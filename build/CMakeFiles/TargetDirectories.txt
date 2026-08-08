@@ -1,0 +1,12 @@
+/home/tanmay/Documents/CodingRepos/compiler/build/CMakeFiles/baka.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/CMakeFiles/edit_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/CMakeFiles/rebuild_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/base/CMakeFiles/base.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/base/CMakeFiles/edit_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/base/CMakeFiles/rebuild_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/driver/CMakeFiles/driver.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/driver/CMakeFiles/edit_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/driver/CMakeFiles/rebuild_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/lexer/CMakeFiles/lexer.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/lexer/CMakeFiles/edit_cache.dir
+/home/tanmay/Documents/CodingRepos/compiler/build/lexer/CMakeFiles/rebuild_cache.dir

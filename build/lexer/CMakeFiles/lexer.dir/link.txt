@@ -1,0 +1,2 @@
+/usr/bin/llvm-ar qc liblexer.a CMakeFiles/lexer.dir/lexer.cc.o
+/usr/bin/llvm-ranlib liblexer.a

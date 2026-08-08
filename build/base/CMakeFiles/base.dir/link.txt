@@ -1,0 +1,2 @@
+/usr/bin/llvm-ar qc libbase.a CMakeFiles/base.dir/mmap_file.cc.o
+/usr/bin/llvm-ranlib libbase.a

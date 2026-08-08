@@ -1,0 +1,26 @@
+[
+{
+  "directory": "/home/tanmay/Documents/CodingRepos/compiler/build",
+  "command": "/usr/bin/c++   -std=gnu++23 -Wall -Wextra -Wpedantic -o CMakeFiles/baka.dir/main.cc.o -c /home/tanmay/Documents/CodingRepos/compiler/main.cc",
+  "file": "/home/tanmay/Documents/CodingRepos/compiler/main.cc",
+  "output": "CMakeFiles/baka.dir/main.cc.o"
+},
+{
+  "directory": "/home/tanmay/Documents/CodingRepos/compiler/build/base",
+  "command": "/usr/bin/c++  -I/home/tanmay/Documents/CodingRepos/compiler/base -std=gnu++23 -o CMakeFiles/base.dir/mmap_file.cc.o -c /home/tanmay/Documents/CodingRepos/compiler/base/mmap_file.cc",
+  "file": "/home/tanmay/Documents/CodingRepos/compiler/base/mmap_file.cc",
+  "output": "base/CMakeFiles/base.dir/mmap_file.cc.o"
+},
+{
+  "directory": "/home/tanmay/Documents/CodingRepos/compiler/build/driver",
+  "command": "/usr/bin/c++  -I/home/tanmay/Documents/CodingRepos/compiler/driver -I/home/tanmay/Documents/CodingRepos/compiler/base -std=gnu++23 -o CMakeFiles/driver.dir/driver.cc.o -c /home/tanmay/Documents/CodingRepos/compiler/driver/driver.cc",
+  "file": "/home/tanmay/Documents/CodingRepos/compiler/driver/driver.cc",
+  "output": "driver/CMakeFiles/driver.dir/driver.cc.o"
+},
+{
+  "directory": "/home/tanmay/Documents/CodingRepos/compiler/build/lexer",
+  "command": "/usr/bin/c++  -I/home/tanmay/Documents/CodingRepos/compiler/lexer -I/home/tanmay/Documents/CodingRepos/compiler/base -std=gnu++23 -o CMakeFiles/lexer.dir/lexer.cc.o -c /home/tanmay/Documents/CodingRepos/compiler/lexer/lexer.cc",
+  "file": "/home/tanmay/Documents/CodingRepos/compiler/lexer/lexer.cc",
+  "output": "lexer/CMakeFiles/lexer.dir/lexer.cc.o"
+}
+]
