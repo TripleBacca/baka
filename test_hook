@@ -7,6 +7,10 @@ COMPILER_PATH = "./build/baka"
 with open("active_tests") as f:
     for line in f.readlines():
         line = line.strip()
+
+        if(line.startswith("#")):
+            continue
+
         chapter, stage = line.split(",")
         chapter = chapter.strip()
         stage = stage.strip()

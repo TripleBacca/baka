@@ -14,6 +14,7 @@ target_link_libraries(lexer PUBLIC
 
 target_include_directories(lexer PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}
 )
 
 
