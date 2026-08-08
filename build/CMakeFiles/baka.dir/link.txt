@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/baka.dir/main.cc.o -o baka 
