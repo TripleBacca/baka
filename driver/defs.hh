@@ -7,9 +7,9 @@ namespace baka {
 namespace driver {
 
     enum class Stage {
-        LEX,
-        PARSE,
-        CODEGEN,
+        LEX = 0,
+        PARSE = 1,
+        CODEGEN = 2,
     };
 
     constexpr std::string_view to_string_view(Stage stage) {

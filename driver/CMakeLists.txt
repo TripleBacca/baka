@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 set(EXEC_SOURCES
     driver.cc
+    gctx.cc
+    # args.cc this is not diff tu
 )
 
 add_library(driver
