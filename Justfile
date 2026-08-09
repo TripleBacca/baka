@@ -4,4 +4,4 @@ test: build
 
 build:
 	cd build && cmake ..
-	cd build && cmake
+	cd build && make

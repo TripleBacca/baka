@@ -16,8 +16,7 @@ baka::driver::Stage baka::driver::Gctx::TillStage() {
 
 
 void baka::driver::Gctx::Print() {
-    std::lock_guard<std::mutex> lg(mut);
-    const Gctx_t& gctx = Gctx::GetGctxRO();
+    auto gctx = Gctx::GetGctxRO();
 
     std::cout << "Gctx::VerboseMode: " << gctx.VerboseMode << std::endl;
     std::cout << "Gctx::BuildType: " << to_string_view(gctx.BuildType) << std::endl;

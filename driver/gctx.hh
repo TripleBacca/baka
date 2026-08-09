@@ -20,7 +20,7 @@ namespace driver {
         Stage TillStage = Stage::LEX; // TODO: change this default later
 
         private:
-            Gctx_t();
+            Gctx_t() = default;
 
         friend Gctx;
 
@@ -30,13 +30,15 @@ namespace driver {
 
 
     class Gctx {
-        static std::mutex mut;
-        static Gctx_t gctx;
+        inline static std::mutex mut;
+        inline static Gctx_t gctx;
 
         public:
-            static const Gctx_t& GetGctxRO() {
+            static Gctx_t GetGctxRO() {
                 std::lock_guard<std::mutex> lg(mut);
-                return gctx;
+
+                Gctx_t gctx_cpy = gctx;
+                return gctx_cpy;
             }
 
             template<class T>
@@ -53,7 +55,6 @@ namespace driver {
             static Stage TillStage();
     };
 
-    void run(int argc, char* argv[]);
 }
 
 }

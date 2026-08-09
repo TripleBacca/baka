@@ -2,6 +2,7 @@
 #include "defs.hh"
 #include "gctx.hh"
 #include <cstddef>
+#include <iostream>
 #include "../types/exceptions.hh"
 
 
@@ -24,7 +25,6 @@ void ParseArgs(int argc, char **argv) {
         throw baka::exceptions::DriverError("no input file");
     }
     std::size_t idx = 1;
-
     // TODO: maybe change these defaults later
     Stage UptoStage = Stage::LEX;
     baka::driver::BuildType BuildType = BuildType::DEBUG;
@@ -34,13 +34,14 @@ void ParseArgs(int argc, char **argv) {
 
     while(idx < argc) {
         std::string_view curr = argv[idx];
+
         if(curr == "--lex") {
             UptoStage = Stage::LEX;
         } else if (curr == "--parse") {
             UptoStage = Stage::PARSE;
         } else if (curr == "--codegen") {
             UptoStage = Stage::CODEGEN;
-        } else if (curr == "--built_type") {
+        } else if (curr == "--build_type") {
             idx++;
             if(idx < argc) {
                 std::string_view type = argv[idx];
@@ -69,7 +70,6 @@ void ParseArgs(int argc, char **argv) {
         idx++;
     }
 
-
     if(!SourceFound) {
         throw baka::exceptions::DriverError("no source file specified");
     }
@@ -81,7 +81,6 @@ void ParseArgs(int argc, char **argv) {
         gctx.BuildType = BuildType;
         gctx.TillStage = UptoStage;
         gctx.VerboseMode = VerboseMode;
-
     });
 
     if(Gctx::isVerbose()) {

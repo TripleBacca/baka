@@ -34,9 +34,15 @@ set(COMPILE_OPTIONS
 target_compile_options(${PROJECT_NAME} PRIVATE
     ${COMPILE_OPTIONS}
 )
-# all dependencies will inherit this
 
 include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(base)
 add_subdirectory(driver)
 add_subdirectory(lexer)
+
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    driver
+    base
+    lexer
+)

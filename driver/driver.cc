@@ -1,3 +1,4 @@
+#include "driver.hh"
 #include "gctx.hh"
 #include "args.cc"
 #include <iostream>
@@ -5,7 +6,7 @@
 #include "lexer/lexer.hh"
 #include "../types/token/all.hh"
 
-void baka::driver::run(int argc, char **argv) {
+void baka::driver::run(int argc, char* argv[]) {
     ParseArgs(argc, argv);
 
     // ValidateSourceFile(); check if file exists and all
