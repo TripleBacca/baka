@@ -1,0 +1,269 @@
+#include "lexer.hh"
+#include <cctype>
+#include <regex>
+#include "../types/token.hh"
+
+namespace baka {
+namespace lexer {
+
+
+std::vector<types::Token> Tokenize(std::string_view SourceCode) {
+    std::vector<types::Token> tokens;
+
+    std::string_view source_view(SourceCode);
+    size_t idx = 0;
+    const size_t n = SourceCode.size();
+
+    // Regexes for floating point and integer literal verification
+    static const std::regex float_regex(
+        "^((([0-9]+\\.[0-9]*|[0-9]*\\.[0-9]+)([eE][+-]?[0-9]+)?)|([0-9]+[eE][+-]?[0-9]+))[fFlL]?",
+        std::regex::optimize
+    );
+
+    static const std::regex int_dec_regex(
+        "^[0-9]+([uU](ll|LL|[lL])?|(ll|LL|[lL])[uU]?)?",
+        std::regex::optimize
+    );
+
+    static const std::regex int_hex_regex(
+        "^0[xX][0-9a-fA-F]+([uU](ll|LL|[lL])?|(ll|LL|[lL])[uU]?)?",
+        std::regex::optimize
+    );
+
+    static const std::regex int_oct_regex(
+        "^0[0-7]+([uU](ll|LL|[lL])?|(ll|LL|[lL])[uU]?)?",
+        std::regex::optimize
+    );
+
+    while (idx < n) {
+        char c = SourceCode[idx];
+
+        // 1. Skip whitespace
+        if (std::isspace(static_cast<unsigned char>(c))) {
+            idx++;
+            continue;
+        }
+
+        // 2. Skip comments
+        if (c == '/' && idx + 1 < n) {
+            if (SourceCode[idx + 1] == '/') {
+                idx += 2;
+                while (idx < n && SourceCode[idx] != '\n') {
+                    idx++;
+                }
+                continue;
+            } else if (SourceCode[idx + 1] == '*') {
+                idx += 2;
+                while (idx + 1 < n && !(SourceCode[idx] == '*' && SourceCode[idx + 1] == '/')) {
+                    idx++;
+                }
+                if (idx + 1 < n) {
+                    idx += 2;
+                } else {
+                    idx = n;
+                }
+                continue;
+            }
+        }
+
+        // 3. Preprocessing numbers & numeric literals (including scientific notation like 1e10, 1.5e-3, etc.)
+        if (std::isdigit(static_cast<unsigned char>(c)) ||
+            (c == '.' && idx + 1 < n && std::isdigit(static_cast<unsigned char>(SourceCode[idx + 1])))) {
+
+            size_t start = idx;
+            size_t cur = idx;
+
+            // Extract candidate preprocessing number token
+            while (cur < n) {
+                char ch = SourceCode[cur];
+                if (std::isalnum(static_cast<unsigned char>(ch)) || ch == '_' || ch == '.') {
+                    if ((ch == 'e' || ch == 'E' || ch == 'p' || ch == 'P') && cur + 1 < n) {
+                        char next_ch = SourceCode[cur + 1];
+                        if (next_ch == '+' || next_ch == '-') {
+                            cur += 2;
+                            continue;
+                        }
+                    }
+                    cur++;
+                } else {
+                    break;
+                }
+            }
+
+            std::string_view num_str = source_view.substr(start, cur - start);
+            std::string num_s(num_str);
+
+            if (std::regex_match(num_s, float_regex)) {
+                tokens.push_back(Token{TokenType::LITERAL_FLOAT, num_str});
+            } else if (std::regex_match(num_s, int_dec_regex) ||
+                       std::regex_match(num_s, int_hex_regex) ||
+                       std::regex_match(num_s, int_oct_regex)) {
+
+                TokenType ttype = TokenType::LITERAL_INT;
+                bool has_u = false, has_l = false, has_ll = false;
+                for (size_t i = 0; i < num_s.size(); ++i) {
+                    char ch = std::tolower(static_cast<unsigned char>(num_s[i]));
+                    if (ch == 'u') has_u = true;
+                    if (ch == 'l') {
+                        if (i + 1 < num_s.size() && std::tolower(static_cast<unsigned char>(num_s[i + 1])) == 'l') {
+                            has_ll = true;
+                            i++;
+                        } else if (!has_ll) {
+                            has_l = true;
+                        }
+                    }
+                }
+                if (has_ll && has_u) ttype = TokenType::LITERALS_ULL;
+                else if (has_ll) ttype = TokenType::LITERALS_LL;
+                else if (has_u && has_l) ttype = TokenType::LITERALS_UL;
+                else ttype = TokenType::LITERAL_INT;
+
+                tokens.push_back(Token{ttype, num_str});
+            } else {
+                tokens.push_back(Token{TokenType::UNKNOWN, num_str});
+            }
+
+            idx = cur;
+            continue;
+        }
+
+        // 4. Identifiers and Keywords
+        if (std::isalpha(static_cast<unsigned char>(c)) || c == '_') {
+            size_t start = idx;
+            while (idx < n && (std::isalnum(static_cast<unsigned char>(SourceCode[idx])) || SourceCode[idx] == '_')) {
+                idx++;
+            }
+            std::string_view lexeme = source_view.substr(start, idx - start);
+            auto it = keywords.find(lexeme);
+            if (it != keywords.end()) {
+                tokens.push_back(Token{it->second, lexeme});
+            } else {
+                tokens.push_back(Token{TokenType::IDENTIFIER, lexeme});
+            }
+            continue;
+        }
+
+        // 5. String Literals
+        if (c == '"') {
+            size_t start = idx;
+            idx++; // skip opening quote
+            while (idx < n && SourceCode[idx] != '"') {
+                if (SourceCode[idx] == '\\' && idx + 1 < n) {
+                    idx += 2;
+                } else {
+                    idx++;
+                }
+            }
+            if (idx < n && SourceCode[idx] == '"') {
+                idx++; // skip closing quote
+            }
+            tokens.push_back(Token{TokenType::LITERAL_STRING, source_view.substr(start, idx - start)});
+            continue;
+        }
+
+        // 6. Character Literals
+        if (c == '\'') {
+            size_t start = idx;
+            idx++; // skip opening quote
+            while (idx < n && SourceCode[idx] != '\'') {
+                if (SourceCode[idx] == '\\' && idx + 1 < n) {
+                    idx += 2;
+                } else {
+                    idx++;
+                }
+            }
+            if (idx < n && SourceCode[idx] == '\'') {
+                idx++; // skip closing quote
+            }
+            tokens.push_back(Token{TokenType::LITERAL_CHAR, source_view.substr(start, idx - start)});
+            continue;
+        }
+
+        // 7. Multi-character and Single-character Operators / Delimiters
+        if (idx + 2 < n && source_view.substr(idx, 3) == "...") {
+            tokens.push_back(Token{TokenType::OP_ELLIPSIS, source_view.substr(idx, 3)});
+            idx += 3;
+            continue;
+        }
+        if (idx + 2 < n && source_view.substr(idx, 3) == "<<=") {
+            tokens.push_back(Token{TokenType::OP_LSHIFT_ASSIGN, source_view.substr(idx, 3)});
+            idx += 3;
+            continue;
+        }
+        if (idx + 2 < n && source_view.substr(idx, 3) == ">>=") {
+            tokens.push_back(Token{TokenType::OP_RSHIFT_ASSIGN, source_view.substr(idx, 3)});
+            idx += 3;
+            continue;
+        }
+
+        if (idx + 1 < n) {
+            std::string_view op2 = source_view.substr(idx, 2);
+            TokenType two_char_type = TokenType::UNKNOWN;
+            if (op2 == "==") two_char_type = TokenType::OP_EQ;
+            else if (op2 == "!=") two_char_type = TokenType::OP_NEQ;
+            else if (op2 == "<=") two_char_type = TokenType::OP_LE;
+            else if (op2 == ">=") two_char_type = TokenType::OP_GE;
+            else if (op2 == "&&") two_char_type = TokenType::OP_LOGICAL_AND;
+            else if (op2 == "||") two_char_type = TokenType::OP_LOGICAL_OR;
+            else if (op2 == "<<") two_char_type = TokenType::OP_LSHIFT;
+            else if (op2 == ">>") two_char_type = TokenType::OP_RSHIFT;
+            else if (op2 == "++") two_char_type = TokenType::OP_INC;
+            else if (op2 == "--") two_char_type = TokenType::OP_DEC;
+            else if (op2 == "+=") two_char_type = TokenType::OP_ADD_ASSIGN;
+            else if (op2 == "-=") two_char_type = TokenType::OP_SUB_ASSIGN;
+            else if (op2 == "*=") two_char_type = TokenType::OP_MUL_ASSIGN;
+            else if (op2 == "/=") two_char_type = TokenType::OP_DIV_ASSIGN;
+            else if (op2 == "%=") two_char_type = TokenType::OP_MOD_ASSIGN;
+            else if (op2 == "&=") two_char_type = TokenType::OP_AND_ASSIGN;
+            else if (op2 == "|=") two_char_type = TokenType::OP_OR_ASSIGN;
+            else if (op2 == "^=") two_char_type = TokenType::OP_XOR_ASSIGN;
+            else if (op2 == "->") two_char_type = TokenType::OP_ARROW;
+            else if (op2 == "::") two_char_type = TokenType::OP_DOUBLE_COLON;
+
+            if (two_char_type != TokenType::UNKNOWN) {
+                tokens.push_back(Token{two_char_type, op2});
+                idx += 2;
+                continue;
+            }
+        }
+
+        // Single-character tokens
+        TokenType one_char_type = TokenType::UNKNOWN;
+        switch (c) {
+            case '(': one_char_type = TokenType::LPAREN_ROUND; break;
+            case ')': one_char_type = TokenType::RPAREN_ROUND; break;
+            case '[': one_char_type = TokenType::LPAREN_SQUARE; break;
+            case ']': one_char_type = TokenType::RPAREN_SQUARE; break;
+            case '{': one_char_type = TokenType::LPAREN_CURLY; break;
+            case '}': one_char_type = TokenType::RPAREN_CURLY; break;
+            case ';': one_char_type = TokenType::SEMICOLON; break;
+            case ':': one_char_type = TokenType::OP_COLON; break;
+            case ',': one_char_type = TokenType::OP_COMMA; break;
+            case '?': one_char_type = TokenType::OP_QUESTION; break;
+            case '.': one_char_type = TokenType::OP_DOT; break;
+            case '+': one_char_type = TokenType::OP_PLUS; break;
+            case '-': one_char_type = TokenType::OP_UNARY_MINUS; break;
+            case '*': one_char_type = TokenType::OP_MUL; break;
+            case '/': one_char_type = TokenType::OP_DIV; break;
+            case '%': one_char_type = TokenType::OP_MOD; break;
+            case '~': one_char_type = TokenType::OP_TILDE; break;
+            case '!': one_char_type = TokenType::OP_LOGICAL_NOT; break;
+            case '&': one_char_type = TokenType::OP_BIT_AND; break;
+            case '|': one_char_type = TokenType::OP_BIT_OR; break;
+            case '^': one_char_type = TokenType::OP_BIT_XOR; break;
+            case '=': one_char_type = TokenType::OP_ASSIGN; break;
+            case '<': one_char_type = TokenType::OP_LT; break;
+            case '>': one_char_type = TokenType::OP_GT; break;
+            default:  one_char_type = TokenType::UNKNOWN; break;
+        }
+
+        tokens.push_back(Token{one_char_type, source_view.substr(idx, 1)});
+        idx++;
+    }
+
+    tokens.push_back(Token{TokenType::EOF_TOKEN, source_view.substr(n, 0)});
+    return tokens;
+}
+
+} // namespace lexer
+} // namespace baka

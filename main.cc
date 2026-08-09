@@ -1,9 +1,5 @@
 #include "driver/driver.hh"
 
-struct X {
-    int a;
-};
-
-
-int main() {
+int main(int argc, char* argv[]) {
+    baka::driver::run(argc, argv);
 }
