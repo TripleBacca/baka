@@ -2,6 +2,8 @@
 
 
 #include "defs.hh"
+#include "mmap_file.hh"
+#include <memory>
 #include <mutex>
 #include <string>
 #include <type_traits>
@@ -18,6 +20,8 @@ namespace driver {
         std::string SourceFilePath;
 
         Stage TillStage = Stage::LEX; // TODO: change this default later
+
+        std::shared_ptr<baka::base::MappedFile> MappedFilePtr;
 
         private:
             Gctx_t() = default;
@@ -54,6 +58,7 @@ namespace driver {
             static bool isDebug();
             static Stage TillStage();
             static std::string GetSourceFilePath();
+            static void AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr);
     };
 
 }

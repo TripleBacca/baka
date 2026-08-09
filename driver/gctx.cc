@@ -26,3 +26,10 @@ void baka::driver::Gctx::Print() {
     std::cout << "Gctx::UptoStage: " << to_string_view(gctx.TillStage) << std::endl;
     std::cout << "Gctx::SourceFile: " << gctx.SourceFilePath << std::endl;
 }
+
+
+void baka::driver::Gctx::AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.MappedFilePtr = std::move(MappedFilePtr);
+    });
+}

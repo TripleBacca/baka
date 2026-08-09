@@ -1,12 +1,12 @@
 #pragma once
-#include "../types/token.hh"
+#include "../types/token/all.hh"
 #include <vector>
-#include <string>
 
 namespace baka {
 namespace lexer {
 
-std::vector<types::Token> Tokenize(const std::string& SourceCode);
+std::vector<types::Token> Tokenize(std::string_view SourceCode);
+
 
 } // namespace lexer
 } // namespace baka
