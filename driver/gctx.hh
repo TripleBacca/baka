@@ -53,6 +53,7 @@ namespace driver {
             static bool isVerbose();
             static bool isDebug();
             static Stage TillStage();
+            static std::string GetSourceFilePath();
     };
 
 }

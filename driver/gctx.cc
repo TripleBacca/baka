@@ -1,6 +1,9 @@
 #include "gctx.hh"
 #include <iostream>
 
+std::string baka::driver::Gctx::GetSourceFilePath() {
+    return Gctx::GetGctxRO().SourceFilePath;
+}
 
 bool baka::driver::Gctx::isVerbose() {
     return Gctx::GetGctxRO().VerboseMode;
