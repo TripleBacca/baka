@@ -1,12 +1,11 @@
 #pragma once
-
-
 #include "defs.hh"
 #include "mmap_file.hh"
 #include <memory>
 #include <mutex>
 #include <string>
 #include <type_traits>
+
 namespace baka {
 
 namespace driver {

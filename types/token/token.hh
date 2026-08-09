@@ -125,6 +125,7 @@ namespace types {
     };
 
     struct TokenSourceLocation {
+        std::string_view FilePath;
         size_t LineNo;
         size_t Col;
     };
