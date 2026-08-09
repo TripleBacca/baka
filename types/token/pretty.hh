@@ -112,6 +112,6 @@ inline std::string_view TokenTypeToStr(types::TokenType tokenType) {
 }
 
 inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
-    os << token.Lexeme << " (TokenType: " << TokenTypeToStr(token.TokenType) << ")";
+    os << token.Lexeme << " (TokenType: " << TokenTypeToStr(token.TokenType_v) << ")";
     return os;
 }

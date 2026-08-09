@@ -77,7 +77,7 @@ void ParseArgs(int argc, char **argv) {
 
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         gctx.SourceFilePath = std::move(SourceFile);
-        gctx.BuildType = BuildType;
+        gctx.BuildType_v = BuildType;
         gctx.TillStage = UptoStage;
         gctx.VerboseMode = VerboseMode;
     });

@@ -10,7 +10,7 @@ bool baka::driver::Gctx::isVerbose() {
 }
 
 bool baka::driver::Gctx::isDebug() {
-    return Gctx::GetGctxRO().BuildType == BuildType::DEBUG;
+    return Gctx::GetGctxRO().BuildType_v == BuildType::DEBUG;
 }
 
 baka::driver::Stage baka::driver::Gctx::TillStage() {
@@ -22,7 +22,7 @@ void baka::driver::Gctx::Print() {
     auto gctx = Gctx::GetGctxRO();
 
     std::cout << "Gctx::VerboseMode: " << gctx.VerboseMode << std::endl;
-    std::cout << "Gctx::BuildType: " << to_string_view(gctx.BuildType) << std::endl;
+    std::cout << "Gctx::BuildType: " << to_string_view(gctx.BuildType_v) << std::endl;
     std::cout << "Gctx::UptoStage: " << to_string_view(gctx.TillStage) << std::endl;
     std::cout << "Gctx::SourceFile: " << gctx.SourceFilePath << std::endl;
 }

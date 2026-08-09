@@ -16,7 +16,7 @@ namespace driver {
         bool DebugMode = true;
         bool ShouldOptimize = true;
         bool VerboseMode = true;
-        BuildType BuildType;
+        BuildType BuildType_v;
         std::string SourceFilePath;
 
         Stage TillStage = Stage::LEX; // TODO: change this default later

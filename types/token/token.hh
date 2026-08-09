@@ -130,7 +130,7 @@ namespace types {
     };
 
     struct Token {
-        TokenType TokenType;
+        TokenType TokenType_v;
         std::string_view Lexeme;
     };
 }
