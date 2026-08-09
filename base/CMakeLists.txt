@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.10)
 set(EXEC_SOURCES
     mmap_file.cc
     validate_file.cc
+    file_size.cc
+    validate_file.cc
 )
 
 add_library(base
