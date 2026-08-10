@@ -29,7 +29,6 @@ namespace lexer {
         {"if",types::TokenType::K_IF},
         {"int",types::TokenType::K_INT},
         {"long",types::TokenType::K_LONG},
-        {"mutable",types::TokenType::K_MUTABLE},
         {"namespace",types::TokenType::K_NAMESPACE},
         {"new",types::TokenType::K_NEW},
         {"return",types::TokenType::K_RETURN},

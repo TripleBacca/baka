@@ -38,7 +38,7 @@
     }; \
 
 
-
+// TODO: abandon c++ exceptions cuz cringe
 namespace baka {
 namespace exceptions {
 
