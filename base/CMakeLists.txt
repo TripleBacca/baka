@@ -19,3 +19,6 @@ target_include_directories(base PUBLIC
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # compiler intrinsics
 set(CMAKE_CXX_EXTENSIONS ON)
+
+
+add_executable(trie trie-ing.cpp)
