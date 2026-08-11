@@ -1,11 +1,11 @@
 #include "lexer.hh"
 #include <cctype>
-#include <exception>
-#include <iostream>
 #include <string>
+#include <string_view>
 #include "../types/token/all.hh"
 #include "../types/exceptions.hh"
 #include "base/base.hh"
+#include "keywords.hh"
 
 namespace baka {
 namespace lexer {
@@ -23,39 +23,66 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     while(lh < SourceCode.size()) {
         char curr = SourceCode[lh];
 
-        if(std::isalpha(curr)) {
-            // identifier or keyword
-            // deal with boolean
+        if(base::isValidKeywordNonDigit(curr)) {
+            // keyword or identifier
+            // deal with boolean (kword deals with this already)
 
-        } else if(curr == '(') {
+            size_t startIdx = lh;
+            size_t endIdx = startIdx;
+
+            size_t peek = lh+1;
+            while(peek < SourceCode.size() && base::isValidKeywordNonDigit(SourceCode[peek]) || std::isdigit(SourceCode[peek])) {
+                endIdx = peek;
+                peek++;
+            }
+
+            std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
+            if(Kw_lexeme_to_type.contains(lexeme)) {
+                tokens.emplace_back(Kw_lexeme_to_type.at(lexeme), lexeme);
+                lh = endIdx + 1;
+                ColNo += endIdx - startIdx + 1;
+            } else {
+                tokens.emplace_back(types::TokenType::IDENTIFIER, lexeme);
+                lh = endIdx + 1;
+                ColNo += endIdx - startIdx + 1;
+            }
+        }
+        else if(curr == '(') {
             tokens.emplace_back(types::TokenType::LPAREN_ROUND, std::string_view("("));
             lh++;
             ColNo++;
-        } else if(curr == ')') {
+        }
+        else if(curr == ')') {
             tokens.emplace_back(types::TokenType::RPAREN_ROUND, std::string_view(")"));
             lh++;
             ColNo++;
-        } else if(curr == '[') {
+        }
+        else if(curr == '[') {
             tokens.emplace_back(types::TokenType::LPAREN_SQUARE, std::string_view("["));
             lh++;
             ColNo++;
-        } else if(curr == ']') {
+        }
+        else if(curr == ']') {
             tokens.emplace_back(types::TokenType::RPAREN_SQUARE, std::string_view("]"));
             lh++;
             ColNo++;
-        } else if(curr == '{') {
+        }
+        else if(curr == '{') {
             tokens.emplace_back(types::TokenType::LPAREN_CURLY, std::string_view("{"));
             lh++;
             ColNo++;
-        } else if(curr == '}') {
+        }
+        else if(curr == '}') {
             tokens.emplace_back(types::TokenType::RPAREN_CURLY, std::string_view("}"));
             lh++;
             ColNo++;
-        } else if (curr == ';') {
+        }
+        else if (curr == ';') {
             tokens.emplace_back(types::TokenType::SEMICOLON, std::string_view(";"));
             lh++;
             ColNo++;
-        } else if(curr == '\'') {
+        }
+        else if(curr == '\'') {
             // character literal
 
             size_t peek = lh+1;
@@ -150,7 +177,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                 tokens.emplace_back(types::TokenType::UNKNOWN, ActualChar);
             }
 
-        } else if(curr == '"') {
+        }
+        else if(curr == '"') {
             //string literal
 
             size_t peek = lh+1;
@@ -233,17 +261,21 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                 tokens.emplace_back(types::TokenType::UNKNOWN, str);
             }
 
-        } else if(std::isdigit(curr)) {
+        }
+        else if(std::isdigit(curr)) {
             // fp or int
             // mulch and regex bash
-        } else if(curr == ' ' || curr == '\t') {
+        }
+        else if(curr == ' ' || curr == '\t') {
             lh++;
             ColNo++;
-        } else if(curr == '\n') {
+        }
+        else if(curr == '\n') {
             lh++;
             LineNo++;
             ColNo = 1;
-        } else {
+        }
+        else {
             // this is operator
         }
     }

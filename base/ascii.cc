@@ -1,4 +1,3 @@
-#pragma once
 
 
 #include <cctype>
@@ -44,5 +43,11 @@ namespace baka {
             }
         }
 
+
+
+        bool isValidKeywordNonDigit(char c) {
+            // https://timsong-cpp.github.io/cppwp/lex#nt:nondigit
+            return std::isalpha(c) || c == '_';
+        }
     }
 }

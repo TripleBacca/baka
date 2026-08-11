@@ -12,6 +12,7 @@ namespace base {
     bool isValidStringChar(char c);
     bool isSimpleEscapeSequenceChar(char c);
     char SimpleEscapeSequence(char suffix);
+    bool isValidKeywordNonDigit(char c);
 
 }
 }
