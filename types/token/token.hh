@@ -27,7 +27,6 @@ namespace types {
         K_IF,
         K_INT,
         K_LONG,
-        K_MUTABLE,
         K_NAMESPACE,
         K_NEW,
         K_RETURN,

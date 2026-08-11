@@ -28,7 +28,6 @@ namespace {
         {types::TokenType::K_IF,"K_IF"},
         {types::TokenType::K_INT,"K_INT"},
         {types::TokenType::K_LONG,"K_LONG"},
-        {types::TokenType::K_MUTABLE,"K_MUTABLE"},
         {types::TokenType::K_NAMESPACE,"K_NAMESPACE"},
         {types::TokenType::K_NEW,"K_NEW"},
         {types::TokenType::K_RETURN,"K_RETURN"},
