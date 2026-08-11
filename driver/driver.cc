@@ -58,9 +58,8 @@ void baka::driver::run(int argc, char* argv[]) {
             // TODO: collect all erorrs first
             return;
         }
-
         if(Gctx::isVerbose()) {
-            std::cout << "Lexer Output: " << tokens.size() << " Tokens" << std::endl;
+            std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << std::endl;
             for(const auto& token : tokens) {
                 std::cout << token << std::endl;
             }

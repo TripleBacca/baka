@@ -1,5 +1,7 @@
 #pragma once
+#include <string>
 #include <string_view>
+#include <variant>
 
 
 namespace types {
@@ -132,7 +134,10 @@ namespace types {
 
     struct Token {
         TokenType TokenType_v;
-        std::string_view Lexeme;
+        std::variant<char, std::string_view , std::string> Value;
+        // char - needed for char literal
+        // string - string literal
+        // string_view - any other lexeme
     };
 
 

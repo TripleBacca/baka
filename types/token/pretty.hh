@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include <ostream>
 #include <string_view>
 #include <unordered_map>
@@ -112,6 +113,21 @@ inline std::string_view TokenTypeToStr(types::TokenType tokenType) {
 }
 
 inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
-    os << token.Lexeme << " (TokenType: " << TokenTypeToStr(token.TokenType_v) << ")";
+    switch(token.Value.index()) {
+        case 0:
+            os << "'" << std::get<char>(token.Value) << "'";
+            break;
+        case 1:
+            os << std::get<std::string_view>(token.Value);
+            break;
+        case 2:
+            os << '"' << std::get<std::string>(token.Value) << '"';
+            break;
+        default:
+            assert(false && "what the helly?");
+            break;
+    }
+
+    os << " (TokenType: " << TokenTypeToStr(token.TokenType_v) << ")";
     return os;
 }
