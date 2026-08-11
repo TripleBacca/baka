@@ -56,32 +56,41 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             lh++;
             ColNo++;
         } else if(curr == '\'') {
+            // character literal
+
             size_t peek = lh+1;
             char ActualChar;
             bool CharSeen = false;
+            size_t CharLength = 0;
             bool RQuoteSeen = false;
 
             while(peek < SourceCode.size()) {
                 if(SourceCode[peek] == '\\') {
+                    // possibly escape seq
                     peek++;
-                    // need to escape whatevers after
-                    // cannot end on slash
                     if(peek >= SourceCode.size()) {
                         errors.push_back("Invalid escape sequence");
                         break;
                     }
 
                     char q = SourceCode[peek];
+                    // q must either be a letter for a simple escape
+                    // or
+                    // q must be a number 0-7 for octal escape seq
+
 
                     if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(q)) {
                         ActualChar = base::SimpleEscapeSequence(q);
                         CharSeen = true;
+                        CharLength++;
                     } else if(std::isdigit(q) &&  (0 <= (q - '0')) && (7 >= (q - '0'))) {
                         // octal escape sequence
                         // need to do this for \0
 
                         long long octal_seq = (q - '0');
                         peek++;
+
+                        // octal escape seq is max 3 digits
                         size_t DigitsSeen = 1;
 
                         while(peek < SourceCode.size() &&
@@ -97,22 +106,25 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                         ActualChar = static_cast<char>(octal_seq);
                         CharSeen = true;
+                        CharLength++;
                     } else {
+                        // TODO: put error here
                         errors.push_back("invalid octal escape sequence");
                         break;
-                        // TODO: put error here
-
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '\'') {
+                    // normal ascii char
                     ActualChar = SourceCode[peek];
                     CharSeen = true;
+                    CharLength++;
                 } else if (SourceCode[peek] == '\'') {
+                    // end literal here
                     RQuoteSeen = true;
                     break;
                 } else {
+                    // TODO: put error here
                     errors.push_back("invalid character in charcter literal");
                     break;
-                    // TODO: put error here
                 }
                 peek++;
             }
@@ -123,11 +135,12 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
             if(RQuoteSeen && CharSeen) {
                 tokens.emplace_back(types::TokenType::LITERAL_CHARACTER, ActualChar);
+
+                if(CharLength > 1) {
+                    // TODO: warn about multilenght char
+                }
             } else {
-                // if breaked and no rquote then only case is error
-                //
-                // either r quote not seen
-                // or char not seen
+                // must be invalid char or (ended literal without any char)
                 if(!CharSeen) {
                     errors.push_back("no character in character literal");
                 }
@@ -146,17 +159,21 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
             while(peek < SourceCode.size()) {
                 if(SourceCode[peek] == '\\') {
+                    // escape sequence
+
                     peek++;
-                    // need to escape whatevers after
-                    // cannot end on slash
                     if(peek >= SourceCode.size()) {
                         errors.push_back("Invalid escape sequence");
                         break;
                     }
 
                     char q = SourceCode[peek];
+                    // q is either letter for escape seq
+                    // or
+                    // q is 0-7 for octal escape seq
 
                     if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(q)) {
+                        // letter escape seq
                         char ToAdd = base::SimpleEscapeSequence(q);
                         str += (ToAdd);
                     } else if(std::isdigit(q) &&  (0 <= (q - '0')) && (7 >= (q - '0'))) {
@@ -165,6 +182,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                         long long octal_seq = (q - '0');
                         peek++;
+
+                        // octal escape seq has max 3 digits
                         size_t DigitsSeen = 1;
 
                         while(peek < SourceCode.size() &&
@@ -181,20 +200,21 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         str += static_cast<char>(octal_seq);
 
                     } else {
+                        // TODO: put error here
                         errors.push_back("invalid octal escape sequence");
                         break;
-                        // TODO: put error here
-
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '"') {
+                    // normal ascii char
                     str += SourceCode[peek];
                 } else if (SourceCode[peek] == '"') {
+                    // end literal here
                     RQuoteSeen = true;
                     break;
                 } else {
+                    // TODO: put error here
                     errors.push_back("invalid character in charcter literal");
                     break;
-                    // TODO: put error here
                 }
                 peek++;
             }
@@ -206,9 +226,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             if(RQuoteSeen) {
                 tokens.emplace_back(types::TokenType::LITERAL_STRING, std::move(str));
             } else {
-                // if breaked and no rquote then only case is error
-                //
-                // either r quote not seen or invalid char
+                // must be invalid char
                 if(!RQuoteSeen) {
                     errors.push_back("string literal not terminated");
                 }
