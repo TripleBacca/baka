@@ -73,7 +73,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                     char q = SourceCode[peek];
 
-                    if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(SourceCode[peek])) {
+                    if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(q)) {
                         ActualChar = base::SimpleEscapeSequence(q);
                         CharSeen = true;
                     } else if(std::isdigit(q) &&  (0 <= (q - '0')) && (7 >= (q - '0'))) {
@@ -82,9 +82,15 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                         long long octal_seq = (q - '0');
                         peek++;
-                        while(peek < SourceCode.size() && std::isdigit(SourceCode[peek])) {
+                        size_t DigitsSeen = 1;
+
+                        while(peek < SourceCode.size() &&
+                              SourceCode[peek] >= '0' && SourceCode[peek] <= '7' &&
+                              DigitsSeen < 3)
+                        {
                             octal_seq *= 8;
-                            octal_seq = (SourceCode[peek] - '0');
+                            octal_seq += (SourceCode[peek] - '0');
+                            DigitsSeen++;
                             peek++;
                         }
                         peek--; // move it back to last scanned char
@@ -150,7 +156,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                     char q = SourceCode[peek];
 
-                    if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(SourceCode[peek])) {
+                    if(base::isSimpleEscapeSequenceChar(q) && base::isValidStringChar(q)) {
                         char ToAdd = base::SimpleEscapeSequence(q);
                         str += (ToAdd);
                     } else if(std::isdigit(q) &&  (0 <= (q - '0')) && (7 >= (q - '0'))) {
@@ -159,14 +165,21 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                         long long octal_seq = (q - '0');
                         peek++;
-                        while(peek < SourceCode.size() && std::isdigit(SourceCode[peek])) {
+                        size_t DigitsSeen = 1;
+
+                        while(peek < SourceCode.size() &&
+                              SourceCode[peek] >= '0' && SourceCode[peek] <= '7' &&
+                              DigitsSeen < 3)
+                        {
                             octal_seq *= 8;
-                            octal_seq = (SourceCode[peek] - '0');
+                            octal_seq += (SourceCode[peek] - '0');
+                            DigitsSeen++;
                             peek++;
                         }
                         peek--; // move it back to last scanned char
 
                         str += static_cast<char>(octal_seq);
+
                     } else {
                         errors.push_back("invalid octal escape sequence");
                         break;
