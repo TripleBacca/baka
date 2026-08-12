@@ -9,7 +9,7 @@ namespace baka {
 namespace lexer {
 
 
-    const std::unordered_map<std::string_view, types::TokenType> Kw_lexeme_to_type = {
+    const inline std::unordered_map<std::string_view, types::TokenType> Kw_lexeme_to_type = {
         {"bool",types::TokenType::K_BOOL},
         {"break",types::TokenType::K_BREAK},
         {"case",types::TokenType::K_CASE},

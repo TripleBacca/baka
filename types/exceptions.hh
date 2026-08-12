@@ -5,7 +5,11 @@
 #include <exception>
 #include <sstream>
 #include <string>
+#include <string_view>
 
+#define RED_ANSII "\033[38;2;255;0;0m"
+#define YELLOW_ANSII "\033[38;2;255;255;0m"
+#define CLEAR_ANSII "\033[0m"
 
 #define WHAT const char* what() const noexcept override
 
@@ -18,35 +22,38 @@
         } \
     } \
 
-#define LINE_INFO_ERROR_CLASS(name) class name : std::exception { \
-    std::string msg; \
-    types::TokenSourceLocation SourceLocation; \
-    mutable std::string scratch; \
-    \
-    public: \
-        \
-    name(std::string msg, types::TokenSourceLocation SourceLocation) : msg(std::move(msg)), SourceLocation(SourceLocation) {} \
-    \
-        const char* what() const noexcept override { \
-            std::ostringstream otpt; \
-            otpt.clear(); \
-            otpt << SourceLocation.FilePath << ": " << SourceLocation.LineNo << ":" << SourceLocation.Col << ": " << msg; \
-            scratch = otpt.str(); \
-            \
-            return scratch.c_str(); \
-        } \
-    }; \
-
+#define LINE_DIAGNOSTIC_CLASS(name, ansii)     class name : Diagnostic { \
+    types::TokenSourceLocation sourceLocation; \
+    std::string_view LineStr; \
+    std::string_view Message; \
+    name(types::TokenSourceLocation sourceLocation, std::string_view LineStr, std::string_view Message) : sourceLocation(sourceLocation), LineStr(LineStr), Message(Message) {} \
+    types::TokenSourceLocation getSourceLocation() const override { \
+        return sourceLocation; \
+    } \
+    std::string getMessage() const override { \
+        std::ostringstream os; \
+        os << sourceLocation.FilePath << sourceLocation.LineNo << ":" << sourceLocation.Col << ": " << LineStr << '\n' \
+            << '\t' << ansii << Message << CLEAR_ANSII << '\n'; \
+        return os.str(); \
+    } \
+} \
 
 // TODO: abandon c++ exceptions cuz cringe
 namespace baka {
 namespace exceptions {
 
     GEN_ERROR_CLASS(DriverError);
-    LINE_INFO_ERROR_CLASS(LexerError);
-    LINE_INFO_ERROR_CLASS(ParserError);
-    LINE_INFO_ERROR_CLASS(CodegenError);
-    LINE_INFO_ERROR_CLASS(OptimizationPassError);
+
+
+    class Diagnostic {
+
+        virtual types::TokenSourceLocation getSourceLocation() const = 0;
+        virtual std::string getMessage() const = 0;
+    };
+
+
+    LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII);
+    LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII);
 
 }
 }
