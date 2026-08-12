@@ -49,5 +49,12 @@ namespace baka {
             // https://timsong-cpp.github.io/cppwp/lex#nt:nondigit
             return std::isalpha(c) || c == '_';
         }
+
+        bool isValidOperatorChar(char c) {
+            return c == '~' || c == '-' || c == '+' || c == '*' ||
+                c == '/' || c == '%' || c == '&' || c == '|' ||
+                    c == '^' || c == '<' || c == '>' || c == '=' ||
+                        c == '!' || c == ':' || c == ',' || c == '?' || c == '.';
+        }
     }
 }

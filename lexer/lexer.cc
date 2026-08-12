@@ -6,6 +6,7 @@
 #include "../types/exceptions.hh"
 #include "base/base.hh"
 #include "keywords.hh"
+#include "operators.hh"
 
 namespace baka {
 namespace lexer {
@@ -265,6 +266,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
         else if(std::isdigit(curr)) {
             // fp or int
             // mulch and regex bash
+
+
         }
         else if(curr == ' ' || curr == '\t') {
             lh++;
@@ -275,8 +278,46 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             LineNo++;
             ColNo = 1;
         }
-        else {
+        else if (base::isValidOperatorChar(curr)) {
             // this is operator
+            // TODO: Remove comments before lexing
+            if (curr == '.')
+            {
+                // check for ellipsis
+                if (lh + 2 < SourceCode.size() && SourceCode[lh + 1] == '.' && SourceCode[lh + 2] == '.') {
+                    tokens.emplace_back(types::TokenType::OP_ELLIPSIS, std::string_view(SourceCode.substr(lh, 3)));
+                    lh += 3;
+                    ColNo += 3;
+                }
+                else
+                {
+                    tokens.emplace_back(types::TokenType::OP_DOT, std::string_view(SourceCode.substr(lh, 1)));
+                    lh++;
+                    ColNo++;
+                }
+            }
+            else
+            {
+                size_t startIdx = lh;
+                size_t endIdx = startIdx;
+
+                size_t peek = lh + 1;
+                while (peek < SourceCode.size() && base::isValidOperatorChar(SourceCode[peek]) && lexeme_to_operator.contains(SourceCode.substr(startIdx, peek - startIdx + 1))) {
+                    endIdx = peek;
+                    peek++;
+                }
+                std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
+                tokens.emplace_back(lexeme_to_operator.at(lexeme), lexeme);
+                lh = endIdx + 1;
+                ColNo += endIdx - startIdx + 1;
+            }
+
+        }
+        else {
+            // TODO: put error here -> Unknown token
+            tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(&curr, 1));
+            lh++;
+            ColNo++;
         }
     }
 
