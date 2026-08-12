@@ -16,6 +16,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     std::vector<types::Token> tokens;
 
     std::vector<std::string> errors; // this is very bad TODO
+    std::vector<std::string> warnings; // this is very bad TODO
 
     size_t LineNo = 1;
     size_t ColNo = 1;
@@ -97,8 +98,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     // possibly escape seq
                     peek++;
                     if(peek >= SourceCode.size()) {
-                        errors.push_back("Invalid escape sequence");
-                        break;
+                        errors.emplace_back("Invalid escape sequence");
+                        break; //TODO: Is this safe????
                     }
 
                     char q = SourceCode[peek];
@@ -136,8 +137,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         CharSeen = true;
                         CharLength++;
                     } else {
-                        // TODO: put error here
-                        errors.push_back("invalid octal escape sequence");
+                        // TODO: put error here, is line and column even updated????
+                        errors.emplace_back("invalid octal escape sequence line: {} column: {}", LineNo, ColNo);
                         break;
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '\'') {
@@ -151,7 +152,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     break;
                 } else {
                     // TODO: put error here
-                    errors.push_back("invalid character in charcter literal");
+                    errors.emplace_back("invalid character in character literal");
                     break;
                 }
                 peek++;
@@ -165,7 +166,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                 tokens.emplace_back(types::TokenType::LITERAL_CHARACTER, ActualChar);
 
                 if(CharLength > 1) {
-                    // TODO: warn about multilenght char
+                    // TODO: warn about multilength char
                 }
             } else {
                 // must be invalid char or (ended literal without any char)

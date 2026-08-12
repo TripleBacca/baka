@@ -1,1 +1,24 @@
-+===...$&&@@@@//=:::=======++++=====+++++++
+int main(){
+ int a;
+ int b;
+ int c = a + b;
+ std::cout << c;
+ if (a < b && c > d) printf("%d", c);
+    else printf("%d", d);
+}
+
+class trying_to_lex{
+    std::vector<int> a(n);
+    for (auto i : a) {
+        std::cout << i << std::endl;
+    }
+    trying_to_lex(int n) : a(n) {}
+};
+
+struct trying_to_lex2{
+    std::vector<int> a(n);
+    for (auto i : a) {
+        std::cout << i << std::endl;
+    }
+    trying_to_lex2(int n) : a(n) {}
+};
