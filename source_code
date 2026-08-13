@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 int main(){
  int a;
  int b;
@@ -22,3 +23,7 @@ struct trying_to_lex2{
     }
     trying_to_lex2(int n) : a(n) {}
 };
+=======
+if while forwhiledoo do char
+"fawfaw"'fawfaws'"fwaf\twfafawf"
+>>>>>>> 783fd07 (add regexes for literal lexing)

@@ -1,5 +1,6 @@
 #include "lexer.hh"
 #include <cctype>
+#include <regex>
 #include <string>
 #include <string_view>
 #include "../types/token/all.hh"
@@ -22,6 +23,14 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     size_t ColNo = 1;
 
     size_t lh = 0;
+
+
+
+    std::regex float_regex(R"(^(([0-9]+\.?[0-9]*)|([0-9]*\.?[0-9]+))([eE][+-]?([0-9]+))?[fF]$)");
+    std::regex double_regex(R"(^(([0-9]+\.?[0-9]*)|([0-9]*\.?[0-9]+))([eE][+-]?([0-9]+))?$)");
+    std::regex long_regex(R"(^((0b[0-1])|(0o[0-7])|(0x[0-9a-fA-F])|([0-9]+))[lL]$)");
+    std::regex int_regex(R"(^((0b[0-1])|(0o[0-7])|(0x[0-9a-fA-F])|([0-9]+))$)");
+
     while(lh < SourceCode.size()) {
         char curr = SourceCode[lh];
 
