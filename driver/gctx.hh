@@ -1,5 +1,6 @@
 #pragma once
 #include "defs.hh"
+#include "line_index.hh"
 #include "mmap_file.hh"
 #include <memory>
 #include <mutex>
@@ -21,6 +22,7 @@ namespace driver {
         Stage TillStage = Stage::LEX; // TODO: change this default later
 
         std::shared_ptr<baka::base::MappedFile> MappedFilePtr;
+        std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
 
         private:
             Gctx_t() = default;
@@ -57,7 +59,10 @@ namespace driver {
             static bool isDebug();
             static Stage TillStage();
             static std::string GetSourceFilePath();
+            static std::shared_ptr<base::LineIndex> GetLineIndex();
+
             static void AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr);
+            static void AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr);
     };
 
 }

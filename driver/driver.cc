@@ -9,6 +9,7 @@
 #include "lexer/lexer.hh"
 #include "base/base.hh"
 #include "../types/token/all.hh"
+#include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
 
@@ -28,6 +29,10 @@ namespace {
 
         std::shared_ptr<baka::base::MappedFile> MappedFilePtr = std::make_shared<baka::base::MappedFile>(path);
         baka::driver::Gctx::AttachMappedFile(MappedFilePtr);
+
+        std::shared_ptr<baka::base::LineIndex> LineIndexPtr = std::make_shared<baka::base::LineIndex>(MappedFilePtr->View());
+        baka::driver::Gctx::AttachLineIndex(LineIndexPtr);
+
         return MappedFilePtr->View();
     }
 }

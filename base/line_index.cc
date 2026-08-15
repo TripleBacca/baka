@@ -35,8 +35,8 @@ namespace base {
         return lineIdx;
     }
 
-    LineCtx LineIndex::CurrentLine() const {
-        return LineCtx{lineIdx, LineIndexId};
+    LineCtx LineIndex::CurrentLine() {
+        return LineCtx{lineIdx, this};
     }
 
 
@@ -51,7 +51,7 @@ namespace base {
     }
 
     std::string_view LineIndex::GetLine(const LineCtx& lCtx) const {
-        assert(lCtx.LineIndexId == LineIndexId);
+        assert(lCtx.LineIndexPtr == this);
 
         const LineInfo& li = LineInfos.at(lCtx.LineIdx);
         return SourceCode.substr(li.StartIdx, li.EndIdx - li.StartIdx);

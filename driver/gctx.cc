@@ -1,5 +1,7 @@
 #include "gctx.hh"
+#include "line_index.hh"
 #include <iostream>
+#include <memory>
 
 std::string baka::driver::Gctx::GetSourceFilePath() {
     return Gctx::GetGctxRO().SourceFilePath;
@@ -17,6 +19,9 @@ baka::driver::Stage baka::driver::Gctx::TillStage() {
     return Gctx::GetGctxRO().TillStage;
 }
 
+std::shared_ptr<baka::base::LineIndex> baka::driver::Gctx::GetLineIndex() {
+    return Gctx::GetGctxRO().LineIndexPtr;
+}
 
 void baka::driver::Gctx::Print() {
     auto gctx = Gctx::GetGctxRO();
@@ -31,5 +36,11 @@ void baka::driver::Gctx::Print() {
 void baka::driver::Gctx::AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         gctx.MappedFilePtr = std::move(MappedFilePtr);
+    });
+}
+
+void baka::driver::Gctx::AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.LineIndexPtr = std::move(LineIndexPtr);
     });
 }

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <deque>
+#include <memory>
 #include <string_view>
 
 namespace {
@@ -16,12 +17,7 @@ namespace baka {
 namespace base {
     inline static std::atomic<int> LineIndexIdCt = 0;
 
-    struct LineCtx {
-        size_t LineIdx;
-
-        int LineIndexId; // make sure it came from same line index
-    };
-
+    struct LineCtx;
 
     class LineIndex {
         int LineIndexId;
@@ -41,11 +37,24 @@ namespace base {
         void endLine(size_t endIdx);
 
         size_t CurrentLineIdx() const;
-        LineCtx CurrentLine() const;
+        LineCtx CurrentLine();
 
         std::string_view GetLine(size_t lineIdx) const;
         std::string_view GetSourceCode() const;
-        std::string_view GetLine(const LineCtx& lCtx) const;
+
+        private:
+            std::string_view GetLine(const LineCtx& lCtx) const;
+        friend LineCtx;
+    };
+
+
+    struct LineCtx {
+        size_t LineIdx;
+        LineIndex* LineIndexPtr; // make sure it came from same line index
+
+        std::string_view Display() {
+            return LineIndexPtr->GetLine(*this);
+        }
     };
 }
 }
