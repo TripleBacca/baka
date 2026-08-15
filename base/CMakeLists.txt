@@ -6,6 +6,7 @@ set(EXEC_SOURCES
     file_size.cc
     validate_file.cc
     ascii.cc
+    line_index.cc
 )
 
 add_library(base
