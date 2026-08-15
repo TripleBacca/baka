@@ -4,7 +4,9 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <ostream>
 #include <string_view>
+#include <vector>
 #include "defs.hh"
 #include "lexer/lexer.hh"
 #include "base/base.hh"
@@ -39,7 +41,7 @@ namespace {
 
 
 
-void baka::driver::run(int argc, char* argv[]) {
+int baka::driver::run(int argc, char* argv[]) {
     ParseArgs(argc, argv);
 
     ValidateSourceFile(); // check if exists and has perms
@@ -55,19 +57,55 @@ void baka::driver::run(int argc, char* argv[]) {
     // Preprocessor(SourceCode); dont plan to do this
 
     std::vector<types::Token> tokens;
+
     { // lexing
         if(Gctx::TillStage() >= Stage::LEX) {
             tokens = lexer::Tokenize(SourceCode);
         } else {
-            // spit out all errors
-            // TODO: collect all erorrs first
-            return;
+            return 0;
         }
         if(Gctx::isVerbose()) {
-            std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << std::endl;
+            std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << '\n';
             for(const auto& token : tokens) {
-                std::cout << token << std::endl;
+                std::cout << token << '\n';
             }
+            std::cout << std::flush;
         }
     }
+
+    { // post lexer
+
+        auto lg = Gctx::GetROLock();
+        auto& gctx = Gctx::GetGctxRO();
+
+        auto& Errors = gctx.CompilerErrors;
+        auto& Warnings = gctx.CompilerErrors;
+
+        for(auto& i: Warnings) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+
+        for(auto& i: Errors) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+
+        if(Gctx::ErrorFound()) {
+            // need to stop here
+            size_t ErrorCount = Errors.size();
+            std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
+            return 1;
+        } else {
+            if(Gctx::isVerbose()) {
+                std::cout << "Lexer: Lexing stage completed" << '\n';
+            }
+        }
+
+        std::cout << std::endl;
+    }
+
+
+
+    return 0;
 }

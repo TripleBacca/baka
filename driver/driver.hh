@@ -3,6 +3,6 @@
 
 namespace baka {
     namespace driver {
-        void run(int argc, char* argv[]);
+        int run(int argc, char* argv[]);
     }
 }

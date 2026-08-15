@@ -1,4 +1,3 @@
-#pragma once
 #include "line_index.hh"
 #include <cassert>
 #include <cstddef>
