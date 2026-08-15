@@ -8,19 +8,10 @@
 #include "base/base.hh"
 #include "keywords.hh"
 #include "operators.hh"
+#include "types/token/token.hh"
 
 namespace baka {
 namespace lexer {
-
-enum class NumType {
-    INT,
-    LONG,
-    UNSIGNED_INT,
-    UNSIGNED_LONG,
-    FLOAT,
-    DOUBLE
-};
-
 
 std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     std::vector<types::Token> tokens;
@@ -278,7 +269,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
         else if (std::isdigit(curr) ||
             (curr == '.' &&
                 (lh + 1 < SourceCode.size()) && std::isdigit(SourceCode[lh + 1]))) {
-            NumType numType = NumType::INT;
+            types::NumericLiteralType numType = types::NumericLiteralType::INT;
 
 
             size_t peek = lh + 1;
@@ -373,10 +364,10 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             ColNo += peek - startIdx;
             if (dotSeen || eSeen) {
                 if (fSeen) {
-                    numType = NumType::FLOAT;
+                    numType = types::NumericLiteralType::FLOAT;
                 }
                 else {
-                    numType = NumType::DOUBLE;
+                    numType = types::NumericLiteralType::DOUBLE;
                 }
             }
             else {
@@ -386,24 +377,24 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                 }
                 if (uSeen) {
                     if (lSeen) {
-                        numType = NumType::UNSIGNED_LONG;
+                        numType = types::NumericLiteralType::UNSIGNED_LONG;
                     }
                     else {
-                        numType = NumType::UNSIGNED_INT;
+                        numType = types::NumericLiteralType::UNSIGNED_INT;
                     }
                 }
                 else {
                     if (lSeen) {
-                        numType = NumType::LONG;
+                        numType = types::NumericLiteralType::LONG;
                     }
                     else {
-                        numType = NumType::INT;
+                        numType = types::NumericLiteralType::INT;
                     }
                 }
             }
 
             switch (numType) {
-            case NumType::INT:
+            case types::NumericLiteralType::INT:
                 {
                     if (numBase == 2 || numBase == 16) {
                         startIdx += 2;
@@ -419,7 +410,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     }
                 }
                 break;
-            case NumType::LONG:
+            case types::NumericLiteralType::LONG:
                 {
                     if (numBase == 2 || numBase == 16) {
                         startIdx += 2;
@@ -435,7 +426,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     }
                 }
                 break;
-            case NumType::UNSIGNED_INT:
+            case types::NumericLiteralType::UNSIGNED_INT:
                 {
                     if (numBase == 2 || numBase == 16) {
                         startIdx += 2;
@@ -451,7 +442,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     }
                 }
                 break;
-            case NumType::UNSIGNED_LONG:
+            case types::NumericLiteralType::UNSIGNED_LONG:
                 {
                     if (numBase == 2 || numBase == 16) {
                         startIdx += 2;
@@ -467,7 +458,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     }
                 }
                 break;
-            case NumType::FLOAT:
+            case types::NumericLiteralType::FLOAT:
                 {
                     std::chars_format fmtBase = std::chars_format::general;
                     if (numBase == 16) {
@@ -485,7 +476,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     }
                 }
                 break;
-            case NumType::DOUBLE:
+            case types::NumericLiteralType::DOUBLE:
                 {
                     std::chars_format fmtBase = std::chars_format::general;
                     if (numBase == 16) {

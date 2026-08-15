@@ -140,5 +140,13 @@ namespace types {
     };
 
 
+    enum class NumericLiteralType {
+        INT,
+        LONG,
+        UNSIGNED_INT,
+        UNSIGNED_LONG,
+        FLOAT,
+        DOUBLE
+    };
 
 }
