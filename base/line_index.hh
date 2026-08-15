@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <deque>
 #include <memory>
+#include <ostream>
 #include <string_view>
 
 namespace {
@@ -52,9 +53,12 @@ namespace base {
         size_t LineIdx;
         LineIndex* LineIndexPtr; // make sure it came from same line index
 
-        std::string_view Display() {
-            return LineIndexPtr->GetLine(*this);
-        }
+        std::string_view Display() const;
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const LineCtx& lCtx) {
+        os << lCtx.Display();
+        return os;
+    }
 }
 }

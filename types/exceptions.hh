@@ -1,5 +1,6 @@
 #pragma once
 
+#include "line_index.hh"
 #include "types/token/token.hh"
 #include <cstdio>
 #include <exception>
@@ -22,17 +23,18 @@
         } \
     } \
 
-#define LINE_DIAGNOSTIC_CLASS(name, ansii)     class name : Diagnostic { \
+#define LINE_DIAGNOSTIC_CLASS(name, ansii)     class name : public Diagnostic { \
     types::TokenSourceLocation sourceLocation; \
-    std::string_view LineStr; \
-    std::string_view Message; \
-    name(types::TokenSourceLocation sourceLocation, std::string_view LineStr, std::string_view Message) : sourceLocation(sourceLocation), LineStr(LineStr), Message(Message) {} \
+    base::LineCtx LineCtx_v; \
+    std::string Message; \
+    public: \
+    name(types::TokenSourceLocation sourceLocation, base::LineCtx LineCtx_v, std::string Message) : sourceLocation(sourceLocation), LineCtx_v(LineCtx_v), Message(Message) {} \
     types::TokenSourceLocation getSourceLocation() const override { \
         return sourceLocation; \
     } \
     std::string getMessage() const override { \
         std::ostringstream os; \
-        os << sourceLocation.FilePath << sourceLocation.LineNo << ":" << sourceLocation.Col << ": " << LineStr << '\n' \
+        os << sourceLocation.FilePath << sourceLocation.LineNo << ":" << sourceLocation.Col << ": " << LineCtx_v << '\n' \
             << '\t' << ansii << Message << CLEAR_ANSII << '\n'; \
         return os.str(); \
     } \
@@ -46,7 +48,7 @@ namespace exceptions {
 
 
     class Diagnostic {
-
+        public:
         virtual types::TokenSourceLocation getSourceLocation() const = 0;
         virtual std::string getMessage() const = 0;
     };

@@ -58,5 +58,8 @@ namespace base {
     }
 
 
+    std::string_view LineCtx::Display() const {
+        return LineIndexPtr->GetLine(LineIdx);
+    }
 }
 }

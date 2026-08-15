@@ -2,6 +2,7 @@
 #include "line_index.hh"
 #include <iostream>
 #include <memory>
+#include <vector>
 
 std::string baka::driver::Gctx::GetSourceFilePath() {
     return Gctx::GetGctxRO().SourceFilePath;
@@ -43,4 +44,21 @@ void baka::driver::Gctx::AttachLineIndex(std::shared_ptr<base::LineIndex> LineIn
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         gctx.LineIndexPtr = std::move(LineIndexPtr);
     });
+}
+
+
+void baka::driver::Gctx::GenerateError(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.CompilerErrors.emplace_back(TokenLoc, LineCtx_v, Message);
+    });
+}
+
+void baka::driver::Gctx::GenerateWarning(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.CompilerWarnings.emplace_back(TokenLoc, LineCtx_v, Message);
+    });
+}
+
+bool baka::driver::Gctx::ErrorFound() {
+    return !Gctx::GetGctxRO().CompilerErrors.empty();
 }

@@ -2,10 +2,13 @@
 #include "defs.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
+#include "types/exceptions.hh"
+#include "types/token/token.hh"
 #include <memory>
 #include <mutex>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 namespace baka {
 
@@ -21,8 +24,13 @@ namespace driver {
 
         Stage TillStage = Stage::LEX; // TODO: change this default later
 
+        // external stuff:
         std::shared_ptr<baka::base::MappedFile> MappedFilePtr;
         std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
+
+        // exceptions:
+        std::vector<exceptions::CompilerError> CompilerErrors; // TODO: reserve with herustics
+        std::vector<exceptions::CompilerWarning> CompilerWarnings; // TODO: reserve with herustics
 
         private:
             Gctx_t() = default;
@@ -61,8 +69,14 @@ namespace driver {
             static std::string GetSourceFilePath();
             static std::shared_ptr<base::LineIndex> GetLineIndex();
 
+            // external stuff:
             static void AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr);
             static void AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr);
+
+            // exception stuff:
+            static void GenerateWarning(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message);
+            static void GenerateError(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message);
+            static bool ErrorFound();
     };
 
 }
