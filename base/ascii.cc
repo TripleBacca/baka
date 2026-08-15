@@ -1,50 +1,55 @@
+
+
 #include <cctype>
 
 namespace baka::base {
+
     bool isValidStringChar(char c) {
         return std::isprint(c) || c == '\t' || c == '\v' || c == '\f' || c == '\r';
     }
 
     bool isSimpleEscapeSequenceChar(char c) {
-        return c == '\\' || c == '\"' || c == '\'' || c == 'a' || c == 'b' || c == 'f' || c == 'n' || c == 'r' || c ==
-            't' || c == 'v';
+        return c == '\\' || c == '\"' || c == '\'' || c == 'a' || c == 'b' || c == 'f' || c == 'n' || c == 'r' || c == 't' || c == 'v';
     }
 
 
     char SimpleEscapeSequence(char suffix) {
-        switch (suffix) {
-        case 'n':
-            return '\n';
-        case 'r':
-            return '\r';
-        case 't':
-            return '\t';
-        case 'v':
-            return '\v';
-        case 'f':
-            return '\f';
-        case 'a':
-            return '\a';
-        case 'b':
-            return '\b';
+        switch(suffix) {
+            case 'n':
+                return '\n';
+            case 'r':
+                return '\r';
+            case 't':
+                return '\t';
+            case 'v':
+                return '\v';
+            case 'f':
+                return '\f';
+            case 'a':
+                return '\a';
+            case 'b':
+                return '\b';
 
-        case '\'':
-            return '\'';
-        case '"':
-            return '"';
-        case '?':
-            return '?';
-        case '\\':
-            return '\\';
-        default:
-            return suffix;
+            case '\'':
+                return '\'';
+            case '"':
+                return '"';
+            case '?':
+                return '?';
+            case '\\':
+                return '\\';
+            default:
+                return suffix;
         }
     }
+
+
 
     bool isValidKeywordNonDigit(char c) {
         // https://timsong-cpp.github.io/cppwp/lex#nt:nondigit
         return std::isalpha(c) || c == '_';
     }
+
     bool isValidDigit(char c, int base) {
         switch (base) {
         case 2:
@@ -60,10 +65,12 @@ namespace baka::base {
         }
     }
 
+
     bool isValidOperatorChar(char c) {
         return c == '~' || c == '-' || c == '+' || c == '*' ||
             c == '/' || c == '%' || c == '&' || c == '|' ||
-            c == '^' || c == '<' || c == '>' || c == '=' ||
-            c == '!' || c == ':' || c == ',' || c == '?' || c == '.';
+                c == '^' || c == '<' || c == '>' || c == '=' ||
+                    c == '!' || c == ':' || c == ',' || c == '?' || c == '.';
     }
 }
+
