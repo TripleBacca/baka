@@ -7,7 +7,6 @@
 #include <ostream>
 #include <string_view>
 #include <vector>
-#include "defs.hh"
 #include "lexer/lexer.hh"
 #include "base/base.hh"
 #include "../types/token/all.hh"
@@ -69,17 +68,16 @@ int baka::driver::run(int argc, char* argv[]) {
             for(const auto& token : tokens) {
                 std::cout << token << '\n';
             }
-            std::cout << std::flush;
+            std::cout << std::endl;
         }
     }
 
     { // post lexer
-
         auto lg = Gctx::GetROLock();
         auto& gctx = Gctx::GetGctxRO();
 
         auto& Errors = gctx.CompilerErrors;
-        auto& Warnings = gctx.CompilerErrors;
+        auto& Warnings = gctx.CompilerWarnings;
 
         for(auto& i: Warnings) {
             std::cout << i.getMessage() << '\n';
@@ -91,13 +89,14 @@ int baka::driver::run(int argc, char* argv[]) {
         }
         std::cout << std::flush;
 
-        if(Gctx::ErrorFound()) {
+
+        if(!Errors.empty()) {
             // need to stop here
             size_t ErrorCount = Errors.size();
             std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
             return 1;
         } else {
-            if(Gctx::isVerbose()) {
+            if(gctx.VerboseMode) {
                 std::cout << "Lexer: Lexing stage completed" << '\n';
             }
         }
