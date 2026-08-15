@@ -47,12 +47,15 @@ namespace driver {
         inline static Gctx_t gctx;
 
         public:
-            static Gctx_t GetGctxRO() {
-                std::lock_guard<std::mutex> lg(mut);
 
-                Gctx_t gctx_cpy = gctx;
-                return gctx_cpy;
+            static const Gctx_t& GetGctxRO() {
+                return gctx;
             }
+            static std::unique_lock<std::mutex> GetLock() {
+                return std::unique_lock<std::mutex>(mut);
+            }
+
+
 
             template<class T>
             requires std::is_invocable_v<T, Gctx_t&>
