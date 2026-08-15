@@ -53,7 +53,12 @@ namespace base {
         assert(lCtx.LineIndexPtr == this);
 
         const LineInfo& li = LineInfos.at(lCtx.LineIdx);
-        return SourceCode.substr(li.StartIdx, li.EndIdx - li.StartIdx);
+
+        size_t retEndIdx = li.EndIdx;
+        if(SourceCode[li.EndIdx] == '\n') {
+            retEndIdx--; // wanna strip the newline for error reporting
+        }
+        return SourceCode.substr(li.StartIdx, retEndIdx - li.StartIdx + 1);
     }
 
 
