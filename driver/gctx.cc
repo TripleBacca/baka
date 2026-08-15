@@ -6,32 +6,32 @@
 #include <vector>
 
 std::string baka::driver::Gctx::GetSourceFilePath() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().SourceFilePath;
 }
 
 bool baka::driver::Gctx::isVerbose() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().VerboseMode;
 }
 
 bool baka::driver::Gctx::isDebug() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().BuildType_v == BuildType::DEBUG;
 }
 
 baka::driver::Stage baka::driver::Gctx::TillStage() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().TillStage;
 }
 
 std::shared_ptr<baka::base::LineIndex> baka::driver::Gctx::GetLineIndex() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().LineIndexPtr;
 }
 
 void baka::driver::Gctx::Print() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     auto gctx = Gctx::GetGctxRO();
 
     std::cout << "Gctx::VerboseMode: " << gctx.VerboseMode << std::endl;
@@ -67,6 +67,6 @@ void baka::driver::Gctx::GenerateWarning(types::TokenSourceLocation TokenLoc, ba
 }
 
 bool baka::driver::Gctx::ErrorFound() {
-    auto lg = Gctx::GetLock();
+    auto lg = Gctx::GetROLock();
     return !Gctx::GetGctxRO().CompilerErrors.empty();
 }

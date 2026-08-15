@@ -6,6 +6,7 @@
 #include "types/token/token.hh"
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -43,7 +44,7 @@ namespace driver {
 
 
     class Gctx {
-        inline static std::mutex mut;
+        inline static std::shared_mutex mut;
         inline static Gctx_t gctx;
 
         public:
@@ -51,8 +52,8 @@ namespace driver {
             static const Gctx_t& GetGctxRO() {
                 return gctx;
             }
-            static std::unique_lock<std::mutex> GetLock() {
-                return std::unique_lock<std::mutex>(mut);
+            static std::shared_lock<std::shared_mutex> GetROLock() {
+                return std::shared_lock(mut);
             }
 
 
@@ -60,7 +61,7 @@ namespace driver {
             template<class T>
             requires std::is_invocable_v<T, Gctx_t&>
             static auto ModifyGctx(T fn) {
-                std::lock_guard<std::mutex> lg(mut);
+                std::unique_lock lg(mut);
                 return fn(gctx);
             }
 
