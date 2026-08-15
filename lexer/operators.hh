@@ -2,7 +2,7 @@
 
 #include <string_view>
 #include <unordered_map>
-#include "../types/token/all.hh"
+#include "types/token/all.hh"
 
 
 
@@ -53,4 +53,3 @@ namespace baka::lexer {
 	};
 
 }
-

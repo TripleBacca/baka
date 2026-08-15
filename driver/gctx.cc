@@ -1,11 +1,13 @@
 #include "gctx.hh"
 #include "line_index.hh"
+#include "types/token/token.hh"
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
-std::string baka::driver::Gctx::GetSourceFilePath() {
+std::string_view baka::driver::Gctx::GetSourceFilePath() {
     auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().SourceFilePath;
 }
@@ -54,15 +56,17 @@ void baka::driver::Gctx::AttachLineIndex(std::shared_ptr<base::LineIndex> LineIn
 }
 
 
-void baka::driver::Gctx::GenerateError(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message) {
+void baka::driver::Gctx::GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
-        gctx.CompilerErrors.emplace_back(TokenLoc, LineCtx_v, Message);
+        types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
+        gctx.CompilerErrors.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
     });
 }
 
-void baka::driver::Gctx::GenerateWarning(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message) {
+void baka::driver::Gctx::GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
-        gctx.CompilerWarnings.emplace_back(TokenLoc, LineCtx_v, Message);
+        types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
+        gctx.CompilerWarnings.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
     });
 }
 

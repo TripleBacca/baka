@@ -3,9 +3,10 @@
 #include <string>
 #include <string_view>
 #include <charconv>
-#include "../types/token/all.hh"
-#include "../types/exceptions.hh"
+#include "types/token/all.hh"
 #include "base/base.hh"
+#include "types/driver/defs.hh"
+#include "driver/gctx.hh"
 #include "keywords.hh"
 #include "operators.hh"
 #include "types/token/token.hh"

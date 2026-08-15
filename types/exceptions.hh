@@ -1,5 +1,6 @@
 #pragma once
 
+#include "driver/defs.hh"
 #include "line_index.hh"
 #include "types/token/token.hh"
 #include <cstdio>

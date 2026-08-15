@@ -1,5 +1,5 @@
 #pragma once
-#include "../types/token/all.hh"
+#include "types/token/all.hh"
 #include <vector>
 
 namespace baka {

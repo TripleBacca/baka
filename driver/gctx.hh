@@ -1,5 +1,5 @@
 #pragma once
-#include "defs.hh"
+#include "types/driver/defs.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
