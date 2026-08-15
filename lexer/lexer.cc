@@ -11,14 +11,15 @@
 #include "operators.hh"
 #include "types/token/token.hh"
 
+
+#define LEX_ERROR(STR) driver::Gctx::GenerateError(LineNo, ColNo, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
+#define LEX_WARN(STR) driver::Gctx::GenerateWarning(LineNo, ColNo, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
+
 namespace baka {
 namespace lexer {
 
 std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     std::vector<types::Token> tokens;
-
-    std::vector<std::string> errors; // this is very bad TODO
-    std::vector<std::string> warnings; // this is very bad TODO
 
     size_t LineNo = 1;
     size_t ColNo = 1;
@@ -46,13 +47,11 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
             if(Kw_lexeme_to_type.contains(lexeme)) {
                 tokens.emplace_back(Kw_lexeme_to_type.at(lexeme), lexeme);
-                lh = endIdx + 1;
-                ColNo += endIdx - startIdx + 1;
             } else {
                 tokens.emplace_back(types::TokenType::IDENTIFIER, lexeme);
-                lh = endIdx + 1;
-                ColNo += endIdx - startIdx + 1;
             }
+            lh = endIdx + 1;
+            ColNo += endIdx - startIdx + 1;
         }
         else if(curr == '(') {
             tokens.emplace_back(types::TokenType::LPAREN_ROUND, std::string_view("("));
@@ -103,7 +102,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     // possibly escape seq
                     peek++;
                     if(peek >= SourceCode.size()) {
-                        errors.emplace_back("Invalid escape sequence");
+                        LEX_ERROR("Invalid escape sequence");
                         break; //TODO: Is this safe????
                     }
 
@@ -143,7 +142,9 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         CharLength++;
                     } else {
                         // TODO: put error here, is line and column even updated????
-                        errors.emplace_back("invalid octal escape sequence line: {} column: {}", LineNo, ColNo);
+                        LEX_ERROR("Invalid escape sequence");
+                        // driver::Gctx::GenerateError(LineNo, ColNo, LineIndex->CurrentLine(), "Invalid escape sequence", driver::Stage::LEX);
+
                         break;
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '\'') {
@@ -157,7 +158,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     break;
                 } else {
                     // TODO: put error here
-                    errors.emplace_back("invalid character in character literal");
+                    // errors.emplace_back("invalid character in character literal");
+                    LEX_ERROR("Invalid character in character literal");
                     break;
                 }
                 peek++;
@@ -172,14 +174,14 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                 if(CharLength > 1) {
                     // TODO: warn about multilength char
+                    LEX_WARN("Multilength character literal will always chose the last character as its representation.");
                 }
             } else {
-                // must be invalid char or (ended literal without any char)
                 if(!CharSeen) {
-                    errors.push_back("no character in character literal");
+                    LEX_ERROR("no character in character literal");
                 }
                 if(!RQuoteSeen) {
-                    errors.push_back("character literal not terminated");
+                    LEX_ERROR("character literal not terminated");
                 }
                 tokens.emplace_back(types::TokenType::UNKNOWN, ActualChar);
             }
@@ -198,7 +200,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                     peek++;
                     if(peek >= SourceCode.size()) {
-                        errors.push_back("Invalid escape sequence");
+                        LEX_ERROR("Invalid escape sequence");
                         break;
                     }
 
@@ -236,7 +238,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
                     } else {
                         // TODO: put error here
-                        errors.push_back("invalid octal escape sequence");
+                        // errors.push_back("invalid escape sequence");
+                        LEX_ERROR("Invalid escape sequence");
                         break;
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '"') {
@@ -248,7 +251,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     break;
                 } else {
                     // TODO: put error here
-                    errors.push_back("invalid character in charcter literal");
+                    // errors.push_back("invalid character in charcter literal");
+                    LEX_ERROR("Invalid character in string literal");
                     break;
                 }
                 peek++;
@@ -263,7 +267,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             } else {
                 // must be invalid char
                 if(!RQuoteSeen) {
-                    errors.push_back("string literal not terminated");
+                    LEX_ERROR("string literal not terminated");
                 }
                 tokens.emplace_back(types::TokenType::UNKNOWN, str);
             }
@@ -375,8 +379,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             }
             else {
                 if (chatIsThisOctLarp) {
-                    errors.push_back(
-                        std::string("Invalid digit '") + SourceCode[larpLoc] + "' in octal number");
+                    LEX_ERROR(std::string("Invalid digit '") + SourceCode[larpLoc] + "' in octal number");
                 }
                 if (uSeen) {
                     if (lSeen) {
@@ -409,7 +412,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<int>(x));
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -425,7 +428,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<long long>(x));
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -441,7 +444,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<unsigned int>(x));
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -457,7 +460,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_INTEGER, x);
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -475,7 +478,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_FP, static_cast<float>(x));
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -492,7 +495,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         tokens.emplace_back(types::TokenType::LITERAL_FP, x);
                     }
                     else {
-                        errors.emplace_back("Token is not a valid numeral, lexer bug");
+                        LEX_ERROR("Not a valid numeric literal");
                     }
                 }
                 break;
@@ -503,7 +506,6 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             ColNo++;
         }
         else if(curr == '\n') {
-            lh++;
             LineNo++;
 
             LineIndex->endLine(lh);
@@ -549,6 +551,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
         }
         else {
             // TODO: put error here -> Unknown token
+            LEX_ERROR("Unknown token");
+
             tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(&curr, 1));
             lh++;
             ColNo++;
