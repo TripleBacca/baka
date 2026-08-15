@@ -14,6 +14,6 @@ namespace base {
     char SimpleEscapeSequence(char suffix);
     bool isValidKeywordNonDigit(char c);
     bool isValidOperatorChar(char c);
-
+    bool isValidDigit(char value, int base);
 }
 }
