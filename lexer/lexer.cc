@@ -24,6 +24,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
     size_t ColNo = 1;
 
     size_t lh = 0;
+    auto LineIndex = driver::Gctx::GetLineIndex();
+    LineIndex->startLine(0);
 
     while(lh < SourceCode.size()) {
         char curr = SourceCode[lh];
@@ -503,6 +505,11 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
         else if(curr == '\n') {
             lh++;
             LineNo++;
+
+            LineIndex->endLine(lh);
+            lh++;
+            LineIndex->startLine(lh);
+
             ColNo = 1;
         }
         else if (base::isValidOperatorChar(curr)) {
@@ -547,6 +554,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
             ColNo++;
         }
     }
+    LineIndex->endLine(lh);
 
     return tokens;
 }
