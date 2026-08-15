@@ -8,6 +8,7 @@
 #include <mutex>
 #include <shared_mutex>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -70,7 +71,7 @@ namespace driver {
             static bool isVerbose();
             static bool isDebug();
             static Stage TillStage();
-            static std::string GetSourceFilePath();
+            static std::string_view GetSourceFilePath();
             static std::shared_ptr<base::LineIndex> GetLineIndex();
 
             // external stuff:
@@ -78,8 +79,8 @@ namespace driver {
             static void AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr);
 
             // exception stuff:
-            static void GenerateWarning(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message);
-            static void GenerateError(types::TokenSourceLocation TokenLoc, base::LineCtx LineCtx_v, std::string Message);
+            static void GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage);
+            static void GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage);
             static bool ErrorFound();
     };
 

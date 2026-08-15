@@ -24,19 +24,27 @@
         } \
     } \
 
-#define LINE_DIAGNOSTIC_CLASS(name, ansii)     class name : public Diagnostic { \
+#define LINE_DIAGNOSTIC_CLASS(name, ansii, error_type_str)     class name : public Diagnostic { \
     types::TokenSourceLocation sourceLocation; \
     base::LineCtx LineCtx_v; \
     std::string Message; \
+    driver::Stage Stage; \
     public: \
-    name(types::TokenSourceLocation sourceLocation, base::LineCtx LineCtx_v, std::string Message) : sourceLocation(sourceLocation), LineCtx_v(LineCtx_v), Message(Message) {} \
+    name(types::TokenSourceLocation sourceLocation, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage) : sourceLocation(sourceLocation), LineCtx_v(LineCtx_v), Message(std::move(Message)), Stage(Stage) {} \
     types::TokenSourceLocation getSourceLocation() const override { \
         return sourceLocation; \
     } \
     std::string getMessage() const override { \
         std::ostringstream os; \
-        os << sourceLocation.FilePath << sourceLocation.LineNo << ":" << sourceLocation.Col << ": " << LineCtx_v << '\n' \
-            << '\t' << ansii << Message << CLEAR_ANSII << '\n'; \
+        os << sourceLocation.FilePath << ":" << sourceLocation.LineNo << ":" << sourceLocation.Col << ": "  \
+        << ansii << error_type_str << ": " << CLEAR_ANSII \
+        << Message << " (" << to_string_view(Stage) << ")\n" \
+        << '\t' << LineCtx_v \
+        << '\t'; \
+        \
+        for(int i = 0; i < sourceLocation.Col-1; i++) os << ' '; \
+        os << ansii << '^' << CLEAR_ANSII << '\n'; \
+        \
         return os.str(); \
     } \
 } \
@@ -48,6 +56,7 @@ namespace exceptions {
     GEN_ERROR_CLASS(DriverError);
 
 
+
     class Diagnostic {
         public:
         virtual types::TokenSourceLocation getSourceLocation() const = 0;
@@ -55,8 +64,8 @@ namespace exceptions {
     };
 
 
-    LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII);
-    LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII);
+    LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII, "error");
+    LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII, "warning");
 
 }
 }
