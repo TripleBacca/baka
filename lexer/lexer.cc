@@ -105,7 +105,7 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     peek++;
                     if(peek >= SourceCode.size()) {
                         LEX_ERROR("Invalid escape sequence", ColNo + peek - orgLh);
-                        break; //TODO: Is this safe????
+                        break;
                     }
 
                     char q = SourceCode[peek];
@@ -143,11 +143,9 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         CharSeen = true;
                         CharLength++;
                     } else {
-                        // TODO: put error here, is line and column even updated????
+                        // TODO: is line and column even updated????
                         LEX_ERROR("Invalid escape sequence", ColNo + peek - orgLh);
-                        // driver::Gctx::GenerateError(LineNo, ColNo, LineIndex->CurrentLine(), "Invalid escape sequence", driver::Stage::LEX);
-
-                        break;
+                        // break; dont break here and search for closing quote
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '\'') {
                     // normal ascii char
@@ -159,10 +157,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     RQuoteSeen = true;
                     break;
                 } else {
-                    // TODO: put error here
-                    // errors.emplace_back("invalid character in character literal");
                     LEX_ERROR("Invalid character in character literal", ColNo + peek - orgLh);
-                    break;
+                    // break; no break here to scan for end quote
                 }
                 peek++;
             }
@@ -176,7 +172,6 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                 tokens.emplace_back(types::TokenType::LITERAL_CHARACTER, ActualChar);
 
                 if(CharLength > 1) {
-                    // TODO: warn about multilength char
                     LEX_WARN("Multilength character literal will always chose the last character as its representation.", ColNo-1);
                 }
             } else {
@@ -242,10 +237,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                         str += static_cast<char>(octal_seq);
 
                     } else {
-                        // TODO: put error here
-                        // errors.push_back("invalid escape sequence");
                         LEX_ERROR("Invalid escape sequence", ColNo + peek - orgLh);
-                        break;
+                        // break; dont break here and search for closing quote
                     }
                 } else if(base::isValidStringChar(SourceCode[peek]) && SourceCode[peek] != '"') {
                     // normal ascii char
@@ -255,10 +248,8 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
                     RQuoteSeen = true;
                     break;
                 } else {
-                    // TODO: put error here
-                    // errors.push_back("invalid character in charcter literal");
                     LEX_ERROR("Invalid character in string literal", ColNo + peek - orgLh);
-                    break;
+                    // break; no break here to scan for end quote
                 }
                 peek++;
             }
@@ -559,7 +550,6 @@ std::vector<types::Token> Tokenize(std::string_view SourceCode) {
 
         }
         else {
-            // TODO: put error here -> Unknown token
             LEX_ERROR("Unknown token", ColNo);
 
             tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(&curr, 1));
