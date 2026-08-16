@@ -3,7 +3,6 @@
 #include <string>
 #include <string_view>
 #include <charconv>
-#include "types/token/all.hh"
 #include "base/base.hh"
 #include "types/driver/defs.hh"
 #include "driver/gctx.hh"
@@ -570,7 +569,6 @@ namespace baka {
                 }
                 else if (base::isValidOperatorChar(curr)) {
                     // this is operator
-                    // TODO: Remove comments before lexing
                     if (curr == '.') {
                         // check for ellipsis
                         if (lh + 2 < SourceCode.size() && SourceCode[lh + 1] == '.' && SourceCode[lh + 2] == '.') {

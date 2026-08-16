@@ -3,7 +3,6 @@
 #include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
-#include "types/token/token.hh"
 #include <memory>
 #include <mutex>
 #include <shared_mutex>
@@ -30,8 +29,8 @@ namespace baka {
             std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
 
             // exceptions:
-            std::vector<exceptions::CompilerError> CompilerErrors; // TODO: reserve with herustics
-            std::vector<exceptions::CompilerWarning> CompilerWarnings; // TODO: reserve with herustics
+            std::vector<exceptions::CompilerError> CompilerErrors;
+            std::vector<exceptions::CompilerWarning> CompilerWarnings;
 
         private:
             Gctx_t() = default;

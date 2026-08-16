@@ -11,7 +11,6 @@
 #include "lexer/lexer.hh"
 #include "base/base.hh"
 #include "types/driver/defs.hh"
-#include "types/token/all.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
