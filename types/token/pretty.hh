@@ -29,6 +29,7 @@ namespace {
         {types::TokenType::K_LONG, "K_LONG"},
         {types::TokenType::K_NAMESPACE, "K_NAMESPACE"},
         {types::TokenType::K_NEW, "K_NEW"},
+        {types::TokenType::K_NULLPTR, "K_NULLPTR"},
         {types::TokenType::K_RETURN, "K_RETURN"},
         {types::TokenType::K_SHORT, "K_SHORT"},
         {types::TokenType::K_SIGNED, "K_SIGNED"},
@@ -96,9 +97,7 @@ namespace {
         {types::TokenType::LITERAL_CHARACTER, "LITERAL_CHARACTER"},
         {types::TokenType::LITERAL_FP, "LITERAL_FP"},
         {types::TokenType::LITERAL_STRING, "LITERAL_STRING"},
-        {types::TokenType::LITERAL_BOOL, "LITERAL_BOOL"},
-        {types::TokenType::LITERAL_PTR, "LITERAL_PTR"},
-        {types::TokenType::LITERAL_NULL, "LITERAL_NULL"},
+
         {types::TokenType::HEADER_NAME, "HEADER_NAME"}, // possible needed by preprocessor
         {types::TokenType::EOF_TOKEN, "EOF_TOKEN"},
         {types::TokenType::UNKNOWN, "UNKNOWN"},

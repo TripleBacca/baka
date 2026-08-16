@@ -28,6 +28,7 @@ namespace types {
         K_LONG,
         K_NAMESPACE,
         K_NEW,
+        K_NULLPTR,
         K_RETURN,
         K_SHORT,
         K_SIGNED,
@@ -111,9 +112,8 @@ namespace types {
         LITERAL_CHARACTER,
         LITERAL_FP,
         LITERAL_STRING,
-        LITERAL_BOOL,
-        LITERAL_PTR,
-        LITERAL_NULL,
+        // LITERAL_PTR, basically nullptr which is keyword
+        // LITERAL_NULL, this is macro not required
         // LITERAL_USER_DEFINED, not supporting this. its like in chrono 1s is lexed
 
         // header name

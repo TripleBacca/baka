@@ -28,6 +28,7 @@ namespace baka {
             {"long", types::TokenType::K_LONG},
             {"namespace", types::TokenType::K_NAMESPACE},
             {"new", types::TokenType::K_NEW},
+            {"nullptr", types::TokenType::K_NULLPTR},
             {"return", types::TokenType::K_RETURN},
             {"short", types::TokenType::K_SHORT},
             {"signed", types::TokenType::K_SIGNED},
