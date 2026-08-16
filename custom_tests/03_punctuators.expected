@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: LEX
-Gctx::SourceFile: custom_tests/tests/03_punctuators.cpp
+Gctx::SourceFile: custom_tests/03_punctuators.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 

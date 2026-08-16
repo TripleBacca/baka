@@ -6,9 +6,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
-TESTS_DIR = ROOT / "custom_tests" / "tests"
-if not TESTS_DIR.exists():
-    TESTS_DIR = ROOT / "test"
+test_dir = ROOT / "custom_tests"
+if not test_dir.exists():
+    test_dir = ROOT / "test"
 
 COMPILER = ROOT / "build" / "baka"
 COMPILER_FLAGS = ["--verbose", "--build_type", "debug"]
