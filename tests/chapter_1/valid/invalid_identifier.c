@@ -2,3 +2,4 @@
 int main(void) {
     return 1foo;
 }
+// this is valid in lex but we will throw in parser

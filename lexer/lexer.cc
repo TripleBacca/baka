@@ -602,7 +602,7 @@ namespace baka {
                 else {
                     LEX_ERROR("Unknown token", ColNo);
 
-                    tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(&curr, 1));
+                    tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(SourceCode.data() + lh, 1));
                     lh++;
                     ColNo++;
                 }
