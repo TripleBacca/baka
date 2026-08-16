@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: LEX
-Gctx::SourceFile: /home/tanmay/Documents/CodingRepos/compiler/custom_tests/tests/01_keywords.cpp
+Gctx::SourceFile: custom_tests/tests/01_keywords.cpp
 Driver::OptimisticDefects: 10
 Driver::SourceCode: 
 
