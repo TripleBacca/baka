@@ -10,7 +10,7 @@
 #include <string_view>
 
 #define RED_ANSII "\033[38;2;255;0;0m"
-#define YELLOW_ANSII "\033[38;2;255;255;0m"
+#define YELLOW_ANSII "\033[38;2;253;218;3m"
 #define CLEAR_ANSII "\033[0m"
 
 #define WHAT const char* what() const noexcept override
@@ -43,7 +43,7 @@
         << '\t'; \
         \
         for(int i = 0; i < sourceLocation.Col-1; i++) os << ' '; \
-        os << ansii << '^' << CLEAR_ANSII << '\n'; \
+        os << ansii << '^' << CLEAR_ANSII; \
         \
         return os.str(); \
     } \
