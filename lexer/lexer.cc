@@ -610,6 +610,7 @@ namespace baka {
                 }
             }
             LineIndex->endLine(lh);
+            tokens.emplace_back(types::TokenType::EOF_TOKEN, std::string_view());
 
             return tokens;
         }
