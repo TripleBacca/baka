@@ -6,8 +6,8 @@ namespace baka::base {
     }
 
     bool isSimpleEscapeSequenceChar(char c) {
-        return c == '\\' || c == '\"' || c == '\'' || c == 'a' || c == 'b' || c == 'f' || c == 'n' || c == 'r' || c ==
-            't' || c == 'v';
+        return c == '\\' || c == '\"' || c == '\'' || c == '?' || c == 'a' || c == 'b' || c == 'f' || c == 'n' || c == 'r' ||
+            c == 't' || c == 'v';
     }
 
 

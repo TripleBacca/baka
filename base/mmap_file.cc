@@ -14,6 +14,12 @@ namespace baka {
             if (fd == -1) {
                 throw std::runtime_error("open failed");
             }
+
+            if (Length == 0) {
+                this->Data = nullptr;
+                return;
+            }
+
             void* data = mmap(NULL, Length, PROT_READ, MAP_SHARED, fd, 0);
 
             if (data == MAP_FAILED) {
@@ -28,7 +34,9 @@ namespace baka {
         }
 
         MappedFile::~MappedFile() {
-            munmap(Data, Length);
+            if (Data != nullptr) {
+                munmap(Data, Length);
+            }
             close(fd);
         }
     }

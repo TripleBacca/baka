@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <charconv>
+#include <climits>
 #include "base/base.hh"
 #include "types/driver/defs.hh"
 #include "driver/gctx.hh"
@@ -37,8 +38,8 @@ namespace baka {
                     size_t endIdx = startIdx;
 
                     size_t peek = lh + 1;
-                    while (peek < SourceCode.size() && base::isValidKeywordNonDigit(SourceCode[peek]) || std::isdigit(
-                        SourceCode[peek])) {
+                    while (peek < SourceCode.size() &&
+                        (base::isValidKeywordNonDigit(SourceCode[peek]) || std::isdigit(SourceCode[peek]))) {
                         endIdx = peek;
                         peek++;
                     }
@@ -273,9 +274,7 @@ namespace baka {
                     }
                     else {
                         // must be invalid char
-                        if (!RQuoteSeen) {
-                            LEX_ERROR("string literal not terminated", orgColNo);
-                        }
+                        LEX_ERROR("string literal not terminated", orgColNo);
                         tokens.emplace_back(types::TokenType::UNKNOWN, str);
                     }
                 }
@@ -419,7 +418,12 @@ namespace baka {
                             auto [ptr, ec] = std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x,
                                                              numBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<int>(x));
+                                if (x > INT_MAX) {
+                                    LEX_ERROR("Integer literal overflows int", orgColNo);
+                                }
+                                else {
+                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<int>(x));
+                                }
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
@@ -435,7 +439,12 @@ namespace baka {
                             auto [ptr, ec] = std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x,
                                                              numBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<long long>(x));
+                                if (x > LLONG_MAX) {
+                                    LEX_ERROR("Integer literal overflows long", orgColNo);
+                                }
+                                else {
+                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<long long>(x));
+                                }
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
@@ -451,7 +460,13 @@ namespace baka {
                             auto [ptr, ec] = std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x,
                                                              numBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<unsigned int>(x));
+                                if (x > UINT_MAX) {
+                                    LEX_ERROR("Integer literal overflows unsigned int", orgColNo);
+                                }
+                                else {
+                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER,
+                                                        static_cast<unsigned int>(x));
+                                }
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
