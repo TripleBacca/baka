@@ -1,0 +1,204 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: LEX
+Gctx::SourceFile: /home/tanmay/Documents/CodingRepos/compiler/custom_tests/tests/04_identifiers.cpp
+Driver::OptimisticDefects: 6
+Driver::SourceCode: 
+// ============================================================================
+// Test File: 04_identifiers.cpp
+// Purpose: Test IDENTIFIER TokenTypes specified in types/token/token.hh
+// ============================================================================
+
+// Namespace identifiers
+namespace compiler_core_v2 {
+
+    // Type and Class identifiers (PascalCase)
+    class LexicalAnalyzerEngine {
+    private:
+        // Variable identifiers (camelCase, snake_case, leading underscore)
+        int tokenCount;
+        int _internal_state_flag;
+        int max_lookahead_limit_99;
+
+    public:
+        // Function identifier
+        void initialize_pipeline() {
+            tokenCount = 0;
+            _internal_state_flag = 1;
+            max_lookahead_limit_99 = 1024;
+        }
+
+        int get_token_count() {
+            return tokenCount;
+        }
+    };
+
+    // Global constants / Enum values identifiers (UPPER_SNAKE_CASE)
+    const int MAX_BUFFER_SIZE_1024 = 1024;
+    const int DEFAULT_TIMEOUT_MS = 5000;
+}
+
+// Function with various parameter identifiers
+int process_data_stream_32(int input_stream_id, int batch_size_limit) {
+    int local_accumulator_temp = 0;
+    int _var1 = input_stream_id;
+    int _2nd_var_with_digits = batch_size_limit; // Note: starts with underscore followed by digit
+    int a, b, c, x1, x2, y1, y2;
+    
+    local_accumulator_temp = _var1 + _2nd_var_with_digits;
+    return local_accumulator_temp;
+}
+
+int main() {
+    compiler_core_v2::LexicalAnalyzerEngine myEngineInstance;
+    myEngineInstance.initialize_pipeline();
+    int result = process_data_stream_32(1, 2);
+    return result;
+}
+
+Lexer::LexerOutput: 142 Tokens
+namespace (TokenType: K_NAMESPACE)
+compiler_core_v2 (TokenType: IDENTIFIER)
+{ (TokenType: LPAREN_CURLY)
+class (TokenType: K_CLASS)
+LexicalAnalyzerEngine (TokenType: IDENTIFIER)
+{ (TokenType: LPAREN_CURLY)
+private (TokenType: IDENTIFIER)
+: (TokenType: OP_COLON)
+int (TokenType: K_INT)
+tokenCount (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+_internal_state_flag (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+max_lookahead_limit_99 (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+public (TokenType: IDENTIFIER)
+: (TokenType: OP_COLON)
+void (TokenType: K_VOID)
+initialize_pipeline (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+tokenCount (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+0 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+_internal_state_flag (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+1 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+max_lookahead_limit_99 (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+1024 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+int (TokenType: K_INT)
+get_token_count (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+return (TokenType: K_RETURN)
+tokenCount (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+} (TokenType: RPAREN_CURLY)
+; (TokenType: SEMICOLON)
+const (TokenType: K_CONST)
+int (TokenType: K_INT)
+MAX_BUFFER_SIZE_1024 (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+1024 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+const (TokenType: K_CONST)
+int (TokenType: K_INT)
+DEFAULT_TIMEOUT_MS (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+5000 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+int (TokenType: K_INT)
+process_data_stream_32 (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+int (TokenType: K_INT)
+input_stream_id (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+int (TokenType: K_INT)
+batch_size_limit (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+int (TokenType: K_INT)
+local_accumulator_temp (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+0 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+_var1 (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+input_stream_id (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+_2nd_var_with_digits (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+batch_size_limit (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+a (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+b (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+c (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+x1 (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+x2 (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+y1 (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+y2 (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+local_accumulator_temp (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+_var1 (TokenType: IDENTIFIER)
++ (TokenType: OP_PLUS)
+_2nd_var_with_digits (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+return (TokenType: K_RETURN)
+local_accumulator_temp (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+int (TokenType: K_INT)
+main (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+compiler_core_v2 (TokenType: IDENTIFIER)
+:: (TokenType: OP_DOUBLE_COLON)
+LexicalAnalyzerEngine (TokenType: IDENTIFIER)
+myEngineInstance (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+myEngineInstance (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+initialize_pipeline (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+result (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+process_data_stream_32 (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+1 (int) (TokenType: LITERAL_INTEGER)
+, (TokenType: OP_COMMA)
+2 (int) (TokenType: LITERAL_INTEGER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+return (TokenType: K_RETURN)
+result (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+ (TokenType: EOF_TOKEN)
+
+Lexer: Lexing stage completed
+

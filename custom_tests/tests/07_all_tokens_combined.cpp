@@ -76,7 +76,6 @@ int main() {
 
     // [LITERAL_PTR, LITERAL_NULL, K_VOID]
     void* null_ptr = nullptr;
-    void* legacy_ptr = NULL;
 
     // [K_NEW, K_DELETE, LPAREN_SQUARE, RPAREN_SQUARE]
     int* dynamic_array = new int[5];

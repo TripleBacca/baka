@@ -1,0 +1,505 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: LEX
+Gctx::SourceFile: /home/tanmay/Documents/CodingRepos/compiler/custom_tests/tests/02_operators.cpp
+Driver::OptimisticDefects: 10
+Driver::SourceCode: 
+// ============================================================================
+// Test File: 02_operators.cpp
+// Purpose: Test all Operator TokenTypes specified in types/token/token.hh
+// ============================================================================
+
+struct Inner {
+    int value;
+};
+
+struct Outer {
+    Inner* inner_ptr;
+    Inner inner_val;
+};
+
+// Ellipsis in variadic function declaration (OP_ELLIPSIS)
+int variadic_sum(int count, ...) {
+    return count;
+}
+
+namespace MathOps {
+    int global_multiplier = 2;
+}
+
+int main() {
+    int a = 10;
+    int b = 20;
+    int c = 0;
+
+    // --- Unary Operators ---
+    // OP_TILDE (~)
+    int bitwise_not = ~a;
+
+    // OP_UNARY_MINUS (-)
+    int neg = -a;
+
+    // OP_INC (++)
+    ++a;
+    a++;
+
+    // OP_DEC (--)
+    --b;
+    b--;
+
+    // OP_LOGICAL_NOT (!)
+    bool flag = !false;
+
+    // OP_PLUS (+)
+    int positive = +a;
+
+    // --- Binary Arithmetic & Bitwise Operators ---
+    // OP_MUL (*)
+    c = a * b;
+
+    // OP_DIV (/)
+    c = b / a;
+
+    // OP_MOD (%)
+    c = b % a;
+
+    // OP_BIT_AND (&)
+    c = a & b;
+
+    // OP_BIT_OR (|)
+    c = a | b;
+
+    // OP_BIT_XOR (^)
+    c = a ^ b;
+
+    // OP_LSHIFT (<<)
+    c = a << 2;
+
+    // OP_RSHIFT (>>)
+    c = b >> 1;
+
+    // --- Logical & Relational Operators ---
+    // OP_LOGICAL_AND (&&)
+    bool cond_and = (a < b) && (b > 0);
+
+    // OP_LOGICAL_OR (||)
+    bool cond_or = (a == 10) || (b != 20);
+
+    // OP_EQ (==)
+    bool is_equal = (a == b);
+
+    // OP_NEQ (!=)
+    bool is_not_equal = (a != b);
+
+    // OP_LT (<)
+    bool is_less = (a < b);
+
+    // OP_GT (>)
+    bool is_greater = (a > b);
+
+    // OP_LE (<=)
+    bool is_less_or_equal = (a <= b);
+
+    // OP_GE (>=)
+    bool is_greater_or_equal = (a >= b);
+
+    // --- Assignment Operators ---
+    // OP_ASSIGN (=)
+    c = a;
+
+    // OP_ADD_ASSIGN (+=)
+    c += 5;
+
+    // OP_SUB_ASSIGN (-=)
+    c -= 3;
+
+    // OP_MUL_ASSIGN (*=)
+    c *= 2;
+
+    // OP_DIV_ASSIGN (/=)
+    c /= 2;
+
+    // OP_MOD_ASSIGN (%=)
+    c %= 4;
+
+    // OP_AND_ASSIGN (&=)
+    c &= 0xFF;
+
+    // OP_OR_ASSIGN (|=)
+    c |= 0x01;
+
+    // OP_XOR_ASSIGN (^=)
+    c ^= 0x0F;
+
+    // OP_LSHIFT_ASSIGN (<<=)
+    c <<= 1;
+
+    // OP_RSHIFT_ASSIGN (>>=)
+    c >>= 1;
+
+    // --- Other Operators & Punctuators ---
+    // OP_DOUBLE_COLON (::)
+    int scoped_val = MathOps::global_multiplier;
+
+    // OP_QUESTION (?), OP_COLON (:)
+    int ternary_res = (a > b) ? a : b;
+
+    // OP_COMMA (,)
+    int x = 1, y = 2, z = 3;
+
+    // OP_DOT (.)
+    Outer outer_obj;
+    outer_obj.inner_val.value = 42;
+
+    // OP_ARROW (->)
+    outer_obj.inner_ptr = &outer_obj.inner_val;
+    int accessed_val = outer_obj.inner_ptr->value;
+
+    return 0;
+}
+
+Lexer::LexerOutput: 341 Tokens
+struct (TokenType: K_STRUCT)
+Inner (TokenType: IDENTIFIER)
+{ (TokenType: LPAREN_CURLY)
+int (TokenType: K_INT)
+value (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+; (TokenType: SEMICOLON)
+struct (TokenType: K_STRUCT)
+Outer (TokenType: IDENTIFIER)
+{ (TokenType: LPAREN_CURLY)
+Inner (TokenType: IDENTIFIER)
+* (TokenType: OP_MUL)
+inner_ptr (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+Inner (TokenType: IDENTIFIER)
+inner_val (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+variadic_sum (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+int (TokenType: K_INT)
+count (TokenType: IDENTIFIER)
+, (TokenType: OP_COMMA)
+... (TokenType: OP_ELLIPSIS)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+return (TokenType: K_RETURN)
+count (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+namespace (TokenType: K_NAMESPACE)
+MathOps (TokenType: IDENTIFIER)
+{ (TokenType: LPAREN_CURLY)
+int (TokenType: K_INT)
+global_multiplier (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+2 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+int (TokenType: K_INT)
+main (TokenType: IDENTIFIER)
+( (TokenType: LPAREN_ROUND)
+) (TokenType: RPAREN_ROUND)
+{ (TokenType: LPAREN_CURLY)
+int (TokenType: K_INT)
+a (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+10 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+b (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+20 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+0 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+bitwise_not (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+~ (TokenType: OP_TILDE)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+neg (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+- (TokenType: OP_UNARY_MINUS)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+++ (TokenType: OP_INC)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+a (TokenType: IDENTIFIER)
+++ (TokenType: OP_INC)
+; (TokenType: SEMICOLON)
+-- (TokenType: OP_DEC)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+b (TokenType: IDENTIFIER)
+-- (TokenType: OP_DEC)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+flag (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+! (TokenType: OP_LOGICAL_NOT)
+false (TokenType: K_FALSE)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+positive (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
++ (TokenType: OP_PLUS)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+* (TokenType: OP_MUL)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+b (TokenType: IDENTIFIER)
+/ (TokenType: OP_DIV)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+b (TokenType: IDENTIFIER)
+% (TokenType: OP_MOD)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+& (TokenType: OP_BIT_AND)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+| (TokenType: OP_BIT_OR)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+^ (TokenType: OP_BIT_XOR)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+<< (TokenType: OP_LSHIFT)
+2 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+b (TokenType: IDENTIFIER)
+>> (TokenType: OP_RSHIFT)
+1 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+cond_and (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+< (TokenType: OP_LT)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+&& (TokenType: OP_LOGICAL_AND)
+( (TokenType: LPAREN_ROUND)
+b (TokenType: IDENTIFIER)
+> (TokenType: OP_GT)
+0 (int) (TokenType: LITERAL_INTEGER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+cond_or (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+== (TokenType: OP_EQ)
+10 (int) (TokenType: LITERAL_INTEGER)
+) (TokenType: RPAREN_ROUND)
+|| (TokenType: OP_LOGICAL_OR)
+( (TokenType: LPAREN_ROUND)
+b (TokenType: IDENTIFIER)
+!= (TokenType: OP_NEQ)
+20 (int) (TokenType: LITERAL_INTEGER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_equal (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+== (TokenType: OP_EQ)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_not_equal (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+!= (TokenType: OP_NEQ)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_less (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+< (TokenType: OP_LT)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_greater (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+> (TokenType: OP_GT)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_less_or_equal (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+<= (TokenType: OP_LE)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+bool (TokenType: K_BOOL)
+is_greater_or_equal (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+>= (TokenType: OP_GE)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+a (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
++= (TokenType: OP_ADD_ASSIGN)
+5 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+-= (TokenType: OP_SUB_ASSIGN)
+3 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+*= (TokenType: OP_MUL_ASSIGN)
+2 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+/= (TokenType: OP_DIV_ASSIGN)
+2 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+%= (TokenType: OP_MOD_ASSIGN)
+4 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+&= (TokenType: OP_AND_ASSIGN)
+255 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+|= (TokenType: OP_OR_ASSIGN)
+1 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+^= (TokenType: OP_XOR_ASSIGN)
+15 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+<<= (TokenType: OP_LSHIFT_ASSIGN)
+1 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+c (TokenType: IDENTIFIER)
+>>= (TokenType: OP_RSHIFT_ASSIGN)
+1 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+scoped_val (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+MathOps (TokenType: IDENTIFIER)
+:: (TokenType: OP_DOUBLE_COLON)
+global_multiplier (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+ternary_res (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+( (TokenType: LPAREN_ROUND)
+a (TokenType: IDENTIFIER)
+> (TokenType: OP_GT)
+b (TokenType: IDENTIFIER)
+) (TokenType: RPAREN_ROUND)
+? (TokenType: OP_QUESTION)
+a (TokenType: IDENTIFIER)
+: (TokenType: OP_COLON)
+b (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+x (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+1 (int) (TokenType: LITERAL_INTEGER)
+, (TokenType: OP_COMMA)
+y (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+2 (int) (TokenType: LITERAL_INTEGER)
+, (TokenType: OP_COMMA)
+z (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+3 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+Outer (TokenType: IDENTIFIER)
+outer_obj (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+outer_obj (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+inner_val (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+value (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+42 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+outer_obj (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+inner_ptr (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+& (TokenType: OP_BIT_AND)
+outer_obj (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+inner_val (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+int (TokenType: K_INT)
+accessed_val (TokenType: IDENTIFIER)
+= (TokenType: OP_ASSIGN)
+outer_obj (TokenType: IDENTIFIER)
+. (TokenType: OP_DOT)
+inner_ptr (TokenType: IDENTIFIER)
+-> (TokenType: OP_ARROW)
+value (TokenType: IDENTIFIER)
+; (TokenType: SEMICOLON)
+return (TokenType: K_RETURN)
+0 (int) (TokenType: LITERAL_INTEGER)
+; (TokenType: SEMICOLON)
+} (TokenType: RPAREN_CURLY)
+ (TokenType: EOF_TOKEN)
+
+Lexer: Lexing stage completed
+

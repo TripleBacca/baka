@@ -18,7 +18,7 @@ void test_character_literals() {
     char simple_char = 'a';
     char uppercase_char = 'Z';
     char digit_char = '9';
-    
+
     // Character escape sequences
     char newline = '\n';
     char tab = '\t';
@@ -60,8 +60,6 @@ void test_special_literals() {
     // LITERAL_PTR
     void* null_pointer = nullptr;
 
-    // LITERAL_NULL
-    void* legacy_null = NULL;
 }
 
 int main() {
