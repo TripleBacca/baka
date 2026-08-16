@@ -27,7 +27,7 @@ namespace TestNamespace {
         static const int default_capacity = 16;
 
         BaseClass() {}
-
+        
         // 7. K_THIS
         BaseClass* get_self() {
             return this;
