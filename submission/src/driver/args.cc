@@ -25,7 +25,7 @@ namespace baka {
             Stage UptoStage = Stage::LEX;
             baka::driver::BuildType BuildType = BuildType::DEBUG;
             std::string SourceFile;
-            bool VerboseMode = true;
+            bool VerboseMode = false;
             bool SourceFound = false;
 
             while (idx < argc) {

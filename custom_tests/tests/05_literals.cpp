@@ -1,9 +1,4 @@
-// ============================================================================
-// Test File: 05_literals.cpp
-// Purpose: Test all Literal TokenTypes specified in types/token/token.hh
-// ============================================================================
 
-// 1. LITERAL_INTEGER
 void test_integer_literals() {
     int zero = 0;
     int decimal_val = 42;
@@ -13,14 +8,12 @@ void test_integer_literals() {
     int binary_val = 0b101010;
 }
 
-// 2. LITERAL_CHARACTER
 void test_character_literals() {
     char simple_char = 'a';
     char uppercase_char = 'Z';
     char digit_char = '9';
 
-    // Character escape sequences
-    char newline = '\n';
+        char newline = '\n';
     char tab = '\t';
     char backslash = '\\';
     char single_quote = '\'';
@@ -30,10 +23,8 @@ void test_character_literals() {
     char form_feed = '\f';
     char carriage_return = '\r';
     char vertical_tab = '\v';
-    char octal_char = '\101'; // 'A'
-}
+    char octal_char = '\101'; }
 
-// 3. LITERAL_FP (Floating Point)
 void test_floating_point_literals() {
     double pi = 3.1415926535;
     float standard_float = 0.5f;
@@ -43,7 +34,6 @@ void test_floating_point_literals() {
     double exp_cap = 7.89E+2;
 }
 
-// 4. LITERAL_STRING
 void test_string_literals() {
     const char* empty_str = "";
     const char* simple_str = "Hello, world!";
@@ -51,14 +41,11 @@ void test_string_literals() {
     const char* octal_escaped_str = "Octal \060 Test";
 }
 
-// 5. LITERAL_BOOL, LITERAL_PTR, LITERAL_NULL
 void test_special_literals() {
-    // LITERAL_BOOL
-    bool flag_true = true;
+        bool flag_true = true;
     bool flag_false = false;
 
-    // LITERAL_PTR
-    void* null_pointer = nullptr;
+        void* null_pointer = nullptr;
 
 }
 

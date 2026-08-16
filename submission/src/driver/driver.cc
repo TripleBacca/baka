@@ -75,9 +75,12 @@ int baka::driver::run(int argc, char* argv[]) {
         }
         if (Gctx::isVerbose()) {
             std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << '\n';
-            for (const auto& token : tokens) {
-                std::cout << token << '\n';
-            }
+        }
+        PrintTokenTableHeader(std::cout);
+        for (const auto& token : tokens) {
+            std::cout << token << '\n';
+        }
+        if (Gctx::isVerbose()) {
             std::cout << std::endl;
         }
     }
@@ -113,7 +116,9 @@ int baka::driver::run(int argc, char* argv[]) {
             }
         }
 
-        std::cout << std::endl;
+        if (gctx.VerboseMode) {
+            std::cout << std::endl;
+        }
     }
 
 

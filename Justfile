@@ -5,8 +5,8 @@ test: build
 
 build:
 	mkdir -p build
-	cd build && cmake ../src
-	cd build && make
+	cmake -S src -B build
+	cmake --build build
 
 
 clean:

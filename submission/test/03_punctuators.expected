@@ -2,40 +2,27 @@ Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: LEX
 Gctx::SourceFile: test/03_punctuators.cpp
-Driver::OptimisticDefects: 4
+Driver::OptimisticDefects: 2
 Driver::SourceCode: 
-// ============================================================================
-// Test File: 03_punctuators.cpp
-// Purpose: Test all Punctuator TokenTypes specified in types/token/token.hh
-// ============================================================================
 
-// LPAREN_ROUND '(', RPAREN_ROUND ')'
-// LPAREN_CURLY '{', RPAREN_CURLY '}'
-// SEMICOLON ';'
 void example_function(int param_a, int param_b) {
-    // LPAREN_SQUARE '[', RPAREN_SQUARE ']'
-    int array[5];
+        int array[5];
 
-    // Nested array subscript indexing with square brackets
-    array[0] = param_a;
+        array[0] = param_a;
     array[1] = param_b;
     array[2] = array[0] + array[1];
 
-    // Round parentheses for expressions & grouping
-    int calculated = ((array[0] * (array[1] + 2)) - (array[2] / 3));
+        int calculated = ((array[0] * (array[1] + 2)) - (array[2] / 3));
 
-    // Curly braces for block scopes
-    {
+        {
         int inner_scoped_var = 100;
         calculated = calculated + inner_scoped_var;
     }
 
-    // Empty statement semicolons
-    ;
+        ;
     ;
 }
 
-// Initializer lists with curly braces
 struct Config {
     int id;
     int values[3];
@@ -48,150 +35,152 @@ int main() {
 }
 
 Lexer::LexerOutput: 144 Tokens
-void (TokenType K_VOID)
-example_function (TokenType IDENTIFIER)
-( (TokenType LPAREN_ROUND)
-int (TokenType K_INT)
-param_a (TokenType IDENTIFIER)
-, (TokenType OP_COMMA)
-int (TokenType K_INT)
-param_b (TokenType IDENTIFIER)
-) (TokenType RPAREN_ROUND)
-{ (TokenType LPAREN_CURLY)
-int (TokenType K_INT)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-5 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-; (TokenType SEMICOLON)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-0 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-= (TokenType OP_ASSIGN)
-param_a (TokenType IDENTIFIER)
-; (TokenType SEMICOLON)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-1 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-= (TokenType OP_ASSIGN)
-param_b (TokenType IDENTIFIER)
-; (TokenType SEMICOLON)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-2 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-= (TokenType OP_ASSIGN)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-0 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-+ (TokenType OP_PLUS)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-1 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-; (TokenType SEMICOLON)
-int (TokenType K_INT)
-calculated (TokenType IDENTIFIER)
-= (TokenType OP_ASSIGN)
-( (TokenType LPAREN_ROUND)
-( (TokenType LPAREN_ROUND)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-0 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-* (TokenType OP_MUL)
-( (TokenType LPAREN_ROUND)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-1 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-+ (TokenType OP_PLUS)
-2 (int) (TokenType LITERAL_INTEGER)
-) (TokenType RPAREN_ROUND)
-) (TokenType RPAREN_ROUND)
-- (TokenType OP_UNARY_MINUS)
-( (TokenType LPAREN_ROUND)
-array (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-2 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-/ (TokenType OP_DIV)
-3 (int) (TokenType LITERAL_INTEGER)
-) (TokenType RPAREN_ROUND)
-) (TokenType RPAREN_ROUND)
-; (TokenType SEMICOLON)
-{ (TokenType LPAREN_CURLY)
-int (TokenType K_INT)
-inner_scoped_var (TokenType IDENTIFIER)
-= (TokenType OP_ASSIGN)
-100 (int) (TokenType LITERAL_INTEGER)
-; (TokenType SEMICOLON)
-calculated (TokenType IDENTIFIER)
-= (TokenType OP_ASSIGN)
-calculated (TokenType IDENTIFIER)
-+ (TokenType OP_PLUS)
-inner_scoped_var (TokenType IDENTIFIER)
-; (TokenType SEMICOLON)
-} (TokenType RPAREN_CURLY)
-; (TokenType SEMICOLON)
-; (TokenType SEMICOLON)
-} (TokenType RPAREN_CURLY)
-struct (TokenType K_STRUCT)
-Config (TokenType IDENTIFIER)
-{ (TokenType LPAREN_CURLY)
-int (TokenType K_INT)
-id (TokenType IDENTIFIER)
-; (TokenType SEMICOLON)
-int (TokenType K_INT)
-values (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-3 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-; (TokenType SEMICOLON)
-} (TokenType RPAREN_CURLY)
-; (TokenType SEMICOLON)
-int (TokenType K_INT)
-main (TokenType IDENTIFIER)
-( (TokenType LPAREN_ROUND)
-) (TokenType RPAREN_ROUND)
-{ (TokenType LPAREN_CURLY)
-Config (TokenType IDENTIFIER)
-cfg (TokenType IDENTIFIER)
-= (TokenType OP_ASSIGN)
-{ (TokenType LPAREN_CURLY)
-1 (int) (TokenType LITERAL_INTEGER)
-, (TokenType OP_COMMA)
-{ (TokenType LPAREN_CURLY)
-10 (int) (TokenType LITERAL_INTEGER)
-, (TokenType OP_COMMA)
-20 (int) (TokenType LITERAL_INTEGER)
-, (TokenType OP_COMMA)
-30 (int) (TokenType LITERAL_INTEGER)
-} (TokenType RPAREN_CURLY)
-} (TokenType RPAREN_CURLY)
-; (TokenType SEMICOLON)
-example_function (TokenType IDENTIFIER)
-( (TokenType LPAREN_ROUND)
-cfg (TokenType IDENTIFIER)
-. (TokenType OP_DOT)
-id (TokenType IDENTIFIER)
-, (TokenType OP_COMMA)
-cfg (TokenType IDENTIFIER)
-. (TokenType OP_DOT)
-values (TokenType IDENTIFIER)
-[ (TokenType LPAREN_SQUARE)
-0 (int) (TokenType LITERAL_INTEGER)
-] (TokenType RPAREN_SQUARE)
-) (TokenType RPAREN_ROUND)
-; (TokenType SEMICOLON)
-return (TokenType K_RETURN)
-0 (int) (TokenType LITERAL_INTEGER)
-; (TokenType SEMICOLON)
-} (TokenType RPAREN_CURLY)
- (TokenType EOF_TOKEN)
+Lexeme                    Token                 
+------------------------------------------------
+void                      K_VOID                
+example_function          IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+param_a                   IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+param_b                   IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+5 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+param_a                   IDENTIFIER            
+;                         SEMICOLON             
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+param_b                   IDENTIFIER            
+;                         SEMICOLON             
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
++                         OP_PLUS               
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+int                       K_INT                 
+calculated                IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+(                         LPAREN_ROUND          
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+*                         OP_MUL                
+(                         LPAREN_ROUND          
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
++                         OP_PLUS               
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+)                         RPAREN_ROUND          
+-                         OP_UNARY_MINUS        
+(                         LPAREN_ROUND          
+array                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+/                         OP_DIV                
+3 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+{                         LPAREN_CURLY          
+int                       K_INT                 
+inner_scoped_var          IDENTIFIER            
+=                         OP_ASSIGN             
+100 (int)                 LITERAL_INTEGER       
+;                         SEMICOLON             
+calculated                IDENTIFIER            
+=                         OP_ASSIGN             
+calculated                IDENTIFIER            
++                         OP_PLUS               
+inner_scoped_var          IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+struct                    K_STRUCT              
+Config                    IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+id                        IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+values                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+3 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Config                    IDENTIFIER            
+cfg                       IDENTIFIER            
+=                         OP_ASSIGN             
+{                         LPAREN_CURLY          
+1 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+{                         LPAREN_CURLY          
+10 (int)                  LITERAL_INTEGER       
+,                         OP_COMMA              
+20 (int)                  LITERAL_INTEGER       
+,                         OP_COMMA              
+30 (int)                  LITERAL_INTEGER       
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+example_function          IDENTIFIER            
+(                         LPAREN_ROUND          
+cfg                       IDENTIFIER            
+.                         OP_DOT                
+id                        IDENTIFIER            
+,                         OP_COMMA              
+cfg                       IDENTIFIER            
+.                         OP_DOT                
+values                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
 
 Lexer: Lexing stage completed
 

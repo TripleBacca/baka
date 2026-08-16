@@ -116,8 +116,8 @@ inline std::string_view TokenTypeToStr(types::TokenType tokenType) {
 
 inline std::ostream& PrintTokenTableHeader(std::ostream& os) {
     os << std::left
-       << std::setw(kTokenValueColumnWidth) << "Value"
-       << std::setw(kTokenTypeColumnWidth)  << "TokenType" << '\n';
+       << std::setw(kTokenValueColumnWidth) << "Lexeme"
+       << std::setw(kTokenTypeColumnWidth)  << "Token" << '\n';
     os << std::string(kTokenValueColumnWidth + kTokenTypeColumnWidth, '-') << '\n';
     return os;
 }
