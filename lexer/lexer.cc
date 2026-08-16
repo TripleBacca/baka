@@ -526,6 +526,48 @@ namespace baka {
 
                     ColNo = 1;
                 }
+                else if(SourceCode[lh] == '/' && (lh + 1 < SourceCode.size()) && SourceCode[lh+1] == '/') {
+                    // skip comment
+                    while (lh < SourceCode.size() && SourceCode[lh] != '\n') {
+                        lh++;
+                        ColNo++;
+                    }
+                }
+                else if(SourceCode[lh] == '/' && (lh + 1 < SourceCode.size()) && SourceCode[lh + 1] == '*') {
+                    // skip block comment
+                    lh+=2;
+                    ColNo+=2;
+
+                    size_t orgLineNo = LineNo;
+                    size_t orgColNo = ColNo-1;
+                    auto orgLine = LineIndex->CurrentLine();
+
+                    bool blockEndFound = false;
+                    while (lh < SourceCode.size()) {
+                        if(SourceCode[lh] == '*' && (lh + 1) < SourceCode.size() && SourceCode[lh + 1] == '/') {
+                            blockEndFound = true;
+                            ColNo += 2;
+                            lh += 2;
+                            break;
+                        }
+
+                        if(SourceCode[lh] == '\n') {
+                            LineNo++;
+
+                            LineIndex->endLine(lh);
+                            lh++;
+                            LineIndex->startLine(lh);
+
+                            ColNo = 1;
+                        } else {
+                            lh++;
+                            ColNo++;
+                        }
+                    }
+                    if(!blockEndFound) {
+                        driver::Gctx::GenerateError(orgLineNo, orgColNo, orgLine, "Block comment not terminated" , driver::Stage::LEX);
+                    }
+                }
                 else if (base::isValidOperatorChar(curr)) {
                     // this is operator
                     // TODO: Remove comments before lexing
