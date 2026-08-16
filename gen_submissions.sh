@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BASE_DIR="submissions"
+
+for file in submission_gen/*
+do
+  echo "Running $file"
+
+  export SUBMISSION_ROOT_DIR="$BASE_DIR/$(basename $file .sh)"
+  rm -rf $SUBMISSION_ROOT_DIR
+  mkdir -p $SUBMISSION_ROOT_DIR
+  bash "$file"
+
+done
+
+echo "Done"
