@@ -22,15 +22,12 @@ jobs:
 
       - name: Build compiler
         run: |
-          cmake -B build
-          cmake --build build
+            make build
 
       - name: Run Tests from Book
         run: |
-          chmod +x ./test_hook
-          ./test_hook
+            ./test_hook
 
       - name: Run Custom Tests
         run: |
-            chmod +x ./custom_test_hook
-            ./custom_test_hook
+            make test
