@@ -7,13 +7,13 @@
 #include <unistd.h>
 
 namespace baka {
-namespace base {
-
+    namespace base {
         class MappedFile {
             size_t Length;
             int fd;
             char* Data;
-            public:
+
+        public:
             MappedFile(std::filesystem::path path);
             std::string_view View() const;
             ~MappedFile();
@@ -24,5 +24,5 @@ namespace base {
             MappedFile& operator=(const MappedFile& other) = delete;
             MappedFile& operator=(const MappedFile&& other) = delete;
         };
-}
+    }
 }

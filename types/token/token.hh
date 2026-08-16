@@ -5,7 +5,6 @@
 
 
 namespace types {
-
     enum class TokenType {
         // https://timsong-cpp.github.io/cppwp/lex.key
         K_BOOL,
@@ -133,7 +132,8 @@ namespace types {
 
     struct Token {
         TokenType TokenType_v;
-        std::variant<char, std::string_view, std::string, int, long long, unsigned int, unsigned long long, float, double> Value;
+        std::variant<char, std::string_view, std::string, int, long long, unsigned int, unsigned long long, float,
+                     double> Value;
         // char - needed for char literal
         // string - string literal
         // string_view - any other lexeme
@@ -148,5 +148,4 @@ namespace types {
         FLOAT,
         DOUBLE
     };
-
 }

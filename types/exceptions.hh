@@ -22,8 +22,7 @@
         const char* what() const noexcept override { \
             return msg.c_str(); \
         } \
-    } \
-
+    }
 #define LINE_DIAGNOSTIC_CLASS(name, ansii, error_type_str)     class name : public Diagnostic { \
     types::TokenSourceLocation sourceLocation; \
     base::LineCtx LineCtx_v; \
@@ -47,24 +46,22 @@
         \
         return os.str(); \
     } \
-} \
+}
 
 namespace baka {
-namespace exceptions {
-
-    GEN_ERROR_CLASS(DriverError);
-
+    namespace exceptions {
+        GEN_ERROR_CLASS(DriverError);
 
 
-    class Diagnostic {
+        class Diagnostic {
         public:
-        virtual types::TokenSourceLocation getSourceLocation() const = 0;
-        virtual std::string getMessage() const = 0;
-    };
+            virtual types::TokenSourceLocation getSourceLocation() const = 0;
+            virtual std::string getMessage() const = 0;
+        };
 
 
-    LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII, "error");
-    LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII, "warning");
+        LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII, "error");
 
-}
+        LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII, "warning");
+    }
 }

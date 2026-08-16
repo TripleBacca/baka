@@ -8,30 +8,28 @@
 #include "base.hh"
 
 namespace baka {
-namespace base {
+    namespace base {
+        MappedFile::MappedFile(std::filesystem::path path) : Length(FileSize(path)) {
+            fd = open(path.c_str(), O_RDONLY);
+            if (fd == -1) {
+                throw std::runtime_error("open failed");
+            }
+            void* data = mmap(NULL, Length, PROT_READ, MAP_SHARED, fd, 0);
 
-    MappedFile::MappedFile(std::filesystem::path path) : Length(FileSize(path)) {
-        fd = open(path.c_str(), O_RDONLY);
-        if (fd == -1) {
-            throw std::runtime_error("open failed");
+            if (data == MAP_FAILED) {
+                close(fd);
+                throw std::runtime_error("mmap failed");
+            }
+            this->Data = static_cast<char*>(data);
         }
-        void* data = mmap(NULL, Length, PROT_READ, MAP_SHARED, fd, 0);
 
-        if (data == MAP_FAILED) {
+        std::string_view MappedFile::View() const {
+            return std::string_view(Data, Length);
+        }
+
+        MappedFile::~MappedFile() {
+            munmap(Data, Length);
             close(fd);
-            throw std::runtime_error("mmap failed");
         }
-        this->Data = static_cast<char*>(data);
     }
-
-    std::string_view MappedFile::View() const {
-        return std::string_view(Data, Length);
-    }
-
-    MappedFile::~MappedFile() {
-        munmap(Data, Length);
-        close(fd);
-    }
-
-}
 }

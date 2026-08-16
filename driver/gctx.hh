@@ -13,54 +13,52 @@
 #include <vector>
 
 namespace baka {
+    namespace driver {
+        class Gctx;
 
-namespace driver {
+        struct Gctx_t {
+            bool DebugMode = true;
+            bool ShouldOptimize = true;
+            bool VerboseMode = true;
+            BuildType BuildType_v;
+            std::string SourceFilePath;
 
-    class Gctx;
-    struct Gctx_t {
-        bool DebugMode = true;
-        bool ShouldOptimize = true;
-        bool VerboseMode = true;
-        BuildType BuildType_v;
-        std::string SourceFilePath;
+            Stage TillStage = Stage::LEX; // TODO: change this default later
 
-        Stage TillStage = Stage::LEX; // TODO: change this default later
+            // external stuff:
+            std::shared_ptr<baka::base::MappedFile> MappedFilePtr;
+            std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
 
-        // external stuff:
-        std::shared_ptr<baka::base::MappedFile> MappedFilePtr;
-        std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
-
-        // exceptions:
-        std::vector<exceptions::CompilerError> CompilerErrors; // TODO: reserve with herustics
-        std::vector<exceptions::CompilerWarning> CompilerWarnings; // TODO: reserve with herustics
+            // exceptions:
+            std::vector<exceptions::CompilerError> CompilerErrors; // TODO: reserve with herustics
+            std::vector<exceptions::CompilerWarning> CompilerWarnings; // TODO: reserve with herustics
 
         private:
             Gctx_t() = default;
 
-        friend Gctx;
+            friend Gctx;
 
 
-        void Print() const;
-    };
+            void Print() const;
+        };
 
 
-    class Gctx {
-        inline static std::shared_mutex mut;
-        inline static Gctx_t gctx;
+        class Gctx {
+            inline static std::shared_mutex mut;
+            inline static Gctx_t gctx;
 
         public:
-
             static const Gctx_t& GetGctxRO() {
                 return gctx;
             }
+
             static std::shared_lock<std::shared_mutex> GetROLock() {
                 return std::shared_lock(mut);
             }
 
 
-
-            template<class T>
-            requires std::is_invocable_v<T, Gctx_t&>
+            template <class T>
+                requires std::is_invocable_v<T, Gctx_t&>
             static auto ModifyGctx(T fn) {
                 std::unique_lock lg(mut);
                 return fn(gctx);
@@ -79,11 +77,11 @@ namespace driver {
             static void AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr);
 
             // exception stuff:
-            static void GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage);
-            static void GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage);
+            static void GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+                                        driver::Stage Stage);
+            static void GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+                                      driver::Stage Stage);
             static bool ErrorFound();
-    };
-
-}
-
+        };
+    }
 }

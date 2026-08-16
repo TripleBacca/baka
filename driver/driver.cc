@@ -20,7 +20,7 @@ namespace {
     void ValidateSourceFile() {
         std::filesystem::path path = baka::driver::Gctx::GetSourceFilePath();
 
-        if(!baka::base::ValidateFile(path)) {
+        if (!baka::base::ValidateFile(path)) {
             throw baka::exceptions::DriverError("source file does not exist: " + path.string());
         }
     }
@@ -32,13 +32,13 @@ namespace {
         std::shared_ptr<baka::base::MappedFile> MappedFilePtr = std::make_shared<baka::base::MappedFile>(path);
         baka::driver::Gctx::AttachMappedFile(MappedFilePtr);
 
-        std::shared_ptr<baka::base::LineIndex> LineIndexPtr = std::make_shared<baka::base::LineIndex>(MappedFilePtr->View());
+        std::shared_ptr<baka::base::LineIndex> LineIndexPtr = std::make_shared<baka::base::LineIndex>(
+            MappedFilePtr->View());
         baka::driver::Gctx::AttachLineIndex(LineIndexPtr);
 
         return MappedFilePtr->View();
     }
 }
-
 
 
 int baka::driver::run(int argc, char* argv[]) {
@@ -47,9 +47,10 @@ int baka::driver::run(int argc, char* argv[]) {
     ValidateSourceFile(); // check if exists and has perms
 
     std::string_view SourceCode;
-    { // read source code
+    {
+        // read source code
         SourceCode = ReadSourceFile();
-        if(Gctx::isVerbose()) {
+        if (Gctx::isVerbose()) {
             std::cout << "Driver::SourceCode: " << '\n' << SourceCode << std::endl;
         }
     }
@@ -58,53 +59,56 @@ int baka::driver::run(int argc, char* argv[]) {
 
     std::vector<types::Token> tokens;
 
-    { // lexing
-        if(Gctx::TillStage() >= Stage::LEX) {
+    {
+        // lexing
+        if (Gctx::TillStage() >= Stage::LEX) {
             tokens = lexer::Tokenize(SourceCode);
-        } else {
+        }
+        else {
             return 0;
         }
-        if(Gctx::isVerbose()) {
+        if (Gctx::isVerbose()) {
             std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << '\n';
-            for(const auto& token : tokens) {
+            for (const auto& token : tokens) {
                 std::cout << token << '\n';
             }
             std::cout << std::endl;
         }
     }
 
-    { // post lexer
+    {
+        // post lexer
         auto lg = Gctx::GetROLock();
         auto& gctx = Gctx::GetGctxRO();
 
         auto& Errors = gctx.CompilerErrors;
         auto& Warnings = gctx.CompilerWarnings;
 
-        for(auto& i: Warnings) {
+        for (auto& i : Warnings) {
             std::cout << i.getMessage() << '\n';
         }
         std::cout << std::flush;
 
-        for(auto& i: Errors) {
+        for (auto& i : Errors) {
             std::cout << i.getMessage() << '\n';
         }
         std::cout << std::flush;
 
 
-        if(!Errors.empty()) {
+        if (!Errors.empty()) {
             // need to stop here
             size_t ErrorCount = Errors.size();
             std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
             return 1;
-        } else {
-            if(gctx.VerboseMode) {
+        }
+        else {
+            if (gctx.VerboseMode) {
                 std::cout << "Lexer: Lexing stage completed" << '\n';
             }
         }
 
         std::cout << std::endl;
     }
-
 
 
     return 0;
