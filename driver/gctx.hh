@@ -82,6 +82,15 @@ namespace baka {
             static void GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
                                       driver::Stage Stage);
             static bool ErrorFound();
-        };
-    }
+
+            static void ReserveDefectsVec(size_t ReserveSz) {
+                ModifyGctx([&](Gctx_t& gctx) {
+                    gctx.CompilerErrors.reserve(ReserveSz);
+                    gctx.CompilerWarnings.reserve(ReserveSz);
+                });
+            }
+    };
+
+}
+
 }

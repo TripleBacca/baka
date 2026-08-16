@@ -7,6 +7,7 @@
 #include <ostream>
 #include <string_view>
 #include <vector>
+#include "heuristics.hh"
 #include "lexer/lexer.hh"
 #include "base/base.hh"
 #include "types/driver/defs.hh"
@@ -50,7 +51,13 @@ int baka::driver::run(int argc, char* argv[]) {
     {
         // read source code
         SourceCode = ReadSourceFile();
-        if (Gctx::isVerbose()) {
+
+        auto OptimisticDefects = heuristics::OptimisticCountDefects(SourceCode);
+        if(Gctx::isVerbose()) {
+            std::cout << "Driver::OptimisticDefects: " << OptimisticDefects << std::endl;
+        }
+        Gctx::ReserveDefectsVec(OptimisticDefects);
+        if(Gctx::isVerbose()) {
             std::cout << "Driver::SourceCode: " << '\n' << SourceCode << std::endl;
         }
     }
