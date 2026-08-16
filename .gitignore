@@ -3,3 +3,5 @@ build
 scratch
 .idea
 cmake-build-debug
+source_code
+submission/*

@@ -10,7 +10,7 @@ mkdir -p submission/build
 cp -r custom_tests/tests submission/test
 cp custom_test_hook submission/
 
-cp makefile submission/
+cp Makefile submission/
 # cp Justfile submission/
 cp run.sh submission/
 cp README.md submission/
