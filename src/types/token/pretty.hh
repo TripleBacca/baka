@@ -1,6 +1,8 @@
 #pragma once
 #include <cassert>
+#include <iomanip>
 #include <ostream>
+#include <sstream>
 #include <string_view>
 #include <unordered_map>
 #include "token.hh"
@@ -102,46 +104,62 @@ namespace {
         {types::TokenType::EOF_TOKEN, "EOF_TOKEN"},
         {types::TokenType::UNKNOWN, "UNKNOWN"},
     };
+
+
+    inline constexpr int kTokenValueColumnWidth = 26;
+    inline constexpr int kTokenTypeColumnWidth  = 22;
 }
 
 inline std::string_view TokenTypeToStr(types::TokenType tokenType) {
     return TokenToStr.at(tokenType);
 }
 
+inline std::ostream& PrintTokenTableHeader(std::ostream& os) {
+    os << std::left
+       << std::setw(kTokenValueColumnWidth) << "Value"
+       << std::setw(kTokenTypeColumnWidth)  << "TokenType" << '\n';
+    os << std::string(kTokenValueColumnWidth + kTokenTypeColumnWidth, '-') << '\n';
+    return os;
+}
+
 inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
+    std::ostringstream valueStream;
     switch (token.Value.index()) {
     case 0:
-        os << "'" << std::get<char>(token.Value) << "'";
+        valueStream << "'" << std::get<char>(token.Value) << "'";
         break;
     case 1:
-        os << std::get<std::string_view>(token.Value);
+        valueStream << std::get<std::string_view>(token.Value);
         break;
     case 2:
-        os << '"' << std::get<std::string>(token.Value) << '"';
+        valueStream << '"' << std::get<std::string>(token.Value) << '"';
         break;
     case 3:
-        os << std::get<int>(token.Value) << " (int)";
+        valueStream << std::get<int>(token.Value) << " (int)";
         break;
     case 4:
-        os << std::get<long long>(token.Value) << " (long)";
+        valueStream << std::get<long long>(token.Value) << " (long)";
         break;
     case 5:
-        os << std::get<unsigned int>(token.Value) << " (uint)";
+        valueStream << std::get<unsigned int>(token.Value) << " (uint)";
         break;
     case 6:
-        os << std::get<unsigned long long>(token.Value) << " (ulong)";
+        valueStream << std::get<unsigned long long>(token.Value) << " (ulong)";
         break;
     case 7:
-        os << std::get<float>(token.Value) << " (float)";
+        valueStream << std::get<float>(token.Value) << " (float)";
         break;
     case 8:
-        os << std::get<double>(token.Value) << " (double)";
+        valueStream << std::get<double>(token.Value) << " (double)";
         break;
     default:
         assert(false && "what the helly?");
         break;
     }
 
-    os << " (TokenType: " << TokenTypeToStr(token.TokenType_v) << ")";
+    os << std::left
+       << std::setw(kTokenValueColumnWidth) << valueStream.str()
+       << std::setw(kTokenTypeColumnWidth)  << TokenTypeToStr(token.TokenType_v);
+
     return os;
 }
