@@ -1,0 +1,29 @@
+name: Generate Submission Files
+
+on:
+  pull_request:
+    branches:
+        - 'checkpoint/**'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Submissions
+        run: |
+            make submit
+
+      - name: Compress Submission Files
+        run: |
+            tar -czvf submissions.tar.gz submissions
+
+      - name: Archive Submission Files
+        uses: actions/upload-artifact@v4
+        with:
+            name: submissions
+            path: |
+                submissions.tar.gz

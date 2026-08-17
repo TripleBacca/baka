@@ -1,0 +1,195 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: LEX
+Gctx::SourceFile: custom_tests/04_identifiers.cpp
+Driver::OptimisticDefects: 4
+Driver::SourceCode: 
+
+namespace compiler_core_v2 {
+
+        class LexicalAnalyzerEngine {
+    private:
+                int tokenCount;
+        int _internal_state_flag;
+        int max_lookahead_limit_99;
+
+    public:
+                void initialize_pipeline() {
+            tokenCount = 0;
+            _internal_state_flag = 1;
+            max_lookahead_limit_99 = 1024;
+        }
+
+        int get_token_count() {
+            return tokenCount;
+        }
+    };
+
+        const int MAX_BUFFER_SIZE_1024 = 1024;
+    const int DEFAULT_TIMEOUT_MS = 5000;
+}
+
+int process_data_stream_32(int input_stream_id, int batch_size_limit) {
+    int local_accumulator_temp = 0;
+    int _var1 = input_stream_id;
+    int _2nd_var_with_digits = batch_size_limit;     int a, b, c, x1, x2, y1, y2;
+
+    local_accumulator_temp = _var1 + _2nd_var_with_digits;
+    return local_accumulator_temp;
+}
+
+int main() {
+    compiler_core_v2::LexicalAnalyzerEngine myEngineInstance;
+    myEngineInstance.initialize_pipeline();
+    int result = process_data_stream_32(1, 2);
+    return result;
+}
+
+Lexer::LexerOutput: 142 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+namespace                 K_NAMESPACE           
+compiler_core_v2          IDENTIFIER            
+{                         LPAREN_CURLY          
+class                     K_CLASS               
+LexicalAnalyzerEngine     IDENTIFIER            
+{                         LPAREN_CURLY          
+private                   IDENTIFIER            
+:                         OP_COLON              
+int                       K_INT                 
+tokenCount                IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+_internal_state_flag      IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+max_lookahead_limit_99    IDENTIFIER            
+;                         SEMICOLON             
+public                    IDENTIFIER            
+:                         OP_COLON              
+void                      K_VOID                
+initialize_pipeline       IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+tokenCount                IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+_internal_state_flag      IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+max_lookahead_limit_99    IDENTIFIER            
+=                         OP_ASSIGN             
+1024 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+get_token_count           IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+tokenCount                IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+const                     K_CONST               
+int                       K_INT                 
+MAX_BUFFER_SIZE_1024      IDENTIFIER            
+=                         OP_ASSIGN             
+1024 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+const                     K_CONST               
+int                       K_INT                 
+DEFAULT_TIMEOUT_MS        IDENTIFIER            
+=                         OP_ASSIGN             
+5000 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+process_data_stream_32    IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+input_stream_id           IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+batch_size_limit          IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+local_accumulator_temp    IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+_var1                     IDENTIFIER            
+=                         OP_ASSIGN             
+input_stream_id           IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+_2nd_var_with_digits      IDENTIFIER            
+=                         OP_ASSIGN             
+batch_size_limit          IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+a                         IDENTIFIER            
+,                         OP_COMMA              
+b                         IDENTIFIER            
+,                         OP_COMMA              
+c                         IDENTIFIER            
+,                         OP_COMMA              
+x1                        IDENTIFIER            
+,                         OP_COMMA              
+x2                        IDENTIFIER            
+,                         OP_COMMA              
+y1                        IDENTIFIER            
+,                         OP_COMMA              
+y2                        IDENTIFIER            
+;                         SEMICOLON             
+local_accumulator_temp    IDENTIFIER            
+=                         OP_ASSIGN             
+_var1                     IDENTIFIER            
++                         OP_PLUS               
+_2nd_var_with_digits      IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+local_accumulator_temp    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+compiler_core_v2          IDENTIFIER            
+::                        OP_DOUBLE_COLON       
+LexicalAnalyzerEngine     IDENTIFIER            
+myEngineInstance          IDENTIFIER            
+;                         SEMICOLON             
+myEngineInstance          IDENTIFIER            
+.                         OP_DOT                
+initialize_pipeline       IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+process_data_stream_32    IDENTIFIER            
+(                         LPAREN_ROUND          
+1 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+result                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
