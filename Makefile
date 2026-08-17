@@ -11,8 +11,8 @@ test: build
 submit:
 	mkdir -p submissions
 	rm -rf submissions/*
-	chmod +x gen_submissions.sh
-	./gen_submissions.sh
+	chmod +x gen_submissions
+	./gen_submissions
 
 bless: build
 	./custom_test_hook bless

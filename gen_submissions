@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BASE_DIR="submissions"
+mkdir -p $BASE_DIR
 
 for file in submission_gen/*
 do
