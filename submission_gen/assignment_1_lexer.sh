@@ -10,7 +10,11 @@ cp custom_test_hook $SUBMISSION_ROOT_DIR/
 
 cp Makefile $SUBMISSION_ROOT_DIR/
 # cp Justfile submission/
-cp run.sh $SUBMISSION_ROOT_DIR/
 cp README.md $SUBMISSION_ROOT_DIR/
 
 find $SUBMISSION_ROOT_DIR/test -name '*.expected' -exec sed -i 's#custom_tests/#test/#g' {} +
+
+touch $SUBMISSION_ROOT_DIR/run.sh
+echo "#!/usr/bin/env bash
+./custom_test_hook" > $SUBMISSION_ROOT_DIR/run.sh
+chmod +x $SUBMISSION_ROOT_DIR/run.sh
