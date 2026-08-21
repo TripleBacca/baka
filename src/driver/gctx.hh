@@ -1,6 +1,6 @@
 #pragma once
 #include "types/driver/defs.hh"
-#include "line_index.hh"
+#include "base/line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
 #include <memory>
