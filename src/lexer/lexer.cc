@@ -278,7 +278,7 @@ namespace baka {
                     else {
                         // must be invalid char
                         LEX_ERROR("string literal not terminated", orgColNo);
-                        tokens.emplace_back(types::TokenType::UNKNOWN, str);
+                        tokens.emplace_back(types::TokenType::UNKNOWN, std::move(str));
                     }
                 }
                 else if (std::isdigit(curr) ||

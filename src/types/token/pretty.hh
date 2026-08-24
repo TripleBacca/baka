@@ -129,27 +129,30 @@ inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
         valueStream << "'" << std::get<char>(token.Value) << "'";
         break;
     case 1:
-        valueStream << std::get<std::string_view>(token.Value);
+        valueStream << '"' << std::get<baka::base::SLString>(token.Value) << '"';
         break;
     case 2:
-        valueStream << '"' << std::get<std::string>(token.Value) << '"';
+        valueStream << std::get<std::string_view>(token.Value);
         break;
     case 3:
-        valueStream << std::get<int>(token.Value) << " (int)";
+        valueStream << std::get<std::string>(token.Value);
         break;
     case 4:
-        valueStream << std::get<long long>(token.Value) << " (long)";
+        valueStream << std::get<int>(token.Value) << " (int)";
         break;
     case 5:
-        valueStream << std::get<unsigned int>(token.Value) << " (uint)";
+        valueStream << std::get<long long>(token.Value) << " (long)";
         break;
     case 6:
-        valueStream << std::get<unsigned long long>(token.Value) << " (ulong)";
+        valueStream << std::get<unsigned int>(token.Value) << " (uint)";
         break;
     case 7:
-        valueStream << std::get<float>(token.Value) << " (float)";
+        valueStream << std::get<unsigned long long>(token.Value) << " (ulong)";
         break;
     case 8:
+        valueStream << std::get<float>(token.Value) << " (float)";
+        break;
+    case 9:
         valueStream << std::get<double>(token.Value) << " (double)";
         break;
     default:
