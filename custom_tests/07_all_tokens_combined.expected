@@ -1,6 +1,6 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
-Gctx::UptoStage: LEX
+Gctx::UptoStage: PARSE
 Gctx::SourceFile: custom_tests/07_all_tokens_combined.cpp
 Driver::OptimisticDefects: 10
 Driver::SourceCode: 
@@ -715,4 +715,9 @@ return                    K_RETURN
                           EOF_TOKEN             
 
 Lexer: Lexing stage completed
+
+Parser::AST: 
+balls
+
+Parser: Parsing stage completed
 
