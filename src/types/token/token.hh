@@ -2,6 +2,7 @@
 #include <string>
 #include <string_view>
 #include <variant>
+#include "memory/custom_strings.hh"
 
 
 namespace types {
@@ -132,8 +133,7 @@ namespace types {
 
     struct Token {
         TokenType TokenType_v;
-        std::variant<char, std::string_view, std::string, int, long long, unsigned int, unsigned long long, float,
-                     double> Value;
+        std::variant<char, baka::base::SLString, std::string_view, std::string,  int, long long, unsigned int, unsigned long long, float, double> Value;
         // char - needed for char literal
         // string - string literal
         // string_view - any other lexeme
