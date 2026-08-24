@@ -5,6 +5,7 @@
 #include "memory/custom_strings.hh"
 
 
+namespace baka {
 namespace types {
     enum class TokenType {
         // https://timsong-cpp.github.io/cppwp/lex.key
@@ -148,4 +149,5 @@ namespace types {
         FLOAT,
         DOUBLE
     };
+}
 }

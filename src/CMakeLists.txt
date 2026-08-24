@@ -37,10 +37,12 @@ include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(base)
 add_subdirectory(driver)
 add_subdirectory(lexer)
+add_subdirectory(parser)
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     driver
     base
     lexer
+    parser
 )

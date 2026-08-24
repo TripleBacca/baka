@@ -10,10 +10,12 @@
 #include "heuristics.hh"
 #include "lexer/lexer.hh"
 #include "base/base.hh"
+#include "parser/parser.hh"
 #include "types/driver/defs.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
+#include "types/parser/ast.hh"
 
 
 namespace {
@@ -139,9 +141,39 @@ int baka::driver::run(int argc, char* argv[]) {
 
     {
         // parsing
+        if (Gctx::TillStage() < Stage::PARSE) {
+            return 0;
+        }
 
+        parser::Parser Parser(tokens);
+        types::ASTNode* Root = Parser.Parse();
+
+        if(isVerbose) {
+            std::cout << "Parser::AST: " << '\n';
+            Root->Print();
+            std::cout << std::endl;
+        }
     }
 
+    {
+        // post parser
+        size_t ErrorCount = PrintErrorsIfAny();
+
+        if (ErrorCount > 0) {
+            // need to stop here
+            std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
+            return 1;
+        }
+        else {
+            if (isVerbose) {
+                std::cout << "Parser: Parsing stage completed" << '\n';
+            }
+        }
+
+        if (isVerbose) {
+            std::cout << std::endl;
+        }
+    }
 
     return 0;
 }

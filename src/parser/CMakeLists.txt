@@ -1,21 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(EXEC_SOURCES
-    driver.cc
-    gctx.cc
-    # args.cc this is not diff tu
+    parser.cc
 )
 
-add_library(driver
+add_library(parser
     ${EXEC_SOURCES}
 )
 
-target_link_libraries(driver PUBLIC
+target_link_libraries(parser PUBLIC
     base
-    parser
 )
 
-target_include_directories(driver PUBLIC
+target_include_directories(parser PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}
 )
 

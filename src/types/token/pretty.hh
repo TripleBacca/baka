@@ -8,6 +8,7 @@
 #include "token.hh"
 
 
+namespace baka {
 namespace {
     inline std::unordered_map<types::TokenType, std::string_view> TokenToStr = {
         {types::TokenType::K_BOOL, "K_BOOL"},
@@ -165,4 +166,5 @@ inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
        << std::setw(kTokenTypeColumnWidth)  << TokenTypeToStr(token.TokenType_v);
 
     return os;
+}
 }
