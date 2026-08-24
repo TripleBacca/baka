@@ -9,15 +9,14 @@
 #include <vector>
 
 namespace baka {
-namespace base {
 
-    // TODO: use std::allocator instead
+namespace {
     template<size_t SZ>
     struct alignas(std::max_align_t) ArenaChunk {
         std::array<std::byte, SZ> data;
     };
 
-    // need for calling dtors\
+    // need for calling dtors
     // type erasure container
     class TEActivationRecord {
         public:
@@ -63,6 +62,9 @@ namespace base {
             }
         }
     };
+}
+
+namespace base {
 
     template<size_t SZ = 1024>
     class Arena {
@@ -134,14 +136,13 @@ namespace base {
 
                     if(PossibleNewIdx <= SZ) {
                         std::byte* base = &ActiveChunk->data[0];
+                        T* startPtr = reinterpret_cast<T*>(base + NearestAlignIdx);
 
                         for(auto i = 0; i < N; i++) {
-                            std::construct_at<T>((base + NearestAlignIdx) + (i * sizeof(T)), std::forward<Args>(args)...);
+                            std::construct_at<T>(startPtr + i, std::forward<Args>(args)...);
                         }
 
                         UsedBytes = PossibleNewIdx;
-                        T* startPtr = reinterpret_cast<T*>(base + NearestAlignIdx);
-
 
                         if constexpr (!std::is_trivially_destructible_v<T>) {
                             TEActivationRecord* NewTEActivationRecord = Alloc<TypedArrayActivationRecord_<T>>(startPtr, N);
@@ -184,11 +185,11 @@ namespace base {
 
                     if(PossibleNewIdx <= SZ) {
                         std::byte* base = &ActiveChunk->data[0];
+                        T* retPtr = reinterpret_cast<T*>(base + NearestAlignIdx);
 
-                        std::construct_at<T>(reinterpret_cast<T*>(base + NearestAlignIdx), std::forward<Args>(args)...);
+                        std::construct_at<T>(retPtr, std::forward<Args>(args)...);
                         UsedBytes = PossibleNewIdx;
 
-                        T* retPtr = reinterpret_cast<T*>(base + NearestAlignIdx);
 
                         if constexpr (!std::is_trivially_destructible_v<T>) {
                             TEActivationRecord* NewTEActivationRecord = Alloc<TypedActivationRecord_<T>>(retPtr);
