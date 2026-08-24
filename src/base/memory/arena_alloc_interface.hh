@@ -8,7 +8,7 @@
 namespace baka {
 namespace base {
 
-    // singleton area shoudl have instance() static function that returns an instance
+    // singleton area shoudl have getInstance() static function that returns an instance
     // the instance should have:
     //
     // template<class T, class ...Args>
