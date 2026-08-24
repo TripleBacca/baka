@@ -5,6 +5,7 @@
 #include <charconv>
 #include <climits>
 #include "base/base.hh"
+#include "memory/custom_strings.hh"
 #include "types/driver/defs.hh"
 #include "driver/gctx.hh"
 #include "keywords.hh"
@@ -198,7 +199,9 @@ namespace baka {
                     size_t orgLh = lh; // need for col no calcs for error
 
                     size_t peek = lh + 1;
-                    std::string str; // TODO: allocate this in an arena somewhere
+
+                    base::SLString str; // arena alloc
+
                     bool RQuoteSeen = false;
 
                     while (peek < SourceCode.size()) {
