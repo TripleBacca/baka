@@ -10,7 +10,7 @@
 
 namespace baka {
 
-namespace {
+namespace detail {
     template<size_t SZ>
     struct alignas(std::max_align_t) ArenaChunk {
         std::array<std::byte, SZ> data;
@@ -68,29 +68,29 @@ namespace base {
 
     template<size_t SZ = 1024>
     class Arena {
-        std::vector<std::unique_ptr<ArenaChunk<SZ>>> InUseChunks;
-        ArenaChunk<SZ>* ActiveChunk;
+        std::vector<std::unique_ptr<detail::ArenaChunk<SZ>>> InUseChunks;
+        detail::ArenaChunk<SZ>* ActiveChunk;
         size_t UsedBytes;
-        std::unique_ptr<ActivationRecordNode> ActivationRecordHead; // dummy head node is raii
-        ActivationRecordNode* ActivationRecordTail;
+        std::unique_ptr<detail::ActivationRecordNode> ActivationRecordHead; // dummy head node is raii
+        detail::ActivationRecordNode* ActivationRecordTail;
 
 
         void NewChunkAlloc() {
-            InUseChunks.emplace_back(std::make_unique<ArenaChunk<SZ>>());
+            InUseChunks.emplace_back(std::make_unique<detail::ArenaChunk<SZ>>());
             ActiveChunk = InUseChunks.back().get();
             UsedBytes = 0;
         }
 
         public:
 
-            Arena() : ActivationRecordHead(std::make_unique<ActivationRecordNode>(ActivationRecordNode::dummy())) {
+            Arena() : ActivationRecordHead(std::make_unique<detail::ActivationRecordNode>(detail::ActivationRecordNode::dummy())) {
                 NewChunkAlloc();
                 ActivationRecordTail = ActivationRecordHead.get();
             }
 
             ~Arena() {
                 // call cleanup on all activation records
-                ActivationRecordNode* curr = ActivationRecordHead.get();
+                detail::ActivationRecordNode* curr = ActivationRecordHead.get();
                 while(curr != nullptr) {
                     if(curr->ActivationRecord == nullptr) {
                         curr = curr->Next;
@@ -99,7 +99,6 @@ namespace base {
 
                     curr->ActivationRecord->cleanup();
 
-                    ActivationRecordNode* prev = curr;
                     curr = curr->Next;
                 }
             }
@@ -118,11 +117,11 @@ namespace base {
                     throw std::bad_alloc();
                 }
 
-                ActivationRecordNode* NewActivationRecordLLNode = nullptr;
+                detail::ActivationRecordNode* NewActivationRecordLLNode = nullptr;
                 if constexpr (!std::is_trivially_destructible_v<T>) {
                     // if not trivially destructible then push activation record
 
-                    NewActivationRecordLLNode = Alloc<ActivationRecordNode>(nullptr, nullptr);
+                    NewActivationRecordLLNode = Alloc<detail::ActivationRecordNode>(nullptr, nullptr);
                     // assingn the activation record later
 
                     ActivationRecordTail->Next = NewActivationRecordLLNode;
@@ -145,7 +144,7 @@ namespace base {
                         UsedBytes = PossibleNewIdx;
 
                         if constexpr (!std::is_trivially_destructible_v<T>) {
-                            TEActivationRecord* NewTEActivationRecord = Alloc<TypedArrayActivationRecord_<T>>(startPtr, N);
+                            detail::TEActivationRecord* NewTEActivationRecord = Alloc<detail::TypedArrayActivationRecord_<T>>(startPtr, N);
                             assert(NewActivationRecordLLNode != nullptr);
 
                             NewActivationRecordLLNode->ActivationRecord = NewTEActivationRecord;
@@ -167,11 +166,11 @@ namespace base {
             T* Alloc(Args&&... args) {
 
                 // if constexpr alloc activation record
-                ActivationRecordNode* NewActivationRecordLLNode = nullptr;
+                detail::ActivationRecordNode* NewActivationRecordLLNode = nullptr;
                 if constexpr (!std::is_trivially_destructible_v<T>) {
                     // if not trivially destructible then push activation record
 
-                    NewActivationRecordLLNode = Alloc<ActivationRecordNode>(nullptr, nullptr);
+                    NewActivationRecordLLNode = Alloc<detail::ActivationRecordNode>(nullptr, nullptr);
                     // assingn the activation record later
 
                     ActivationRecordTail->Next = NewActivationRecordLLNode;
@@ -192,7 +191,7 @@ namespace base {
 
 
                         if constexpr (!std::is_trivially_destructible_v<T>) {
-                            TEActivationRecord* NewTEActivationRecord = Alloc<TypedActivationRecord_<T>>(retPtr);
+                            detail::TEActivationRecord* NewTEActivationRecord = Alloc<detail::TypedActivationRecord_<T>>(retPtr);
                             assert(NewActivationRecordLLNode != nullptr);
 
                             NewActivationRecordLLNode->ActivationRecord = NewTEActivationRecord;
