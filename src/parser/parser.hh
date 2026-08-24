@@ -35,6 +35,13 @@ namespace parser {
         // recursive descent nodes:
         // TODO
 
+        types::ProgramNode* Program();
+        types::FunctionNode* Function();
+        types::ReturnStatementNode* ReturnStatement();
+        types::ExpressionNode* Expression();
+        types::UnaryExpressionNode* UnaryExpression();
+        types::ConstantNode* ConstantNode();
+
 
     };
 
