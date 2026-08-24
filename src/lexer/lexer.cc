@@ -13,8 +13,8 @@
 #include "types/token/token.hh"
 
 
-#define LEX_ERROR(STR, IDX) driver::Gctx::GenerateError(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
-#define LEX_WARN(STR, IDX) driver::Gctx::GenerateWarning(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
+#define LEX_ERROR(STR, IDX) driver::Gctx::GenerateLineError(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
+#define LEX_WARN(STR, IDX) driver::Gctx::GenerateLineWarning(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
 
 namespace baka {
     namespace lexer {
@@ -582,7 +582,7 @@ namespace baka {
                         }
                     }
                     if(!blockEndFound) {
-                        driver::Gctx::GenerateError(orgLineNo, orgColNo, orgLine, "Block comment not terminated" , driver::Stage::LEX);
+                        driver::Gctx::GenerateLineError(orgLineNo, orgColNo, orgLine, "Block comment not terminated" , driver::Stage::LEX);
                     }
                 }
                 else if (base::isValidOperatorChar(curr)) {

@@ -7,6 +7,8 @@
 #include <string_view>
 #include <vector>
 
+// getters:
+
 std::string_view baka::driver::Gctx::GetSourceFilePath() {
     auto lg = Gctx::GetROLock();
     return Gctx::GetGctxRO().SourceFilePath;
@@ -32,16 +34,7 @@ std::shared_ptr<baka::base::LineIndex> baka::driver::Gctx::GetLineIndex() {
     return Gctx::GetGctxRO().LineIndexPtr;
 }
 
-void baka::driver::Gctx::Print() {
-    auto lg = Gctx::GetROLock();
-    auto gctx = Gctx::GetGctxRO();
-
-    std::cout << "Gctx::VerboseMode: " << gctx.VerboseMode << std::endl;
-    std::cout << "Gctx::BuildType: " << to_string_view(gctx.BuildType_v) << std::endl;
-    std::cout << "Gctx::UptoStage: " << to_string_view(gctx.TillStage) << std::endl;
-    std::cout << "Gctx::SourceFile: " << gctx.SourceFilePath << std::endl;
-}
-
+// attach globals:
 
 void baka::driver::Gctx::AttachMappedFile(std::shared_ptr<base::MappedFile> MappedFilePtr) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
@@ -55,24 +48,51 @@ void baka::driver::Gctx::AttachLineIndex(std::shared_ptr<base::LineIndex> LineIn
     });
 }
 
+// generate errors:
 
-void baka::driver::Gctx::GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+void baka::driver::Gctx::GenerateGlobalError(std::string Message, driver::Stage Stage) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.CompilerGlobalErrors.emplace_back(gctx.SourceFilePath, Message, Stage);
+    });
+}
+
+void baka::driver::Gctx::GenerateGlobalWarning(std::string Message, driver::Stage Stage) {
+    Gctx::ModifyGctx([&](Gctx_t& gctx) {
+        gctx.CompilerGlobalWarnings.emplace_back(gctx.SourceFilePath, Message, Stage);
+    });
+}
+
+
+void baka::driver::Gctx::GenerateLineError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
                                        driver::Stage Stage) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
-        gctx.CompilerErrors.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
+        gctx.CompilerLineErrors.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
     });
 }
 
-void baka::driver::Gctx::GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+void baka::driver::Gctx::GenerateLineWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
                                          driver::Stage Stage) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
-        gctx.CompilerWarnings.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
+        gctx.CompilerLineWarnings.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
     });
 }
 
+// utils:
+
 bool baka::driver::Gctx::ErrorFound() {
     auto lg = Gctx::GetROLock();
-    return !Gctx::GetGctxRO().CompilerErrors.empty();
+    return !Gctx::GetGctxRO().CompilerLineErrors.empty() || !Gctx::GetGctxRO().CompilerLineWarnings.empty();
+}
+
+
+void baka::driver::Gctx::Print() {
+    auto lg = Gctx::GetROLock();
+    auto gctx = Gctx::GetGctxRO();
+
+    std::cout << "Gctx::VerboseMode: " << gctx.VerboseMode << std::endl;
+    std::cout << "Gctx::BuildType: " << to_string_view(gctx.BuildType_v) << std::endl;
+    std::cout << "Gctx::UptoStage: " << to_string_view(gctx.TillStage) << std::endl;
+    std::cout << "Gctx::SourceFile: " << gctx.SourceFilePath << std::endl;
 }

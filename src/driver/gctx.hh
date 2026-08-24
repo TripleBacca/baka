@@ -29,8 +29,11 @@ namespace baka {
             std::shared_ptr<baka::base::LineIndex> LineIndexPtr;
 
             // exceptions:
-            std::vector<exceptions::CompilerError> CompilerErrors;
-            std::vector<exceptions::CompilerWarning> CompilerWarnings;
+            std::vector<exceptions::CompilerLineError> CompilerLineErrors;
+            std::vector<exceptions::CompilerLineError> CompilerLineWarnings;
+
+            std::vector<exceptions::CompilerGlobalError> CompilerGlobalErrors;
+            std::vector<exceptions::CompilerGlobalWarning> CompilerGlobalWarnings;
 
         private:
             Gctx_t() = default;
@@ -40,6 +43,9 @@ namespace baka {
 
             void Print() const;
         };
+
+        constexpr size_t NO_LINE = 0;
+        constexpr size_t NO_COL = 0;
 
 
         class Gctx {
@@ -76,16 +82,24 @@ namespace baka {
             static void AttachLineIndex(std::shared_ptr<base::LineIndex> LineIndexPtr);
 
             // exception stuff:
-            static void GenerateWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+            static void GenerateLineWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
                                         driver::Stage Stage);
-            static void GenerateError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
+            static void GenerateLineError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
                                       driver::Stage Stage);
+
+            static void GenerateGlobalWarning(std::string Message,
+                                        driver::Stage Stage);
+            static void GenerateGlobalError(std::string Message,
+                                      driver::Stage Stage);
+
             static bool ErrorFound();
 
             static void ReserveDefectsVec(size_t ReserveSz) {
                 ModifyGctx([&](Gctx_t& gctx) {
-                    gctx.CompilerErrors.reserve(ReserveSz);
-                    gctx.CompilerWarnings.reserve(ReserveSz);
+                    gctx.CompilerLineErrors.reserve(ReserveSz);
+                    gctx.CompilerLineWarnings.reserve(ReserveSz);
+                    gctx.CompilerGlobalErrors.reserve(ReserveSz);
+                    gctx.CompilerGlobalWarnings.reserve(ReserveSz);
                 });
             }
     };

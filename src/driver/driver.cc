@@ -25,7 +25,6 @@ namespace {
         }
     }
 
-
     std::string_view ReadSourceFile() {
         std::filesystem::path path = baka::driver::Gctx::GetSourceFilePath();
 
@@ -38,6 +37,37 @@ namespace {
 
         return MappedFilePtr->View();
     }
+
+    size_t PrintErrorsIfAny() {
+        auto lg = baka::driver::Gctx::GetROLock();
+        auto& gctx = baka::driver::Gctx::GetGctxRO();
+
+        auto& LineErrors = gctx.CompilerLineErrors;
+        auto& LineWarnings = gctx.CompilerLineWarnings;
+        auto& GlobalErrors = gctx.CompilerGlobalErrors;
+        auto& GlobalWarnings = gctx.CompilerGlobalWarnings;
+
+        for (auto& i : GlobalWarnings) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+        for (auto& i : LineWarnings) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+
+        for (auto& i : GlobalErrors) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+        for (auto& i : LineErrors) {
+            std::cout << i.getMessage() << '\n';
+        }
+        std::cout << std::flush;
+
+        return GlobalErrors.size() + LineErrors.size();
+    }
+
 }
 
 
@@ -46,17 +76,19 @@ int baka::driver::run(int argc, char* argv[]) {
 
     ValidateSourceFile(); // check if exists and has perms
 
+    bool isVerbose = Gctx::isVerbose();
+
     std::string_view SourceCode;
     {
         // read source code
         SourceCode = ReadSourceFile();
 
         auto OptimisticDefects = heuristics::OptimisticCountDefects(SourceCode);
-        if(Gctx::isVerbose()) {
+        if(isVerbose) {
             std::cout << "Driver::OptimisticDefects: " << OptimisticDefects << std::endl;
         }
         Gctx::ReserveDefectsVec(OptimisticDefects);
-        if(Gctx::isVerbose()) {
+        if(isVerbose) {
             std::cout << "Driver::SourceCode: " << '\n' << SourceCode << std::endl;
         }
     }
@@ -73,52 +105,41 @@ int baka::driver::run(int argc, char* argv[]) {
         else {
             return 0;
         }
-        if (Gctx::isVerbose()) {
+        if (isVerbose) {
             std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << '\n';
         }
         PrintTokenTableHeader(std::cout);
         for (const auto& token : tokens) {
             std::cout << token << '\n';
         }
-        if (Gctx::isVerbose()) {
+        if (isVerbose) {
             std::cout << std::endl;
         }
     }
 
     {
         // post lexer
-        auto lg = Gctx::GetROLock();
-        auto& gctx = Gctx::GetGctxRO();
+        size_t ErrorCount = PrintErrorsIfAny();
 
-        auto& Errors = gctx.CompilerErrors;
-        auto& Warnings = gctx.CompilerWarnings;
-
-        for (auto& i : Warnings) {
-            std::cout << i.getMessage() << '\n';
-        }
-        std::cout << std::flush;
-
-        for (auto& i : Errors) {
-            std::cout << i.getMessage() << '\n';
-        }
-        std::cout << std::flush;
-
-
-        if (!Errors.empty()) {
+        if (ErrorCount > 0) {
             // need to stop here
-            size_t ErrorCount = Errors.size();
             std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
             return 1;
         }
         else {
-            if (gctx.VerboseMode) {
+            if (isVerbose) {
                 std::cout << "Lexer: Lexing stage completed" << '\n';
             }
         }
 
-        if (gctx.VerboseMode) {
+        if (isVerbose) {
             std::cout << std::endl;
         }
+    }
+
+    {
+        // parsing
+
     }
 
 

@@ -48,6 +48,26 @@
     } \
 }
 
+
+#define LINELESS_DIAGNOSTIC_CLASS(name, ansii, error_type_str)     class name : public Diagnostic { \
+    std::string Message; \
+    driver::Stage Stage; \
+    std::string_view FilePath; \
+    public: \
+    name(std::string_view FilePath, std::string Message, driver::Stage Stage) :  Message(std::move(Message)), Stage(Stage), FilePath(FilePath) {} \
+    types::TokenSourceLocation getSourceLocation() const override { \
+        return {}; \
+    } \
+    std::string getMessage() const override { \
+        std::ostringstream os; \
+        os << FilePath << ": "  \
+        << ansii << error_type_str << ": " << CLEAR_ANSII \
+        << Message << " (" << to_string_view(Stage) << ")\n"; \
+        return os.str(); \
+    } \
+}
+
+
 namespace baka {
     namespace exceptions {
         GEN_ERROR_CLASS(DriverError);
@@ -60,8 +80,11 @@ namespace baka {
         };
 
 
-        LINE_DIAGNOSTIC_CLASS(CompilerError, RED_ANSII, "error");
+        LINE_DIAGNOSTIC_CLASS(CompilerLineError, RED_ANSII, "error");
+        LINE_DIAGNOSTIC_CLASS(CompilerLineWarning, YELLOW_ANSII, "warning");
 
-        LINE_DIAGNOSTIC_CLASS(CompilerWarning, YELLOW_ANSII, "warning");
+        LINELESS_DIAGNOSTIC_CLASS(CompilerGlobalError, RED_ANSII, "error");
+        LINELESS_DIAGNOSTIC_CLASS(CompilerGlobalWarning, RED_ANSII, "error");
     }
+
 }
