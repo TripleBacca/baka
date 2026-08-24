@@ -43,8 +43,11 @@ namespace base {
         constexpr ArenaAllocatorWrapper(const ArenaAllocatorWrapper<U, SingletonArenaT>&) noexcept {}
 
         T* allocate(std::size_t n) {
+            if(n == 0) {
+                return nullptr;
+            }
             auto& arena = SingletonArenaT::getInstance();
-            return &arena.template AllocArray<T>(n)[0];
+            return arena.template AllocArray<T>(n).data();
         }
 
         void deallocate(T*, std::size_t) noexcept {
