@@ -22,7 +22,7 @@ namespace baka {
             BuildType BuildType_v;
             std::string SourceFilePath;
 
-            Stage TillStage = Stage::LEX; // TODO: change this default later
+            Stage TillStage = Stage::PARSE; // TODO: change this default later
 
             // external stuff:
             std::shared_ptr<baka::base::MappedFile> MappedFilePtr;

@@ -22,7 +22,7 @@ namespace baka {
             }
             std::size_t idx = 1;
             // TODO: maybe change these defaults later
-            Stage UptoStage = Stage::LEX;
+            Stage UptoStage = Stage::PARSE;
             baka::driver::BuildType BuildType = BuildType::DEBUG;
             std::string SourceFile;
             bool VerboseMode = false;

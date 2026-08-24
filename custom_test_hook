@@ -14,19 +14,20 @@ COMPILER = ROOT / "build" / "baka"
 COMPILER_FLAGS = ["--verbose", "--build_type", "debug"]
 
 
-def get_compile_output(source):
+
+def get_compile_output(source, stage_args):
     arg = str(source.relative_to(ROOT))
     return subprocess.run(
-        [str(COMPILER)] + COMPILER_FLAGS + [arg],
+        [str(COMPILER)] + COMPILER_FLAGS + stage_args + [arg],
         capture_output=True,
         text=True,
         errors="replace",
     )
 
 
-def bless(tests) -> None:
+def bless(tests, stage_args) -> None:
     for i in tests:
-        result = get_compile_output(i)
+        result = get_compile_output(i, stage_args)
         expected_file = i.with_suffix(".expected")
 
         expected_file.write_text(result.stdout, encoding="utf-8")
@@ -34,7 +35,7 @@ def bless(tests) -> None:
         print(f"blessed {expected_file.relative_to(ROOT)} : exit-code({result.returncode})")
 
 
-def verify(tests):
+def verify(tests, stage_args):
     failures = 0
     for i in tests:
 
@@ -44,7 +45,7 @@ def verify(tests):
             failures += 1
             continue
 
-        result = get_compile_output(i)
+        result = get_compile_output(i, stage_args)
         expected = expected_file.read_text(encoding="utf-8")
 
         if result.stdout == expected:
@@ -80,11 +81,21 @@ def main():
         print(f"no tests found in {test_dir}")
         return 1
 
+    if "lex" in sys.argv[1:]:
+        stage_args = ["--lex"]
+    elif "parse" in sys.argv[1:]:
+        stage_args = ["--parse"]
+    elif "codegen" in sys.argv[1:]:
+        stage_args = ["--codegen"]
+    else:
+        stage_args = []
+
     if "bless" in sys.argv[1:]:
-        bless(tests)
+        bless(tests, stage_args)
         return 0
 
-    return verify(tests)
+
+    return verify(tests, stage_args)
 
 
 if __name__ == "__main__":

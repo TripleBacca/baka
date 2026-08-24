@@ -6,7 +6,7 @@ help:
 	@printf "make lex file=path/to/file \t run the compiler till the lexer stage\n"
 
 test: build
-	./custom_test_hook
+	./custom_test_hook $(STAGE_ARGS)
 
 submit:
 	mkdir -p submissions
