@@ -21,10 +21,15 @@ namespace detail {
     }
 
     inline bool IsUnaryOperator(types::TokenType Type) {
-        // TODO: fill this shit up
         switch (Type) {
-            case types::TokenType::OP_UNARY_MINUS:
-            case types::TokenType::OP_TILDE:
+            case types::TokenType::OP_UNARY_MINUS:   // unary -
+            case types::TokenType::OP_PLUS:           // unary +
+            case types::TokenType::OP_TILDE:          // bitwise NOT ~
+            case types::TokenType::OP_LOGICAL_NOT:    // logical NOT !
+            case types::TokenType::OP_INC:            // prefix ++
+            case types::TokenType::OP_DEC:            // prefix --
+            case types::TokenType::OP_MUL:            // dereference *
+            case types::TokenType::OP_BIT_AND:        // address-of &
                 return true;
             default:
                 return false;
