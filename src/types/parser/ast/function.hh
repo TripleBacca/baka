@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string_view>
 #include <utility>
+#include <vector>
 #include "statement.hh"
 #include "types/parser/ast/utils.hh"
 
