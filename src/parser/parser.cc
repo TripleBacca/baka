@@ -43,14 +43,22 @@ namespace baka {
         };
 
         types::ProgramNode* Parser::Program() {
-            types::FunctionNode* Function = this->Function();
+            std::vector<types::ASTNode*> body;
+            while (!Check(types::TokenType::EOF_TOKEN)) {
+                if (Check(types::TokenType::K_STRUCT)) {
+                    body.push_back(this->Struct());
+                }
+                else {
+                    body.push_back(this->Function());
+                }
+            }
 
-            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(Function);
+            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
             return Node;
         }
 
         types::FunctionNode* Parser::Function() {
-            this->Advance(); // return type
+            const types::Token& ReturnType = this->Advance();
 
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
@@ -79,9 +87,41 @@ namespace baka {
             if (!this->Match(types::TokenType::RPAREN_CURLY)) {
                 // throw error
             }
-
             types::FunctionNode* Node = ASTALLOC.Alloc<types::FunctionNode>(
-                std::get<std::string_view>(FunctionIdentifier.Value), Body);
+                std::get<std::string_view>(ReturnType.Value), std::get<std::string_view>(FunctionIdentifier.Value),
+                Body);
+
+            return Node;
+        }
+
+        types::StructNode* Parser::Struct() {
+            //TODO add support for declarations after struct
+            //TODO semicolon?
+            if (!this->Match(types::TokenType::K_STRUCT)) {
+                // match struct keyword
+                // throw error
+            }
+
+            if (!this->Check(types::TokenType::IDENTIFIER)) {
+                // throw error
+            }
+            const types::Token& StructIdentifier = this->Advance();
+            if (!std::holds_alternative<std::string_view>(StructIdentifier.Value)) {
+                // throw error
+            }
+
+
+            if (!this->Match(types::TokenType::LPAREN_CURLY)) {
+                // throw error
+            }
+            std::vector<types::StructDeclarationStatementNode*> Body;
+
+            while (!this->Match(types::TokenType::RPAREN_CURLY)) {
+                Body.push_back(this->StructDeclarationStatement());
+            }
+
+            types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(
+                std::get<std::string_view>(StructIdentifier.Value), Body);
 
             return Node;
         }
@@ -98,6 +138,23 @@ namespace baka {
             }
 
             types::ReturnStatementNode* Node = ASTALLOC.Alloc<types::ReturnStatementNode>(Expression);
+            return Node;
+        }
+
+        types::StructDeclarationStatementNode* Parser::StructDeclarationStatement() {
+            //TODO add support for inline initialisation
+            //TODO add support for comma separated declarations
+            //TODO add support for struct enum etc declarations
+            const types::Token& DataType = this->Advance();
+            const types::Token& VariableName = this->Advance();
+
+            if (!this->Match(types::TokenType::SEMICOLON)) {
+                // throw error
+            }
+
+            types::StructDeclarationStatementNode* Node = ASTALLOC.Alloc<types::StructDeclarationStatementNode>(
+                std::get<std::string_view>(DataType.Value), std::get<std::string_view>(VariableName.Value));
+
             return Node;
         }
 

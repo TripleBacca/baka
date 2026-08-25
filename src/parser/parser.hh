@@ -37,7 +37,10 @@ namespace parser {
 
         types::ProgramNode* Program();
         types::FunctionNode* Function();
+        types::StructNode* Struct();
         types::ReturnStatementNode* ReturnStatement();
+        // this is for declarations inside a struct, im sorry
+        types::StructDeclarationStatementNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
         types::UnaryExpressionNode* UnaryExpression();
         types::ConstantNode* ConstantNode();
