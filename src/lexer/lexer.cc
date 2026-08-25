@@ -55,6 +55,11 @@ namespace baka {
                     lh = endIdx + 1;
                     ColNo += endIdx - startIdx + 1;
                 }
+                else if (curr == '@') {
+                    tokens.emplace_back(types::TokenType::AT, std::string_view("@"));
+                    lh++;
+                    ColNo++;
+                }
                 else if (curr == '(') {
                     tokens.emplace_back(types::TokenType::LPAREN_ROUND, std::string_view("("));
                     lh++;

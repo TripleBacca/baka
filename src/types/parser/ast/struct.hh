@@ -43,7 +43,8 @@ namespace baka {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "Struct(" << StructName << ", " << '\n';
+                std::cout << "Struct(";
+                StructName->Print();
 
                 for (auto decl : Body) {
                     decl->Print(Tabs + 1);

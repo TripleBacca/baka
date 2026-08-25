@@ -7,6 +7,7 @@
 #include "statement.hh"
 #include "types/parser/ast/utils.hh"
 
+
 namespace baka {
 namespace types {
     class FunctionArgumentStatementNode : public StatementNode {
@@ -69,7 +70,8 @@ namespace types {
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Function(" << ReturnType << ", " << FuncName << ", " << '\n';
+            std::cout << "Function(" << ReturnType << ", ";
+            FuncName->Print();
 
             Args->Print(Tabs + 1);
 

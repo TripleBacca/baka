@@ -70,7 +70,7 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentiferNode* StructIdentifier = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
+            types::IdentiferNode* StructIdentifier = this->Identifier();
 
 
             if (!this->Match(types::TokenType::LPAREN_CURLY)) {
@@ -87,21 +87,6 @@ namespace baka {
             return Node;
         }
 
-        types::ReturnStatementNode* Parser::ReturnStatement() {
-            if (!this->Match(types::TokenType::K_RETURN)) {
-                // throw error
-            }
-
-            types::ExpressionNode* Expression = this->Expression();
-
-            if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
-            }
-
-            types::ReturnStatementNode* Node = ASTALLOC.Alloc<types::ReturnStatementNode>(Expression);
-            return Node;
-        }
-
         types::StructDeclarationStatementNode* Parser::StructDeclarationStatement() {
             //TODO add support for inline initialisation
             //TODO add support for comma separated declarations
@@ -112,7 +97,7 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            types::IdentiferNode* VariableName = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
+            types::IdentiferNode* VariableName = Identifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 // throw error

@@ -15,7 +15,6 @@
 #include "line_index.hh"
 #include "mmap_file.hh"
 #include "types/exceptions.hh"
-#include "types/parser/ast.hh"
 
 
 namespace {
