@@ -193,8 +193,3 @@ result                    IDENTIFIER
 
 Lexer: Lexing stage completed
 
-Parser::AST: 
-balls
-
-Parser: Parsing stage completed
-

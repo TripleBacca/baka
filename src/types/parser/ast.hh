@@ -57,8 +57,13 @@ namespace baka {
             {TokenType::OP_TILDE, ASTUnaryOp::OP_TILDE},
         };
 
-        inline std::string_view UnaryOpToStr(ASTUnaryOp op) {
-            switch (op) {
+    inline static std::unordered_map<TokenType, int> BinaryOpToPriority = {
+        {},
+
+    };
+
+    inline std::string_view UnaryOpToStr(ASTUnaryOp op) {
+        switch (op) {
             case ASTUnaryOp::OP_UNARY_MINUS: return "-";
             case ASTUnaryOp::OP_TILDE: return "~";
             case ASTUnaryOp::OP_NOOP: return "NOOP";

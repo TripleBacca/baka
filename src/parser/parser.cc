@@ -5,6 +5,8 @@
 #include <string_view>
 #include <variant>
 
+// TODO: deal with dtypddefs by mainting symbol table
+//
 #define ASTALLOC base::ASTNodeArena::getInstance()
 
 namespace baka {
