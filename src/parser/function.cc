@@ -63,7 +63,7 @@ namespace baka {
                 // throw error
             }
 
-            const types::FunctionArgumentsNode* Args = this->FunctionArguments();
+            types::FunctionArgumentsNode* Args = this->FunctionArguments();
 
             if (!this->Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
