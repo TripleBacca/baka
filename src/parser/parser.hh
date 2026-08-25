@@ -61,7 +61,7 @@ namespace parser {
         types::ExpressionNode* ParseFactor();
 
         // for ++, -- , [], ->, .
-        types::PostfixExpressionNode* ParsePostfixExpression();
+        types::ExpressionNode* ParsePostfixExpression();
 
     };
 

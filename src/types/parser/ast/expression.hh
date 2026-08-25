@@ -2,7 +2,7 @@
 #include "ast_node.hh"
 #include "constant.hh"
 #include <variant>
-#include "identifer.hh"
+#include "identifier.hh"
 #include "utils.hh"
 
 
@@ -22,11 +22,11 @@ namespace types {
 
 
     class PrimaryExpressionNode : public ExpressionNode {
-        std::variant<ConstantNode*, IdentiferNode*> Expr;
+        std::variant<ConstantNode*, IdentifierNode*> Expr;
 
         public:
 
-        PrimaryExpressionNode(std::variant<ConstantNode*, IdentiferNode*> Expr) : Expr(Expr) {}
+        PrimaryExpressionNode(std::variant<ConstantNode*, IdentifierNode*> Expr) : Expr(Expr) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -35,7 +35,7 @@ namespace types {
             if(std::holds_alternative<ConstantNode*>(Expr)) {
                 std::get<ConstantNode*>(Expr)->Print(Tabs + 1);
             } else {
-                std::get<IdentiferNode*>(Expr)->Print(Tabs + 1);
+                std::get<IdentifierNode*>(Expr)->Print(Tabs + 1);
             }
 
             INDENT(Tabs);
@@ -66,5 +66,108 @@ namespace types {
             }
     };
 
+
+    // POSTFIX EXPRESSION NODES: . , ->, [] , (),
+
+
+    class IndexPostfixExpr : public PostfixExpressionNode {
+        ExpressionNode* LHSExpr;
+        ExpressionNode* Index;
+        public:
+            IndexPostfixExpr(ExpressionNode* LHSExpr, ExpressionNode* Index)
+                : LHSExpr(LHSExpr), Index(Index) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "IndexPostfixExpr(" << std::endl;
+
+                LHSExpr->Print(Tabs + 1);
+                Index->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
+
+
+    // for ++ and -- postfix:
+    class UnaryPostfixExpr : public PostfixExpressionNode {
+        ExpressionNode* LHSExpr;
+        ASTUnaryOp Op;
+        public:
+            UnaryPostfixExpr(ExpressionNode* LHSExpr, ASTUnaryOp Op)
+                : LHSExpr(LHSExpr), Op(Op) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "UnaryPostfixExpr(" << std::endl;
+
+                LHSExpr->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
+
+    // for . postfix expr
+    class MemberPostfixExpr : public PostfixExpressionNode {
+        ExpressionNode* LHSExpr;
+        IdentifierNode* MemberName;
+        public:
+            MemberPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
+                : LHSExpr(LHSExpr), MemberName(MemberName) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "MemberPostfixExpr(" << std::endl;
+
+                LHSExpr->Print(Tabs + 1);
+                MemberName->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
+
+    // for -> postfix expr
+    class ArrowPostfixExpr : public PostfixExpressionNode {
+        ExpressionNode* LHSExpr;
+        IdentifierNode* MemberName;
+        public:
+            ArrowPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
+                : LHSExpr(LHSExpr), MemberName(MemberName) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "ArrowPostfixExpr(" << std::endl;
+
+                LHSExpr->Print(Tabs + 1);
+                MemberName->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
+
+
+    class FunctionCallPostfixExpr :  public PostfixExpressionNode {
+        ExpressionNode* FunctionIdentifier;
+        ExpressionNode* ArgumentList;
+
+        public:
+            FunctionCallPostfixExpr(ExpressionNode* FunctionIdentifier, ExpressionNode* ArgumentList)
+                : FunctionIdentifier(FunctionIdentifier), ArgumentList(ArgumentList) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "FunctionCallPostfixExpr(" << std::endl;
+
+                FunctionIdentifier->Print(Tabs + 1);
+                ArgumentList->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
 }
 }

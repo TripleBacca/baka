@@ -3,11 +3,13 @@
 #include "parser.hh"
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
-#include "types/parser/ast/identifer.hh"
+#include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/utils.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include "base/memory/custom_arenas.hh"
+#include <string_view>
+#include <variant>
 
 
 namespace baka {
@@ -35,6 +37,8 @@ namespace parser {
 //     → parse_factor      (unary ops: - ! ~)
 //         → parse_postfix_exp   (postfix: ++ -- . -> [ ( )
 //             → parse_primary_exp   (atoms: constants, identifiers, "(...)")
+
+
 
 
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
@@ -66,7 +70,7 @@ namespace parser {
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            types::IdentiferNode* IdentifierNode = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(Identifier.Value));
+            types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
 
             types::PrimaryExpressionNode* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
 
@@ -95,8 +99,78 @@ namespace parser {
     }
 
     // for ++, -- , [], ->, .
-    types::PostfixExpressionNode* Parser::ParsePostfixExpression() {
+    types::ExpressionNode* Parser::ParsePostfixExpression() {
+        types::ExpressionNode* Left = ParsePrimaryExpression(); // can be int, (expr), constants, identifier
+        // primary expr because cannot be something like 'a-- --' or 'a--[]' - need be brakcetted
 
+        auto isPostfixExprOp = [](types::TokenType TokenType_v) -> bool {
+            switch(TokenType_v) {
+                case types::TokenType::OP_INC:
+                case types::TokenType::OP_DEC:
+                case types::TokenType::OP_DOT:
+                case types::TokenType::OP_ARROW:
+                case types::TokenType::LPAREN_SQUARE:
+                case types::TokenType::LPAREN_ROUND:
+                    return true;
+                default:
+                    return false;
+            }
+        };
+
+        while(isPostfixExprOp(Peek().TokenType_v)) {
+            types::TokenType Op = Advance().TokenType_v;
+
+            if(Op == types::TokenType::LPAREN_SQUARE) {
+
+                types::ExpressionNode* Index = ParseExpression();
+                Left = ASTALLOC.Alloc<types::IndexPostfixExpr>(Left, Index);
+
+                if(!Match(types::TokenType::RPAREN_SQUARE)) {
+                    // todo throw error
+                }
+            } else if(Op == types::TokenType::OP_INC || Op == types::TokenType::OP_DEC) {
+
+                Left = ASTALLOC.Alloc<types::UnaryPostfixExpr>(Left, Op);
+
+            } else if(Op == types::TokenType::OP_DOT) {
+                // (expr).identifer
+
+                if(!Check(types::TokenType::IDENTIFIER)) {
+                    // todo throw error
+                }
+
+                auto& Identifier = Advance();
+                assert(std::holds_alternative<std::string_view>(Identifier.Value) && "identifier doesnt have string view");
+                types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+
+                Left = ASTALLOC.Alloc<types::MemberPostfixExpr>(Left, IdentifierNode);
+
+            } else if(Op == types::TokenType::OP_ARROW) {
+                // (expr)->identifer
+
+                if(!Check(types::TokenType::IDENTIFIER)) {
+                    // todo throw error
+                }
+                auto& Identifier = Advance();
+                assert(std::holds_alternative<std::string_view>(Identifier.Value) && "identifier doesnt have string view");
+                types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+
+                Left = ASTALLOC.Alloc<types::ArrowPostfixExpr>(Left, IdentifierNode);
+            } else {
+                // identifer(expr) expr will have commas
+                // (2+2)(1,2) will allow this
+
+                types::ExpressionNode* ArgsList = ParseExpression();
+
+                if(!Match(types::TokenType::RPAREN_ROUND)) {
+                    // todo throw error
+                }
+
+                Left = ASTALLOC.Alloc<types::FunctionCallPostfixExpr>(Left, ArgsList);
+            }
+        }
+
+        return Left;
     }
 
 

@@ -8,10 +8,10 @@ namespace baka {
 
 namespace types {
 
-class IdentiferNode : public ASTNode {
+class IdentifierNode : public ASTNode {
     std::string_view IdentiferName;
 public:
-    IdentiferNode(std::string_view Name) : IdentiferName(Name) {}
+    IdentifierNode(std::string_view Name) : IdentiferName(Name) {}
 
     void Print(size_t Tabs = 0) const override {
         INDENT(Tabs);
