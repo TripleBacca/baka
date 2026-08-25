@@ -69,10 +69,8 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            const types::Token& StructIdentifier = this->Advance();
-            if (!std::holds_alternative<std::string_view>(StructIdentifier.Value)) {
-                // throw error
-            }
+
+            types::IdentiferNode* StructIdentifier = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
 
 
             if (!this->Match(types::TokenType::LPAREN_CURLY)) {
@@ -84,8 +82,7 @@ namespace baka {
                 Body.push_back(this->StructDeclarationStatement());
             }
 
-            types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(
-                std::get<std::string_view>(StructIdentifier.Value), Body);
+            types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(StructIdentifier, Body);
 
             return Node;
         }
@@ -115,14 +112,14 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            const types::Token& VariableName = this->Advance();
+            types::IdentiferNode* VariableName = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 // throw error
             }
 
             types::StructDeclarationStatementNode* Node = ASTALLOC.Alloc<types::StructDeclarationStatementNode>(
-                std::get<std::string_view>(DataType.Value), std::get<std::string_view>(VariableName.Value));
+                std::get<std::string_view>(DataType.Value), VariableName);
 
             return Node;
         }
