@@ -58,43 +58,6 @@ namespace baka {
             return Node;
         }
 
-        types::FunctionNode* Parser::Function() {
-            const types::Token& ReturnType = this->Advance();
-
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // throw error
-            }
-            const types::Token& FunctionIdentifier = this->Advance();
-            if (!std::holds_alternative<std::string_view>(FunctionIdentifier.Value)) {
-                // throw error
-            }
-
-
-            if (!this->Match(types::TokenType::LPAREN_ROUND)) {
-                // throw error
-            }
-
-            // call decl list
-
-            if (!this->Match(types::TokenType::RPAREN_ROUND)) {
-                // throw error
-            }
-
-
-            if (!this->Match(types::TokenType::LPAREN_CURLY)) {
-                // throw error
-            }
-            types::ReturnStatementNode* Body = this->ReturnStatement();
-            if (!this->Match(types::TokenType::RPAREN_CURLY)) {
-                // throw error
-            }
-            types::FunctionNode* Node = ASTALLOC.Alloc<types::FunctionNode>(
-                std::get<std::string_view>(ReturnType.Value), std::get<std::string_view>(FunctionIdentifier.Value),
-                Body);
-
-            return Node;
-        }
-
         types::StructNode* Parser::Struct() {
             //TODO add support for declarations after struct
             //TODO semicolon?
@@ -146,7 +109,12 @@ namespace baka {
             //TODO add support for inline initialisation
             //TODO add support for comma separated declarations
             //TODO add support for struct enum etc declarations
+            //TODO add support for unsigned const etc declarations
             const types::Token& DataType = this->Advance();
+
+            if (!this->Check(types::TokenType::IDENTIFIER)) {
+                // throw error
+            }
             const types::Token& VariableName = this->Advance();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
