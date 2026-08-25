@@ -21,9 +21,12 @@ namespace types {
     };
 
 
-
     class PrimaryExpressionNode : public ExpressionNode {
         std::variant<ConstantNode*, IdentiferNode*> Expr;
+
+        public:
+
+        PrimaryExpressionNode(std::variant<ConstantNode*, IdentiferNode*> Expr) : Expr(Expr) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -40,6 +43,28 @@ namespace types {
         }
     };
 
+
+    class FactorNode : public ExpressionNode {
+        ASTUnaryOp UnaryOp;
+        ExpressionNode* Expr;
+        public:
+            FactorNode(ASTUnaryOp UnaryOp, ExpressionNode* Expr)
+                : UnaryOp(UnaryOp), Expr(Expr) {}
+
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "Factor(" << std::endl;
+
+                INDENT(Tabs + 1);
+                std::cout << "UnaryOp: " << ASTUnaryOpToString(UnaryOp) << ",\n";
+
+                Expr->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
 
 }
 }

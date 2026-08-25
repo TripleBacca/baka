@@ -1,13 +1,12 @@
 #include "parser.hh"
 #include "memory/custom_arenas.hh"
-#include "types/parser/ast.hh"
+#include "types/parser/ast/expression.hh"
 #include "types/token/token.hh"
+#include "utils.hh"
 #include <string_view>
 #include <variant>
 
 // TODO: deal with dtypddefs by mainting symbol table
-//
-#define ASTALLOC base::ASTNodeArena::getInstance()
 
 namespace baka {
     namespace parser {
@@ -161,47 +160,51 @@ namespace baka {
         }
 
         types::ExpressionNode* Parser::Expression() {
-            types::ExpressionNode* Unary;
-            if (this->Match(types::TokenType::LPAREN_ROUND)) {
-                Unary = this->UnaryExpression();
-                if (!this->Match(types::TokenType::RPAREN_ROUND)) {
-                    // throw error
-                }
-            }
-            else {
-                Unary = this->UnaryExpression();
-            }
+            //TODO:
+            // types::ExpressionNode* Unary;
+            // if (this->Match(types::TokenType::LPAREN_ROUND)) {
+            //     Unary = this->UnaryExpression();
+            //     if (!this->Match(types::TokenType::RPAREN_ROUND)) {
+            //         // throw error
+            //     }
+            // }
+            // else {
+            //     Unary = this->UnaryExpression();
+            // }
 
 
-            return Unary;
+            // return Unary;
         }
 
-        types::UnaryExpressionNode* Parser::UnaryExpression() {
-            if (this->Match(types::TokenType::OP_UNARY_MINUS) || this->Match(types::TokenType::OP_TILDE)) {
-                types::ASTUnaryOp Op = types::TokenTypeToASTUnaryOp[this->Previous().TokenType_v];
+        // types::UnaryExpressionNode* Parser::UnaryExpression() {
+        //     if (this->Match(types::TokenType::OP_UNARY_MINUS) || this->Match(types::TokenType::OP_TILDE)) {
+        //         types::ASTUnaryOp Op = types::TokenTypeToASTUnaryOp[this->Previous().TokenType_v];
 
-                types::ExpressionNode* Expr = this->Expression();
-                types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(Op, Expr);
-                return Node;
-            }
-            else {
-                types::ConstantNode* Constant = this->ConstantNode();
-                types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(
-                    types::ASTUnaryOp::OP_NOOP, Constant);
+        //         types::ExpressionNode* Expr = this->Expression();
+        //         types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(Op, Expr);
+        //         return Node;
+        //     }
+        //     else {
+        //         types::ConstantIntNode* Constant = this->ParseConstantNode();
+        //         types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(
+        //             types::ASTUnaryOp::OP_NOOP, Constant);
 
-                return Node;
-            }
-        }
+        //         return Node;
+        //     }
+        // }
 
-        types::ConstantNode* Parser::ConstantNode() {
+
+        types::ConstantIntNode* Parser::ParseConstantNode() {
             types::Token Token = this->Peek();
             if (!std::holds_alternative<int>(Token.Value)) {
                 // throw error
             }
             this->Advance();
 
-            types::ConstantNode* Node = ASTALLOC.Alloc<types::ConstantNode>(std::get<int>(Token.Value));
+            types::ConstantIntNode* Node = ASTALLOC.Alloc<types::ConstantIntNode>(std::get<int>(Token.Value));
             return Node;
         }
+
+
     }
 }

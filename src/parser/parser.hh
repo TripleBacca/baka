@@ -1,8 +1,12 @@
 #pragma once
-#include "types/parser/ast.hh"
 #include "types/token/all.hh"
 #include <span>
 #include <cstddef>
+#include "types/parser/ast/expression.hh"
+#include "types/parser/ast/struct.hh"
+#include "types/parser/ast/return.hh"
+#include "types/parser/ast/program.hh"
+#include "types/parser/ast/function.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -14,6 +18,9 @@
 
 
 namespace baka {
+
+
+
 
 namespace parser {
 
@@ -33,7 +40,6 @@ namespace parser {
         const types::Token& Previous() const;
 
         // recursive descent nodes:
-        // TODO
 
         types::ProgramNode* Program();
         types::FunctionNode* Function();
@@ -42,9 +48,20 @@ namespace parser {
         // this is for declarations inside a struct, im sorry
         types::StructDeclarationStatementNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
-        types::UnaryExpressionNode* UnaryExpression();
-        types::ConstantNode* ConstantNode();
+        // types::UnaryExpressionNode* UnaryExpression();
+        types::ConstantIntNode* ParseConstantNode();
 
+
+        // expressions:
+        types::ExpressionNode* ParseExpression(size_t MinPrecedence = 0);
+
+        types::ExpressionNode* ParsePrimaryExpression();
+
+        bool IsUnaryOperator(types::TokenType type) const noexcept;
+        types::ExpressionNode* ParseFactor();
+
+        // for ++, -- , [], ->, .
+        types::PostfixExpressionNode* ParsePostfixExpression();
 
     };
 
