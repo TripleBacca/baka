@@ -1,7 +1,6 @@
 #pragma once
 #include "types/token/all.hh"
 #include <span>
-#include <cstddef>
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
 #include "types/parser/ast/return.hh"
@@ -43,6 +42,8 @@ namespace parser {
 
         types::ProgramNode* Program();
         types::FunctionNode* Function();
+        types::FunctionArgumentsNode* FunctionArguments();
+        types::FunctionArgumentStatementNode* FunctionArgumentStatement();
         types::StructNode* Struct();
         types::ReturnStatementNode* ReturnStatement();
         // this is for declarations inside a struct, im sorry
