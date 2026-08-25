@@ -4,7 +4,7 @@
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
-#include "types/parser/ast/utils.hh"
+#include "types/parser/ast/ternery.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include "base/memory/custom_arenas.hh"
@@ -34,9 +34,9 @@ namespace parser {
 
 //
 //   parse_expr         (binary ops: + - * / etc, via precedence climbing)
-//     → parse_factor      (unary ops: - ! ~)
-//         → parse_postfix_exp   (postfix: ++ -- . -> [ ( )
-//             → parse_primary_exp   (atoms: constants, identifiers, "(...)")
+//     -> parse_factor      (unary ops: - ! ~)
+//         -> parse_postfix_exp   (postfix: ++ -- . -> [ ( )
+//             -> parse_primary_exp   (atoms: constants, identifiers, "(...)")
 
 
 
@@ -45,6 +45,7 @@ namespace parser {
         auto& ConstantOrIdentifier = Peek();
 
         if(Match(types::TokenType::LPAREN_ROUND)) {
+            // TODO: can be a c style cast do later after symbol talbe
             types::ExpressionNode* Node = ParseCommaExpression();
             if(!Match(types::TokenType::RPAREN_ROUND)) {
                 // TODO: throw erorr
@@ -79,7 +80,7 @@ namespace parser {
             // TODO: throw error
         }
 
-
+        return nullptr;
     }
 
 
@@ -178,12 +179,23 @@ namespace parser {
     {
         auto* LeftFactor = ParseFactor();
         auto Op = Peek().TokenType_v;
-        while (IsBinaryOperator(Op) && GetPrecedence(Op) >= MinPrecedence) {
+        while (IsBinaryOperator(Op) && GetPrecedence(Op) >= MinPrecedence && Op != types::TokenType::OP_COMMA) {
             Advance();
-            if (IsRightToLeft(Peek().TokenType_v))
+            if (IsRightToLeft(Op))
             {
-                auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op));
-                LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+                if (Op == types::TokenType::OP_QUESTION) {
+                    auto* ThenExpr = ParseAssignmentExpression();
+                    if (!Match(types::TokenType::OP_COLON)) {
+                        // todo throw error
+                    }
+
+                    auto* ElseExpr = ParseAssignmentExpression();
+
+                    LeftFactor = ASTALLOC.Alloc<types::TerneryOpNode>(LeftFactor, ThenExpr, ElseExpr);
+                } else {
+                    auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op));
+                    LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+                }
             }
             else
             {
@@ -200,6 +212,7 @@ namespace parser {
     {
         std::vector<types::ExpressionNode*> Args;
         auto* LeftFactor = ParseAssignmentExpression();
+        Args.push_back(LeftFactor);
         while (Match(types::TokenType::OP_COMMA)) {
             auto* RightFactor = ParseAssignmentExpression();
             Args.push_back(RightFactor);
