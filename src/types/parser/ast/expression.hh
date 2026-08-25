@@ -4,6 +4,7 @@
 #include <variant>
 #include "identifier.hh"
 #include "utils.hh"
+#include "operators.hh"
 
 
 namespace baka {
@@ -141,9 +142,12 @@ namespace types {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "UnaryPostfixExpr(" << std::endl;
+                std::cout << "UnaryPostfixExpr(" << '\n';
 
                 LHSExpr->Print(Tabs + 1);
+
+                INDENT(Tabs + 1);
+                std::cout << ASTUnaryOpToString(Op) << '\n';
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -210,5 +214,6 @@ namespace types {
                 std::cout << ")" << std::endl;
             }
     };
+
 }
 }
