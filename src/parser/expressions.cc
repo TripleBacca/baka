@@ -45,7 +45,7 @@ namespace parser {
         auto& ConstantOrIdentifier = Peek();
 
         if(Match(types::TokenType::LPAREN_ROUND)) {
-            types::ExpressionNode* Node = ParseExpression();
+            types::ExpressionNode* Node = ParseCommaExpression();
             if(!Match(types::TokenType::RPAREN_ROUND)) {
                 // TODO: throw erorr
             }
@@ -122,7 +122,7 @@ namespace parser {
 
             if(Op == types::TokenType::LPAREN_SQUARE) {
 
-                types::ExpressionNode* Index = ParseExpression();
+                types::ExpressionNode* Index = ParseCommaExpression();
                 Left = ASTALLOC.Alloc<types::IndexPostfixExpr>(Left, Index);
 
                 if(!Match(types::TokenType::RPAREN_SQUARE)) {
@@ -130,7 +130,8 @@ namespace parser {
                 }
             } else if(Op == types::TokenType::OP_INC || Op == types::TokenType::OP_DEC) {
 
-                Left = ASTALLOC.Alloc<types::UnaryPostfixExpr>(Left, Op);
+
+                Left = ASTALLOC.Alloc<types::UnaryPostfixExpr>(Left, types::TokenTypeToASTUnaryOp.at(Op));
 
             } else if(Op == types::TokenType::OP_DOT) {
                 // (expr).identifer
@@ -160,7 +161,7 @@ namespace parser {
                 // identifer(expr) expr will have commas
                 // (2+2)(1,2) will allow this
 
-                types::ExpressionNode* ArgsList = ParseExpression();
+                types::ExpressionNode* ArgsList = ParseCommaExpression();
 
                 if(!Match(types::TokenType::RPAREN_ROUND)) {
                     // todo throw error
@@ -173,6 +174,38 @@ namespace parser {
         return Left;
     }
 
+    types::ExpressionNode* Parser::ParseAssignmentExpression(size_t MinPrecedence)
+    {
+        auto* LeftFactor = ParseFactor();
+        auto Op = Peek().TokenType_v;
+        while (IsBinaryOperator(Op) && GetPrecedence(Op) >= MinPrecedence) {
+            Advance();
+            if (IsRightToLeft(Peek().TokenType_v))
+            {
+                auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op));
+                LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+            }
+            else
+            {
+                auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op) + 1);
+                LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+            }
+            Op = Peek().TokenType_v;
+        }
+
+        return LeftFactor;
+    }
+
+    types::ExpressionNode* Parser::ParseCommaExpression()
+    {
+        std::vector<types::ExpressionNode*> Args;
+        auto* LeftFactor = ParseAssignmentExpression();
+        while (Match(types::TokenType::OP_COMMA)) {
+            auto* RightFactor = ParseAssignmentExpression();
+            Args.push_back(RightFactor);
+        }
+        return ASTALLOC.Alloc<types::CommaExpressionNode>(std::move(Args));
+    }
 
 }
 }

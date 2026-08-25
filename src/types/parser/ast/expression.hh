@@ -20,7 +20,6 @@ namespace types {
         virtual ~PostfixExpressionNode() = default;
     };
 
-
     class PrimaryExpressionNode : public ExpressionNode {
         std::variant<ConstantNode*, IdentifierNode*> Expr;
 
@@ -66,6 +65,48 @@ namespace types {
             }
     };
 
+
+    class BinaryExpressionNode : public ExpressionNode {
+        ASTBinaryOp BinaryOp;
+        ExpressionNode* LHSExpr;
+        ExpressionNode* RHSExpr;
+        public:
+            BinaryExpressionNode(ASTBinaryOp BinaryOp, ExpressionNode* LHSExpr, ExpressionNode* RHSExpr)
+                : BinaryOp(BinaryOp), LHSExpr(LHSExpr), RHSExpr(RHSExpr) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "BinaryExpression(" << std::endl;
+
+                INDENT(Tabs + 1);
+                std::cout << "BinaryOp: " << ASTBinaryOpToString(BinaryOp) << ",\n";
+
+                LHSExpr->Print(Tabs + 1);
+                RHSExpr->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
+
+    class CommaExpressionNode : public ExpressionNode {
+        std::vector<ExpressionNode*> ExpressionList;
+        public:
+            CommaExpressionNode(std::vector<ExpressionNode*> ExpressionList)
+                : ExpressionList(std::move(ExpressionList)) {}
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "CommaExpression(" << std::endl;
+
+                for(auto* expr : ExpressionList) {
+                    expr->Print(Tabs + 1);
+                }
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+    };
 
     // POSTFIX EXPRESSION NODES: . , ->, [] , (),
 
