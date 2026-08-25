@@ -46,6 +46,7 @@ namespace baka::lexer {
         {"?", types::TokenType::OP_QUESTION},
         {".", types::TokenType::OP_DOT},
         {"->", types::TokenType::OP_ARROW},
-        {"...", types::TokenType::OP_ELLIPSIS}
+        {"...", types::TokenType::OP_ELLIPSIS},
+        {"@", types::TokenType::AT}
     };
 }

@@ -4,6 +4,8 @@ set(EXEC_SOURCES
     parser.cc
     expressions.cc
     function.cc
+    jumpStatement.cc
+    identifier.cc
 )
 
 add_library(parser

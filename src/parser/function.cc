@@ -16,7 +16,7 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            types::IdentiferNode* VariableName = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
+            types::IdentiferNode* VariableName = Identifier();
 
             types::FunctionArgumentStatementNode* Node = ASTALLOC.Alloc<types::FunctionArgumentStatementNode>(
                 std::get<std::string_view>(DataType.Value), VariableName);
@@ -53,7 +53,7 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            types::IdentiferNode* FunctionIdentifier = ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
+            types::IdentiferNode* FunctionIdentifier = this->Identifier();
 
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
@@ -70,7 +70,7 @@ namespace baka {
             if (!this->Match(types::TokenType::LPAREN_CURLY)) {
                 // throw error
             }
-            types::ReturnStatementNode* Body = this->ReturnStatement();
+            types::JumpStatementNode* Body = this->JumpStatement();
             if (!this->Match(types::TokenType::RPAREN_CURLY)) {
                 // throw error
             }

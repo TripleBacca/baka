@@ -3,9 +3,9 @@
 #include <span>
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
-#include "types/parser/ast/return.hh"
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
+#include "types/parser/ast/jumpStatement.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -45,7 +45,11 @@ namespace parser {
         types::FunctionArgumentsNode* FunctionArguments();
         types::FunctionArgumentStatementNode* FunctionArgumentStatement();
         types::StructNode* Struct();
+        types::JumpStatementNode* JumpStatement();
         types::ReturnStatementNode* ReturnStatement();
+        types::GotoStatementNode* GotoStatement();
+        types::BreakStatementNode* BreakStatement();
+        types::ContinueStatementNode* ContinueStatement();
         // this is for declarations inside a struct, im sorry
         types::StructDeclarationStatementNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
@@ -63,7 +67,7 @@ namespace parser {
 
         // for ++, -- , [], ->, .
         types::PostfixExpressionNode* ParsePostfixExpression();
-
+        types::IdentiferNode* Identifier();
     };
 
 }
