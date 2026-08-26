@@ -37,7 +37,7 @@ namespace baka {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "Goto(@, " << "\n";
+                std::cout << "Goto(" << "\n";
 
                 Label->Print(Tabs + 1);
 
@@ -55,9 +55,7 @@ namespace baka {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "Break(";
-                if (Label) std::cout << "@, ";
-                std::cout << "\n";
+                std::cout << "Break(\n";
 
                 if (Label) Label->Print(Tabs + 1);
 
@@ -75,9 +73,7 @@ namespace baka {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "Continue(";
-                if (Label) std::cout << "@, ";
-                std::cout << "\n";
+                std::cout << "Continue(\n";
 
                 if (Label) Label->Print(Tabs + 1);
 

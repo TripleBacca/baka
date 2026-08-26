@@ -16,6 +16,12 @@ namespace baka {
             return Tokens[current].TokenType_v == type;
         }
 
+        bool Parser::Check2(types::TokenType type) const noexcept {
+            if (current + 1 >= Tokens.size()) return (type == types::TokenType::EOF_TOKEN);
+
+            return Tokens[current + 1].TokenType_v == type;
+        }
+
         const types::Token& Parser::Advance() {
             return Tokens[current++];
         }
@@ -40,22 +46,22 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseCommaExpression();
+            return Program();
         };
 
         types::ProgramNode* Parser::Program() {
-            // std::vector<types::ASTNode*> body;
-            // while (!Check(types::TokenType::EOF_TOKEN)) {
-            //     if (Check(types::TokenType::K_STRUCT)) {
-            //         body.push_back(this->Struct());
-            //     }
-            //     else {
-            //         body.push_back(this->Function());
-            //     }
-            // }
+            std::vector<types::ASTNode*> body;
+            while (!Check(types::TokenType::EOF_TOKEN)) {
+                if (Check(types::TokenType::K_STRUCT)) {
+                    body.push_back(this->Struct());
+                }
+                else {
+                    body.push_back(this->Function());
+                }
+            }
 
-            // types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
-            // return Node;
+            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
+            return Node;
         }
 
         types::StructNode* Parser::Struct() {

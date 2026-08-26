@@ -70,7 +70,7 @@ namespace baka {
             if (!this->Match(types::TokenType::LPAREN_CURLY)) {
                 // throw error
             }
-            types::JumpStatementNode* Body = this->JumpStatement();
+            types::StatementNode* Body = this->Statement();
             if (!this->Match(types::TokenType::RPAREN_CURLY)) {
                 // throw error
             }
