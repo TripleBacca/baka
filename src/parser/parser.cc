@@ -40,7 +40,7 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseCommaExpression();
+            return ParseDeclarationList();
         };
 
         types::ProgramNode* Parser::Program() {

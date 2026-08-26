@@ -1,7 +1,5 @@
-#pragma once
-
-
 #include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
 #include "parser.hh"
 #include "utils.hh"
@@ -20,22 +18,6 @@ namespace baka
 		// declarator          := '*'* IDENTIFIER ('[' expr? ']')* ('=' initializer)?
 		// initializer         := expr | '{' expr (',' expr)* '}'
 
-		// parse_specifiers():
-		//     is_static = False
-		//     is_const = False
-
-		//     if peek() == 'static':
-		//         consume('static')
-		//         is_static = True
-
-		//     if peek() == 'const':
-		//         consume('const')
-		//         is_const = True
-
-		//     base_type = parse_type_specifier()
-		//     base_type.is_const = is_const   # attach to the type, not the declarator
-
-		//     return is_static, base_type
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
 			bool IsStatic = false;
@@ -59,6 +41,12 @@ namespace baka
 
 			std::vector<types::SingleDeclarationNode*> Declarations;
 			auto* Node = ParseSingleDeclaration();
+			if(Node == nullptr) {
+			    // idk if this faulure case is ever met
+				// todo throw error
+				assert(false && "Expected single declaration");
+			}
+
 			Declarations.push_back(Node);
 
 			while (Match(types::TokenType::OP_COMMA))
@@ -72,31 +60,46 @@ namespace baka
 				// TODO: throw error
 				assert(false && "Expected semicolon at the end of declaration list");
 			}
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, Declarations);
+
+			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst,TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 
-
 		// int * ((***a[2])[4])[5];
+		// int a = {1}, b;
 		types::SingleDeclarationNode* Parser::ParseSingleDeclaration()
 		{
+			auto* DeclarationIdentifer = ParseDeclarationIdentifier();
+			if(DeclarationIdentifer == nullptr) {
+				// todo throw error
+				assert(false && "Expected declaration identifier");
+			}
 
+			types::ExpressionNode* Initialization = nullptr;
+			if (Match(types::TokenType::OP_ASSIGN))
+			{
+				Initialization = ParseInitializer();
+				// Intializer is either : assignment_expr, { intializer, ... }
+			}
+
+			auto* Node = ASTALLOC.Alloc<types::SingleDeclarationNode>(DeclarationIdentifer, Initialization);
+			return Node;
 		}
+
 
 		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier()
 		{
-			types::DeclarationIdentifierNode *VariableName = nullptr;
-			size_t PointerCount = 0;
+			types::DeclarationIdentifierNode *Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
 			while (Match(types::TokenType::OP_MUL))
 			{
-				PointerCount++;
+			    Variable->appendPointer();
 			}
 
 			if (Match(types::TokenType::LPAREN_ROUND))
 			{
 				auto* InnerDeclaration = ParseDeclarationIdentifier();
 				Match(types::TokenType::RPAREN_ROUND);
-				VariableName = ASTALLOC.Alloc<types::DeclarationIdentifierNode>(PointerCount, InnerDeclaration, std::vector<types::ExpressionNode*>{});
+				Variable->setInnerDeclaration(InnerDeclaration);
 			}
 			else
 			{
@@ -105,20 +108,29 @@ namespace baka
 					// TODO: throw error
 					assert(false && "Expected identifier");
 				}
-				VariableName = ASTALLOC<types::DeclarationIdentifierNode>(ParseIdentifier(), std::vector<types::ExpressionNode*>{});
+
+				Variable->setInnerDeclaration(ParseIdentifier());
 			}
 
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
-				types::ExpressionNode* ArraySize = nullptr;
-				if (!Check(types::TokenType::RPAREN_SQUARE))
-				{
-					ArraySize = ParseAssignmentExpression();
+				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
+				if(ArraySize == nullptr) {
+				    // todo throw error empty array expr
+					assert(false && "Expected array size");
 				}
-				Match(types::TokenType::RPAREN_SQUARE);
-				VariableName->ArraySizes.push_back(ArraySize);
+
+				Variable->appendArraySize(ArraySize);
+
+				if (!Match(types::TokenType::RPAREN_SQUARE))
+				{
+					// TODO: throw error
+					assert(false && "Expected ']'");
+				}
 			}
-			return VariableName;
+
+
+			return Variable;
 		}
 	}
 }

@@ -7,6 +7,8 @@
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
 #include "types/parser/ast/jumpStatement.hh"
+#include "types/parser/ast/initializer.hh"
+
 
 // functions in here:
 // check - check of current token is of some type
@@ -74,6 +76,8 @@ namespace parser {
         types::DeclarationList* ParseDeclarationList();
         types::SingleDeclarationNode* ParseSingleDeclaration();
         types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
+        types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
+
     };
 
 }
