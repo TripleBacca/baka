@@ -13,6 +13,9 @@ namespace baka {
             else if (Check(types::TokenType::K_FOR) || Check(types::TokenType::K_WHILE) || Check(types::TokenType::K_DO)) {
                 return this->IterationStatement();
             }
+            else if ((Check(types::TokenType::IDENTIFIER) && Check2(types::TokenType::OP_COLON)) || Check(types::TokenType::K_CASE) || Check(types::TokenType::K_DEFAULT)) {
+                return this->LabelStatement();
+            }
             else {
                 return this->JumpStatement();
             }

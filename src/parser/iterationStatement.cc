@@ -60,15 +60,12 @@ namespace baka {
             }
 
             types::ExpressionNode* Cond = nullptr;
-            if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                Cond = this->Expression();
-                if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                    // throw error
-                }
-            }
+            Cond = this->Expression();
             types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
-                Label = this->Identifier();
+            if (Match(types::TokenType::SEMICOLON)) {
+                if (Check(types::TokenType::IDENTIFIER)) {
+                    Label = this->Identifier();
+                }
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
@@ -98,16 +95,15 @@ namespace baka {
             }
 
             types::ExpressionNode* Cond = nullptr;
-            if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                Cond = this->Expression();
-                if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                    // throw error
+            Cond = this->Expression();
+
+            types::IdentifierNode* Label = nullptr;
+            if (Match(types::TokenType::SEMICOLON)) {
+                if (Check(types::TokenType::IDENTIFIER)) {
+                    Label = this->Identifier();
                 }
             }
-            types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
-                Label = this->Identifier();
-            }
+
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
