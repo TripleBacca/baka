@@ -71,7 +71,7 @@ namespace parser {
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+            types::IdentiferNode* IdentifierNode = this->Identifier();
 
             types::PrimaryExpressionNode* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
 

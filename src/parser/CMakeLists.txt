@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.10)
 set(EXEC_SOURCES
     parser.cc
     expressions.cc
+    function.cc
+    jumpStatement.cc
+    identifier.cc
 )
 
 add_library(parser

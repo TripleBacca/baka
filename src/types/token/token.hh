@@ -96,6 +96,9 @@ namespace types {
         OP_ARROW,
         OP_ELLIPSIS,
 
+        //@
+        AT,
+
         // punctuators
         LPAREN_ROUND,
         RPAREN_ROUND,

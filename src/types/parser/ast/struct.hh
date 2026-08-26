@@ -10,10 +10,10 @@ namespace baka {
     namespace types{
         class StructDeclarationStatementNode : public StatementNode {
             std::string_view DataType;
-            std::string_view VariableName;
+            IdentiferNode* VariableName;
 
         public:
-            StructDeclarationStatementNode(std::string_view dataType, std::string_view variableName) :
+            StructDeclarationStatementNode(std::string_view dataType, IdentiferNode* variableName) :
                 DataType(dataType), VariableName(variableName) {
             }
 
@@ -21,8 +21,7 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "StructDeclaration(" << DataType << ", " << '\n';
 
-                INDENT(Tabs + 1);
-                std::cout << VariableName << '\n';
+                VariableName->Print(Tabs + 1);
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -31,11 +30,11 @@ namespace baka {
 
 
         class StructNode : public ASTNode {
-            std::string_view StructName;
+            IdentiferNode* StructName;
             std::vector<StructDeclarationStatementNode*> Body;
 
         public:
-            StructNode(std::string_view identifier,
+            StructNode(IdentiferNode* identifier,
                        std::vector<StructDeclarationStatementNode*> body) : StructName(identifier),
                                                                             Body(std::move(body)) {
             }
@@ -44,7 +43,8 @@ namespace baka {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "Struct(" << StructName << ", " << '\n';
+                std::cout << "Struct(";
+                StructName->Print();
 
                 for (auto decl : Body) {
                     decl->Print(Tabs + 1);

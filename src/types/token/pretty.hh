@@ -88,6 +88,7 @@ namespace {
         {types::TokenType::OP_DOT, "OP_DOT"},
         {types::TokenType::OP_ARROW, "OP_ARROW"},
         {types::TokenType::OP_ELLIPSIS, "OP_ELLIPSIS"},
+        {types::TokenType::AT, "AT"},
         {types::TokenType::LPAREN_ROUND, "LPAREN_ROUND"},
         {types::TokenType::RPAREN_ROUND, "RPAREN_ROUND"},
         {types::TokenType::LPAREN_SQUARE, "LPAREN_SQUARE"},

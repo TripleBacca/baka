@@ -2,27 +2,78 @@
 #include "ast_node.hh"
 #include <iostream>
 #include <string_view>
+#include <utility>
+#include <vector>
 #include "statement.hh"
 #include "types/parser/ast/utils.hh"
 
+
 namespace baka {
 namespace types {
+    class FunctionArgumentStatementNode : public StatementNode {
+        std::string_view DataType;
+        IdentiferNode* VariableName;
+
+    public:
+        FunctionArgumentStatementNode(std::string_view dataType, IdentiferNode* variableName) : DataType(dataType), VariableName(variableName) {
+        }
+
+        void Print(size_t Tabs = 0) const override {
+            INDENT(Tabs);
+            std::cout << "ArgumentDecl(" << DataType << ", " << '\n';
+
+            VariableName->Print(Tabs + 1);
+
+            INDENT(Tabs);
+            std::cout << ")" << std::endl;
+        }
+    };
+
+    class FunctionArgumentsNode : public ASTNode {
+        std::vector<FunctionArgumentStatementNode*> Declarations;
+        bool HasEllipsis;
+
+    public:
+        FunctionArgumentsNode(std::vector<FunctionArgumentStatementNode*> declarations, bool hasEllipses) : Declarations(std::move(declarations)), HasEllipsis(hasEllipses) {
+        }
+
+        void Print(size_t Tabs = 0) const override {
+            INDENT(Tabs);
+            std::cout << "Args(" << '\n';
+
+            for (const auto decl : Declarations) {
+                decl->Print(Tabs + 1);
+            }
+
+            if (HasEllipsis) {
+                INDENT(Tabs + 1);
+                std::cout << "...\n";
+            }
+
+            INDENT(Tabs);
+            std::cout << ")" << std::endl;
+        }
+    };
 
     class FunctionNode : public ASTNode {
         std::string_view ReturnType;
-        std::string_view FuncName;
+        IdentiferNode* FuncName;
+        FunctionArgumentsNode* Args;
         StatementNode* Body;
 
     public:
-        FunctionNode(std::string_view returnType, std::string_view funcName, StatementNode* body) :
-            ReturnType(returnType), FuncName(funcName), Body(body) {
+        FunctionNode(std::string_view returnType, IdentiferNode* funcName, FunctionArgumentsNode* args, StatementNode* body) :
+            ReturnType(returnType), FuncName(funcName), Args(args), Body(body) {
         }
 
         ~FunctionNode() = default;
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Function(" << ReturnType << ", " << FuncName << ", " << '\n';
+            std::cout << "Function(" << ReturnType << ", ";
+            FuncName->Print();
+
+            Args->Print(Tabs + 1);
 
             Body->Print(Tabs + 1);
 
@@ -30,6 +81,5 @@ namespace types {
             std::cout << ")" << std::endl;
         }
     };
-
 }
 }
