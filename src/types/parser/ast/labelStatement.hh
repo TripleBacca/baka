@@ -63,7 +63,6 @@ namespace baka {
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Default Label(:\n";
-                std::cout << ":\n";
 
                 Stmt->Print(Tabs + 1);
 

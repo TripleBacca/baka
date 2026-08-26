@@ -1,5 +1,5 @@
 int main(int a){
     for(1;;)
-        continue
+        continue;
 }
 //**arr[*ptr++ + ~-val] = func(a, b)->field.method(x++) ? (b.x > 3 && (c->d || !*++p)) : (int_val % 2 ^ var->elem[idx[0]]);

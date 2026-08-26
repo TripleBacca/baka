@@ -36,7 +36,7 @@ namespace baka {
                 }
             }
             types::IdentifierNode* Label = nullptr;
-            if (!Match(types::TokenType::RPAREN_ROUND)) {
+            if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->Identifier();
             }
 
@@ -67,7 +67,7 @@ namespace baka {
                 }
             }
             types::IdentifierNode* Label = nullptr;
-            if (!Match(types::TokenType::RPAREN_ROUND)) {
+            if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->Identifier();
             }
 
@@ -105,7 +105,7 @@ namespace baka {
                 }
             }
             types::IdentifierNode* Label = nullptr;
-            if (!Match(types::TokenType::RPAREN_ROUND)) {
+            if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->Identifier();
             }
 

@@ -64,10 +64,9 @@ namespace parser {
         types::WhileBlockStatementNode* WhileBlockStatement();
         types::DoWhileBlockStatementNode* DoWhileBlockStatement();
         types::IterationStatementNode* IterationStatement();
-        types::GotoLabelStatementNode* GotoLabelStatementNode();
-        types::CaseLabelStatementNode* CaseLabelStatementNode();
-        types::DefaultLabelStatementNode* DefaultLabelStatementNode();
-
+        types::GotoLabelStatementNode* GotoLabelStatement();
+        types::CaseLabelStatementNode* CaseLabelStatement();
+        types::DefaultLabelStatementNode* DefaultLabelStatement();
         types::LabelStatementNode* LabelStatement();
 
 
