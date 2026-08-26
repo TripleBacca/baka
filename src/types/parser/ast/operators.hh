@@ -177,6 +177,9 @@ namespace baka {
                 case TokenType::OP_SUB_ASSIGN:
                 case TokenType::OP_LSHIFT_ASSIGN:
                 case TokenType::OP_RSHIFT_ASSIGN:
+                case TokenType::OP_OR_ASSIGN:
+                case TokenType::OP_XOR_ASSIGN:
+                case TokenType::OP_AND_ASSIGN:
                     return true;
                 default:
                     return false;
