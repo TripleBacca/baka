@@ -67,13 +67,13 @@ namespace types {
     };
 
     class FunctionNode : public ASTNode {
-        std::string_view ReturnType;
+        IdentifierNode* ReturnType;
         IdentifierNode* FuncName;
         FunctionParameterList* Args;
         StatementNode* Body;
 
     public:
-        FunctionNode(std::string_view returnType, IdentifierNode* funcName, FunctionParameterList* args, StatementNode* body) :
+        FunctionNode(IdentifierNode* returnType, IdentifierNode* funcName, FunctionParameterList* args, StatementNode* body) :
             ReturnType(returnType), FuncName(funcName), Args(args), Body(body) {
         }
 
@@ -81,11 +81,11 @@ namespace types {
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Function(" << ReturnType << ", ";
-            FuncName->Print();
+            std::cout << "Function(";
 
+            FuncName->Print(Tabs + 1);
+            ReturnType->Print(Tabs + 1);
             Args->Print(Tabs + 1);
-
             Body->Print(Tabs + 1);
 
             INDENT(Tabs);

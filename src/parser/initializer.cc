@@ -1,5 +1,3 @@
-#pragma once
-
 #include "types/parser/ast/initializer.hh"
 #include "parser.hh"
 #include "types/token/token.hh"

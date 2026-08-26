@@ -57,7 +57,7 @@ namespace parser {
         types::FunctionNode* Function();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
-        types::StructNode* Struct();
+        types::StructNode* ParseStruct();
 
         types::CompoundStatementNode* CompoundStatement();
 
@@ -67,7 +67,7 @@ namespace parser {
         types::BreakStatementNode* BreakStatement();
         types::ContinueStatementNode* ContinueStatement();
         // this is for declarations inside a struct, im sorry
-        types::StructDeclarationStatementNode* StructDeclarationStatement();
+        types::StructNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();
         types::ConstantIntNode* ParseConstantNode();

@@ -5,6 +5,7 @@
 #include <optional>
 #include <string_view>
 #include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/hash_policy.hpp>
 #include <vector>
 using namespace __gnu_pbds;
 
@@ -21,17 +22,13 @@ template<class SymbolTableEntry, class Alloc = base::UtilArena>
 class SymbolTable {
 
     // TODO: can cache hash value
-    using Map = gp_hash_table<std::string_view,
+    // gp_hash_table template params:
+    //   Key, Mapped, Hash_Fn, Eq_Fn,
+    //   Comb_Probe_Fn, Probe_Fn, Resize_Policy, Store_Hash, _Alloc
+    using Map = gp_hash_table<
+        std::string_view,
         SymbolTableEntry,
-        std::hash<std::string_view>,
-        std::equal_to<std::string_view>,
-        ArenaAllocatorWrapper<
-            char,
-            SingletonArena<
-                Arena<1024>,
-                AllocArenaTag::UTIL_NODE
-            >
-        >
+        std::hash<std::string_view>
     >;
 
     std::vector<Map> Scopes;
@@ -74,7 +71,6 @@ class ParserSymbolTable : public SymbolTable<SymbolTableEntry, Alloc> {
 
     public:
         ParserSymbolTable() {
-            // prefill
             this->EnterNewScope();
         }
 

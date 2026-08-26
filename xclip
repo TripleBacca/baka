@@ -1,0 +1,5 @@
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/tanmay/Documents/CodingRepos/compiler/build
+[ 28%] Built target base
+[ 33%] Building CXX object parser/CMakeFiles/parser.dir/parser.cc.o

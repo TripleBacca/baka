@@ -18,6 +18,12 @@ namespace baka
 		// declarator          := '*'* IDENTIFIER ('[' expr? ']')* ('=' initializer)?
 		// initializer         := expr | '{' expr (',' expr)* '}'
 
+
+		// TODO: stuff left to support
+		// function ptr
+		// unsigned annol
+		// bare struct - not gonna support
+
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
 			bool IsStatic = false;

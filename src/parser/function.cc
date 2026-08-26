@@ -3,11 +3,8 @@
 #include "memory/custom_arenas.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
-#include "types/token/pretty.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
-#include <string_view>
-#include <variant>
 
 namespace baka {
     namespace parser {
@@ -93,8 +90,7 @@ namespace baka {
 
             // TODO: do statement
             types::JumpStatementNode* Body = this->JumpStatement();
-            types::FunctionNode* Node = ASTALLOC.Alloc<types::FunctionNode>(
-                std::get<std::string_view>(ReturnTypeIdentifier->Value), FunctionIdentifier, Args, Body);
+            types::FunctionNode* Node = ASTALLOC.Alloc<types::FunctionNode>(ReturnTypeIdentifier, FunctionIdentifier, Args, Body);
 
             return Node;
         }

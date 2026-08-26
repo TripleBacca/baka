@@ -1,5 +1,8 @@
 #pragma once
 #include "ast_node.hh"
+#include "types/parser/ast/declaration.hh"
+#include <variant>
+#include <vector>
 
 
 
