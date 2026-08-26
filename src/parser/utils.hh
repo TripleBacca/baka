@@ -30,6 +30,7 @@ namespace detail {
             case types::TokenType::OP_DEC:            // prefix --
             case types::TokenType::OP_MUL:            // dereference *
             case types::TokenType::OP_BIT_AND:        // address-of &
+            case types::TokenType::K_SIZEOF:          // sizeof
                 return true;
             default:
                 return false;
