@@ -1,0 +1,74 @@
+#include "parser.hh"
+#include "types/token/token.hh"
+#include "utils.hh"
+#include <cassert>
+
+
+namespace baka {
+namespace parser {
+
+
+    types::StructNode* Parser::Struct() {
+        //TODO add support for declarations after struct - not doing
+        //TODO semicolon?
+
+        if (!this->Match(types::TokenType::K_STRUCT)) {
+            // match struct keyword
+            // todo throw error
+        }
+
+        if (!this->Check(types::TokenType::IDENTIFIER)) {
+            // todo throw error
+        }
+
+        types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
+        if(!LookupType(StructIdentifier)) {
+            // todo throw error
+        }
+
+        AddType(StructIdentifier);
+        EnterScope();
+
+
+        if (!this->Match(types::TokenType::LPAREN_CURLY)) {
+            // todo throw error
+        }
+        std::vector<types::DeclarationList*> Body;
+
+        while (!this->Match(types::TokenType::RPAREN_CURLY)) {
+            Body.push_back(this->ParseDeclarationList());
+        }
+
+        types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(StructIdentifier, std::move(Body));
+
+        if(!Match(types::TokenType::SEMICOLON)) {
+            // todo put error
+            assert(false);
+        }
+
+        return Node;
+    }
+
+    types::StructDeclarationStatementNode* Parser::StructDeclarationStatement() {
+        //TODO add support for inline initialisation
+        //TODO add support for comma separated declarations
+        //TODO add support for struct enum etc declarations
+        //TODO add support for unsigned const etc declarations
+        const types::Token& DataType = this->Advance();
+
+        if (!this->Check(types::TokenType::IDENTIFIER)) {
+            // throw error
+        }
+        types::IdentifierNode* VariableName = ParseIdentifier();
+
+        if (!this->Match(types::TokenType::SEMICOLON)) {
+            // throw error
+        }
+
+        types::StructDeclarationStatementNode* Node = ASTALLOC.Alloc<types::StructDeclarationStatementNode>(
+            std::get<std::string_view>(DataType.Value), VariableName);
+
+        return Node;
+    }
+}
+}
