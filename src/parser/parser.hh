@@ -55,8 +55,8 @@ namespace parser {
 
         types::ProgramNode* Program();
         types::FunctionNode* Function();
-        types::FunctionArgumentsNode* FunctionArguments();
-        types::FunctionArgumentStatementNode* FunctionArgumentStatement();
+        types::FunctionParameter* ParseFunctionParameter();
+        types::FunctionParameterList* ParseFunctionParameterList();
         types::StructNode* Struct();
         types::JumpStatementNode* JumpStatement();
         types::ReturnStatementNode* ReturnStatement();

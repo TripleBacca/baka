@@ -1,5 +1,9 @@
+#include "types/parser/ast/function.hh"
 #include "parser.hh"
 #include "memory/custom_arenas.hh"
+#include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/identifier.hh"
+#include "types/token/pretty.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include <string_view>
@@ -7,76 +11,90 @@
 
 namespace baka {
     namespace parser {
-        types::FunctionArgumentStatementNode* Parser::FunctionArgumentStatement() {
-            //TODO add support for default arguments
-            //TODO add support for struct enum etc declarations
-            //TODO add support for unsigned const etc declarations
-            const types::Token& DataType = this->Advance();
+        types::FunctionParameter* Parser::ParseFunctionParameter() {
 
+            Match(types::TokenType::K_STRUCT); // eat
+
+            bool IsConst = false;
+
+            if(Match(types::TokenType::K_CONST)) {
+                IsConst = true;
+            }
+
+            const types::Token& DataType = this->Advance();
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
+                assert(false);
             }
-            types::IdentifierNode* VariableName = ParseIdentifier();
-            // todo identifier
+            types::IdentifierNode* TypeName = ParseIdentifier();
+            if(!LookupType(TypeName)) {
+                // throw error
+                assert(false);
+            }
 
-            types::FunctionArgumentStatementNode* Node = ASTALLOC.Alloc<types::FunctionArgumentStatementNode>(
-                std::get<std::string_view>(DataType.Value), VariableName);
+            types::SingleDeclarationNode* Node = ParseSingleDeclaration();
 
-            return Node;
+            types::FunctionParameter* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, TypeName, Node);
+            return Parameter;
         }
 
-        types::FunctionArgumentsNode* Parser::FunctionArguments() {
-            std::vector<types::FunctionArgumentStatementNode*> Decls;
-            bool HasEllipsis = false;
-            bool ReachedEnd = false;
-            while (!Check(types::TokenType::RPAREN_ROUND) && !ReachedEnd) {
-                if (Match(types::TokenType::OP_ELLIPSIS)) {
-                    HasEllipsis = true;
-                    ReachedEnd = true;
-                }
-                else {
-                    Decls.push_back(this->FunctionArgumentStatement());
-                    if (!Match(types::TokenType::OP_COMMA)) {
-                        ReachedEnd = true;
-                    }
-                }
-            }
-            if (!Check(types::TokenType::RPAREN_ROUND)) {
-                // throw error
+        types::FunctionParameterList* Parser::ParseFunctionParameterList() {
+            // parses <functionparam>, <functionparam> , ...
+
+            std::vector<types::FunctionParameter*> Decls;
+
+            if(Check(types::TokenType::RPAREN_ROUND)) {
+                // empty parameter list
+                return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
             }
 
-            return ASTALLOC.Alloc<types::FunctionArgumentsNode>(Decls, HasEllipsis);
+            bool DefaultRunning = false;
+            do {
+                if(this->Match(types::TokenType::OP_ELLIPSIS)) {
+                    break;
+                }
+
+                auto* FunctionParam = ParseFunctionParameter();
+
+                if(FunctionParam->hasInitalizer()) {
+                    DefaultRunning = true;
+                } else if (DefaultRunning) {
+                    // default shoudl be in end
+                    // throw error
+                    assert(false);
+                }
+
+                Decls.push_back(FunctionParam);
+
+            } while (this->Match(types::TokenType::OP_COMMA));
+
+            return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
         }
 
         types::FunctionNode* Parser::Function() {
-            const types::Token& ReturnType = this->Advance();
-
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
+            types::IdentifierNode* ReturnTypeIdentifier = this->ParseIdentifier();
+            if(!LookupType(ReturnTypeIdentifier)) {
+                // throw error
+                assert(false);
+            }
             types::IdentifierNode* FunctionIdentifier = this->ParseIdentifier();
-
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
                 // throw error
             }
 
-            types::FunctionArgumentsNode* Args = this->FunctionArguments();
-
-            if (!this->Match(types::TokenType::RPAREN_ROUND)) {
+            types::FunctionParameterList* Args = this->ParseFunctionParameterList();
+            if(!this->Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
             }
 
-
-            if (!this->Match(types::TokenType::LPAREN_CURLY)) {
-                // throw error
-            }
+            // TODO: do statement
             types::JumpStatementNode* Body = this->JumpStatement();
-            if (!this->Match(types::TokenType::RPAREN_CURLY)) {
-                // throw error
-            }
             types::FunctionNode* Node = ASTALLOC.Alloc<types::FunctionNode>(
-                std::get<std::string_view>(ReturnType.Value), FunctionIdentifier, Args, Body);
+                std::get<std::string_view>(ReturnTypeIdentifier->Value), FunctionIdentifier, Args, Body);
 
             return Node;
         }

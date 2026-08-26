@@ -95,6 +95,10 @@ namespace types {
             INDENT(Tabs);
             std::cout << ")\n";
         }
+
+        bool hasInitalizer() const {
+            return Initialization != nullptr;
+        }
     };
 
     class DeclarationList : public ASTNode {
