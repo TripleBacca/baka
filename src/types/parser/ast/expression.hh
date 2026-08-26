@@ -5,6 +5,8 @@
 #include "identifier.hh"
 #include "utils.hh"
 #include "operators.hh"
+#include <vector>
+#include <iostream>
 
 
 namespace baka {
