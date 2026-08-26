@@ -36,6 +36,19 @@ namespace detail {
                 return false;
         }
     }
+
+    inline bool IsSpecifier(types::TokenType Type)
+    {
+        switch (Type) {
+            case types::TokenType::K_CONST:
+            case types::TokenType::K_STATIC:
+            case types::TokenType::K_STRUCT:
+                return true;
+            default:
+                return false;
+        }
+
+    }
 }
 }
 }

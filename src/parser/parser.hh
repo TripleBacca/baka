@@ -58,6 +58,9 @@ namespace parser {
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         types::StructNode* Struct();
+
+        types::CompoundStatementNode* CompoundStatement();
+
         types::JumpStatementNode* JumpStatement();
         types::ReturnStatementNode* ReturnStatement();
         types::GotoStatementNode* GotoStatement();
