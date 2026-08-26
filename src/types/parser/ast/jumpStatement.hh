@@ -29,10 +29,10 @@ namespace baka {
         };
 
         class GotoStatementNode : public JumpStatementNode {
-            IdentiferNode* Label;
+            IdentifierNode* Label;
 
         public:
-            GotoStatementNode(IdentiferNode* label) : Label(label) {
+            GotoStatementNode(IdentifierNode* label) : Label(label) {
             }
 
             void Print(size_t Tabs = 0) const override {
@@ -47,10 +47,10 @@ namespace baka {
         };
 
         class BreakStatementNode : public JumpStatementNode {
-            IdentiferNode* Label;
+            IdentifierNode* Label;
 
         public:
-            BreakStatementNode(IdentiferNode* label) : Label(label) {
+            BreakStatementNode(IdentifierNode* label) : Label(label) {
             }
 
             void Print(size_t Tabs = 0) const override {
@@ -67,10 +67,10 @@ namespace baka {
         };
 
         class ContinueStatementNode : public JumpStatementNode {
-            IdentiferNode* Label;
+            IdentifierNode* Label;
 
         public:
-            ContinueStatementNode(IdentiferNode* label) : Label(label) {
+            ContinueStatementNode(IdentifierNode* label) : Label(label) {
             }
 
             void Print(size_t Tabs = 0) const override {

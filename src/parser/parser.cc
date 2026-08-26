@@ -70,7 +70,7 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentiferNode* StructIdentifier = this->Identifier();
+            types::IdentifierNode* StructIdentifier = this->Identifier();
 
 
             if (!this->Match(types::TokenType::LPAREN_CURLY)) {
@@ -97,7 +97,7 @@ namespace baka {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            types::IdentiferNode* VariableName = Identifier();
+            types::IdentifierNode* VariableName = Identifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 // throw error

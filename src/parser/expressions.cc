@@ -71,7 +71,7 @@ namespace parser {
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            types::IdentiferNode* IdentifierNode = this->Identifier();
+            types::IdentifierNode* IdentifierNode = this->Identifier();
 
             types::PrimaryExpressionNode* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
 
@@ -135,7 +135,7 @@ namespace parser {
                 Left = ASTALLOC.Alloc<types::UnaryPostfixExpr>(Left, types::TokenTypeToASTUnaryOp.at(Op));
 
             } else if(Op == types::TokenType::OP_DOT) {
-                // (expr).identifer
+                // (expr).Identifier
 
                 if(!Check(types::TokenType::IDENTIFIER)) {
                     // todo throw error
@@ -148,7 +148,7 @@ namespace parser {
                 Left = ASTALLOC.Alloc<types::MemberPostfixExpr>(Left, IdentifierNode);
 
             } else if(Op == types::TokenType::OP_ARROW) {
-                // (expr)->identifer
+                // (expr)->Identifier
 
                 if(!Check(types::TokenType::IDENTIFIER)) {
                     // todo throw error
@@ -159,7 +159,7 @@ namespace parser {
 
                 Left = ASTALLOC.Alloc<types::ArrowPostfixExpr>(Left, IdentifierNode);
             } else {
-                // identifer(expr) expr will have commas
+                // Identifier(expr) expr will have commas
                 // (2+2)(1,2) will allow this
 
                 types::ExpressionNode* ArgsList = nullptr;

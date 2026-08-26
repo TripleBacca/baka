@@ -7,11 +7,11 @@
 
 namespace baka {
     namespace parser {
-        types::IdentiferNode* Parser::Identifier() {
+        types::IdentifierNode* Parser::Identifier() {
             if (!Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
-            return ASTALLOC.Alloc<types::IdentiferNode>(std::get<std::string_view>(this->Advance().Value));
+            return ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(this->Advance().Value));
         }
     }
 }

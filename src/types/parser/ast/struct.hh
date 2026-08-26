@@ -10,10 +10,10 @@ namespace baka {
     namespace types{
         class StructDeclarationStatementNode : public StatementNode {
             std::string_view DataType;
-            IdentiferNode* VariableName;
+            IdentifierNode* VariableName;
 
         public:
-            StructDeclarationStatementNode(std::string_view dataType, IdentiferNode* variableName) :
+            StructDeclarationStatementNode(std::string_view dataType, IdentifierNode* variableName) :
                 DataType(dataType), VariableName(variableName) {
             }
 
@@ -30,11 +30,11 @@ namespace baka {
 
 
         class StructNode : public ASTNode {
-            IdentiferNode* StructName;
+            IdentifierNode* StructName;
             std::vector<StructDeclarationStatementNode*> Body;
 
         public:
-            StructNode(IdentiferNode* identifier,
+            StructNode(IdentifierNode* identifier,
                        std::vector<StructDeclarationStatementNode*> body) : StructName(identifier),
                                                                             Body(std::move(body)) {
             }

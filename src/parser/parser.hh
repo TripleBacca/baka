@@ -68,7 +68,7 @@ namespace parser {
         // for ++, -- , [], ->, .
         types::ExpressionNode* ParsePostfixExpression();
         types::ExpressionNode* ParseAssignmentExpression(size_t MinPrecedence = 1);
-        types::IdentiferNode* Identifier();
+        types::IdentifierNode* Identifier();
     };
 
 }
