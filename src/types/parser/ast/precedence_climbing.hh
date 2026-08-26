@@ -26,7 +26,7 @@ namespace types {
         {TokenType::OP_BIT_OR, 5},
         {TokenType::OP_LOGICAL_AND, 4},
         {TokenType::OP_LOGICAL_OR, 3},
-        {TokenType::OP_QUESTION, 1}, // ternery
+        {TokenType::OP_QUESTION, 1}, // ternary
         {TokenType::OP_ASSIGN, 1},
         {TokenType::OP_ADD_ASSIGN, 1},
         {TokenType::OP_SUB_ASSIGN, 1},

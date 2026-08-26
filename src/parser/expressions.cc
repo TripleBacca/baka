@@ -4,7 +4,7 @@
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
-#include "types/parser/ast/ternery.hh"
+#include "types/parser/ast/ternary.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include "base/memory/custom_arenas.hh"
@@ -191,7 +191,7 @@ namespace parser {
 
                     auto* ElseExpr = ParseAssignmentExpression();
 
-                    LeftFactor = ASTALLOC.Alloc<types::TerneryOpNode>(LeftFactor, ThenExpr, ElseExpr);
+                    LeftFactor = ASTALLOC.Alloc<types::TernaryOpNode>(LeftFactor, ThenExpr, ElseExpr);
                 } else {
                     auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op));
                     LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
