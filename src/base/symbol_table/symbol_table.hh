@@ -3,11 +3,7 @@
 #include "memory/arena_alloc_interface.hh"
 #include "memory/custom_arenas.hh"
 #include <optional>
-#include <queue>
-#include <stack>
 #include <string_view>
-#include <unordered_map>
-#include <variant>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <vector>
 using namespace __gnu_pbds;
@@ -38,23 +34,24 @@ class SymbolTable {
         >
     >;
 
-    std::stack<Map> Scopes;
+    std::vector<Map> Scopes;
 
 public:
     SymbolTable() = default;
 
     void EnterNewScope() {
-        Scopes.push(Map());
+        Scopes.emplace_back();
     }
 
     void ExitScope() {
-        Scopes.pop();
+        Scopes.pop_back();
     }
 
     std::optional<SymbolTableEntry> Lookup(std::string_view IdentifierName) {
         for (auto it = Scopes.rbegin(); it != Scopes.rend(); ++it) {
-            if (it->contains(IdentifierName)) {
-                return it->at(IdentifierName);
+            auto found = it->find(IdentifierName);
+            if (found != it->end()) {
+                return found->second;
             }
         }
 
@@ -62,11 +59,11 @@ public:
     }
 
     bool AddEntry(std::string_view Symbol, SymbolTableEntry Entry) {
-        if(Scopes.top().contain(Symbol)) {
+        if (Scopes.back().find(Symbol) != Scopes.back().end()) {
             assert(false);
             return false;
         }
-        Scopes.top().insert({Symbol, std::move(Entry)});
+        Scopes.back().insert({Symbol, std::move(Entry)});
         return true;
     }
 };
@@ -79,8 +76,6 @@ class ParserSymbolTable : public SymbolTable<SymbolTableEntry, Alloc> {
         ParserSymbolTable() {
             // prefill
             this->EnterNewScope();
-
-
         }
 
 };
