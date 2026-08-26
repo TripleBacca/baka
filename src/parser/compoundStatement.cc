@@ -17,7 +17,7 @@ namespace baka
 
 			while (Peek().TokenType_v != types::TokenType::RPAREN_CURLY)
 			{
-				if (detail::IsSpecifier(Peek().TokenType_v) || (Check(types::TokenType::IDENTIFIER) && LookupType(
+				if (detail::IsSpecifier(Peek().TokenType_v) || detail::IsTypeOrIdentifier(this->Peek().TokenType_v) && LookupType(
 					ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(this->Peek().Value)))))
 				{
 					auto* DeclarationListNode = ParseDeclarationList();

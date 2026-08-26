@@ -18,8 +18,7 @@ namespace baka {
                 IsConst = true;
             }
 
-            const types::Token& DataType = this->Advance();
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
+            if (!detail::IsTypeOrIdentifier(this->Peek().TokenType_v)) {
                 // throw error
                 assert(false);
             }
@@ -69,8 +68,9 @@ namespace baka {
         }
 
         types::FunctionNode* Parser::Function() {
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
+            if (!detail::IsTypeOrIdentifier(this->Peek().TokenType_v)) {
                 // throw error
+                assert(false);
             }
             types::IdentifierNode* ReturnTypeIdentifier = this->ParseIdentifier();
             if(!LookupType(ReturnTypeIdentifier)) {

@@ -49,6 +49,26 @@ namespace detail {
         }
 
     }
+
+    inline bool IsTypeOrIdentifier(types::TokenType Type)
+    {
+        switch (Type)
+        {
+        case types::TokenType::K_BOOL:
+        case types::TokenType::K_CHAR:
+        case types::TokenType::K_DOUBLE:
+        case types::TokenType::K_FLOAT:
+        case types::TokenType::K_INT:
+        case types::TokenType::K_LONG:
+        case types::TokenType::K_SHORT:
+        case types::TokenType::K_SIGNED:
+        case types::TokenType::K_UNSIGNED:
+        case types::TokenType::IDENTIFIER:
+            return true;
+        default:
+            return false;
+        }
+    }
 }
 }
 }

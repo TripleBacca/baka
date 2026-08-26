@@ -72,6 +72,16 @@ class ParserSymbolTable : public SymbolTable<SymbolTableEntry, Alloc> {
     public:
         ParserSymbolTable() {
             this->EnterNewScope();
+            this->AddEntry("int", SymbolTableEntry());
+            this->AddEntry("float", SymbolTableEntry());
+            this->AddEntry("double", SymbolTableEntry());
+            this->AddEntry("char", SymbolTableEntry());
+            this->AddEntry("void", SymbolTableEntry());
+            this->AddEntry("long", SymbolTableEntry());
+            this->AddEntry("short", SymbolTableEntry());
+            this->AddEntry("bool", SymbolTableEntry());
+            // this->AddEntry("signed", SymbolTableEntry());
+            // this->AddEntry("unsigned", SymbolTableEntry()); //TODO NOT IMPLEMENTED SOME FUCKER GET ON THIS SHIT RNRNRN
         }
 
 };
