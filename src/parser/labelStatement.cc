@@ -5,7 +5,7 @@
 
 namespace baka {
     namespace parser {
-        types::GotoLabelStatementNode* Parser::GotoLabelStatementNode() {
+        types::GotoLabelStatementNode* Parser::GotoLabelStatement() {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 // throw error
             }
@@ -22,7 +22,7 @@ namespace baka {
             return Node;
         }
 
-        types::CaseLabelStatementNode* Parser::CaseLabelStatementNode() {
+        types::CaseLabelStatementNode* Parser::CaseLabelStatement() {
             if (!this->Match(types::TokenType::K_CASE)) {
                 // throw error
             }
@@ -39,7 +39,7 @@ namespace baka {
             return Node;
         }
 
-        types::DefaultLabelStatementNode* Parser::DefaultLabelStatementNode() {
+        types::DefaultLabelStatementNode* Parser::DefaultLabelStatement() {
             if (!this->Match(types::TokenType::K_DEFAULT)) {
                 // throw error
             }
@@ -52,6 +52,22 @@ namespace baka {
 
             types::DefaultLabelStatementNode* Node = ASTALLOC.Alloc<types::DefaultLabelStatementNode>(Stmt);
             return Node;
+        }
+
+        types::LabelStatementNode* Parser::LabelStatement() {
+            if (this->Check(types::TokenType::IDENTIFIER) && this->Check2(types::TokenType::OP_COLON)) {
+                return this->GotoLabelStatement();
+            }
+            else if (this->Check(types::TokenType::K_CASE)) {
+                return this->CaseLabelStatement();
+            }
+            else if (this->Check(types::TokenType::K_DEFAULT)) {
+                return this->DefaultLabelStatement();
+            }
+            else {
+                // throw error
+                return nullptr;
+            }
         }
     }
 }
