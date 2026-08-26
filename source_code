@@ -1,8 +1,5 @@
 int main(int a){
-    if(a == 0)
-        if(a == 1)
-            return 1;
-        else
-            return 2;
+    for(1;;)
+        continue
 }
 //**arr[*ptr++ + ~-val] = func(a, b)->field.method(x++) ? (b.x > 3 && (c->d || !*++p)) : (int_val % 2 ^ var->elem[idx[0]]);

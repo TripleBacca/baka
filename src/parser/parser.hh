@@ -5,8 +5,10 @@
 #include "types/parser/ast/struct.hh"
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
+#include "types/parser/ast/labelStatement.hh"
 #include "types/parser/ast/jumpStatement.hh"
 #include "types/parser/ast/selectionStatement.hh"
+#include "types/parser/ast/iterationStatement.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -58,6 +60,16 @@ namespace parser {
         types::ElseIfSubBlockStatementNode* ElseIfSubBlockStatement();
         types::ElseSubBlockStatementNode* ElseSubBlockStatement();
         types::SelectionStatementNode* SelectionStatement();
+        types::ForBlockStatementNode* ForBlockStatement();
+        types::WhileBlockStatementNode* WhileBlockStatement();
+        types::DoWhileBlockStatementNode* DoWhileBlockStatement();
+        types::IterationStatementNode* IterationStatement();
+        types::GotoLabelStatementNode* GotoLabelStatementNode();
+        types::CaseLabelStatementNode* CaseLabelStatementNode();
+        types::DefaultLabelStatementNode* DefaultLabelStatementNode();
+
+        types::LabelStatementNode* LabelStatement();
+
 
         // this is for declarations inside a struct, im sorry
         types::StructDeclarationStatementNode* StructDeclarationStatement();

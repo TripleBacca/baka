@@ -14,6 +14,7 @@ namespace baka {
             {"class", types::TokenType::K_CLASS},
             {"const", types::TokenType::K_CONST},
             {"continue", types::TokenType::K_CONTINUE},
+            {"default", types::TokenType::K_DEFAULT},
             {"delete", types::TokenType::K_DELETE},
             {"do", types::TokenType::K_DO},
             {"double", types::TokenType::K_DOUBLE},

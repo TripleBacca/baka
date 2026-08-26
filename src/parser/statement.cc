@@ -10,6 +10,9 @@ namespace baka {
             if (Check(types::TokenType::K_IF)) {
                 return this->SelectionStatement();
             }
+            else if (Check(types::TokenType::K_FOR) || Check(types::TokenType::K_WHILE) || Check(types::TokenType::K_DO)) {
+                return this->IterationStatement();
+            }
             else {
                 return this->JumpStatement();
             }
