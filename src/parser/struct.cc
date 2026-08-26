@@ -22,8 +22,9 @@ namespace parser {
             // todo throw error
         }
         types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
-        if(!LookupType(StructIdentifier)) {
+        if(LookupType(StructIdentifier)) {
             // todo throw error
+            assert(false);
         }
 
         AddType(StructIdentifier);
@@ -45,6 +46,8 @@ namespace parser {
             // todo put error
             assert(false);
         }
+
+        ExitScope();
 
         return Node;
     }

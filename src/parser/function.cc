@@ -5,15 +5,15 @@
 #include "types/parser/ast/identifier.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
+#include <cassert>
 
 namespace baka {
     namespace parser {
         types::FunctionParameter* Parser::ParseFunctionParameter() {
-
+            // TODO: need to test dis
             Match(types::TokenType::K_STRUCT); // eat
 
             bool IsConst = false;
-
             if(Match(types::TokenType::K_CONST)) {
                 IsConst = true;
             }
