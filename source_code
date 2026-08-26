@@ -1,10 +1,1 @@
-int main() {
-    return -(~1);
-}
-struct bluk {
-    int a;
-    long val;
-}
-int func() {
-    return -1;
-}
+**arr[*ptr++ + ~-val] = func(a, b)->field.method(x++) ? (b.x > 3 && (c->d || !*++p)) : (int_val % 2 ^ var->elem[idx[0]]);

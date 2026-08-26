@@ -40,22 +40,22 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return Program();
+            return ParseCommaExpression();
         };
 
         types::ProgramNode* Parser::Program() {
-            std::vector<types::ASTNode*> body;
-            while (!Check(types::TokenType::EOF_TOKEN)) {
-                if (Check(types::TokenType::K_STRUCT)) {
-                    body.push_back(this->Struct());
-                }
-                else {
-                    body.push_back(this->Function());
-                }
-            }
+            // std::vector<types::ASTNode*> body;
+            // while (!Check(types::TokenType::EOF_TOKEN)) {
+            //     if (Check(types::TokenType::K_STRUCT)) {
+            //         body.push_back(this->Struct());
+            //     }
+            //     else {
+            //         body.push_back(this->Function());
+            //     }
+            // }
 
-            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
-            return Node;
+            // types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
+            // return Node;
         }
 
         types::StructNode* Parser::Struct() {
@@ -110,39 +110,9 @@ namespace baka {
         }
 
         types::ExpressionNode* Parser::Expression() {
-            //TODO:
-            // types::ExpressionNode* Unary;
-            // if (this->Match(types::TokenType::LPAREN_ROUND)) {
-            //     Unary = this->UnaryExpression();
-            //     if (!this->Match(types::TokenType::RPAREN_ROUND)) {
-            //         // throw error
-            //     }
-            // }
-            // else {
-            //     Unary = this->UnaryExpression();
-            // }
-
-
-            // return Unary;
+            // todo: does this have to be different
+            return ParseCommaExpression();
         }
-
-        // types::UnaryExpressionNode* Parser::UnaryExpression() {
-        //     if (this->Match(types::TokenType::OP_UNARY_MINUS) || this->Match(types::TokenType::OP_TILDE)) {
-        //         types::ASTUnaryOp Op = types::TokenTypeToASTUnaryOp[this->Previous().TokenType_v];
-
-        //         types::ExpressionNode* Expr = this->Expression();
-        //         types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(Op, Expr);
-        //         return Node;
-        //     }
-        //     else {
-        //         types::ConstantIntNode* Constant = this->ParseConstantNode();
-        //         types::UnaryExpressionNode* Node = ASTALLOC.Alloc<types::UnaryExpressionNode>(
-        //             types::ASTUnaryOp::OP_NOOP, Constant);
-
-        //         return Node;
-        //     }
-        // }
-
 
         types::ConstantIntNode* Parser::ParseConstantNode() {
             types::Token Token = this->Peek();

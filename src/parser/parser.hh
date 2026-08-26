@@ -58,7 +58,7 @@ namespace parser {
 
 
         // expressions:
-        types::ExpressionNode* ParseExpression(size_t MinPrecedence = 0);
+        types::ExpressionNode* ParseCommaExpression();
 
         types::ExpressionNode* ParsePrimaryExpression();
 
@@ -66,7 +66,8 @@ namespace parser {
         types::ExpressionNode* ParseFactor();
 
         // for ++, -- , [], ->, .
-        types::PostfixExpressionNode* ParsePostfixExpression();
+        types::ExpressionNode* ParsePostfixExpression();
+        types::ExpressionNode* ParseAssignmentExpression(size_t MinPrecedence = 1);
         types::IdentiferNode* Identifier();
     };
 
