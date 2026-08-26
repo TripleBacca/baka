@@ -6,6 +6,7 @@
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
 #include "types/parser/ast/jumpStatement.hh"
+#include "types/parser/ast/selectionStatement.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -33,6 +34,7 @@ namespace parser {
 
         // helpers
         bool Check(types::TokenType type) const noexcept;
+        bool Check2(types::TokenType type) const noexcept;
         const types::Token& Advance();
         bool Match(types::TokenType type);
         const types::Token& Peek() const noexcept;
@@ -45,11 +47,18 @@ namespace parser {
         types::FunctionArgumentsNode* FunctionArguments();
         types::FunctionArgumentStatementNode* FunctionArgumentStatement();
         types::StructNode* Struct();
+        types::StatementNode* Statement();
         types::JumpStatementNode* JumpStatement();
         types::ReturnStatementNode* ReturnStatement();
         types::GotoStatementNode* GotoStatement();
         types::BreakStatementNode* BreakStatement();
         types::ContinueStatementNode* ContinueStatement();
+        types::IfSuperBlockStatementNode* IfSuperBlockStatement();
+        types::IfSubBlockStatementNode* IfSubBlockStatement();
+        types::ElseIfSubBlockStatementNode* ElseIfSubBlockStatement();
+        types::ElseSubBlockStatementNode* ElseSubBlockStatement();
+        types::SelectionStatementNode* SelectionStatement();
+
         // this is for declarations inside a struct, im sorry
         types::StructDeclarationStatementNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
