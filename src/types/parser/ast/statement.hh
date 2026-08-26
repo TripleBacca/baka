@@ -6,7 +6,6 @@
 namespace baka {
 namespace types {
 
-
     class StatementNode : public ASTNode {
     public:
         virtual ~StatementNode() = default;

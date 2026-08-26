@@ -35,7 +35,7 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentifierNode* Label = this->Identifier();
+            types::IdentifierNode* Label = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 // throw error
@@ -55,7 +55,7 @@ namespace baka {
                 if (!this->Check(types::TokenType::IDENTIFIER)) {
                     // throw error
                 }
-                Label = this->Identifier();
+                Label = this->ParseIdentifier();
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
@@ -76,7 +76,7 @@ namespace baka {
                 if (!this->Check(types::TokenType::IDENTIFIER)) {
                     // throw error
                 }
-                Label = this->Identifier();
+                Label = this->ParseIdentifier();
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {

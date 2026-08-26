@@ -1,4 +1,5 @@
 #pragma once
+#include "types/parser/ast/declaration.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -68,7 +69,10 @@ namespace parser {
         // for ++, -- , [], ->, .
         types::ExpressionNode* ParsePostfixExpression();
         types::ExpressionNode* ParseAssignmentExpression(size_t MinPrecedence = 1);
-        types::IdentifierNode* Identifier();
+        types::IdentifierNode* ParseIdentifier();
+
+        types::DeclarationList* ParseDeclarationList();
+
     };
 
 }
