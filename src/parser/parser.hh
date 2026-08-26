@@ -72,7 +72,8 @@ namespace parser {
         types::IdentifierNode* ParseIdentifier();
 
         types::DeclarationList* ParseDeclarationList();
-
+        types::SingleDeclarationNode* ParseSingleDeclaration();
+        types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
     };
 
 }
