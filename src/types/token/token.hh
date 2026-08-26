@@ -17,6 +17,7 @@ namespace types {
         K_CONST,
         K_CONTINUE,
         K_DELETE,
+        K_DEFAULT,
         K_DO,
         K_DOUBLE,
         K_ELSE,

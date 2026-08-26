@@ -5,8 +5,10 @@ set(EXEC_SOURCES
     expressions.cc
     function.cc
     statement.cc
+    labelStatement.cc
     selectionStatement.cc
     jumpStatement.cc
+    iterationStatement.cc
     identifier.cc
 )
 
