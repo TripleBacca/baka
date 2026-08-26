@@ -162,7 +162,12 @@ namespace parser {
                 // identifer(expr) expr will have commas
                 // (2+2)(1,2) will allow this
 
-                types::ExpressionNode* ArgsList = ParseCommaExpression();
+                types::ExpressionNode* ArgsList = nullptr;
+                if (!Check(types::TokenType::RPAREN_ROUND)) {
+                    ArgsList = ParseCommaExpression();
+                } else {
+                    ArgsList = ASTALLOC.Alloc<types::CommaExpressionNode>(std::vector<types::ExpressionNode*>{});
+                }
 
                 if(!Match(types::TokenType::RPAREN_ROUND)) {
                     // todo throw error
@@ -212,6 +217,7 @@ namespace parser {
     {
         std::vector<types::ExpressionNode*> Args;
         auto* LeftFactor = ParseAssignmentExpression();
+
         Args.push_back(LeftFactor);
         while (Match(types::TokenType::OP_COMMA)) {
             auto* RightFactor = ParseAssignmentExpression();
