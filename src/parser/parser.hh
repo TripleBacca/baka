@@ -1,5 +1,7 @@
 #pragma once
+#include "symbol_table/symbol_table.hh"
 #include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/identifier.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -25,14 +27,22 @@ namespace baka {
 
 
 namespace parser {
+    struct ParserSTE {};
 
     class Parser {
         size_t current = 0;
         std::span<types::Token> Tokens;
+        base::ParserSymbolTable<ParserSTE> TypeLookup;
 
         public:
         Parser(std::span<types::Token> Tokens) : Tokens(Tokens) {};
         types::ASTNode* Parse();
+
+        // type lookup helpers:
+        bool LookupType(types::IdentifierNode* Identifier);
+        void EnterScope();
+        void ExitScope();
+        void AddType(types::IdentifierNode* Identifier);
 
         // helpers
         bool Check(types::TokenType type) const noexcept;

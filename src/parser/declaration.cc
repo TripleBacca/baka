@@ -37,7 +37,10 @@ namespace baka
 
 			Match(types::TokenType::K_STRUCT);
 			types::IdentifierNode* TypeName = ParseIdentifier(); //TODO: parse type specifier properly
-
+			if(!LookupType(TypeName)) {
+				// TODO: throw error
+				assert(false && "Expected type name");
+			}
 
 			std::vector<types::SingleDeclarationNode*> Declarations;
 			auto* Node = ParseSingleDeclaration();
@@ -109,7 +112,13 @@ namespace baka
 					assert(false && "Expected identifier");
 				}
 
-				Variable->setInnerDeclaration(ParseIdentifier());
+				auto* Identifier = ParseIdentifier();
+				if(LookupType(Identifier)) {
+				    // todo throw error
+					assert(false && "Identifier already type");
+				}
+
+				Variable->setInnerDeclaration(Identifier);
 			}
 
 			while (Match(types::TokenType::LPAREN_SQUARE))

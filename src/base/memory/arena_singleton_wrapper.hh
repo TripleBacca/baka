@@ -8,7 +8,8 @@ namespace base {
 // enumerate all kinds of different arenas we need
 enum class AllocArenaTag {
     SL_STRING, // one for string literals
-    AST_NODE
+    AST_NODE,
+    UTIL_NODE
 };
 
 

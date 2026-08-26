@@ -17,6 +17,7 @@ namespace baka {
                 // throw error
             }
             types::IdentifierNode* VariableName = ParseIdentifier();
+            // todo identifier
 
             types::FunctionArgumentStatementNode* Node = ASTALLOC.Alloc<types::FunctionArgumentStatementNode>(
                 std::get<std::string_view>(DataType.Value), VariableName);

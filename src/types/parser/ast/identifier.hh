@@ -17,6 +17,10 @@ public:
         INDENT(Tabs);
         std::cout << "Identifier(" << IdentifierName << ")" << std::endl;
     }
+
+    std::string_view GetName() const {
+        return IdentifierName;
+    }
 };
 
 

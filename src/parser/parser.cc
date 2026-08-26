@@ -125,6 +125,20 @@ namespace baka {
             return Node;
         }
 
+        bool Parser::LookupType(types::IdentifierNode* Identifier) {
+            return TypeLookup.Lookup(Identifier->GetName()).has_value();
+        }
 
+        void Parser::EnterScope() {
+            TypeLookup.EnterNewScope();
+        }
+
+        void Parser::ExitScope() {
+            TypeLookup.ExitScope();
+        }
+
+        void Parser::AddType(types::IdentifierNode* Identifier) {
+            TypeLookup.AddEntry(Identifier->GetName(), ParserSTE{});
+        }
     }
 }
