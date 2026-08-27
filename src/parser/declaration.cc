@@ -97,6 +97,8 @@ namespace baka
 		}
 
 
+		// TODO : write function declaration parser
+
 		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier()
 		{
 			types::DeclarationIdentifierNode *Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();

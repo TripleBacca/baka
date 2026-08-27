@@ -17,15 +17,14 @@ namespace baka
 
 			while (Peek().TokenType_v != types::TokenType::RPAREN_CURLY)
 			{
-				if (detail::IsSpecifier(Peek().TokenType_v) || detail::IsTypeOrIdentifier(this->Peek().TokenType_v) && LookupType(
-					ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(this->Peek().Value)))))
+				if (detail::IsSpecifier(Peek().TokenType_v) || detail::IsTypeOrIdentifier(this->Peek().TokenType_v))
 				{
 					auto* DeclarationListNode = ParseDeclarationList();
 					statements.push_back(DeclarationListNode);
 				}
 				else
 				{
-					auto* StatementNode = ParseStatement(); //TODO Put the right function here
+					auto* StatementNode = ParseStatement();
 					statements.push_back(StatementNode);
 				}
 			}

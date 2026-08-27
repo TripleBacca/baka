@@ -13,6 +13,7 @@ set(EXEC_SOURCES
     declaration.cc
     initializer.cc
     struct.cc
+    compoundStatement.cc
 )
 
 add_library(parser
