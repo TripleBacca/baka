@@ -30,6 +30,9 @@ namespace baka
 			bool IsStatic = false;
 			bool IsConst = false;
 
+			bool isClassOrStruct = false;
+			bool isEnum = false;
+
 			while (Check(types::TokenType::K_STATIC) || Check(types::TokenType::K_CONST))
 			{
 				if (Match(types::TokenType::K_STATIC))
@@ -42,7 +45,19 @@ namespace baka
 				}
 			}
 
-			Match(types::TokenType::K_STRUCT);
+			if (Match(types::TokenType::K_STRUCT))
+			{
+				isClassOrStruct = true;
+			}
+			if (Match(types::TokenType::K_ENUM))
+			{
+				isEnum = true;
+			}
+			if(isEnum && isClassOrStruct) { // cannot be both class and enum
+				// TODO: throw error
+				assert(false && "Enum cannot be a class or struct");
+			}
+
 			types::IdentifierNode* TypeName = ParseIdentifier(); //TODO: parse type specifier properly
 			if(!LookupType(TypeName)) {
 				// TODO: throw error
@@ -71,7 +86,7 @@ namespace baka
 				assert(false && "Expected semicolon at the end of declaration list");
 			}
 
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst,TypeName, std::move(Declarations));
+			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 

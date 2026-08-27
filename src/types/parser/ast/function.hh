@@ -53,6 +53,7 @@ namespace types {
         }
     };
 
+    // TODO: use pimpl idiom
 
     class FunctionParameterList : public ASTNode {
         std::vector<FunctionParameter*> Parameters;
@@ -87,7 +88,7 @@ namespace types {
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Function(";
+            std::cout << "Function(\n";
 
             FuncName->Print(Tabs + 1);
             ReturnType->Print(Tabs + 1);
