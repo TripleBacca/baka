@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 
@@ -37,14 +36,14 @@ namespace baka {
             }
             types::IdentifierNode* Label = nullptr;
             if (Check(types::TokenType::IDENTIFIER)) {
-                Label = this->Identifier();
+                Label = this->ParseIdentifier();
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
+            types::StatementNode* Body = this->ParseStatement();
 
             types::ForBlockStatementNode* Node = ASTALLOC.Alloc<types::ForBlockStatementNode>(Decl, Cond, Upd, Label, Body);
             return Node;
@@ -64,7 +63,7 @@ namespace baka {
             types::IdentifierNode* Label = nullptr;
             if (Match(types::TokenType::SEMICOLON)) {
                 if (Check(types::TokenType::IDENTIFIER)) {
-                    Label = this->Identifier();
+                    Label = this->ParseIdentifier();
                 }
             }
 
@@ -72,7 +71,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
+            types::StatementNode* Body = this->ParseStatement();
 
             types::WhileBlockStatementNode* Node = ASTALLOC.Alloc<types::WhileBlockStatementNode>(Cond, Label, Body);
             return Node;
@@ -83,8 +82,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
-
+            types::StatementNode* Body = this->ParseStatement();
 
             if (!this->Match(types::TokenType::K_WHILE)) {
                 // throw error
@@ -100,7 +98,7 @@ namespace baka {
             types::IdentifierNode* Label = nullptr;
             if (Match(types::TokenType::SEMICOLON)) {
                 if (Check(types::TokenType::IDENTIFIER)) {
-                    Label = this->Identifier();
+                    Label = this->ParseIdentifier();
                 }
             }
 

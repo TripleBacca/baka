@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 
@@ -29,7 +28,7 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentifierNode* Label = this->Identifier();
+            types::IdentifierNode* Label = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 // throw error
@@ -47,7 +46,7 @@ namespace baka {
             types::IdentifierNode* Label = nullptr;
 
             if (this->Check(types::TokenType::IDENTIFIER)) {
-                Label = this->Identifier();
+                Label = this->ParseIdentifier();
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
@@ -65,7 +64,7 @@ namespace baka {
 
             types::IdentifierNode* Label = nullptr;
             if (this->Check(types::TokenType::IDENTIFIER)) {
-                Label = this->Identifier();
+                Label = this->ParseIdentifier();
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {

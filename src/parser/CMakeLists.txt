@@ -10,6 +10,9 @@ set(EXEC_SOURCES
     jumpStatement.cc
     iterationStatement.cc
     identifier.cc
+    declaration.cc
+    initializer.cc
+    struct.cc
 )
 
 add_library(parser

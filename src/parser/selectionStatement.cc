@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 
@@ -20,7 +19,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
+            types::StatementNode* Body = this->ParseStatement();
 
             types::IfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::IfSubBlockStatementNode>(Expression, Body);
             return Node;
@@ -44,7 +43,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
+            types::StatementNode* Body = this->ParseStatement();
 
             types::ElseIfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::ElseIfSubBlockStatementNode>(Expression, Body);
             return Node;
@@ -55,7 +54,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->Statement();
+            types::StatementNode* Body = this->ParseStatement();
 
             types::ElseSubBlockStatementNode* Node = ASTALLOC.Alloc<types::ElseSubBlockStatementNode>( Body);
             return Node;

@@ -1,9 +1,7 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
-#include <string_view>
 #include <variant>
 
 // TODO: deal with dtypddefs by mainting symbol table
@@ -46,72 +44,21 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return Program();
+            return this->ParseProgram();
         };
 
-        types::ProgramNode* Parser::Program() {
+        types::ProgramNode* Parser::ParseProgram() {
             std::vector<types::ASTNode*> body;
             while (!Check(types::TokenType::EOF_TOKEN)) {
                 if (Check(types::TokenType::K_STRUCT)) {
-                    body.push_back(this->Struct());
+                    body.push_back(this->ParseStruct());
                 }
                 else {
-                    body.push_back(this->Function());
+                    body.push_back(this->ParseFunction());
                 }
             }
 
             types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
-            return Node;
-        }
-
-        types::StructNode* Parser::Struct() {
-            //TODO add support for declarations after struct
-            //TODO semicolon?
-            if (!this->Match(types::TokenType::K_STRUCT)) {
-                // match struct keyword
-                // throw error
-            }
-
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // throw error
-            }
-
-            types::IdentifierNode* StructIdentifier = this->Identifier();
-
-
-            if (!this->Match(types::TokenType::LPAREN_CURLY)) {
-                // throw error
-            }
-            std::vector<types::StructDeclarationStatementNode*> Body;
-
-            while (!this->Match(types::TokenType::RPAREN_CURLY)) {
-                Body.push_back(this->StructDeclarationStatement());
-            }
-
-            types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(StructIdentifier, Body);
-
-            return Node;
-        }
-
-        types::StructDeclarationStatementNode* Parser::StructDeclarationStatement() {
-            //TODO add support for inline initialisation
-            //TODO add support for comma separated declarations
-            //TODO add support for struct enum etc declarations
-            //TODO add support for unsigned const etc declarations
-            const types::Token& DataType = this->Advance();
-
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // throw error
-            }
-            types::IdentifierNode* VariableName = Identifier();
-
-            if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
-            }
-
-            types::StructDeclarationStatementNode* Node = ASTALLOC.Alloc<types::StructDeclarationStatementNode>(
-                std::get<std::string_view>(DataType.Value), VariableName);
-
             return Node;
         }
 
@@ -131,6 +78,20 @@ namespace baka {
             return Node;
         }
 
+        bool Parser::LookupType(types::IdentifierNode* Identifier) {
+            return TypeLookup.Lookup(Identifier->GetName()).has_value();
+        }
 
+        void Parser::EnterScope() {
+            TypeLookup.EnterNewScope();
+        }
+
+        void Parser::ExitScope() {
+            TypeLookup.ExitScope();
+        }
+
+        void Parser::AddType(types::IdentifierNode* Identifier) {
+            TypeLookup.AddEntry(Identifier->GetName(), ParserSTE{});
+        }
     }
 }

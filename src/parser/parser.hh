@@ -1,4 +1,9 @@
 #pragma once
+#include "symbol_table/symbol_table.hh"
+#include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/identifier.hh"
+#include "types/parser/ast/initializer.hh"
+#include "types/parser/ast/statement.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -6,7 +11,7 @@
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
 #include "types/parser/ast/labelStatement.hh"
-#include "types/parser/ast/jumpStatement.hh"
+#include "types/parser/ast/jump.hh"
 #include "types/parser/ast/selectionStatement.hh"
 #include "types/parser/ast/iterationStatement.hh"
 
@@ -20,19 +25,23 @@
 
 
 namespace baka {
-
-
-
-
 namespace parser {
+    struct ParserSTE {};
 
     class Parser {
         size_t current = 0;
         std::span<types::Token> Tokens;
+        base::ParserSymbolTable<ParserSTE> TypeLookup;
 
         public:
         Parser(std::span<types::Token> Tokens) : Tokens(Tokens) {};
         types::ASTNode* Parse();
+
+        // type lookup helpers:
+        bool LookupType(types::IdentifierNode* Identifier);
+        void EnterScope();
+        void ExitScope();
+        void AddType(types::IdentifierNode* Identifier);
 
         // helpers
         bool Check(types::TokenType type) const noexcept;
@@ -44,12 +53,16 @@ namespace parser {
 
         // recursive descent nodes:
 
-        types::ProgramNode* Program();
-        types::FunctionNode* Function();
-        types::FunctionArgumentsNode* FunctionArguments();
-        types::FunctionArgumentStatementNode* FunctionArgumentStatement();
-        types::StructNode* Struct();
-        types::StatementNode* Statement();
+        types::ProgramNode* ParseProgram();
+
+        types::FunctionNode* ParseFunction();
+        types::FunctionParameter* ParseFunctionParameter();
+        types::FunctionParameterList* ParseFunctionParameterList();
+        types::StructNode* ParseStruct();
+
+        types::StatementNode* ParseStatement();
+        types::CompoundStatementNode* CompoundStatement();
+
         types::JumpStatementNode* JumpStatement();
         types::ReturnStatementNode* ReturnStatement();
         types::GotoStatementNode* GotoStatement();
@@ -71,7 +84,7 @@ namespace parser {
 
 
         // this is for declarations inside a struct, im sorry
-        types::StructDeclarationStatementNode* StructDeclarationStatement();
+        types::StructNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();
         types::ConstantIntNode* ParseConstantNode();
@@ -88,7 +101,13 @@ namespace parser {
         // for ++, -- , [], ->, .
         types::ExpressionNode* ParsePostfixExpression();
         types::ExpressionNode* ParseAssignmentExpression(size_t MinPrecedence = 1);
-        types::IdentifierNode* Identifier();
+        types::IdentifierNode* ParseIdentifier();
+
+        types::DeclarationList* ParseDeclarationList();
+        types::SingleDeclarationNode* ParseSingleDeclaration();
+        types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
+        types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
+
     };
 
 }

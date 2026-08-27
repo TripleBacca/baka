@@ -5,49 +5,60 @@
 #include <utility>
 #include <vector>
 #include "statement.hh"
+#include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/utils.hh"
 
 
 namespace baka {
 namespace types {
-    class FunctionArgumentStatementNode : public StatementNode {
-        std::string_view DataType;
-        IdentifierNode* VariableName;
 
-    public:
-        FunctionArgumentStatementNode(std::string_view dataType, IdentifierNode* variableName) : DataType(dataType), VariableName(variableName) {
-        }
+
+    class FunctionParameter : public ASTNode {
+        bool IsConst = false;
+        SingleDeclarationNode* SDeclarationNode;
+        IdentifierNode* TypeName;
+
+        public:
+        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
+        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "ArgumentDecl(" << DataType << ", " << '\n';
-
-            VariableName->Print(Tabs + 1);
-
+            std::cout << "DeclarationList(" << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "IsConst: " << IsConst << "\n";
+            if (TypeName) {
+                TypeName->Print(Tabs + 1);
+            } else {
+                INDENT(Tabs + 1);
+                std::cout << "nullptr\n";
+            }
+            if (SDeclarationNode) {
+                SDeclarationNode->Print(Tabs + 1);
+            }
             INDENT(Tabs);
-            std::cout << ")" << std::endl;
+            std::cout << ")\n";
+        }
+
+
+        bool hasInitalizer() const {
+            return SDeclarationNode->hasInitalizer();
         }
     };
 
-    class FunctionArgumentsNode : public ASTNode {
-        std::vector<FunctionArgumentStatementNode*> Declarations;
-        bool HasEllipsis;
 
+    class FunctionParameterList : public ASTNode {
+        std::vector<FunctionParameter*> Parameters;
     public:
-        FunctionArgumentsNode(std::vector<FunctionArgumentStatementNode*> declarations, bool hasEllipses) : Declarations(std::move(declarations)), HasEllipsis(hasEllipses) {
-        }
+        FunctionParameterList(std::vector<FunctionParameter*> parameters) : Parameters(std::move(parameters)) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
             std::cout << "Args(" << '\n';
 
-            for (const auto decl : Declarations) {
-                decl->Print(Tabs + 1);
-            }
-
-            if (HasEllipsis) {
-                INDENT(Tabs + 1);
-                std::cout << "...\n";
+            for (const auto param : Parameters) {
+                param->Print(Tabs + 1);
             }
 
             INDENT(Tabs);
@@ -56,13 +67,13 @@ namespace types {
     };
 
     class FunctionNode : public ASTNode {
-        std::string_view ReturnType;
+        IdentifierNode* ReturnType;
         IdentifierNode* FuncName;
-        FunctionArgumentsNode* Args;
+        FunctionParameterList* Args;
         StatementNode* Body;
 
     public:
-        FunctionNode(std::string_view returnType, IdentifierNode* funcName, FunctionArgumentsNode* args, StatementNode* body) :
+        FunctionNode(IdentifierNode* returnType, IdentifierNode* funcName, FunctionParameterList* args, StatementNode* body) :
             ReturnType(returnType), FuncName(funcName), Args(args), Body(body) {
         }
 
@@ -70,11 +81,11 @@ namespace types {
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Function(" << ReturnType << ", ";
-            FuncName->Print();
+            std::cout << "Function(";
 
+            FuncName->Print(Tabs + 1);
+            ReturnType->Print(Tabs + 1);
             Args->Print(Tabs + 1);
-
             Body->Print(Tabs + 1);
 
             INDENT(Tabs);

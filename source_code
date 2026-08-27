@@ -1,5 +1,7 @@
-int main(int a){
-    for(1;;)
-        continue;
-}
-//**arr[*ptr++ + ~-val] = func(a, b)->field.method(x++) ? (b.x > 3 && (c->d || !*++p)) : (int_val % 2 ^ var->elem[idx[0]]);
+struct SampleStruct {
+    // 1. Standard declarators with multiple variables per line
+    int id, *ptr_val;
+
+    // 2. Struct with array declarator
+    char name[32];
+};

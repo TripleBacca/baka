@@ -1,11 +1,9 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/token/token.hh"
-#include "utils.hh"
 
 namespace baka {
     namespace parser {
-        types::StatementNode* Parser::Statement() {
+        types::StatementNode* Parser::ParseStatement() {
             //TODO implement proper statement logic
             if (Check(types::TokenType::K_IF)) {
                 return this->SelectionStatement();
@@ -16,8 +14,10 @@ namespace baka {
             else if ((Check(types::TokenType::IDENTIFIER) && Check2(types::TokenType::OP_COLON)) || Check(types::TokenType::K_CASE) || Check(types::TokenType::K_DEFAULT)) {
                 return this->LabelStatement();
             }
-            else {
+            else if (Check(types::TokenType::K_GOTO) || Check(types::TokenType::K_RETURN) || Check(types::TokenType::K_BREAK) || Check(types::TokenType::K_CONTINUE)) {
                 return this->JumpStatement();
+            } else {
+                return this->CompoundStatement();
             }
         }
     }

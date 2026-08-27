@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 
@@ -10,13 +9,14 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentifierNode* Tag = this->Identifier();
+            types::IdentifierNode* Tag = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::OP_COLON)) {
                 // throw error
             }
 
-            types::StatementNode* Stmt = this->Statement();
+            // types::StatementNode* Stmt = this->Statement();
+            types::StatementNode* Stmt = nullptr;
 
             types::GotoLabelStatementNode* Node = ASTALLOC.Alloc<types::GotoLabelStatementNode>(Tag, Stmt);
             return Node;
@@ -33,7 +33,8 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Stmt = this->Statement();
+            // types::StatementNode* Stmt = this->Statement();
+            types::StatementNode* Stmt = nullptr;
 
             types::CaseLabelStatementNode* Node = ASTALLOC.Alloc<types::CaseLabelStatementNode>(Tag, Stmt);
             return Node;
@@ -48,7 +49,8 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Stmt = this->Statement();
+            types::StatementNode* Stmt = nullptr;
+            // types::StatementNode* Stmt = this->Statement();
 
             types::DefaultLabelStatementNode* Node = ASTALLOC.Alloc<types::DefaultLabelStatementNode>(Stmt);
             return Node;
