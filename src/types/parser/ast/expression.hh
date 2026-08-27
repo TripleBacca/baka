@@ -61,7 +61,10 @@ namespace types {
                 INDENT(Tabs + 1);
                 std::cout << "UnaryOp: " << ASTUnaryOpToString(UnaryOp) << ",\n";
 
-                Expr->Print(Tabs + 1);
+                if(Expr)
+                    Expr->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -84,8 +87,15 @@ namespace types {
                 INDENT(Tabs + 1);
                 std::cout << "BinaryOp: " << ASTBinaryOpToString(BinaryOp) << ",\n";
 
-                LHSExpr->Print(Tabs + 1);
-                RHSExpr->Print(Tabs + 1);
+                if(LHSExpr)
+                    LHSExpr->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+
+                if(RHSExpr)
+                    RHSExpr->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -103,7 +113,10 @@ namespace types {
                 std::cout << "CommaExpression(" << std::endl;
 
                 for(auto* expr : ExpressionList) {
-                    expr->Print(Tabs + 1);
+                    if(expr)
+                        expr->Print(Tabs + 1);
+                    else
+                        INDENT(Tabs + 1) << "nullptr" << std::endl;
                 }
 
                 INDENT(Tabs);

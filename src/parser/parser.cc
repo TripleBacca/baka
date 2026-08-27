@@ -50,8 +50,15 @@ namespace baka {
         types::ProgramNode* Parser::ParseProgram() {
             std::vector<types::ASTNode*> body;
             while (!Check(types::TokenType::EOF_TOKEN)) {
-                if (Check(types::TokenType::K_STRUCT)) {
+
+                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
                     body.push_back(this->ParseStruct());
+                }
+                else if (detail::IsTypeOrIdentifier(Peek().TokenType_v) ||
+                        detail::IsSpecifier(Peek().TokenType_v)
+                ) {
+
+                    body.push_back(this->ParseFunction());
                 }
                 else {
                     body.push_back(this->ParseFunction());
@@ -81,6 +88,11 @@ namespace baka {
         bool Parser::LookupType(types::IdentifierNode* Identifier) {
             return TypeLookup.Lookup(Identifier->GetName()).has_value();
         }
+
+        bool Parser::LookupType(std::string_view IdentifierName) {
+            return TypeLookup.Lookup(IdentifierName).has_value();
+        }
+
 
         void Parser::EnterScope() {
             TypeLookup.EnterNewScope();

@@ -1,6 +1,11 @@
 #include "parser.hh"
+#include "types/parser/ast/ast_node.hh"
+#include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/expression.hh"
+#include "types/token/pretty.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
+#include <variant>
 
 namespace baka {
     namespace parser {
@@ -13,27 +18,26 @@ namespace baka {
                 // throw error
             }
 
-            types::ExpressionNode* Decl = nullptr;
-            if (!Match(types::TokenType::SEMICOLON)) {
+            std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
+            if(detail::IsSpecifier(Peek().TokenType_v) || Peek().TokenType_v == types::TokenType::IDENTIFIER) {
+                Decl = this->ParseDeclarationList();
+            } else {
                 Decl = this->Expression();
-                if (!Match(types::TokenType::SEMICOLON)) {
-                    // throw error
-                }
             }
-            types::ExpressionNode* Cond = nullptr;
+            if(!Match(types::TokenType::SEMICOLON)) {
+                // throw error
+                assert(false);
+            }
+
+            types::ExpressionNode* ComparisonExpr = Expression();
             if (!Match(types::TokenType::SEMICOLON)) {
-                Cond = this->Expression();
-                if (!Match(types::TokenType::SEMICOLON)) {
-                    // throw error
-                }
+                // throw error
+                assert(false);
             }
-            types::ExpressionNode* Upd = nullptr;
-            if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                Upd = this->Expression();
-                if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::RPAREN_ROUND)) {
-                    // throw error
-                }
-            }
+
+            types::ExpressionNode* Update = Expression();
+            Match(types::TokenType::SEMICOLON); // can optionally leave a trailing semicolon without label
+
             types::IdentifierNode* Label = nullptr;
             if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
@@ -41,11 +45,12 @@ namespace baka {
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
+                assert(false);
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
-            types::ForBlockStatementNode* Node = ASTALLOC.Alloc<types::ForBlockStatementNode>(Decl, Cond, Upd, Label, Body);
+            types::ForBlockStatementNode* Node = ASTALLOC.Alloc<types::ForBlockStatementNode>(Decl, ComparisonExpr, Update, Label, Body);
             return Node;
         }
 
@@ -58,13 +63,13 @@ namespace baka {
                 // throw error
             }
 
-            types::ExpressionNode* Cond = nullptr;
-            Cond = this->Expression();
+            types::ExpressionNode* Cond = this->Expression();
+            Match(types::TokenType::SEMICOLON); // allow trailing semicolon
+
+
             types::IdentifierNode* Label = nullptr;
-            if (Match(types::TokenType::SEMICOLON)) {
-                if (Check(types::TokenType::IDENTIFIER)) {
-                    Label = this->ParseIdentifier();
-                }
+            if (Match(types::TokenType::IDENTIFIER)) {
+                Label = this->ParseIdentifier();
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
@@ -72,7 +77,6 @@ namespace baka {
             }
 
             types::StatementNode* Body = this->ParseStatement();
-
             types::WhileBlockStatementNode* Node = ASTALLOC.Alloc<types::WhileBlockStatementNode>(Cond, Label, Body);
             return Node;
         }
@@ -92,21 +96,17 @@ namespace baka {
                 // throw error
             }
 
-            types::ExpressionNode* Cond = nullptr;
-            Cond = this->Expression();
+            types::ExpressionNode* Cond = this->Expression();
+            Match(types::TokenType::SEMICOLON); // allow trailing semicolon
 
             types::IdentifierNode* Label = nullptr;
-            if (Match(types::TokenType::SEMICOLON)) {
-                if (Check(types::TokenType::IDENTIFIER)) {
-                    Label = this->ParseIdentifier();
-                }
+            if (Match(types::TokenType::IDENTIFIER)) {
+                Label = this->ParseIdentifier();
             }
-
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
             }
-
             if (!Match(types::TokenType::SEMICOLON)) {
                 // throw error
             }

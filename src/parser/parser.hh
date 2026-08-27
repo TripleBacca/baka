@@ -39,6 +39,7 @@ namespace parser {
 
         // type lookup helpers:
         bool LookupType(types::IdentifierNode* Identifier);
+        bool LookupType(std::string_view Name);
         void EnterScope();
         void ExitScope();
         void AddType(types::IdentifierNode* Identifier);

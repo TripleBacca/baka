@@ -1,9 +1,8 @@
 #pragma once
-#include <utility>
-
 #include "expression.hh"
 #include "statement.hh"
 #include "utils.hh"
+#include <variant>
 
 namespace baka {
     namespace types {
@@ -14,15 +13,15 @@ namespace baka {
 
         class ForBlockStatementNode : public IterationStatementNode {
             //TODO Change to declaration?
-            ExpressionNode* Decl;
-            ExpressionNode* Cond;
-            ExpressionNode* Upd;
-            IdentifierNode* Label;
+            std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
+            types::ExpressionNode* Cond;
+            types::ExpressionNode* Upd;
+            types::IdentifierNode* Label;
 
             StatementNode* Body;
 
         public:
-            ForBlockStatementNode(ExpressionNode* decl, ExpressionNode* cond, ExpressionNode* upd, IdentifierNode* label, StatementNode* body) :
+            ForBlockStatementNode(std::variant<types::ExpressionNode*, types::DeclarationList*> decl, types::ExpressionNode* cond, types::ExpressionNode* upd, types::IdentifierNode* label, StatementNode* body) :
                 Decl(decl), Cond(cond), Upd(upd), Label(label), Body(body) {
             }
 
@@ -30,19 +29,32 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "For(" << "\n";
 
-                if (Decl) Decl->Print(Tabs + 1);
-                INDENT(Tabs);
-                std::cout << ";\n";
-                if (Cond) Cond->Print(Tabs + 1);
-                INDENT(Tabs);
-                std::cout << ";\n";
-                if (Upd) Upd->Print(Tabs + 1);
-                if (Label) {
-                    INDENT(Tabs);
-                    std::cout << ";\n";
+                std::visit([&](auto&& decl) {
+                    if(decl)
+                        decl->Print(Tabs + 1);
+                    else
+                        INDENT(Tabs + 1) << "nullptr" << std::endl;
+                }, Decl);
+
+                if (Cond)
+                    Cond->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+
+                if (Upd)
+                    Upd->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+
+                if (Label)
                     Label->Print(Tabs + 1);
-                }
-                if (Body) Body->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+
+                if (Body)
+                    Body->Print(Tabs + 1);
+                else
+                    INDENT(Tabs + 1) << "nullptr" << std::endl;
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
