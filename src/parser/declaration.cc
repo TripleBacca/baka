@@ -2,6 +2,7 @@
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
 #include "parser.hh"
+#include "types/token/token.hh"
 #include "utils.hh"
 #include <cassert>
 
@@ -22,11 +23,19 @@ namespace baka
 
 		// TODO: stuff left to support
 		// function ptr
-		// unsigned annol
+
 		// bare struct - not gonna support
+
+
+		struct X {};
+		unsigned  x = 1;
+		// char
+		// int
 
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
+		    bool isUnsigned = false;
+
 			bool IsStatic = false;
 			bool IsConst = false;
 
@@ -45,20 +54,17 @@ namespace baka
 				}
 			}
 
-			if (Match(types::TokenType::K_STRUCT))
-			{
-				isClassOrStruct = true;
-			}
-			if (Match(types::TokenType::K_ENUM))
-			{
-				isEnum = true;
-			}
+			isClassOrStruct = Match(types::TokenType::K_STRUCT);
+			isEnum = Match(types::TokenType::K_ENUM);
+
 			if(isEnum && isClassOrStruct) { // cannot be both class and enum
 				// TODO: throw error
 				assert(false && "Enum cannot be a class or struct");
 			}
 
-			types::IdentifierNode* TypeName = ParseIdentifier(); //TODO: parse type specifier properly
+			isUnsigned = Match(types::TokenType::K_UNSIGNED);
+
+			types::IdentifierNode* TypeName = ParseIdentifier();
 			if(!LookupType(TypeName)) {
 				// TODO: throw error
 				assert(false && "Expected type name");
@@ -86,7 +92,7 @@ namespace baka
 				assert(false && "Expected semicolon at the end of declaration list");
 			}
 
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, TypeName, std::move(Declarations));
+			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, isUnsigned, TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 

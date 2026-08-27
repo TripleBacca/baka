@@ -106,12 +106,19 @@ namespace types {
     class DeclarationList : public ASTNode {
         bool IsStatic, IsConst;
         bool isClassOrStruct, isEnum;
+
+        bool isUnsigned;
         IdentifierNode* TypeName{}; // todo
         std::vector<SingleDeclarationNode*> Declarations;
 
         public:
-        DeclarationList(bool IsStatic, bool IsConst, bool isClassOrStruct, bool isEnum, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
-        IsStatic(IsStatic), IsConst(IsConst), isClassOrStruct(isClassOrStruct), isEnum(isEnum), TypeName(TypeName), Declarations(std::move(Declarations)) {}
+        DeclarationList(bool IsStatic, bool IsConst, bool isClassOrStruct, bool isEnum, bool isUnsigned, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
+        IsStatic(IsStatic), IsConst(IsConst), isClassOrStruct(isClassOrStruct), isEnum(isEnum), isUnsigned(isUnsigned), TypeName(TypeName), Declarations(std::move(Declarations)) {
+            if(isUnsigned && !detail::isUnsignedTypeName(TypeName->GetName())) {
+                // todo throw error
+                assert(false);
+            }
+        }
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -124,6 +131,9 @@ namespace types {
                 INDENT(Tabs + 1);
                 std::cout << "nullptr\n";
             }
+            INDENT(Tabs + 1);
+            std::cout << "isUnsigned: " << isUnsigned << "\n";
+
             for (const auto& Declaration : Declarations) {
                 Declaration->Print(Tabs + 1);
             }

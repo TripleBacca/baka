@@ -1,7 +1,6 @@
 #pragma once
 #include "ast_node.hh"
 #include <iostream>
-#include <string_view>
 #include <utility>
 #include <vector>
 #include "statement.hh"
@@ -18,12 +17,15 @@ namespace types {
         bool IsConst = false;
         bool isStructOrClass = false;
         bool isEnum = false;
+
+        bool isUnsigned = false;
+
         SingleDeclarationNode* SDeclarationNode;
         IdentifierNode* TypeName;
 
         public:
-        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode, bool isStructOrClass, bool isEnum) :
-        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode), isStructOrClass(isStructOrClass), isEnum(isEnum) {}
+        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode, bool isStructOrClass, bool isEnum, bool isUnsigned) :
+        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode), isStructOrClass(isStructOrClass), isEnum(isEnum), isUnsigned(isUnsigned) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -34,6 +36,8 @@ namespace types {
             std::cout << "isStructOrClass: " << isStructOrClass << "\n";
             INDENT(Tabs + 1);
             std::cout << "isEnum: " << isEnum << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isUnsigned: " << isUnsigned << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {

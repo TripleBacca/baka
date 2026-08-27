@@ -12,11 +12,12 @@ namespace baka {
             // TODO: need to test dis
             bool isStructOrClass = Match(types::TokenType::K_STRUCT); // eat
             bool isEnum = Match(types::TokenType::K_ENUM); // eat
-
             if(isStructOrClass && isEnum) { // cannot eat both
                 // throw error
                 assert(false);
             }
+
+            bool isUnsigned = Match(types::TokenType::K_UNSIGNED);
 
             bool IsConst = false;
             if(Match(types::TokenType::K_CONST)) {
@@ -35,7 +36,8 @@ namespace baka {
 
             types::SingleDeclarationNode* Node = ParseSingleDeclaration();
 
-            types::FunctionParameter* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, TypeName, Node, isStructOrClass, isEnum);
+            // TODO: fix these disgusting constructors
+            types::FunctionParameter* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, TypeName, Node, isStructOrClass, isEnum, isUnsigned);
             return Parameter;
         }
 
