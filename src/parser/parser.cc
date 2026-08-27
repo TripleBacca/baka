@@ -1,9 +1,7 @@
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
-#include <string_view>
 #include <variant>
 
 // TODO: deal with dtypddefs by mainting symbol table
@@ -14,6 +12,12 @@ namespace baka {
             if (current >= Tokens.size()) return (type == types::TokenType::EOF_TOKEN);
 
             return Tokens[current].TokenType_v == type;
+        }
+
+        bool Parser::Check2(types::TokenType type) const noexcept {
+            if (current + 1 >= Tokens.size()) return (type == types::TokenType::EOF_TOKEN);
+
+            return Tokens[current + 1].TokenType_v == type;
         }
 
         const types::Token& Parser::Advance() {
@@ -40,22 +44,22 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseStruct();
+            return this->ParseProgram();
         };
 
-        types::ProgramNode* Parser::Program() {
-            // std::vector<types::ASTNode*> body;
-            // while (!Check(types::TokenType::EOF_TOKEN)) {
-            //     if (Check(types::TokenType::K_STRUCT)) {
-            //         body.push_back(this->Struct());
-            //     }
-            //     else {
-            //         body.push_back(this->Function());
-            //     }
-            // }
+        types::ProgramNode* Parser::ParseProgram() {
+            std::vector<types::ASTNode*> body;
+            while (!Check(types::TokenType::EOF_TOKEN)) {
+                if (Check(types::TokenType::K_STRUCT)) {
+                    body.push_back(this->ParseStruct());
+                }
+                else {
+                    body.push_back(this->ParseFunction());
+                }
+            }
 
-            // types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
-            // return Node;
+            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
+            return Node;
         }
 
         types::ExpressionNode* Parser::Expression() {

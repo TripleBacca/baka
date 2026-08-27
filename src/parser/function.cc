@@ -1,6 +1,5 @@
 #include "types/parser/ast/function.hh"
 #include "parser.hh"
-#include "memory/custom_arenas.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/token/token.hh"
@@ -67,7 +66,7 @@ namespace baka {
             return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
         }
 
-        types::FunctionNode* Parser::Function() {
+        types::FunctionNode* Parser::ParseFunction() {
             if (!detail::IsTypeOrIdentifier(this->Peek().TokenType_v)) {
                 // throw error
                 assert(false);

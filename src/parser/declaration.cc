@@ -3,7 +3,6 @@
 #include "types/parser/ast/identifier.hh"
 #include "parser.hh"
 #include "utils.hh"
-#include "memory/custom_arenas.hh"
 #include <cassert>
 
 

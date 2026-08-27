@@ -18,6 +18,7 @@ namespace {
         {types::TokenType::K_CLASS, "K_CLASS"},
         {types::TokenType::K_CONST, "K_CONST"},
         {types::TokenType::K_CONTINUE, "K_CONTINUE"},
+        {types::TokenType::K_DEFAULT, "K_DEFAULT"},
         {types::TokenType::K_DELETE, "K_DELETE"},
         {types::TokenType::K_DO, "K_DO"},
         {types::TokenType::K_DOUBLE, "K_DOUBLE"},

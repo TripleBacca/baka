@@ -4,7 +4,11 @@ set(EXEC_SOURCES
     parser.cc
     expressions.cc
     function.cc
+    statement.cc
+    labelStatement.cc
+    selectionStatement.cc
     jumpStatement.cc
+    iterationStatement.cc
     identifier.cc
     declaration.cc
     initializer.cc

@@ -2,7 +2,6 @@
 #include "parser.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
-#include "base/memory/custom_arenas.hh"
 
 namespace baka {
 namespace parser {

@@ -7,7 +7,6 @@
 #include "types/parser/ast/ternary.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
-#include "base/memory/custom_arenas.hh"
 #include <string_view>
 #include <variant>
 

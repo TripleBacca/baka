@@ -2,15 +2,18 @@
 #include "symbol_table/symbol_table.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
+#include "types/parser/ast/initializer.hh"
+#include "types/parser/ast/statement.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/function.hh"
+#include "types/parser/ast/labelStatement.hh"
 #include "types/parser/ast/jump.hh"
-#include "types/parser/ast/initializer.hh"
-
+#include "types/parser/ast/selectionStatement.hh"
+#include "types/parser/ast/iterationStatement.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -22,10 +25,6 @@
 
 
 namespace baka {
-
-
-
-
 namespace parser {
     struct ParserSTE {};
 
@@ -46,6 +45,7 @@ namespace parser {
 
         // helpers
         bool Check(types::TokenType type) const noexcept;
+        bool Check2(types::TokenType type) const noexcept;
         const types::Token& Advance();
         bool Match(types::TokenType type);
         const types::Token& Peek() const noexcept;
@@ -53,12 +53,14 @@ namespace parser {
 
         // recursive descent nodes:
 
-        types::ProgramNode* Program();
-        types::FunctionNode* Function();
+        types::ProgramNode* ParseProgram();
+
+        types::FunctionNode* ParseFunction();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         types::StructNode* ParseStruct();
 
+        types::StatementNode* ParseStatement();
         types::CompoundStatementNode* CompoundStatement();
 
         types::JumpStatementNode* JumpStatement();
@@ -66,6 +68,21 @@ namespace parser {
         types::GotoStatementNode* GotoStatement();
         types::BreakStatementNode* BreakStatement();
         types::ContinueStatementNode* ContinueStatement();
+        types::IfSuperBlockStatementNode* IfSuperBlockStatement();
+        types::IfSubBlockStatementNode* IfSubBlockStatement();
+        types::ElseIfSubBlockStatementNode* ElseIfSubBlockStatement();
+        types::ElseSubBlockStatementNode* ElseSubBlockStatement();
+        types::SelectionStatementNode* SelectionStatement();
+        types::ForBlockStatementNode* ForBlockStatement();
+        types::WhileBlockStatementNode* WhileBlockStatement();
+        types::DoWhileBlockStatementNode* DoWhileBlockStatement();
+        types::IterationStatementNode* IterationStatement();
+        types::GotoLabelStatementNode* GotoLabelStatement();
+        types::CaseLabelStatementNode* CaseLabelStatement();
+        types::DefaultLabelStatementNode* DefaultLabelStatement();
+        types::LabelStatementNode* LabelStatement();
+
+
         // this is for declarations inside a struct, im sorry
         types::StructNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();

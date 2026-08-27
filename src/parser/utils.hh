@@ -1,6 +1,7 @@
 #pragma once
 #include "types/token/all.hh"
 #include "types/token/token.hh"
+#include "memory/custom_arenas.hh"
 
 #define ASTALLOC baka::base::ASTNodeArena::getInstance()
 
