@@ -1,2 +1,1 @@
-struct X {};
-int balls(int a, const int* b[2], struct X c) {}
+int (*func(int x))()

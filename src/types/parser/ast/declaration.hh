@@ -1,7 +1,9 @@
 #pragma once
 
 
+#include <iostream>
 #include <utility>
+#include <vector>
 
 #include "types/parser/ast/ast_node.hh"
 #include "types/parser/ast/expression.hh"
@@ -11,14 +13,14 @@
 namespace baka {
 namespace types {
 
-    struct X {};
-    void balls(const struct X a, struct X* (*c));
 
     class DeclarationIdentifierNode : public ASTNode
     {
         size_t PointerCount;
         std::variant<DeclarationIdentifierNode*, IdentifierNode*> VariableName;
         std::vector<ExpressionNode*> ArraySizes;
+
+        ASTNode* FunctionParameters = nullptr;
 
     public:
         DeclarationIdentifierNode() = default;
@@ -53,6 +55,13 @@ namespace types {
                 ArraySize->Print(Tabs + 2);
             }
 
+            if(FunctionParameters)
+            {
+                INDENT(Tabs + 1);
+                std::cout << "FunctionParameters: " << std::endl;
+                FunctionParameters->Print(Tabs + 2);
+            }
+
             INDENT(Tabs);
             std::cout << ")\n";
         }
@@ -70,6 +79,27 @@ namespace types {
         void setInnerDeclaration(std::variant<DeclarationIdentifierNode*, IdentifierNode*> InnerDeclaration)
         {
             VariableName = InnerDeclaration;
+        }
+
+        void setFunctionParameters(ASTNode* Params)
+        {
+            this->FunctionParameters = Params;
+        }
+
+        size_t getPointerCount() const
+        {
+            return PointerCount;
+        }
+
+        // Returns true if this node or any nested DeclarationIdentifierNode
+        // has at least one pointer level - used to validate function pointer
+        // need for: int ((*fp))(int x) : we need to check if the innermost thingy has a * cuz it has to be a ptr
+        bool hasPointerAtAnyLevel() const
+        {
+            if (PointerCount > 0) return true;
+            if (std::holds_alternative<DeclarationIdentifierNode*>(VariableName))
+                return std::get<DeclarationIdentifierNode*>(VariableName)->hasPointerAtAnyLevel();
+            return false;
         }
 
     };
@@ -139,6 +169,71 @@ namespace types {
             }
             INDENT(Tabs);
             std::cout << ")\n";
+        }
+    };
+
+
+    class FunctionParameter : public ASTNode {
+        bool IsConst = false;
+        bool isStructOrClass = false;
+        bool isEnum = false;
+
+        bool isUnsigned = false;
+
+        SingleDeclarationNode* SDeclarationNode;
+        IdentifierNode* TypeName;
+
+        public:
+        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode, bool isStructOrClass, bool isEnum, bool isUnsigned) :
+        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode), isStructOrClass(isStructOrClass), isEnum(isEnum), isUnsigned(isUnsigned) {}
+
+        void Print(size_t Tabs = 0) const override {
+            INDENT(Tabs);
+            std::cout << "FunctionParameter(" << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "IsConst: " << IsConst << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isStructOrClass: " << isStructOrClass << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isEnum: " << isEnum << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isUnsigned: " << isUnsigned << "\n";
+            if (TypeName) {
+                TypeName->Print(Tabs + 1);
+            } else {
+                INDENT(Tabs + 1);
+                std::cout << "nullptr\n";
+            }
+            if (SDeclarationNode) {
+                SDeclarationNode->Print(Tabs + 1);
+            }
+            INDENT(Tabs);
+            std::cout << ")\n";
+        }
+
+
+        bool hasInitalizer() const {
+            return SDeclarationNode->hasInitalizer();
+        }
+    };
+
+    // TODO: use pimpl idiom
+
+    class FunctionParameterList : public ASTNode {
+        std::vector<FunctionParameter*> Parameters;
+    public:
+        FunctionParameterList(std::vector<FunctionParameter*> parameters) : Parameters(std::move(parameters)) {}
+
+        void Print(size_t Tabs = 0) const override {
+            INDENT(Tabs);
+            std::cout << "Args(" << '\n';
+
+            for (const auto param : Parameters) {
+                param->Print(Tabs + 1);
+            }
+
+            INDENT(Tabs);
+            std::cout << ")" << std::endl;
         }
     };
 

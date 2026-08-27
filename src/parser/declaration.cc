@@ -128,10 +128,46 @@ namespace baka
 			    Variable->appendPointer();
 			}
 
+			// not supporting const pointer
+			// int* const ptr - not supported
+
 			if (Match(types::TokenType::LPAREN_ROUND))
 			{
 				auto* InnerDeclaration = ParseDeclarationIdentifier();
-				Match(types::TokenType::RPAREN_ROUND);
+				if(!Match(types::TokenType::RPAREN_ROUND))
+				{
+					// TODO: throw error
+					assert(false && "Expected ')'");
+				}
+
+				// check for function ptr
+				if(Match(types::TokenType::LPAREN_ROUND)) {
+					auto* ParameterList = ParseFunctionParameterList();
+					if(!Match(types::TokenType::RPAREN_ROUND))
+					{
+						// TODO: throw error
+						assert(false && "Expected ')'");
+					}
+
+					if(!InnerDeclaration->hasPointerAtAnyLevel())
+					{
+					    // todo throw error
+						assert(false && "Function pointer declarator requires at least one '*' inside the parentheses");
+					}
+
+					Variable->setFunctionParameters(ParameterList);
+
+					// bind inner declaration to function ptr;
+					// cases:
+					// if inner decl = function ptr, bind to its return type
+					// if inner decl = identifier, bind to it
+					// if inner decl = function definition, bind to its return type - NOT POSSIBLE
+					// if inner decl = pointer type,
+					//
+
+					// int (*(*foo[2])())();
+				}
+
 				Variable->setInnerDeclaration(InnerDeclaration);
 			}
 			else
