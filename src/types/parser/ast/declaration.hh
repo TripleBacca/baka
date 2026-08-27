@@ -11,6 +11,8 @@
 namespace baka {
 namespace types {
 
+    struct X {};
+    void balls(const struct X a, struct X* (*c));
 
     class DeclarationIdentifierNode : public ASTNode
     {

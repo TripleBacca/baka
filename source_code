@@ -1,7 +1,2 @@
-struct SampleStruct {
-    // 1. Standard declarators with multiple variables per line
-    int id, *ptr_val;
-
-    // 2. Struct with array declarator
-    char name[32];
-};
+struct X {};
+int balls(int a, const int* b[2], struct X c) {}

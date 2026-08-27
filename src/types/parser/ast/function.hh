@@ -16,18 +16,24 @@ namespace types {
 
     class FunctionParameter : public ASTNode {
         bool IsConst = false;
+        bool isStructOrClass = false;
+        bool isEnum = false;
         SingleDeclarationNode* SDeclarationNode;
         IdentifierNode* TypeName;
 
         public:
-        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
-        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode) {}
+        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode, bool isStructOrClass, bool isEnum) :
+        IsConst(IsConst), TypeName(TypeName), SDeclarationNode(SingleDeclarationNode), isStructOrClass(isStructOrClass), isEnum(isEnum) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "DeclarationList(" << "\n";
+            std::cout << "FunctionParameter(" << "\n";
             INDENT(Tabs + 1);
             std::cout << "IsConst: " << IsConst << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isStructOrClass: " << isStructOrClass << "\n";
+            INDENT(Tabs + 1);
+            std::cout << "isEnum: " << isEnum << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {
