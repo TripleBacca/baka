@@ -6,7 +6,7 @@ test: build
 build:
 	mkdir -p build
 	cmake -S src -B build
-	cmake --build build
+	cmake --build build --parallel
 
 
 clean:

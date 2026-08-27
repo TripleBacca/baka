@@ -20,7 +20,7 @@ bless: build
 build:
 	mkdir -p build
 	cmake -S src -B build
-	cmake --build build
+	cmake --build build --parallel
 
 lex:
 	./build/baka --lex --verbose $(file)
