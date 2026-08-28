@@ -30,13 +30,6 @@ namespace baka {
                 IsConst = true;
             }
 
-            auto isTypeName = [&](const types::Token& token) {
-				if(!std::holds_alternative<std::string_view>(token.Value))
-					return false;
-
-				return LookupType(std::get<std::string_view>(token.Value));
-		    };
-
             if (!isTypeName(this->Peek())) {
                 // throw error
                 assert(false);

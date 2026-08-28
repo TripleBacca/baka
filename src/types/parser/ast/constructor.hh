@@ -11,22 +11,19 @@
 namespace baka {
     namespace types {
         class ConstructorNode : public ASTNode {
-            IdentifierNode* ConstructorName;
             FunctionParameterList* Args;
             StatementNode* Body;
 
         public:
-            ConstructorNode(IdentifierNode* constructorName, FunctionParameterList* args, StatementNode* body) :
-                ConstructorName(constructorName), Args(args), Body(body) {
+            ConstructorNode(FunctionParameterList* args, StatementNode* body) :
+                Args(args), Body(body) {
             }
 
-            ~ConstructorNode() = default;
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Constructor(\n";
 
-                ConstructorName->Print(Tabs + 1);
                 Args->Print(Tabs + 1);
                 Body->Print(Tabs + 1);
 

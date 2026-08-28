@@ -1,7 +1,14 @@
-int (*foo(int a,int b))(int c) {
-    goto X;
+struct X;
+struct X {
+    int a,b;
+    bool c;
 
-    if(true) {
+    int foo(int x) {
+        int x = 1;
+    }
+
+    X(int a, int b) {}
+    ~X() {
 
     }
 };

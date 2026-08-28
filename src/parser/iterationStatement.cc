@@ -19,14 +19,14 @@ namespace baka {
             }
 
             std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
-            if(detail::IsSpecifier(Peek().TokenType_v) || Peek().TokenType_v == types::TokenType::IDENTIFIER) {
+            if(detail::IsSpecifier(Peek().TokenType_v) || isTypeName(Peek())) {
                 Decl = this->ParseDeclarationList();
             } else {
                 Decl = this->Expression();
-            }
-            if(!Match(types::TokenType::SEMICOLON)) {
-                // throw error
-                assert(false);
+                if (!Match(types::TokenType::SEMICOLON)) {
+                    // todo throw error
+                    assert(false);
+                }
             }
 
             types::ExpressionNode* ComparisonExpr = Expression();
@@ -36,11 +36,14 @@ namespace baka {
             }
 
             types::ExpressionNode* Update = Expression();
-            Match(types::TokenType::SEMICOLON); // can optionally leave a trailing semicolon without label
 
             types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
+            if (Match(types::TokenType::SEMICOLON) && Check(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
+                if (LookupType(Label)) {
+                    // todo throw error
+                    assert(false);
+                }
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {

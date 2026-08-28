@@ -6,21 +6,27 @@
 
 namespace baka {
     namespace parser {
-        types::ConstructorNode* Parser::ParseConstructor() {
+        types::ConstructorNode* Parser::ParseConstructor(types::IdentifierNode* ParentName) {
             types::IdentifierNode* ConstructorIdentifier = this->ParseIdentifier();
+            if (ConstructorIdentifier->GetName() != ParentName->GetName()) {
+                assert(false);
+                // todo throw error
+            }
+
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
                 // throw error
+                assert(false);
             }
 
             types::FunctionParameterList* Args = this->ParseFunctionParameterList();
             if (!this->Match(types::TokenType::RPAREN_ROUND)) {
                 // throw error
+                assert(false);
             }
 
-            // TODO: do statement
-            types::StatementNode* Body = this->ParseStatement();
-            auto* Node = ASTALLOC.Alloc<types::ConstructorNode>(ConstructorIdentifier, Args, Body);
+            types::StatementNode* Body = this->CompoundStatement();
+            auto* Node = ASTALLOC.Alloc<types::ConstructorNode>(Args, Body);
 
             return Node;
         }

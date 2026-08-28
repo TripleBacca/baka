@@ -60,7 +60,7 @@ namespace parser {
             // todo throw error
             assert(false && "Expected '{' after struct/class declaration");
         }
-        types::CompoundStatementNode* Body = this->CompoundStatement();
+        types::StructBodyNode* Body = this->ParseStructBody(StructIdentifier);
         if (!this->Match(types::TokenType::SEMICOLON))
         {
             // todo throw error

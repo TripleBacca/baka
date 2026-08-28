@@ -61,6 +61,7 @@ namespace parser {
                 types::PrimaryExpressionNode* Node = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
                 return Node;
             } else {
+                // todo: fill this up niga
                 assert(false && "havent added other constant types");
             }
 
