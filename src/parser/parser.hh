@@ -83,6 +83,10 @@ namespace parser {
         types::CaseLabelStatementNode* CaseLabelStatement();
         types::DefaultLabelStatementNode* DefaultLabelStatement();
         types::LabelStatementNode* LabelStatement();
+
+        types::ExpressionStatementNode* ParseExpressionStatement();
+
+        types::StatementNodeType DetermineStatementType();
         types::EnumNode* ParseEnumDecl();
 
         // this is for declarations inside a struct, im sorry

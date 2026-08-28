@@ -14,6 +14,7 @@ set(EXEC_SOURCES
     initializer.cc
     struct.cc
     compoundStatement.cc
+    expressionStatement.cc
     enums.cc
 )
 
