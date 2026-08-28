@@ -45,7 +45,8 @@ namespace baka {
             std::string_view Value;
 
             public:
-                ConstantTNode(base::SLString& val) : Value(val) {
+                ConstantTNode(const base::SLString& val) : Value(val) {
+                    int x = 1;
                 }
 
                 void Print(size_t Tabs = 0) const override {
