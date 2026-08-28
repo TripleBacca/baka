@@ -16,6 +16,7 @@ set(EXEC_SOURCES
     compoundStatement.cc
     expressionStatement.cc
     enums.cc
+    type.cc
 )
 
 add_library(parser

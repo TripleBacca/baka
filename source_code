@@ -1,6 +1,7 @@
-enum fawgfawjf {
-one,
-two,
-three,
-four
+int (*foo(int a,int b))(int c) {
+    goto X;
+
+    if(true) {
+
+    }
 };

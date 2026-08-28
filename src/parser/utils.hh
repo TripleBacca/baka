@@ -44,33 +44,14 @@ namespace detail {
             case types::TokenType::K_CONST:
             case types::TokenType::K_STATIC:
             case types::TokenType::K_STRUCT:
+            case types::TokenType::K_ENUM:
+            case types::TokenType::K_UNSIGNED:
                 return true;
             default:
                 return false;
         }
-
     }
 
-    inline bool IsTypeOrIdentifier(types::TokenType Type)
-    {
-        switch (Type)
-        {
-        case types::TokenType::K_BOOL:
-        case types::TokenType::K_CHAR:
-        case types::TokenType::K_DOUBLE:
-        case types::TokenType::K_FLOAT:
-        case types::TokenType::K_INT:
-        case types::TokenType::K_LONG:
-        case types::TokenType::K_SHORT:
-        case types::TokenType::K_SIGNED:
-        case types::TokenType::K_UNSIGNED:
-        case types::TokenType::K_ENUM:
-        case types::TokenType::IDENTIFIER:
-            return true;
-        default:
-            return false;
-        }
-    }
 }
 }
 }

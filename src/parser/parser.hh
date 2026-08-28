@@ -66,9 +66,12 @@ namespace parser {
         types::FunctionNode* ParseFunction();
         types::ConstructorNode* ParseConstructor();
         types::DestructorNode* ParseDestructor();
+        std::optional<types::FunctionNode*> TryParseFunction();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
+
+        types::IdentifierNode* ParseTypeIdentifier();
 
         types::StatementNode* ParseStatement();
         types::CompoundStatementNode* CompoundStatement();

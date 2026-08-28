@@ -2,9 +2,15 @@
 #include "parser.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
+#include "types/parser/ast/statement.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include <cassert>
+#include <optional>
+
+// A declaration of a parameter as "function returning type" shall be adjusted to "pointer to function returning type"
+// void x(int x, int foo() = 0) {
+// }
 
 namespace baka {
     namespace parser {
@@ -24,7 +30,14 @@ namespace baka {
                 IsConst = true;
             }
 
-            if (!detail::IsTypeOrIdentifier(this->Peek().TokenType_v)) {
+            auto isTypeName = [&](const types::Token& token) {
+				if(!std::holds_alternative<std::string_view>(token.Value))
+					return false;
+
+				return LookupType(std::get<std::string_view>(token.Value));
+		    };
+
+            if (!isTypeName(this->Peek())) {
                 // throw error
                 assert(false);
             }
@@ -75,32 +88,64 @@ namespace baka {
             return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
         }
 
-        types::FunctionNode* Parser::ParseFunction() {
-            if (!detail::IsTypeOrIdentifier(this->Peek().TokenType_v)) {
+        std::optional<types::FunctionNode*> Parser::TryParseFunction() {
+            size_t prev = current;
+
+            bool isUnsigned = false;
+
+			bool IsStatic = false;
+			bool IsConst = false;
+
+			bool isClassOrStruct = false;
+			bool isEnum = false;
+
+			while (Check(types::TokenType::K_STATIC) || Check(types::TokenType::K_CONST))
+			{
+				if (Match(types::TokenType::K_STATIC))
+				{
+					IsStatic = true;
+				}
+				if (Match(types::TokenType::K_CONST))
+				{
+					IsConst = true;
+				}
+			}
+
+			isClassOrStruct = Match(types::TokenType::K_STRUCT);
+			isEnum = Match(types::TokenType::K_ENUM);
+
+			if(isEnum && isClassOrStruct) { // cannot be both class and enum
+				// TODO: throw error
+				assert(false && "Enum cannot be a class or struct");
+			}
+
+			isUnsigned = Match(types::TokenType::K_UNSIGNED);
+
+
+            // TODO: use TypeNode
+            types::IdentifierNode* ReturnTypeBindedIdentifier = this->ParseTypeIdentifier();
+
+            // int (*foo())();
+
+            // TODO: declaration identifer should deal with function
+            // single declaration can take a default init issok
+            // in single declaration if its declared then put in symbol table and mark as not declared (not defined = true)
+
+            types::DeclarationIdentifierNode* FunctionTypeDecl = this->ParseDeclarationIdentifier();
+            if(!FunctionTypeDecl) {
                 // throw error
                 assert(false);
             }
-            types::IdentifierNode* ReturnTypeIdentifier = this->ParseIdentifier();
-            if(!LookupType(ReturnTypeIdentifier)) {
-                // throw error
-                assert(false);
-            }
-            types::IdentifierNode* FunctionIdentifier = this->ParseIdentifier();
 
-            if (!this->Match(types::TokenType::LPAREN_ROUND)) {
-                // throw error
+            if(!Check(types::TokenType::LPAREN_CURLY)) {
+                current = prev;
+                return std::nullopt;
             }
 
-            types::FunctionParameterList* Args = this->ParseFunctionParameterList();
-            if(!this->Match(types::TokenType::RPAREN_ROUND)) {
-                // throw error
-            }
+            // function body
+            types::StatementNode* Body = this->CompoundStatement();
 
-            // TODO: do statement
-            types::StatementNode* Body = this->ParseStatement();
-            auto* Node = ASTALLOC.Alloc<types::FunctionNode>(ReturnTypeIdentifier, FunctionIdentifier, Args, Body);
-
-            return Node;
+            return ASTALLOC.Alloc<types::FunctionNode>(ReturnTypeBindedIdentifier, FunctionTypeDecl, Body, IsStatic, IsConst, isClassOrStruct, isEnum, isUnsigned);
         }
     }
 }

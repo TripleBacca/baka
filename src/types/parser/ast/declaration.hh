@@ -17,6 +17,7 @@ namespace types {
     class DeclarationIdentifierNode : public ASTNode
     {
         size_t PointerCount;
+        // TODO: use typenode instead of identifier
         std::variant<DeclarationIdentifierNode*, IdentifierNode*> VariableName;
         std::vector<ExpressionNode*> ArraySizes;
 
@@ -101,7 +102,6 @@ namespace types {
                 return std::get<DeclarationIdentifierNode*>(VariableName)->hasPointerAtAnyLevel();
             return false;
         }
-
     };
 
     class SingleDeclarationNode : public ASTNode {

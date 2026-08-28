@@ -64,11 +64,7 @@ namespace baka
 
 			isUnsigned = Match(types::TokenType::K_UNSIGNED);
 
-			types::IdentifierNode* TypeName = ParseIdentifier();
-			if(!LookupType(TypeName)) {
-				// TODO: throw error
-				assert(false && "Expected type name");
-			}
+			types::IdentifierNode* TypeName = ParseTypeIdentifier();
 
 			std::vector<types::SingleDeclarationNode*> Declarations;
 			auto* Node = ParseSingleDeclaration();
@@ -140,7 +136,7 @@ namespace baka
 					assert(false && "Expected ')'");
 				}
 
-				// check for function ptr
+				// check for function
 				if(Match(types::TokenType::LPAREN_ROUND)) {
 					auto* ParameterList = ParseFunctionParameterList();
 					if(!Match(types::TokenType::RPAREN_ROUND))
@@ -149,11 +145,11 @@ namespace baka
 						assert(false && "Expected ')'");
 					}
 
-					if(!InnerDeclaration->hasPointerAtAnyLevel())
-					{
-					    // todo throw error
-						assert(false && "Function pointer declarator requires at least one '*' inside the parentheses");
-					}
+					// if(!InnerDeclaration->hasPointerAtAnyLevel())
+					// {
+					//     // todo throw error
+					// 	assert(false && "Function pointer declarator requires at least one '*' inside the parentheses");
+					// }
 
 					Variable->setFunctionParameters(ParameterList);
 
@@ -185,8 +181,21 @@ namespace baka
 				}
 
 				Variable->setInnerDeclaration(Identifier);
+
+				// check for function ( copypastad code )
+				if(Match(types::TokenType::LPAREN_ROUND)) {
+					auto* ParameterList = ParseFunctionParameterList();
+					if(!Match(types::TokenType::RPAREN_ROUND))
+					{
+						// TODO: throw error
+						assert(false && "Expected ')'");
+					}
+					Variable->setFunctionParameters(ParameterList);
+				}
+
 			}
 
+			// int (*foo[20])()[];
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
 				types::ExpressionNode* ArraySize = ParseAssignmentExpression();

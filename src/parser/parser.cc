@@ -44,12 +44,15 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseProgram();
+            auto result = this->TryParseFunction();
+            if (result) return result.value();
+
+            return this->ParseDeclarationList();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
             std::vector<types::ASTNode*> body;
-            while (!Check(types::TokenType::EOF_TOKEN)) {
+            // while (!Check(types::TokenType::EOF_TOKEN)) {
 
                 // if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
                 //     auto Struct = this->ParseStruct();
@@ -68,15 +71,14 @@ namespace baka {
                 // else {
                 //     body.push_back(this->ParseFunction());
                 // }
-
-                auto Struct = this->ParseStruct();
-                if (std::holds_alternative<types::StructDefinitionNode*>(Struct))
-                {
-                    body.push_back(std::get<types::StructDefinitionNode*>(Struct));
-                } else {
-                    body.push_back(std::get<types::StructDeclarationNode*>(Struct));
-                }
-            }
+            //     auto Struct = this->ParseStruct();
+            //     if (std::holds_alternative<types::StructDefinitionNode*>(Struct))
+            //     {
+            //         body.push_back(std::get<types::StructDefinitionNode*>(Struct));
+            //     } else {
+            //         body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+            //     }
+            // }
 
             auto* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
             return Node;

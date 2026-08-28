@@ -3,4 +3,5 @@
 // struct/classes full grammar for inheritance,
 // struct/classes ctor/dtor
 // enter and exit scope everywhere
+// register types into symbol talbe
 // bare typenames for functions

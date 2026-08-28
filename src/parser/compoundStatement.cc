@@ -1,5 +1,7 @@
 #include "parser.hh"
 #include "utils.hh"
+#include <string_view>
+#include <variant>
 
 
 namespace baka
@@ -17,7 +19,16 @@ namespace baka
 
 			while (Peek().TokenType_v != types::TokenType::RPAREN_CURLY)
 			{
-				if (detail::IsSpecifier(Peek().TokenType_v) || detail::IsTypeOrIdentifier(this->Peek().TokenType_v))
+
+			    auto isTypeName = [&](const types::Token& token) {
+					if(!std::holds_alternative<std::string_view>(token.Value))
+						return false;
+
+					return LookupType(std::get<std::string_view>(token.Value));
+			    };
+
+
+				if (detail::IsSpecifier(Peek().TokenType_v) && isTypeName(Peek()))
 				{
 					auto* DeclarationListNode = ParseDeclarationList();
 					statements.emplace_back(DeclarationListNode);
