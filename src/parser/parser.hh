@@ -83,6 +83,9 @@ namespace parser {
         types::DefaultLabelStatementNode* DefaultLabelStatement();
         types::LabelStatementNode* LabelStatement();
 
+        types::ExpressionStatementNode* ParseExpressionStatement();
+
+        types::StatementNodeType DetermineStatementType();
 
         // this is for declarations inside a struct, im sorry
         types::StructNode* StructDeclarationStatement();
