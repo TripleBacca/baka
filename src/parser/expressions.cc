@@ -54,33 +54,11 @@ namespace parser {
 
         if (detail::isConstantToken(ConstantOrIdentifier.TokenType_v)) {
             auto& Constant = ConstantOrIdentifier;
+
+            auto* ConstantNode =  ParseConstantNode();
             Advance();
 
-            // int
-            // string
-            // char
-            // float
-            // double
-            // long long
-            // unsigned int
-            // unsigned long long
-
-            #define CONSTANT_NODE(T) else if(std::holds_alternative<T>(Constant.Value)) do { \
-                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<T>>(std::get<T>(Constant.Value)); \
-                auto* Node = ASTALLOC.Alloc<types::PrimaryExpressionNode>(cn); \
-                return Node; } while(0)
-
-            if(false) {}
-            CONSTANT_NODE(int);
-            CONSTANT_NODE(base::SLString);
-            CONSTANT_NODE(char);
-            CONSTANT_NODE(std::string);
-            CONSTANT_NODE(float);
-            CONSTANT_NODE(double);
-            CONSTANT_NODE(long long);
-            CONSTANT_NODE(unsigned int);
-            CONSTANT_NODE(unsigned long long);
-
+            return ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
 
         } else if(ConstantOrIdentifier.TokenType_v == types::TokenType::IDENTIFIER) {
             auto& Identifier = ConstantOrIdentifier;
