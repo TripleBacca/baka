@@ -9,30 +9,54 @@
 namespace baka {
     namespace types{
 
-        class StructNode : public ASTNode {
+        class StructDefinitionNode : public ASTNode {
             IdentifierNode* StructName;
-            std::vector<DeclarationList*> Body;
+            IdentifierNode* ParentStructName = nullptr;
+            CompoundStatementNode* Body;
 
         public:
-            StructNode(IdentifierNode* identifier, std::vector<DeclarationList*> body) : StructName(identifier), Body(std::move(body)) {
+            StructDefinitionNode(IdentifierNode* identifier, CompoundStatementNode* body) :
+            StructName(identifier), Body(body) {
+            }
+            StructDefinitionNode(IdentifierNode* identifier, IdentifierNode* parent, CompoundStatementNode* body) :
+            StructName(identifier), ParentStructName(parent), Body(body) {
             }
 
-            ~StructNode() = default;
+            ~StructDefinitionNode() override = default;
 
-            void Print(size_t Tabs = 0) const override {
+            void Print(size_t Tabs) const override {
 
                 INDENT(Tabs);
-                std::cout << "Struct(";
-                StructName->Print();
-
-                for (auto decl : Body) {
-                    decl->Print(Tabs + 1);
+                std::cout << "Struct(" << std::endl;
+                StructName->Print(Tabs + 1);
+                if (ParentStructName) {
+                    INDENT(Tabs+1);
+                    std::cout << "ParentStruct : " << std::endl;
+                    ParentStructName->Print(Tabs+2);
                 }
-
+                Body->Print(Tabs + 1);
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
             }
         };
 
+
+        class StructDeclarationNode : public ASTNode
+        {
+            IdentifierNode* StructName;
+        public:
+            StructDeclarationNode(IdentifierNode* identifier) : StructName(identifier) {
+            }
+
+            ~StructDeclarationNode() override = default;
+
+            void Print(size_t Tabs) const override {
+                INDENT(Tabs);
+                std::cout << "StructDeclaration(" << std::endl;
+                StructName->Print(Tabs + 1);
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+        };
     }
 }
