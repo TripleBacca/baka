@@ -10,6 +10,8 @@
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
 #include "types/parser/ast/program.hh"
+#include "types/parser/ast/constructor.hh"
+#include "types/parser/ast/destructor.hh"
 #include "types/parser/ast/function.hh"
 #include "types/parser/ast/labelStatement.hh"
 #include "types/parser/ast/jump.hh"
@@ -62,6 +64,8 @@ namespace parser {
         types::ProgramNode* ParseProgram();
 
         types::FunctionNode* ParseFunction();
+        types::ConstructorNode* ParseConstructor();
+        types::DestructorNode* ParseDestructor();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
@@ -116,7 +120,6 @@ namespace parser {
         types::SingleDeclarationNode* ParseSingleDeclaration();
         types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
         types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
-
     };
 
 }
