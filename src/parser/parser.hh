@@ -66,7 +66,6 @@ namespace parser {
 
         types::ProgramNode* ParseProgram();
 
-        types::FunctionNode* ParseFunction();
         types::ConstructorNode* ParseConstructor(types::IdentifierNode* ParentName);
         types::DestructorNode* ParseDestructor(types::IdentifierNode* ParentName);
         std::optional<types::FunctionNode*> TryParseFunction();

@@ -44,7 +44,9 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseProgram();
+            auto Func = TryParseFunction();
+            if (!Func) assert(false);
+            return Func.value();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
