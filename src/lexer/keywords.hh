@@ -11,7 +11,7 @@ namespace baka {
             {"break", types::TokenType::K_BREAK},
             {"case", types::TokenType::K_CASE},
             {"char", types::TokenType::K_CHAR},
-            {"class", types::TokenType::K_CLASS},
+            {"class", types::TokenType::K_STRUCT},
             {"const", types::TokenType::K_CONST},
             {"continue", types::TokenType::K_CONTINUE},
             {"default", types::TokenType::K_DEFAULT},

@@ -20,12 +20,12 @@ namespace baka
 				if (detail::IsSpecifier(Peek().TokenType_v) || detail::IsTypeOrIdentifier(this->Peek().TokenType_v))
 				{
 					auto* DeclarationListNode = ParseDeclarationList();
-					statements.push_back(DeclarationListNode);
+					statements.emplace_back(DeclarationListNode);
 				}
 				else
 				{
 					auto* StatementNode = ParseStatement();
-					statements.push_back(StatementNode);
+					statements.emplace_back(StatementNode);
 				}
 			}
 

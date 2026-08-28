@@ -26,7 +26,10 @@
 
 namespace baka {
 namespace parser {
-    struct ParserSTE {};
+    struct ParserSTE
+    {
+        bool isDefined = false;
+    };
 
     class Parser {
         size_t current = 0;
@@ -40,6 +43,7 @@ namespace parser {
         // type lookup helpers:
         bool LookupType(types::IdentifierNode* Identifier);
         bool LookupType(std::string_view Name);
+        ParserSTE* GetParserSTE(types::IdentifierNode* Identifier);
         void EnterScope();
         void ExitScope();
         void AddType(types::IdentifierNode* Identifier);
@@ -59,7 +63,7 @@ namespace parser {
         types::FunctionNode* ParseFunction();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
-        types::StructNode* ParseStruct();
+        std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
 
         types::StatementNode* ParseStatement();
         types::CompoundStatementNode* CompoundStatement();
@@ -84,8 +88,6 @@ namespace parser {
         types::LabelStatementNode* LabelStatement();
 
 
-        // this is for declarations inside a struct, im sorry
-        types::StructNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();
         types::ConstantIntNode* ParseConstantNode();

@@ -8,43 +8,70 @@
 namespace baka {
 namespace parser {
 
-
-    types::StructNode* Parser::ParseStruct() {
+    std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> Parser::ParseStruct() {
         //TODO add support for declarations after struct - not doing
         //TODO semicolon?
 
         if (!this->Match(types::TokenType::K_STRUCT)) {
             // match struct keyword
             // todo throw error
+            assert(false && "Expected 'struct' keyword");
         }
 
         if (!this->Check(types::TokenType::IDENTIFIER)) {
             // todo throw error
+            assert(false && "Expected identifier after 'struct' keyword");
         }
         types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
-        if(LookupType(StructIdentifier)) {
-            // todo throw error
-            assert(false);
+        if (Match(types::TokenType::SEMICOLON)) {
+            // this is a declaration
+            auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
+            if (!LookupType(StructIdentifier)) {
+                AddType(StructIdentifier);
+            }
+            return Node;
         }
 
-        AddType(StructIdentifier);
+        // surely a definition
+        if(LookupType(StructIdentifier) && GetParserSTE(StructIdentifier)->isDefined) {
+            // TODO throw error
+            assert(false && "Struct already defined");
+        }
+
+        types::IdentifierNode* ParentStructIdentifier = nullptr;
+        if (this->Match(types::TokenType::OP_COLON))
+        {
+            if (!this->Check(types::TokenType::IDENTIFIER)) {
+                // todo throw error
+                assert(false);
+            }
+            ParentStructIdentifier = this->ParseIdentifier();
+            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->isDefined) {
+                // todo throw error
+                assert(false && "Parent struct/class not found in symbol table");
+            }
+        }
+
+        if (!LookupType(StructIdentifier)) AddType(StructIdentifier);
+        GetParserSTE(StructIdentifier)->isDefined = true;
         EnterScope();
 
-
-        if (!this->Match(types::TokenType::LPAREN_CURLY)) {
+        if (!this->Check(types::TokenType::LPAREN_CURLY)) {
             // todo throw error
+            assert(false && "Expected '{' after struct/class declaration");
         }
-        std::vector<types::DeclarationList*> Body;
-
-        while (!this->Match(types::TokenType::RPAREN_CURLY)) {
-            Body.push_back(this->ParseDeclarationList());
+        types::CompoundStatementNode* Body = this->CompoundStatement();
+        if (!this->Match(types::TokenType::SEMICOLON))
+        {
+            // todo throw error
+            assert(false && "Expected semicolon after struct/class body");
         }
 
-        types::StructNode* Node = ASTALLOC.Alloc<types::StructNode>(StructIdentifier, std::move(Body));
-
-        if(!Match(types::TokenType::SEMICOLON)) {
-            // todo put error
-            assert(false);
+        types::StructDefinitionNode* Node = nullptr;
+        if (ParentStructIdentifier) {
+            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, ParentStructIdentifier, Body);
+        } else {
+            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, Body);
         }
 
         ExitScope();

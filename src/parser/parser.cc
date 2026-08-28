@@ -44,28 +44,41 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return this->ParseDeclarationList();
+            return ParseProgram();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
             std::vector<types::ASTNode*> body;
             while (!Check(types::TokenType::EOF_TOKEN)) {
 
-                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
-                    body.push_back(this->ParseStruct());
-                }
-                else if (detail::IsTypeOrIdentifier(Peek().TokenType_v) ||
-                        detail::IsSpecifier(Peek().TokenType_v)
-                ) {
+                // if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
+                //     auto Struct = this->ParseStruct();
+                //     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
+                //         body.push_back(std::get<types::StructDefinitionNode*>(Struct));
+                //     } else {
+                //         body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+                //     }
+                // }
+                // else if (detail::IsTypeOrIdentifier(Peek().TokenType_v) ||
+                //         detail::IsSpecifier(Peek().TokenType_v)
+                // ) {
+                //
+                //     body.push_back(this->ParseFunction());
+                // }
+                // else {
+                //     body.push_back(this->ParseFunction());
+                // }
 
-                    body.push_back(this->ParseFunction());
-                }
-                else {
-                    body.push_back(this->ParseFunction());
+                auto Struct = this->ParseStruct();
+                if (std::holds_alternative<types::StructDefinitionNode*>(Struct))
+                {
+                    body.push_back(std::get<types::StructDefinitionNode*>(Struct));
+                } else {
+                    body.push_back(std::get<types::StructDeclarationNode*>(Struct));
                 }
             }
 
-            types::ProgramNode* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
+            auto* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
             return Node;
         }
 
@@ -93,6 +106,14 @@ namespace baka {
             return TypeLookup.Lookup(IdentifierName).has_value();
         }
 
+        ParserSTE* Parser::GetParserSTE(types::IdentifierNode* Identifier) {
+            auto* Entry = TypeLookup.GetEntry(Identifier->GetName());
+            if (!Entry) {
+                // throw error
+                assert(false && "Type not found in symbol table");
+            }
+            return Entry;
+        }
 
         void Parser::EnterScope() {
             TypeLookup.EnterNewScope();

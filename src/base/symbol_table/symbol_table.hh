@@ -65,6 +65,17 @@ public:
         Scopes.back().insert({Symbol, std::move(Entry)});
         return true;
     }
+
+    //TODO GP hash does not guarantee pointer stability need to edit this to not return a pointer
+    SymbolTableEntry* GetEntry(std::string_view Symbol) {
+        for (auto it = Scopes.rbegin(); it != Scopes.rend(); ++it) {
+            auto found = it->find(Symbol);
+            if (found != it->end()) {
+                return &found->second;
+            }
+        }
+        return nullptr;
+    }
 };
 
 
