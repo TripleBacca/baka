@@ -5,6 +5,10 @@
 #include "utils.hh"
 #include <cassert>
 
+enum {
+    BALLS,
+    EAT
+};
 
 namespace baka {
 namespace parser {
@@ -15,14 +19,17 @@ namespace parser {
             assert(false);
         }
 
-        types::IdentifierNode* EnumName = ParseIdentifier();
-        // enums cannot have fwd decl btw
+        types::IdentifierNode* EnumName = nullptr;
+        if(!Check(types::TokenType::LPAREN_CURLY)) { // supporting anonymous enums
+            EnumName = ParseIdentifier();
+            // enums cannot have fwd decl btw
 
-        if(LookupType(EnumName->GetName())) {
-            // todo throw error
-            assert(false);
+            if(LookupType(EnumName->GetName())) {
+                // todo throw error
+                assert(false);
+            }
+            AddType(EnumName);
         }
-        AddType(EnumName);
 
         types::EnumNode* Enum = ASTALLOC.Alloc<types::EnumNode>(EnumName);
 
