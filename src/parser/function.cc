@@ -34,6 +34,7 @@ namespace baka {
                 assert(false);
             }
 
+
             types::SingleDeclarationNode* Node = ParseSingleDeclaration();
 
             // TODO: fix these disgusting constructors

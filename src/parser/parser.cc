@@ -44,7 +44,7 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return this->ParseDeclarationList();
+            return this->ParseProgram();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
@@ -53,6 +53,9 @@ namespace baka {
 
                 if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
                     body.push_back(this->ParseStruct());
+                }
+                else if (Check(types::TokenType::K_ENUM)) {
+                    body.push_back(this->ParseEnumDecl());
                 }
                 else if (detail::IsTypeOrIdentifier(Peek().TokenType_v) ||
                         detail::IsSpecifier(Peek().TokenType_v)

@@ -14,6 +14,7 @@ set(EXEC_SOURCES
     initializer.cc
     struct.cc
     compoundStatement.cc
+    enums.cc
 )
 
 add_library(parser
