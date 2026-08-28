@@ -9,7 +9,7 @@ namespace baka {
 namespace types {
 
     class EnumNode : public ASTNode {
-        IdentifierNode* EnumName;
+        IdentifierNode* EnumName; // cann be nullptr - anonymous enums
         std::vector<IdentifierNode*> EnumValues; // TODO use lsit mayube?
     public:
 
