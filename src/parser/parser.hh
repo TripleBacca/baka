@@ -73,6 +73,7 @@ namespace parser {
         types::IfSubBlockStatementNode* IfSubBlockStatement();
         types::ElseIfSubBlockStatementNode* ElseIfSubBlockStatement();
         types::ElseSubBlockStatementNode* ElseSubBlockStatement();
+        types::SwitchBlockStatementNode* SwitchBlockStatement();
         types::SelectionStatementNode* SelectionStatement();
         types::ForBlockStatementNode* ForBlockStatement();
         types::WhileBlockStatementNode* WhileBlockStatement();
@@ -84,8 +85,6 @@ namespace parser {
         types::LabelStatementNode* LabelStatement();
 
 
-        // this is for declarations inside a struct, im sorry
-        types::StructNode* StructDeclarationStatement();
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();
         types::ConstantIntNode* ParseConstantNode();

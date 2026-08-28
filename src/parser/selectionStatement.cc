@@ -80,14 +80,34 @@ namespace baka {
             return Node;
         }
 
+        types::SwitchBlockStatementNode* Parser::SwitchBlockStatement() {
+            if (!this->Match(types::TokenType::K_SWITCH)) {
+                // throw error
+            }
+
+            if (!Match(types::TokenType::LPAREN_ROUND)) {
+                // throw error
+            }
+
+            types::ExpressionNode* Expression = this->Expression();
+
+            if (!Match(types::TokenType::RPAREN_ROUND)) {
+                // throw error
+            }
+
+            types::StatementNode* Body = this->ParseStatement();
+
+            types::SwitchBlockStatementNode* Node = ASTALLOC.Alloc<types::SwitchBlockStatementNode>(Expression, Body);
+            return Node;
+        }
+
         types::SelectionStatementNode* Parser::SelectionStatement() {
             if (this->Check(types::TokenType::K_IF)) {
                 return IfSuperBlockStatement();
             }
-            //TODO add support for switch case
-            /*else if (this->Check(types::TokenType::K_SWITCH)) {
-                return SwitchStatement();
-            }*/
+            else if (this->Check(types::TokenType::K_SWITCH)) {
+                return SwitchBlockStatement();
+            }
             else {
                 // throw error
                 return nullptr;

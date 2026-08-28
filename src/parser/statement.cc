@@ -5,7 +5,7 @@ namespace baka {
     namespace parser {
         types::StatementNode* Parser::ParseStatement() {
             //TODO implement proper statement logic
-            if (Check(types::TokenType::K_IF)) {
+            if (Check(types::TokenType::K_IF) || Check(types::TokenType::K_SWITCH)) {
                 return this->SelectionStatement();
             }
             else if (Check(types::TokenType::K_FOR) || Check(types::TokenType::K_WHILE) || Check(types::TokenType::K_DO)) {
@@ -16,7 +16,8 @@ namespace baka {
             }
             else if (Check(types::TokenType::K_GOTO) || Check(types::TokenType::K_RETURN) || Check(types::TokenType::K_BREAK) || Check(types::TokenType::K_CONTINUE)) {
                 return this->JumpStatement();
-            } else {
+            }
+            else {
                 return this->CompoundStatement();
             }
         }
