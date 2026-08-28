@@ -1,6 +1,7 @@
 #pragma once
 #include "symbol_table/symbol_table.hh"
 #include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/enums.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
@@ -86,6 +87,7 @@ namespace parser {
         types::ExpressionStatementNode* ParseExpressionStatement();
 
         types::StatementNodeType DetermineStatementType();
+        types::EnumNode* ParseEnumDecl();
 
         // this is for declarations inside a struct, im sorry
         types::StructNode* StructDeclarationStatement();

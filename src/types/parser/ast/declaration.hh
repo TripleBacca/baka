@@ -180,7 +180,7 @@ namespace types {
 
         bool isUnsigned = false;
 
-        SingleDeclarationNode* SDeclarationNode;
+        SingleDeclarationNode* SDeclarationNode; // can be nullptr cuz bare type: int balls(int,int)
         IdentifierNode* TypeName;
 
         public:
@@ -213,7 +213,9 @@ namespace types {
 
 
         bool hasInitalizer() const {
-            return SDeclarationNode->hasInitalizer();
+            if(SDeclarationNode)
+                return SDeclarationNode->hasInitalizer();
+            return false;
         }
     };
 
