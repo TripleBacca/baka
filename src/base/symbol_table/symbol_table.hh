@@ -1,6 +1,5 @@
 #pragma once
 
-#include "memory/arena_alloc_interface.hh"
 #include "memory/custom_arenas.hh"
 #include <optional>
 #include <string_view>

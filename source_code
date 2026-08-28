@@ -1,9 +1,6 @@
-struct X;
-struct X {
-    int b = 20;
+enum fawgfawjf {
+one,
+two,
+three,
+four
 };
-struct Y : X {
-    int a = 10;
-    short x = a+b;
-};
-struct Y;
