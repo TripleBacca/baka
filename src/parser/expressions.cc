@@ -1,5 +1,5 @@
 
-#include "parser.hh"
+#include "memory/custom_strings.hh"
 #include "parser.hh"
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
@@ -56,13 +56,30 @@ namespace parser {
             auto& Constant = ConstantOrIdentifier;
             Advance();
 
-            if (std::holds_alternative<int>(Constant.Value)) {
-                types::ConstantNode* ConstantNode = ASTALLOC.Alloc<types::ConstantIntNode>(std::get<int>(Constant.Value));
-                types::PrimaryExpressionNode* Node = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
-                return Node;
-            } else {
-                assert(false && "havent added other constant types");
-            }
+            // int
+            // string
+            // char
+            // float
+            // double
+            // long long
+            // unsigned int
+            // unsigned long long
+
+            #define CONSTANT_NODE(T) else if(std::holds_alternative<T>(Constant.Value)) do { \
+                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<T>>(std::get<T>(Constant.Value)); \
+                auto* Node = ASTALLOC.Alloc<types::PrimaryExpressionNode>(cn); \
+                return Node; } while(0)
+
+            if(false) {}
+            CONSTANT_NODE(int);
+            CONSTANT_NODE(base::SLString);
+            CONSTANT_NODE(char);
+            CONSTANT_NODE(std::string);
+            CONSTANT_NODE(float);
+            CONSTANT_NODE(double);
+            CONSTANT_NODE(long long);
+            CONSTANT_NODE(unsigned int);
+            CONSTANT_NODE(unsigned long long);
 
 
         } else if(ConstantOrIdentifier.TokenType_v == types::TokenType::IDENTIFIER) {
