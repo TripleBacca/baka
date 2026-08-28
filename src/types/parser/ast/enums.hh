@@ -4,20 +4,20 @@
 #include "types/parser/ast/ast_node.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/utils.hh"
-#include <list>
+#include <vector>
 namespace baka {
 namespace types {
 
     class EnumNode : public ASTNode {
         IdentifierNode* EnumName;
-        std::list<IdentifierNode*> EnumValues; // change most vectors to lists
+        std::vector<IdentifierNode*> EnumValues; // TODO use lsit mayube?
     public:
 
         EnumNode(IdentifierNode* name)
             : EnumName(name) {}
 
         IdentifierNode* getEnumName() const { return EnumName; }
-        const std::list<IdentifierNode*>& getEnumValues() const { return EnumValues; }
+        const std::vector<IdentifierNode*>& getEnumValues() const { return EnumValues; }
 
         void addEnumValue(IdentifierNode* value) {
             EnumValues.push_back(value);

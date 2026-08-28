@@ -22,6 +22,8 @@ namespace parser {
             // todo throw error
             assert(false);
         }
+        AddType(EnumName);
+
         types::EnumNode* Enum = ASTALLOC.Alloc<types::EnumNode>(EnumName);
 
         if(!Match(types::TokenType::LPAREN_CURLY)) {

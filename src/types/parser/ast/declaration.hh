@@ -213,7 +213,9 @@ namespace types {
 
 
         bool hasInitalizer() const {
-            return SDeclarationNode->hasInitalizer();
+            if(SDeclarationNode)
+                return SDeclarationNode->hasInitalizer();
+            return false;
         }
     };
 
