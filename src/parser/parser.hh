@@ -1,6 +1,7 @@
 #pragma once
 #include "symbol_table/symbol_table.hh"
 #include "types/parser/ast/declaration.hh"
+#include "types/parser/ast/enums.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
@@ -84,6 +85,10 @@ namespace parser {
         types::DefaultLabelStatementNode* DefaultLabelStatement();
         types::LabelStatementNode* LabelStatement();
 
+        types::ExpressionStatementNode* ParseExpressionStatement();
+
+        types::StatementNodeType DetermineStatementType();
+        types::EnumNode* ParseEnumDecl();
 
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();

@@ -1,1 +1,6 @@
-int (*func(int x))()
+enum fawgfawjf {
+one,
+two,
+three,
+four
+};

@@ -64,6 +64,7 @@ namespace detail {
         case types::TokenType::K_SHORT:
         case types::TokenType::K_SIGNED:
         case types::TokenType::K_UNSIGNED:
+        case types::TokenType::K_ENUM:
         case types::TokenType::IDENTIFIER:
             return true;
         default:
