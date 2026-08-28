@@ -2,6 +2,5 @@
 // function decl
 // struct/classes full grammar for inheritence,
 // struct/classes ctor/dtor
-// switch/case
 // enter and exit scope everywhere
 // bare typenames for functions

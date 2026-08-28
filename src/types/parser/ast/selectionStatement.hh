@@ -100,5 +100,26 @@ namespace baka {
                 std::cout << ")" << std::endl;
             }
         };
+
+        class SwitchBlockStatementNode : public SelectionStatementNode {
+            ExpressionNode* Expr;
+            StatementNode* Body;
+
+        public:
+            SwitchBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
+            }
+
+            void Print(size_t Tabs = 0) const override {
+                INDENT(Tabs);
+                std::cout << "Switch(" << "\n";
+
+                Expr->Print(Tabs + 1);
+
+                if (Body) Body->Print(Tabs + 1);
+
+                INDENT(Tabs);
+                std::cout << ")" << std::endl;
+            }
+        };
     }
 }
