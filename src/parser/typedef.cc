@@ -28,14 +28,15 @@ namespace parser {
 
         types::TypedefNode* Node = ASTALLOC.Alloc<types::TypedefNode>(BoundTypeName, Modifier, isConst);
 
-        InTypedef = true;
+        // redefinition exemption applies to the typedef own variable name. not function params in the typdef
+        // eg: typedef int (*foo)(int a, int b) exemption should not apply to a, b
+        TypedefFlagGuard InTypedefGuard(*this, true);
         do {
             types::DeclarationIdentifierNode* Variable = ParseDeclarationIdentifier();
             // doesnt matter if typedef is already done on that variable name
             RegisterOrReplaceType(Variable->getIdentifier());
             Node->AddVariable(Variable);
         } while(Match(types::TokenType::OP_COMMA));
-        InTypedef = false;
 
         if (!Match(types::TokenType::SEMICOLON)) {
             // todo throw error

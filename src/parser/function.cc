@@ -17,7 +17,8 @@ namespace baka
 	namespace parser
 	{
 		types::FunctionParameter* Parser::ParseFunctionParameter() {
-			// TODO: need to test dis
+
+			TypedefFlagGuard ScopedInTypedef(*this, false);
 
 			types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 

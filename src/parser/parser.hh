@@ -68,6 +68,20 @@ namespace parser {
         // states needed for parser
         bool InTypedef = false;
 
+        // for typedef redefinition exemption
+        class TypedefFlagGuard {
+            Parser& Self;
+            bool Saved;
+        public:
+            TypedefFlagGuard(Parser& parser, bool NewValue) :
+                Self(parser), Saved(Self.InTypedef) {
+                Self.InTypedef = NewValue;
+            }
+            ~TypedefFlagGuard() {
+                Self.InTypedef = Saved;
+            }
+        };
+
 
         // type lookup helpers:
         bool LookupType(types::IdentifierNode* Identifier);
