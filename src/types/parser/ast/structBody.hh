@@ -36,7 +36,7 @@ namespace types {
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
-                std::cout << "StructBodyNode(:\n";
+                std::cout << "StructBodyNode(\n";
                 for (const auto& decl : Declarations) {
                     decl->Print(Tabs + 1);
                 }

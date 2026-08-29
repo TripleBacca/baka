@@ -20,6 +20,7 @@ set(EXEC_SOURCES
     structBody.cc
     destructor.cc
     constructor.cc
+    union.cc
 )
 
 add_library(parser

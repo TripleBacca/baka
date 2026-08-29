@@ -7,6 +7,7 @@
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
 #include "types/parser/ast/structBody.hh"
+#include "types/parser/ast/union.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -75,6 +76,8 @@ namespace parser {
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
         types::StructBodyNode* ParseStructBody(types::IdentifierNode* ParentName);
 
+        types::UnionNode* ParseUnion();
+        types::UnionBodyNode* ParseUnionBody(types::IdentifierNode* ParentName);
 
         types::IdentifierNode* ParseTypeIdentifier();
 
