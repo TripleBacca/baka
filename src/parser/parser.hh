@@ -7,6 +7,7 @@
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
 #include "types/parser/ast/structBody.hh"
+#include "types/parser/ast/typedef.hh"
 #include "types/parser/ast/union.hh"
 #include "types/token/all.hh"
 #include <span>
@@ -122,6 +123,8 @@ namespace parser {
         types::CaseLabelStatementNode* CaseLabelStatement();
         types::DefaultLabelStatementNode* DefaultLabelStatement();
         types::LabelStatementNode* LabelStatement();
+
+        types::TypedefNode* ParseTypedef();
 
         types::ExpressionStatementNode* ParseExpressionStatement();
 
