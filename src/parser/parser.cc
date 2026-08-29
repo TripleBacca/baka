@@ -1,11 +1,17 @@
 #include "parser.hh"
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
+#include "types/parser/ast/program.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
+#include <optional>
 #include <variant>
 
 // TODO: deal with dtypddefs by mainting symbol table
+
+typedef int foo();
+// foo -> int ()
+
 
 namespace baka {
     namespace parser {
@@ -45,25 +51,42 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseUnion();
+            return ParseProgram();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
-            std::vector<types::ASTNode*> body;
+            auto* ProgramNode = ASTALLOC.Alloc<types::ProgramNode>();
+
             while (!Check(types::TokenType::EOF_TOKEN)) {
+                // function decl
+                // declaration list
+                // union decl
+                // class decl
+                // enum decl
+                // typdef
 
                 if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
                     auto Struct = this->ParseStruct();
                     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
-                        body.push_back(std::get<types::StructDefinitionNode*>(Struct));
+                        ProgramNode->addNode(std::get<types::StructDefinitionNode*>(Struct));
                     } else {
-                        body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+                        ProgramNode->addNode(std::get<types::StructDeclarationNode*>(Struct));
                     }
+                } else if (Check(types::TokenType::K_UNION)) {
+                    auto Union = this->ParseUnion();
+                    ProgramNode->addNode(Union);
+                } else if (Check(types::TokenType::K_ENUM)) {
+                    auto Enum = this->ParseEnumDecl();
+                    ProgramNode->addNode(Enum);
+                } else if (auto PossibleFunction = TryParseFunction()) {
+                    ProgramNode->addNode(PossibleFunction.value());
+                } else {
+                    auto* Node = ParseDeclarationList();
+                    ProgramNode->addNode(Node);
                 }
             }
 
-            auto* Node = ASTALLOC.Alloc<types::ProgramNode>(body);
-            return Node;
+            return ProgramNode;
         }
 
         types::ExpressionNode* Parser::Expression() {

@@ -8,10 +8,21 @@ namespace baka {
     namespace types {
         class ProgramNode : public ASTNode {
             std::vector<ASTNode*> Body;
-            // TODO: should have a vector of declarations
+            // function decl
+            // declaration list
+            // union decl
+            // class decl
+            // enum decl
+            // typedef
 
         public:
             ProgramNode(std::vector<ASTNode*> body) : Body(std::move(body)) {
+            }
+
+            ProgramNode() = default;
+
+            void addNode(ASTNode* node) {
+                Body.push_back(node);
             }
 
             ~ProgramNode() = default;
