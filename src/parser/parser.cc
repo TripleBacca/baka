@@ -1,4 +1,5 @@
 #include "parser.hh"
+#include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
@@ -44,7 +45,7 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseProgram();
+            return Expression();
         };
 
         types::ProgramNode* Parser::ParseProgram() {
@@ -70,15 +71,35 @@ namespace baka {
             return ParseCommaExpression();
         }
 
-        types::ConstantIntNode* Parser::ParseConstantNode() {
-            types::Token Token = this->Peek();
-            if (!std::holds_alternative<int>(Token.Value)) {
-                // throw error
-            }
-            this->Advance();
+        types::ConstantNode* Parser::ParseConstantNode() {
+            const types::Token& Token = this->Peek();
 
-            types::ConstantIntNode* Node = ASTALLOC.Alloc<types::ConstantIntNode>(std::get<int>(Token.Value));
-            return Node;
+            // int
+            // string
+            // char
+            // float
+            // double
+            // long long
+            // unsigned int
+            // unsigned long long
+
+            #define CONSTANT_NODE(T) else if(std::holds_alternative<T>(Token.Value)) do { \
+                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<T>>(std::get<T>(Token.Value)); \
+                return cn; } while(0)
+
+            if(false) {}
+            CONSTANT_NODE(int);
+            CONSTANT_NODE(base::SLString);
+            CONSTANT_NODE(char);
+            CONSTANT_NODE(std::string);
+            CONSTANT_NODE(float);
+            CONSTANT_NODE(double);
+            CONSTANT_NODE(long long);
+            CONSTANT_NODE(unsigned int);
+            CONSTANT_NODE(unsigned long long);
+
+            // todo throw error
+            assert(false);
         }
 
         bool Parser::LookupType(types::IdentifierNode* Identifier) {

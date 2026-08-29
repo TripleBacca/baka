@@ -1,14 +1,1 @@
-struct X;
-struct X {
-    int a,b;
-    bool c;
-
-    int foo(int x) {
-        int x = 1;
-    }
-
-    X(int a, int b) {}
-    ~X() {
-
-    }
-};
+2 * "fwafaw" + 'c' + 212UL

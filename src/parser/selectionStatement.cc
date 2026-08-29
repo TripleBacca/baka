@@ -95,7 +95,7 @@ namespace baka {
                 // throw error
             }
 
-            types::StatementNode* Body = this->ParseStatement();
+            types::StatementNode* Body = this->CompoundStatement();
 
             types::SwitchBlockStatementNode* Node = ASTALLOC.Alloc<types::SwitchBlockStatementNode>(Expression, Body);
             return Node;

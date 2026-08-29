@@ -1,5 +1,6 @@
 #pragma once
 #include "symbol_table/symbol_table.hh"
+#include "types/parser/ast/constant.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/enums.hh"
 #include "types/parser/ast/identifier.hh"
@@ -108,7 +109,7 @@ namespace parser {
 
         types::ExpressionNode* Expression();
         // types::UnaryExpressionNode* UnaryExpression();
-        types::ConstantIntNode* ParseConstantNode();
+        types::ConstantNode* ParseConstantNode();
 
 
         // expressions:

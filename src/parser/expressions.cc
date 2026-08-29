@@ -1,5 +1,5 @@
 
-#include "parser.hh"
+#include "memory/custom_strings.hh"
 #include "parser.hh"
 #include "types/parser/ast/constant.hh"
 #include "types/parser/ast/expression.hh"
@@ -54,17 +54,11 @@ namespace parser {
 
         if (detail::isConstantToken(ConstantOrIdentifier.TokenType_v)) {
             auto& Constant = ConstantOrIdentifier;
+
+            auto* ConstantNode =  ParseConstantNode();
             Advance();
 
-            if (std::holds_alternative<int>(Constant.Value)) {
-                types::ConstantNode* ConstantNode = ASTALLOC.Alloc<types::ConstantIntNode>(std::get<int>(Constant.Value));
-                types::PrimaryExpressionNode* Node = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
-                return Node;
-            } else {
-                // todo: fill this up niga
-                assert(false && "havent added other constant types");
-            }
-
+            return ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
 
         } else if(ConstantOrIdentifier.TokenType_v == types::TokenType::IDENTIFIER) {
             auto& Identifier = ConstantOrIdentifier;
