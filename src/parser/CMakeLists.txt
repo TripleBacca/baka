@@ -13,6 +13,7 @@ set(EXEC_SOURCES
     declaration.cc
     initializer.cc
     struct.cc
+    class.cc
     compoundStatement.cc
     expressionStatement.cc
     enums.cc

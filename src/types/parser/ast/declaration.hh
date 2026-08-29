@@ -13,6 +13,24 @@
 namespace baka {
 namespace types {
 
+    enum class TypeSpecifierModifier {
+        NONE,
+        UNSIGNED,
+        STRUCT,
+        CLASS,
+        ENUM,
+        UNION
+    };
+
+    inline std::unordered_map<TypeSpecifierModifier,std::string_view> TypeSpecifierModifierToStr ={
+        {TypeSpecifierModifier::NONE,"None"},
+        {TypeSpecifierModifier::UNSIGNED,"Unsigned"},
+        {TypeSpecifierModifier::STRUCT,"Struct"},
+        {TypeSpecifierModifier::CLASS,"Class"},
+        {TypeSpecifierModifier::ENUM,"Enum"},
+        {TypeSpecifierModifier::UNION,"Union"}
+    };
+
 
     class DeclarationIdentifierNode : public ASTNode
     {
@@ -134,22 +152,17 @@ namespace types {
 
     class DeclarationList : public ASTNode {
         bool IsStatic = false, IsConst = false;
-        bool isClassOrStruct = false, isEnum = false, isUnion = false;
+        TypeSpecifierModifier Modifier = TypeSpecifierModifier::NONE;
 
-        bool isUnsigned;
-        IdentifierNode* TypeName{}; // todo
+        IdentifierNode* TypeName{};
         std::vector<SingleDeclarationNode*> Declarations;
 
         public:
-        DeclarationList(bool IsStatic, bool IsConst, bool isClassOrStruct, bool isEnum, bool isUnion, bool isUnsigned, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
-        IsStatic(IsStatic), IsConst(IsConst), isClassOrStruct(isClassOrStruct), isEnum(isEnum), isUnion(isUnion), isUnsigned(isUnsigned), TypeName(TypeName), Declarations(std::move(Declarations)) {
-            if(isUnsigned && !detail::isUnsignedTypeName(TypeName->GetName())) {
+        DeclarationList(bool IsStatic, bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
+        IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier), TypeName(TypeName), Declarations(std::move(Declarations)) {
+            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
                 // todo throw error
                 assert(false);
-            }
-            if ((int)isClassOrStruct + (int)isEnum + (int)isUnion > 1) {
-                // todo throw error
-                assert(false && "Cannot be more than one of class/struct/enum/union");
             }
         }
 
@@ -158,15 +171,13 @@ namespace types {
             std::cout << "DeclarationList(" << "\n";
             INDENT(Tabs + 1);
             std::cout << "IsStatic: " << IsStatic << ", IsConst: " << IsConst << "\n";
-            std::cout << "isClassOrStruct: " << isClassOrStruct << ", isEnum: " << isEnum << ", isUnion: " << isUnion << "\n";
+            std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {
                 INDENT(Tabs + 1);
                 std::cout << "nullptr\n";
             }
-            INDENT(Tabs + 1);
-            std::cout << "isUnsigned: " << isUnsigned << "\n";
 
             for (const auto& Declaration : Declarations) {
                 Declaration->Print(Tabs + 1);
@@ -179,25 +190,17 @@ namespace types {
 
     class FunctionParameter : public ASTNode {
         bool IsConst = false;
-        bool isStructOrClass = false;
-        bool isEnum = false, isUnion = false;
-
-        bool isUnsigned = false;
+        TypeSpecifierModifier Modifier;
 
         SingleDeclarationNode* SDeclarationNode; // can be nullptr cuz bare type: int balls(int,int)
         IdentifierNode* TypeName;
 
         public:
-        FunctionParameter(bool IsConst, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode, bool isStructOrClass, bool isEnum, bool isUnsigned, bool isUnion) :
-        IsConst(IsConst), isStructOrClass(isStructOrClass), isEnum(isEnum), isUnsigned(isUnsigned), isUnion(isUnion), SDeclarationNode(SingleDeclarationNode), TypeName(TypeName)
-        {
-            if(isUnsigned && !detail::isUnsignedTypeName(TypeName->GetName())) {
+        FunctionParameter(bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
+            IsConst(IsConst), Modifier(modifier), SDeclarationNode(SingleDeclarationNode), TypeName(TypeName) {
+            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
                 // todo throw error
                 assert(false);
-            }
-            if ((int)isStructOrClass + (int)isEnum + (int)isUnion > 1) {
-                // todo throw error
-                assert(false && "Cannot be more than one of class/struct/enum/union");
             }
         }
 
@@ -207,9 +210,7 @@ namespace types {
             INDENT(Tabs + 1);
             std::cout << "IsConst: " << IsConst << "\n";
             INDENT(Tabs + 1);
-            std::cout << "isStructOrClass: " << isStructOrClass << ", isEnum: " << isEnum << ", isUnion: " << isUnion << "\n";
-            INDENT(Tabs + 1);
-            std::cout << "isUnsigned: " << isUnsigned << "\n";
+            std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {

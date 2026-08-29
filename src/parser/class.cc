@@ -8,28 +8,28 @@
 namespace baka {
 namespace parser {
 
-    std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> Parser::ParseStruct() {
-        if (!this->Match(types::TokenType::K_STRUCT)) {
+    std::variant<types::ClassDefinitionNode*, types::ClassDeclarationNode*> Parser::ParseClass() {
+        if (!this->Match(types::TokenType::K_CLASS)) {
             // todo throw error
-            assert(false && "Expected 'struct' keyword");
+            assert(false && "Expected 'class' keyword");
         }
 
         if (!this->Check(types::TokenType::IDENTIFIER)) {
             // todo throw error
-            assert(false && "Expected identifier after 'struct' keyword");
+            assert(false && "Expected identifier after 'class' keyword");
         }
-        types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
+        types::IdentifierNode* ClassIdentifier = this->ParseIdentifier();
         if (Match(types::TokenType::SEMICOLON)) {
             // this is a declaration
-            auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
-            if (!LookupType(StructIdentifier)) {
-                AddType(StructIdentifier);
-                GetParserSTE(StructIdentifier)->SetIsStruct();
+            auto* Node = ASTALLOC.Alloc<types::ClassDeclarationNode>(ClassIdentifier);
+            if (!LookupType(ClassIdentifier)) {
+                AddType(ClassIdentifier);
+                GetParserSTE(ClassIdentifier)->SetIsStruct();
 
             } else {
-                if(!GetParserSTE(StructIdentifier)->IsStruct()) {
+                if(!GetParserSTE(ClassIdentifier)->IsStruct()) {
                     // TODO throw error
-                    assert(false && "Not a struct");
+                    assert(false && "Not a class");
                 }
 
             }
@@ -37,11 +37,11 @@ namespace parser {
         }
 
         // surely a definition
-        if(LookupType(StructIdentifier)) {
+        if(LookupType(ClassIdentifier)) {
             // TODO throw error
-            if(GetParserSTE(StructIdentifier)->IsStructDefined()) {
+            if(GetParserSTE(ClassIdentifier)->IsStructDefined()) {
                 assert(false && "Struct already defined");
-            } else if(!GetParserSTE(StructIdentifier)->IsStruct()) {
+            } else if(!GetParserSTE(ClassIdentifier)->IsStruct()) {
                 assert(false && "Not a struct");
             }
         }
@@ -60,29 +60,29 @@ namespace parser {
             }
         }
 
-        if (!LookupType(StructIdentifier)) {
-            AddType(StructIdentifier);
-            GetParserSTE(StructIdentifier)->SetIsStruct();
+        if (!LookupType(ClassIdentifier)) {
+            AddType(ClassIdentifier);
+            GetParserSTE(ClassIdentifier)->SetIsStruct();
         }
-        GetParserSTE(StructIdentifier)->SetIsStructDefined();
+        GetParserSTE(ClassIdentifier)->SetIsStructDefined();
         EnterScope();
 
         if (!this->Check(types::TokenType::LPAREN_CURLY)) {
             // todo throw error
             assert(false && "Expected '{' after struct/class declaration");
         }
-        types::StructBodyNode* Body = this->ParseStructBody(StructIdentifier);
+        types::StructBodyNode* Body = this->ParseStructBody(ClassIdentifier);
         if (!this->Match(types::TokenType::SEMICOLON))
         {
             // todo throw error
             assert(false && "Expected semicolon after struct/class body");
         }
 
-        types::StructDefinitionNode* Node = nullptr;
+        types::ClassDefinitionNode* Node = nullptr;
         if (ParentStructIdentifier) {
-            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, ParentStructIdentifier, Body);
+            Node = ASTALLOC.Alloc<types::ClassDefinitionNode>(ClassIdentifier, ParentStructIdentifier, Body);
         } else {
-            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, Body);
+            Node = ASTALLOC.Alloc<types::ClassDefinitionNode>(ClassIdentifier, Body);
         }
 
         ExitScope();

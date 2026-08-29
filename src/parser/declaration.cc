@@ -32,16 +32,30 @@ namespace baka
 		// char
 		// int
 
+		types::TypeSpecifierModifier Parser::DetermineTypeSpecifierModifierType() const {
+			switch (Peek().TokenType_v) {
+			case types::TokenType::K_UNSIGNED:
+				return types::TypeSpecifierModifier::UNSIGNED;
+			case types::TokenType::K_STRUCT:
+				return types::TypeSpecifierModifier::STRUCT;
+			case types::TokenType::K_CLASS:
+				return types::TypeSpecifierModifier::CLASS;
+			case types::TokenType::K_ENUM:
+				return types::TypeSpecifierModifier::ENUM;
+			case types::TokenType::K_UNION:
+				return types::TypeSpecifierModifier::UNION;
+			default:
+				return types::TypeSpecifierModifier::NONE;
+			}
+		}
+
+
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
-		    bool isUnsigned = false;
+		    types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
 			bool IsStatic = false;
 			bool IsConst = false;
-
-			bool isClassOrStruct = false;
-			bool isEnum = false;
-			bool isUnion = false;
 
 			while (Check(types::TokenType::K_STATIC) || Check(types::TokenType::K_CONST))
 			{
@@ -55,11 +69,10 @@ namespace baka
 				}
 			}
 
-			isClassOrStruct = Match(types::TokenType::K_STRUCT);
-			isEnum = Match(types::TokenType::K_ENUM);
-			isUnion = Match(types::TokenType::K_UNION);
-
-			isUnsigned = Match(types::TokenType::K_UNSIGNED);
+			Modifier = DetermineTypeSpecifierModifierType();
+			if (Modifier != types::TypeSpecifierModifier::NONE) {
+				this->Advance();
+			}
 
 			types::IdentifierNode* TypeName = ParseTypeIdentifier();
 
@@ -85,7 +98,7 @@ namespace baka
 				assert(false && "Expected semicolon at the end of declaration list");
 			}
 
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, isUnion, isUnsigned, TypeName, std::move(Declarations));
+			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, Modifier, TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 

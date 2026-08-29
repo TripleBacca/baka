@@ -9,10 +9,6 @@
 
 // TODO: deal with dtypddefs by mainting symbol table
 
-typedef int foo();
-// foo -> int ()
-
-
 namespace baka {
     namespace parser {
         bool Parser::Check(types::TokenType type) const noexcept {
@@ -65,12 +61,19 @@ namespace baka {
                 // enum decl
                 // typdef
 
-                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
+                if (Check(types::TokenType::K_STRUCT)) {
                     auto Struct = this->ParseStruct();
                     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
                         ProgramNode->addNode(std::get<types::StructDefinitionNode*>(Struct));
                     } else {
                         ProgramNode->addNode(std::get<types::StructDeclarationNode*>(Struct));
+                    }
+                } else if (Check(types::TokenType::K_CLASS)) {
+                    auto Class = this->ParseClass();
+                    if (std::holds_alternative<types::ClassDefinitionNode*>(Class)) {
+                        ProgramNode->addNode(std::get<types::ClassDefinitionNode*>(Class));
+                    } else {
+                        ProgramNode->addNode(std::get<types::ClassDeclarationNode*>(Class));
                     }
                 } else if (Check(types::TokenType::K_UNION)) {
                     auto Union = this->ParseUnion();

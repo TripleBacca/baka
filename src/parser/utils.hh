@@ -44,6 +44,7 @@ namespace detail {
             case types::TokenType::K_CONST:
             case types::TokenType::K_STATIC:
             case types::TokenType::K_STRUCT:
+            case types::TokenType::K_CLASS:
             case types::TokenType::K_ENUM:
             case types::TokenType::K_UNSIGNED:
                 return true;
