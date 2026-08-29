@@ -34,29 +34,39 @@ namespace baka {
                 std::visit([&](auto&& decl) {
                     if(decl)
                         decl->Print(Tabs + 1);
-                    else
-                        INDENT(Tabs + 1) << "nullptr" << std::endl;
+                    else {
+                        INDENT(Tabs + 1);
+                        std::cout << "Decl: nullptr" << std::endl;
+                    }
                 }, Decl);
 
                 if (Cond)
                     Cond->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Cond: nullptr" << std::endl;
+                }
 
                 if (Upd)
                     Upd->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Upd: nullptr" << std::endl;
+                }
 
                 if (Label)
                     Label->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Label: nullptr" << std::endl;
+                }
 
                 if (Body)
                     Body->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Body: nullptr" << std::endl;
+                }
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;

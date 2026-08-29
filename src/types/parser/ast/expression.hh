@@ -8,8 +8,6 @@
 #include <vector>
 #include <iostream>
 
-#include "typenode.hh"
-
 
 namespace baka {
 
@@ -65,8 +63,10 @@ namespace types {
 
                 if(Expr)
                     Expr->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Expr: nullptr" << std::endl;
+                }
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -91,13 +91,17 @@ namespace types {
 
                 if(LHSExpr)
                     LHSExpr->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "LHSExpr: nullptr" << std::endl;
+                }
 
                 if(RHSExpr)
                     RHSExpr->Print(Tabs + 1);
-                else
-                    INDENT(Tabs + 1) << "nullptr" << std::endl;
+                else {
+                    INDENT(Tabs + 1);
+                    std::cout << "RHSExpr: nullptr" << std::endl;
+                }
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -117,8 +121,10 @@ namespace types {
                 for(auto* expr : ExpressionList) {
                     if(expr)
                         expr->Print(Tabs + 1);
-                    else
-                        INDENT(Tabs + 1) << "nullptr" << std::endl;
+                    else {
+                        INDENT(Tabs + 1);
+                        std::cout << "nullptr" << std::endl;
+                    }
                 }
 
                 INDENT(Tabs);

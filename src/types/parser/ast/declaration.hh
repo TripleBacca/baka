@@ -48,7 +48,7 @@ namespace types {
                 else
                 {
                     INDENT(Tabs + 2);
-                    std::cout << "nullptr" << std::endl;
+                    std::cout << "Variable: nullptr" << std::endl;
                 }
             }
             else
@@ -60,7 +60,7 @@ namespace types {
                 else
                 {
                     INDENT(Tabs + 2);
-                    std::cout << "nullptr" << std::endl;
+                    std::cout << "Variable: nullptr" << std::endl;
                 }
             }
 
