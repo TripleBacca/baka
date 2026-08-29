@@ -10,13 +10,13 @@ namespace types {
     class TypedefNode : public ASTNode {
         bool isConst = false;
         // struct,enum, union or unsigned
-
+        TypeSpecifierModifier Modifier;
         IdentifierNode* BoundReturnType;
         DeclarationIdentifierNode* Variable;
 
     public:
-        TypedefNode(IdentifierNode* BoundReturnType, DeclarationIdentifierNode* Variable, bool isConst) :
-        BoundReturnType(BoundReturnType), Variable(Variable), isConst(isConst) {}
+        TypedefNode(IdentifierNode* BoundReturnType, DeclarationIdentifierNode* Variable, TypeSpecifierModifier Modifier, bool isConst) :
+        BoundReturnType(BoundReturnType), Variable(Variable), Modifier(Modifier), isConst(isConst) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -27,6 +27,7 @@ namespace types {
             Variable->Print(Tabs + 1);
 
             INDENT(Tabs + 1);
+            std::cout << "Modifier: " << TypeSpecifierModifierToStr[Modifier] << "\n";
             std::cout << ")\n";
         }
     };

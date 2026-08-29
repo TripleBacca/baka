@@ -81,9 +81,12 @@ namespace baka {
                 } else if (Check(types::TokenType::K_ENUM)) {
                     auto Enum = this->ParseEnumDecl();
                     ProgramNode->addNode(Enum);
+                } else if (Check(types::TokenType::K_TYPEDEF)) {
+                    auto Typedef = this->ParseTypedef();
+                    ProgramNode->addNode(Typedef);
                 } else if (auto PossibleFunction = TryParseFunction()) {
                     ProgramNode->addNode(PossibleFunction.value());
-                } else {
+                } else  {
                     auto* Node = ParseDeclarationList();
                     ProgramNode->addNode(Node);
                 }

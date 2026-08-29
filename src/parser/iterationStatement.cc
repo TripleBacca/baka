@@ -2,6 +2,7 @@
 #include "types/parser/ast/ast_node.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/expression.hh"
+#include "types/parser/ast/typedef.hh"
 #include "types/token/pretty.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
@@ -20,9 +21,11 @@ namespace baka {
 
             EnterScope();
 
-            std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
+            std::variant<types::ExpressionNode*, types::DeclarationList*, types::TypedefNode*> Decl;
             if(detail::IsSpecifier(Peek().TokenType_v) || isTypeName(Peek())) {
                 Decl = this->ParseDeclarationList();
+            } else if (Check(types::TokenType::K_TYPEDEF)) {
+                Decl = this->ParseTypedef();
             } else {
                 Decl = this->Expression();
                 if (!Match(types::TokenType::SEMICOLON)) {

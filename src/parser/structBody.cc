@@ -41,6 +41,9 @@ namespace parser {
                 types::DestructorNode* Dtor = ParseDestructor(ParentName);
                 Node->SetDestructor(Dtor);
 
+            } else if(Check(types::TokenType::K_TYPEDEF)) {
+                types::TypedefNode* Typedef = ParseTypedef();
+                Node->AddTypedef(Typedef);
             } else {
                 std::optional<types::FunctionNode*> Func = TryParseFunction();
                 if(Func) {

@@ -109,6 +109,22 @@ namespace types {
             return PointerCount;
         }
 
+        // returns undelying variable name
+        // eg: int (*x)(int)  should return 'x'
+        std::string_view getVariableName() const
+        {
+            if (std::holds_alternative<IdentifierNode*>(VariableName))
+                return std::get<IdentifierNode*>(VariableName)->GetName();
+            return std::get<DeclarationIdentifierNode*>(VariableName)->getVariableName();
+        }
+
+        IdentifierNode* getIdentifier() const
+        {
+            if (std::holds_alternative<IdentifierNode*>(VariableName))
+                return std::get<IdentifierNode*>(VariableName);
+            return std::get<DeclarationIdentifierNode*>(VariableName)->getIdentifier();
+        }
+
         // Returns true if this node or any nested DeclarationIdentifierNode
         // has at least one pointer level - used to validate function pointer
         // need for: int ((*fp))(int x) : we need to check if the innermost thingy has a * cuz it has to be a ptr

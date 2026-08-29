@@ -1,6 +1,7 @@
 #pragma once
 #include "expression.hh"
 #include "statement.hh"
+#include "types/parser/ast/typedef.hh"
 #include "utils.hh"
 #include <variant>
 
@@ -13,7 +14,8 @@ namespace baka {
 
         class ForBlockStatementNode : public IterationStatementNode {
             //TODO Change to declaration?
-            std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
+            // we should probably not support typedefs here
+            std::variant<types::ExpressionNode*, types::DeclarationList*, types::TypedefNode*> Decl;
             types::ExpressionNode* Cond;
             types::ExpressionNode* Upd;
             types::IdentifierNode* Label;
@@ -21,7 +23,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
-            ForBlockStatementNode(std::variant<types::ExpressionNode*, types::DeclarationList*> decl, types::ExpressionNode* cond, types::ExpressionNode* upd, types::IdentifierNode* label, StatementNode* body) :
+            ForBlockStatementNode(std::variant<types::ExpressionNode*, types::DeclarationList*, types::TypedefNode*> decl, types::ExpressionNode* cond, types::ExpressionNode* upd, types::IdentifierNode* label, StatementNode* body) :
                 Decl(decl), Cond(cond), Upd(upd), Label(label), Body(body) {
             }
 
