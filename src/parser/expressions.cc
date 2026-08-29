@@ -82,10 +82,9 @@ namespace parser {
         auto& CurrentToken = Peek();
 
         if (detail::IsUnaryOperator(CurrentToken.TokenType_v)) {
-            types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp.at(CurrentToken.TokenType_v);
-            Advance();
+            types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp[Advance().TokenType_v];
 
-            types::ExpressionNode* Expr = Parser::ParseFactor();
+            types::ExpressionNode* Expr = ParseFactor();
 
             return ASTALLOC.Alloc<types::FactorNode>(UnaryOp, Expr);
         } else  {
