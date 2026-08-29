@@ -14,6 +14,8 @@ namespace baka
 				assert(false && "Expected '{' at the beginning of a compound statement");
 			}
 
+			EnterScope();
+
 			std::vector<std::variant<types::StatementNode*, types::DeclarationList*>> statements;
 
 			while (Peek().TokenType_v != types::TokenType::RPAREN_CURLY)
@@ -35,6 +37,7 @@ namespace baka
 				assert(false && "Expected '}' at the end of a compound statement");
 			}
 
+			ExitScope();
 
 			return ASTALLOC.Alloc<types::CompoundStatementNode>(std::move(statements));
 		}

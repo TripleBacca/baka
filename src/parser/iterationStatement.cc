@@ -18,6 +18,8 @@ namespace baka {
                 // throw error
             }
 
+            EnterScope();
+
             std::variant<types::ExpressionNode*, types::DeclarationList*> Decl;
             if(detail::IsSpecifier(Peek().TokenType_v) || isTypeName(Peek())) {
                 Decl = this->ParseDeclarationList();
@@ -54,6 +56,9 @@ namespace baka {
             types::StatementNode* Body = this->ParseStatement();
 
             types::ForBlockStatementNode* Node = ASTALLOC.Alloc<types::ForBlockStatementNode>(Decl, ComparisonExpr, Update, Label, Body);
+
+            ExitScope();
+
             return Node;
         }
 

@@ -26,6 +26,8 @@ namespace parser {
         }
         AddType(UnionName);
 
+        EnterScope();
+
         if(!Check(types::TokenType::LPAREN_CURLY)) {
             // todo throw error;
             assert(false && "expected LPAREN_CURLY");
@@ -37,6 +39,9 @@ namespace parser {
         }
 
         types::UnionNode* Node = ASTALLOC.Alloc<types::UnionNode>(Body);
+
+        ExitScope();
+
         return Node;
     }
 
