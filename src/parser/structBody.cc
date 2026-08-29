@@ -23,7 +23,7 @@ namespace parser {
         while(!Match(types::TokenType::RPAREN_CURLY)) {
 
             auto isCtor = [&]() -> bool {
-                if(Peek().TokenType_v == types::TokenType::IDENTIFIER) {
+                if(Peek().TokenType_v == types::TokenType::IDENTIFIER && Check2(types::TokenType::LPAREN_ROUND)) {
                     const std::string_view& Name = std::get<std::string_view>(Peek().Value);
                     if(Name == ParentName->GetName()) {
                         return true;

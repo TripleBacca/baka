@@ -34,11 +34,7 @@ namespace baka {
                 // throw error
                 assert(false);
             }
-            types::IdentifierNode* TypeName = ParseIdentifier();
-            if(!LookupType(TypeName)) {
-                // throw error
-                assert(false);
-            }
+            types::IdentifierNode* TypeName = ParseTypeIdentifier();
 
 
             types::SingleDeclarationNode* Node = ParseSingleDeclaration();

@@ -17,7 +17,6 @@ namespace types {
         DeclarationIdentifierNode* FuncType;
 
         StatementNode* Body;
-        FunctionParameterList* Params;
 
         bool IsStatic, IsConst;
         bool isClassOrStruct, isEnum;
