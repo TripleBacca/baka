@@ -5,6 +5,7 @@
 #include "types/token/token.hh"
 #include "utils.hh"
 #include <cassert>
+#include <variant>
 
 
 namespace baka
@@ -49,7 +50,7 @@ namespace baka
 			}
 		}
 
-
+		// wherever declaration list is typedef also must be there
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
 		    types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;

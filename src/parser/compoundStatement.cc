@@ -1,4 +1,5 @@
 #include "parser.hh"
+#include "types/token/token.hh"
 #include "utils.hh"
 #include <variant>
 
@@ -16,7 +17,7 @@ namespace baka
 
 			EnterScope();
 
-			std::vector<std::variant<types::StatementNode*, types::DeclarationList*>> statements;
+			std::vector<std::variant<types::StatementNode*, types::DeclarationList*, types::TypedefNode*>> statements;
 
 			while (Peek().TokenType_v != types::TokenType::RPAREN_CURLY)
 			{
@@ -24,6 +25,10 @@ namespace baka
 				{
 					auto* DeclarationListNode = ParseDeclarationList();
 					statements.emplace_back(DeclarationListNode);
+				}
+				else if (Check(types::TokenType::K_TYPEDEF)) {
+					auto* TypedefNode = ParseTypedef();
+					statements.emplace_back(TypedefNode);
 				}
 				else
 				{

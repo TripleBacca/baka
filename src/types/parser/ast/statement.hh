@@ -2,6 +2,7 @@
 #include "ast_node.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/expression.hh"
+#include "types/parser/ast/typedef.hh"
 #include <variant>
 #include <vector>
 
@@ -25,9 +26,9 @@ namespace types {
 
     class CompoundStatementNode : public StatementNode
     {
-        std::vector<std::variant<StatementNode*, DeclarationList*>> Statements;
+        std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*>> Statements;
     public:
-        CompoundStatementNode(std::vector<std::variant<StatementNode*, DeclarationList*>> Statements) : Statements(std::move(Statements)) {}
+        CompoundStatementNode(std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*>> Statements) : Statements(std::move(Statements)) {}
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);
