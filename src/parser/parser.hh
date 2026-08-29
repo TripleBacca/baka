@@ -6,6 +6,7 @@
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
+#include "types/parser/ast/structBody.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -46,8 +47,8 @@ namespace parser {
 
         // type lookup helpers:
         bool LookupType(types::IdentifierNode* Identifier);
-        bool LookupType(std::string_view Name);
         ParserSTE* GetParserSTE(types::IdentifierNode* Identifier);
+        bool LookupType(const std::string_view& Name);
         void EnterScope();
         void ExitScope();
         void AddType(types::IdentifierNode* Identifier);
@@ -60,16 +61,23 @@ namespace parser {
         const types::Token& Peek() const noexcept;
         const types::Token& Previous() const;
 
+        bool isTypeName(const types::Token& token);
+
         // recursive descent nodes:
 
         types::ProgramNode* ParseProgram();
 
         types::FunctionNode* ParseFunction();
-        types::ConstructorNode* ParseConstructor();
-        types::DestructorNode* ParseDestructor();
+        types::ConstructorNode* ParseConstructor(types::IdentifierNode* ParentName);
+        types::DestructorNode* ParseDestructor(types::IdentifierNode* ParentName);
+        std::optional<types::FunctionNode*> TryParseFunction();
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
+        types::StructBodyNode* ParseStructBody(types::IdentifierNode* ParentName);
+
+
+        types::IdentifierNode* ParseTypeIdentifier();
 
         types::StatementNode* ParseStatement();
         types::CompoundStatementNode* CompoundStatement();

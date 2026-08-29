@@ -12,13 +12,13 @@ namespace baka {
         class StructDefinitionNode : public ASTNode {
             IdentifierNode* StructName;
             IdentifierNode* ParentStructName = nullptr;
-            CompoundStatementNode* Body;
+            StructBodyNode* Body;
 
         public:
-            StructDefinitionNode(IdentifierNode* identifier, CompoundStatementNode* body) :
+            StructDefinitionNode(IdentifierNode* identifier, StructBodyNode* body) :
             StructName(identifier), Body(body) {
             }
-            StructDefinitionNode(IdentifierNode* identifier, IdentifierNode* parent, CompoundStatementNode* body) :
+            StructDefinitionNode(IdentifierNode* identifier, IdentifierNode* parent, StructBodyNode* body) :
             StructName(identifier), ParentStructName(parent), Body(body) {
             }
 

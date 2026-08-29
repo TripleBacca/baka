@@ -52,30 +52,13 @@ namespace baka {
             std::vector<types::ASTNode*> body;
             while (!Check(types::TokenType::EOF_TOKEN)) {
 
-                // if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
-                //     auto Struct = this->ParseStruct();
-                //     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
-                //         body.push_back(std::get<types::StructDefinitionNode*>(Struct));
-                //     } else {
-                //         body.push_back(std::get<types::StructDeclarationNode*>(Struct));
-                //     }
-                // }
-                // else if (detail::IsTypeOrIdentifier(Peek().TokenType_v) ||
-                //         detail::IsSpecifier(Peek().TokenType_v)
-                // ) {
-                //
-                //     body.push_back(this->ParseFunction());
-                // }
-                // else {
-                //     body.push_back(this->ParseFunction());
-                // }
-
-                auto Struct = this->ParseStruct();
-                if (std::holds_alternative<types::StructDefinitionNode*>(Struct))
-                {
-                    body.push_back(std::get<types::StructDefinitionNode*>(Struct));
-                } else {
-                    body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
+                    auto Struct = this->ParseStruct();
+                    if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
+                        body.push_back(std::get<types::StructDefinitionNode*>(Struct));
+                    } else {
+                        body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+                    }
                 }
             }
 
@@ -123,7 +106,7 @@ namespace baka {
             return TypeLookup.Lookup(Identifier->GetName()).has_value();
         }
 
-        bool Parser::LookupType(std::string_view IdentifierName) {
+        bool Parser::LookupType(const std::string_view& IdentifierName) {
             return TypeLookup.Lookup(IdentifierName).has_value();
         }
 
@@ -147,5 +130,13 @@ namespace baka {
         void Parser::AddType(types::IdentifierNode* Identifier) {
             TypeLookup.AddEntry(Identifier->GetName(), ParserSTE{});
         }
+
+        bool Parser::isTypeName(const types::Token& token) {
+            if(!std::holds_alternative<std::string_view>(token.Value))
+                return false;
+
+            return LookupType(std::get<std::string_view>(token.Value));
+        }
+
     }
 }

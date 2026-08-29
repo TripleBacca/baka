@@ -5,12 +5,16 @@
 
 namespace baka {
     namespace parser {
-        types::DestructorNode* Parser::ParseDestructor() {
+        types::DestructorNode* Parser::ParseDestructor(types::IdentifierNode* ParentName) {
             if (!this->Match(types::TokenType::OP_TILDE)) {
                 // throw error
             }
 
             types::IdentifierNode* DestructorIdentifier = this->ParseIdentifier();
+            if(DestructorIdentifier->GetName() != ParentName->GetName()) {
+                // throw error
+                assert(false);
+            }
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
                 // throw error
@@ -20,9 +24,8 @@ namespace baka {
                 // throw error
             }
 
-            // TODO: do statement
             types::StatementNode* Body = this->CompoundStatement();
-            auto* Node = ASTALLOC.Alloc<types::DestructorNode>(DestructorIdentifier, Body);
+            auto* Node = ASTALLOC.Alloc<types::DestructorNode>(Body);
 
             return Node;
         }

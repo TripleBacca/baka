@@ -16,6 +16,10 @@ set(EXEC_SOURCES
     compoundStatement.cc
     expressionStatement.cc
     enums.cc
+    type.cc
+    structBody.cc
+    destructor.cc
+    constructor.cc
 )
 
 add_library(parser

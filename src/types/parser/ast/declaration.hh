@@ -101,7 +101,6 @@ namespace types {
                 return std::get<DeclarationIdentifierNode*>(VariableName)->hasPointerAtAnyLevel();
             return false;
         }
-
     };
 
     class SingleDeclarationNode : public ASTNode {

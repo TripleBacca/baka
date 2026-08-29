@@ -10,12 +10,11 @@
 namespace baka {
     namespace types {
         class DestructorNode : public ASTNode {
-            IdentifierNode* DestructorName;
             StatementNode* Body;
 
         public:
-            DestructorNode(IdentifierNode* destructorName, StatementNode* body) :
-                DestructorName(destructorName), Body(body) {
+            DestructorNode(StatementNode* body) :
+                 Body(body) {
             }
 
             ~DestructorNode() = default;
@@ -24,7 +23,6 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "Destructor(\n";
 
-                DestructorName->Print(Tabs + 1);
                 Body->Print(Tabs + 1);
 
                 INDENT(Tabs);

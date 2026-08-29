@@ -1,6 +1,4 @@
 // TODO:
-// function decl
-// struct/classes full grammar for inheritance,
-// struct/classes ctor/dtor
 // enter and exit scope everywhere
-// bare typenames for functions
+// register types into symbol talbe
+// error handling
