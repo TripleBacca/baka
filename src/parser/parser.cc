@@ -167,5 +167,9 @@ namespace baka {
             return LookupType(std::get<std::string_view>(token.Value));
         }
 
+        bool Parser::RegisterOrReplaceType(types::IdentifierNode* Identifier) {
+            return TypeLookup.RegisterOrReplaceType(Identifier->GetName(), ParserSTE{});
+        }
+
     }
 }

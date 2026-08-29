@@ -72,6 +72,8 @@ namespace parser {
         void EnterScope();
         void ExitScope();
         void AddType(types::IdentifierNode* Identifier);
+        bool RegisterOrReplaceType(types::IdentifierNode* Identifier);
+
 
         // helpers
         bool Check(types::TokenType type) const noexcept;
@@ -152,7 +154,8 @@ namespace parser {
 
         types::DeclarationList* ParseDeclarationList();
         types::SingleDeclarationNode* ParseSingleDeclaration();
-        types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
+        // AllowRedefine : if true allows redefining the same identifier (useful for typedef that lets u redefine the same name)
+        types::DeclarationIdentifierNode* ParseDeclarationIdentifier(bool AllowRedefine = false);
         types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
     };
 
