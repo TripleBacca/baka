@@ -128,7 +128,7 @@ namespace baka
 		// TODO : write function declaration parser
 		// AllowRedefine : if true allows redefining the same identifier (useful for typedef that lets u redefine the same name)
 		// false by default
-		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier(bool AllowRedefine)
+		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier()
 		{
 			types::DeclarationIdentifierNode *Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
 			while (Match(types::TokenType::OP_MUL))
@@ -141,7 +141,7 @@ namespace baka
 
 			if (Match(types::TokenType::LPAREN_ROUND))
 			{
-				auto* InnerDeclaration = ParseDeclarationIdentifier(AllowRedefine);
+				auto* InnerDeclaration = ParseDeclarationIdentifier();
 				if(!Match(types::TokenType::RPAREN_ROUND))
 				{
 					// TODO: throw error
@@ -187,7 +187,7 @@ namespace baka
 				}
 
 				auto* Identifier = ParseIdentifier();
-				if(!AllowRedefine && LookupType(Identifier)) {
+				if(!InTypedef && LookupType(Identifier)) {
 				    // todo throw error
 					assert(false && "Identifier already type");
 				}
