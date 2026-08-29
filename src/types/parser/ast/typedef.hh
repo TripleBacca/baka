@@ -32,6 +32,7 @@ namespace types {
 
             INDENT(Tabs + 1);
             std::cout << "Modifier: " << TypeSpecifierModifierToStr[Modifier] << "\n";
+            INDENT(Tabs);
             std::cout << ")\n";
         }
 

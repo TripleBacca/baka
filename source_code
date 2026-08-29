@@ -1,1 +1,2 @@
-typedef int x, *y, **z;
+typedef int x;
+x A = 1;
