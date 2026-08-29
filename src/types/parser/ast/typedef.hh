@@ -12,23 +12,31 @@ namespace types {
         // struct,enum, union or unsigned
         TypeSpecifierModifier Modifier;
         IdentifierNode* BoundReturnType;
-        DeclarationIdentifierNode* Variable;
+        std::vector<DeclarationIdentifierNode*> Variables;
 
     public:
-        TypedefNode(IdentifierNode* BoundReturnType, DeclarationIdentifierNode* Variable, TypeSpecifierModifier Modifier, bool isConst) :
-        BoundReturnType(BoundReturnType), Variable(Variable), Modifier(Modifier), isConst(isConst) {}
+        TypedefNode(IdentifierNode* BoundReturnType, TypeSpecifierModifier Modifier, bool isConst) :
+        BoundReturnType(BoundReturnType), Variables(), Modifier(Modifier), isConst(isConst) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
-            std::cout << "Typedef(";
+            std::cout << "Typedef(\n";
 
-            INDENT(Tabs + 1) << "isConst = " << isConst << ")\n";
+            INDENT(Tabs + 1);
+            std::cout << "isConst = " << isConst << "\n";
+
             BoundReturnType->Print(Tabs + 1);
-            Variable->Print(Tabs + 1);
+            for (const auto& Variable : Variables) {
+                Variable->Print(Tabs + 1);
+            }
 
             INDENT(Tabs + 1);
             std::cout << "Modifier: " << TypeSpecifierModifierToStr[Modifier] << "\n";
             std::cout << ")\n";
+        }
+
+        void AddVariable(DeclarationIdentifierNode* Variable) {
+            Variables.push_back(Variable);
         }
     };
 

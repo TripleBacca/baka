@@ -65,6 +65,10 @@ namespace parser {
         Parser(std::span<types::Token> Tokens) : Tokens(Tokens) {};
         types::ASTNode* Parse();
 
+        // states needed for parser
+        bool InTypedef = false;
+
+
         // type lookup helpers:
         bool LookupType(types::IdentifierNode* Identifier);
         ParserSTE* GetParserSTE(types::IdentifierNode* Identifier);
@@ -154,8 +158,7 @@ namespace parser {
 
         types::DeclarationList* ParseDeclarationList();
         types::SingleDeclarationNode* ParseSingleDeclaration();
-        // AllowRedefine : if true allows redefining the same identifier (useful for typedef that lets u redefine the same name)
-        types::DeclarationIdentifierNode* ParseDeclarationIdentifier(bool AllowRedefine = false);
+        types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
         types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
     };
 

@@ -1,3 +1,1 @@
-int a = 2;
-typedef int x;
-x b = 3;
+typedef int x, *y, **z;

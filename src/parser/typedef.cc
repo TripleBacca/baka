@@ -26,16 +26,23 @@ namespace parser {
 
         types::IdentifierNode* BoundTypeName = ParseTypeIdentifier();
 
-        types::DeclarationIdentifierNode* Variable = ParseDeclarationIdentifier();
-        // doesnt matter if typedef is already done on that variable name
-        RegisterOrReplaceType(Variable->getIdentifier());
+        types::TypedefNode* Node = ASTALLOC.Alloc<types::TypedefNode>(BoundTypeName, Modifier, isConst);
 
-        if(!Match(types::TokenType::SEMICOLON)) {
+        InTypedef = true;
+        do {
+            types::DeclarationIdentifierNode* Variable = ParseDeclarationIdentifier();
+            // doesnt matter if typedef is already done on that variable name
+            RegisterOrReplaceType(Variable->getIdentifier());
+            Node->AddVariable(Variable);
+        } while(Match(types::TokenType::OP_COMMA));
+        InTypedef = false;
+
+        if (!Match(types::TokenType::SEMICOLON)) {
             // todo throw error
             assert(false);
         }
 
-        types::TypedefNode* Node = ASTALLOC.Alloc<types::TypedefNode>(BoundTypeName, Variable, Modifier, isConst);
+
         return Node;
     }
 }
