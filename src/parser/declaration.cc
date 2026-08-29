@@ -41,6 +41,7 @@ namespace baka
 
 			bool isClassOrStruct = false;
 			bool isEnum = false;
+			bool isUnion = false;
 
 			while (Check(types::TokenType::K_STATIC) || Check(types::TokenType::K_CONST))
 			{
@@ -56,11 +57,7 @@ namespace baka
 
 			isClassOrStruct = Match(types::TokenType::K_STRUCT);
 			isEnum = Match(types::TokenType::K_ENUM);
-
-			if(isEnum && isClassOrStruct) { // cannot be both class and enum
-				// TODO: throw error
-				assert(false && "Enum cannot be a class or struct");
-			}
+			isUnion = Match(types::TokenType::K_UNION);
 
 			isUnsigned = Match(types::TokenType::K_UNSIGNED);
 
@@ -88,7 +85,7 @@ namespace baka
 				assert(false && "Expected semicolon at the end of declaration list");
 			}
 
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, isUnsigned, TypeName, std::move(Declarations));
+			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, isClassOrStruct, isEnum, isUnion, isUnsigned, TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 
