@@ -2,6 +2,7 @@
 #include "parser.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
+#include "types/parser/ast/castFactorNode.hh"
 #include "types/parser/ast/ternary.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
@@ -77,15 +78,30 @@ namespace parser {
 
 
     types::ExpressionNode* Parser::ParseFactor() {
-        auto& CurrentToken = Peek();
 
         if (Check(types::TokenType::LPAREN_ROUND))
         {
             // try parsing contents as a type name for c style cast
+            size_t prev = current;
+            Advance();
 
+            auto TypeNameOpt = TryParseTypeName();
+            if (TypeNameOpt.has_value())
+            {
+                auto Declarator = ParseAbstractDeclarator();
+                if (!Match(types::TokenType::RPAREN_ROUND))
+                {
+                    //todo throw error
+                    assert(false && "Expected ')' after type name in cast");
+                }
+                auto CastExpression = ParseFactor();
+                return ASTALLOC.Alloc<types::CastFactorNode>(TypeNameOpt.value(), Declarator, CastExpression);
+            }
+
+            current = prev;
         }
 
-        if (detail::IsUnaryOperator(CurrentToken.TokenType_v)) {
+        if (detail::IsUnaryOperator(Peek().TokenType_v)) {
             types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp[Advance().TokenType_v];
 
             types::ExpressionNode* Expr = ParseFactor();

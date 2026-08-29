@@ -5,31 +5,13 @@
 #include <utility>
 #include <vector>
 
+#include "types/parser/ast/utils.hh"
 #include "types/parser/ast/ast_node.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
-#include "types/parser/ast/utils.hh"
 
 namespace baka {
 namespace types {
-
-    enum class TypeSpecifierModifier {
-        NONE,
-        UNSIGNED,
-        STRUCT,
-        CLASS,
-        ENUM,
-        UNION
-    };
-
-    inline std::unordered_map<TypeSpecifierModifier,std::string_view> TypeSpecifierModifierToStr ={
-        {TypeSpecifierModifier::NONE,"None"},
-        {TypeSpecifierModifier::UNSIGNED,"Unsigned"},
-        {TypeSpecifierModifier::STRUCT,"Struct"},
-        {TypeSpecifierModifier::CLASS,"Class"},
-        {TypeSpecifierModifier::ENUM,"Enum"},
-        {TypeSpecifierModifier::UNION,"Union"}
-    };
 
 
     class DeclarationIdentifierNode : public ASTNode
@@ -59,11 +41,27 @@ namespace types {
 
             if(std::holds_alternative<DeclarationIdentifierNode*>(VariableName))
             {
-                std::get<DeclarationIdentifierNode*>(VariableName)->Print(Tabs + 2);
+                if (auto Node = std::get<DeclarationIdentifierNode*>(VariableName); Node != nullptr)
+                {
+                    Node->Print(Tabs + 2);
+                }
+                else
+                {
+                    INDENT(Tabs + 2);
+                    std::cout << "nullptr" << std::endl;
+                }
             }
             else
             {
-                std::get<IdentifierNode*>(VariableName)->Print(Tabs + 2);
+                if (auto Node = std::get<IdentifierNode*>(VariableName); Node != nullptr)
+                {
+                    Node->Print(Tabs + 2);
+                }
+                else
+                {
+                    INDENT(Tabs + 2);
+                    std::cout << "nullptr" << std::endl;
+                }
             }
 
             INDENT(Tabs + 1);
@@ -154,7 +152,7 @@ namespace types {
                 Initialization->Print(Tabs + 1);
             } else {
                 INDENT(Tabs + 1);
-                std::cout << "nullptr\n";
+                std::cout << "Initialization : nullptr\n";
             }
 
             INDENT(Tabs);

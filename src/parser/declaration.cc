@@ -33,7 +33,7 @@ namespace baka
 		// char
 		// int
 
-		types::TypeSpecifierModifier Parser::DetermineTypeSpecifierModifierType() const {
+		types::TypeSpecifierModifier Parser::DetermineTypeSpecifierModifier() const {
 			switch (Peek().TokenType_v) {
 			case types::TokenType::K_UNSIGNED:
 				return types::TypeSpecifierModifier::UNSIGNED;
@@ -62,15 +62,23 @@ namespace baka
 			{
 				if (Match(types::TokenType::K_STATIC))
 				{
+					if (IsStatic) {
+						// todo throw error
+						assert(false && "Duplicate 'static' specifier");
+					}
 					IsStatic = true;
 				}
 				if (Match(types::TokenType::K_CONST))
 				{
+					if (IsConst) {
+						// todo throw error
+						assert(false && "Duplicate 'const' specifier");
+					}
 					IsConst = true;
 				}
 			}
 
-			Modifier = DetermineTypeSpecifierModifierType();
+			Modifier = DetermineTypeSpecifierModifier();
 			if (Modifier != types::TypeSpecifierModifier::NONE) {
 				this->Advance();
 			}
@@ -130,7 +138,7 @@ namespace baka
 		// false by default
 		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier()
 		{
-			types::DeclarationIdentifierNode *Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+			auto* Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
 			while (Match(types::TokenType::OP_MUL))
 			{
 			    Variable->appendPointer();
@@ -148,33 +156,6 @@ namespace baka
 					assert(false && "Expected ')'");
 				}
 
-				// check for function
-				if(Match(types::TokenType::LPAREN_ROUND)) {
-					auto* ParameterList = ParseFunctionParameterList();
-					if(!Match(types::TokenType::RPAREN_ROUND))
-					{
-						// TODO: throw error
-						assert(false && "Expected ')'");
-					}
-
-					// if(!InnerDeclaration->hasPointerAtAnyLevel())
-					// {
-					//     // todo throw error
-					// 	assert(false && "Function pointer declarator requires at least one '*' inside the parentheses");
-					// }
-
-					Variable->setFunctionParameters(ParameterList);
-
-					// bind inner declaration to function ptr;
-					// cases:
-					// if inner decl = function ptr, bind to its return type
-					// if inner decl = identifier, bind to it
-					// if inner decl = function definition, bind to its return type - NOT POSSIBLE
-					// if inner decl = pointer type,
-					//
-
-					// int (*(*foo[2])())();
-				}
 
 				Variable->setInnerDeclaration(InnerDeclaration);
 			}
@@ -194,17 +175,26 @@ namespace baka
 
 				Variable->setInnerDeclaration(Identifier);
 
-				// check for function ( copypastad code )
-				if(Match(types::TokenType::LPAREN_ROUND)) {
-					auto* ParameterList = ParseFunctionParameterList();
-					if(!Match(types::TokenType::RPAREN_ROUND))
-					{
-						// TODO: throw error
-						assert(false && "Expected ')'");
-					}
-					Variable->setFunctionParameters(ParameterList);
-				}
+			}
 
+			// check for function
+			// bind inner declaration to function ptr;
+			// cases:
+			// if inner decl = function ptr, bind to its return type
+			// if inner decl = identifier, bind to it
+			// if inner decl = function definition, bind to its return type - NOT POSSIBLE
+			// if inner decl = pointer type,
+			//
+
+			// int (*(*foo[2])())();
+			if(Match(types::TokenType::LPAREN_ROUND)) {
+				auto* ParameterList = ParseFunctionParameterList();
+				if(!Match(types::TokenType::RPAREN_ROUND))
+				{
+					// TODO: throw error
+					assert(false && "Expected ')'");
+				}
+				Variable->setFunctionParameters(ParameterList);
 			}
 
 			// int (*foo[20])()[];
@@ -225,6 +215,60 @@ namespace baka
 				}
 			}
 
+
+			return Variable;
+		}
+
+		types::DeclarationIdentifierNode* Parser::ParseAbstractDeclarator()
+		{
+			auto* Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+			while (Match(types::TokenType::OP_MUL))
+			{
+			    Variable->appendPointer();
+			}
+			// not supporting const pointer
+			// int* const ptr - not supported
+
+			if (Check(types::TokenType::LPAREN_ROUND) && Check2(types::TokenType::OP_MUL))
+			{
+				Advance();
+				auto* InnerDeclaration = ParseAbstractDeclarator();
+				if(!Match(types::TokenType::RPAREN_ROUND))
+				{
+					// TODO: throw error
+					assert(false && "Expected ')'");
+				}
+
+				Variable->setInnerDeclaration(InnerDeclaration);
+			}
+
+			if(Match(types::TokenType::LPAREN_ROUND)) {
+				auto* ParameterList = ParseFunctionParameterList();
+				if(!Match(types::TokenType::RPAREN_ROUND))
+				{
+					// TODO: throw error
+					assert(false && "Expected ')'");
+				}
+				Variable->setFunctionParameters(ParameterList);
+			}
+
+
+			while (Match(types::TokenType::LPAREN_SQUARE))
+			{
+				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
+				if(ArraySize == nullptr) {
+				    // todo throw error empty array expr
+					assert(false && "Expected array size");
+				}
+
+				Variable->appendArraySize(ArraySize);
+
+				if (!Match(types::TokenType::RPAREN_SQUARE))
+				{
+					// TODO: throw error
+					assert(false && "Expected ']'");
+				}
+			}
 
 			return Variable;
 		}

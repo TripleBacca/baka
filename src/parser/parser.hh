@@ -22,6 +22,7 @@
 #include "types/parser/ast/jump.hh"
 #include "types/parser/ast/selectionStatement.hh"
 #include "types/parser/ast/iterationStatement.hh"
+#include "types/parser/ast/typenode.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -148,7 +149,7 @@ namespace parser {
 
         types::ExpressionStatementNode* ParseExpressionStatement();
 
-        types::TypeSpecifierModifier DetermineTypeSpecifierModifierType() const;
+        types::TypeSpecifierModifier DetermineTypeSpecifierModifier() const;
         types::StatementNodeType DetermineStatementType();
         types::EnumNode* ParseEnumDecl();
 
@@ -163,7 +164,7 @@ namespace parser {
         types::ExpressionNode* ParsePrimaryExpression();
 
         types::ExpressionNode* ParseFactor();
-        types::TypeNode* TryParseTypeName();
+        std::optional<types::TypeNode*> TryParseTypeName();
 
         // for ++, -- , [], ->, .
         types::ExpressionNode* ParsePostfixExpression();
@@ -173,6 +174,7 @@ namespace parser {
         types::DeclarationList* ParseDeclarationList();
         types::SingleDeclarationNode* ParseSingleDeclaration();
         types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
+        types::DeclarationIdentifierNode* ParseAbstractDeclarator();
         types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
     };
 

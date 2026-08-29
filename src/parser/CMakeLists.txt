@@ -22,6 +22,7 @@ set(EXEC_SOURCES
     destructor.cc
     constructor.cc
     union.cc
+    typename.cc
     typedef.cc
 )
 

@@ -47,7 +47,7 @@ namespace baka {
 
 
         types::ASTNode* Parser::Parse() {
-            return ParseProgram();
+            return ParseFactor();
         };
 
         types::ProgramNode* Parser::ParseProgram() {

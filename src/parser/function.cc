@@ -27,7 +27,7 @@ namespace baka
 				IsConst = true;
 			}
 
-			Modifier = DetermineTypeSpecifierModifierType();
+			Modifier = DetermineTypeSpecifierModifier();
 			if (Modifier != types::TypeSpecifierModifier::NONE) {
 				this->Advance();
 			}
@@ -108,7 +108,7 @@ namespace baka
 				}
 			}
 
-			Modifier = DetermineTypeSpecifierModifierType();
+			Modifier = DetermineTypeSpecifierModifier();
 			if (Modifier != types::TypeSpecifierModifier::NONE) {
 				this->Advance();
 			}

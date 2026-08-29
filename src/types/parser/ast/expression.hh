@@ -8,6 +8,8 @@
 #include <vector>
 #include <iostream>
 
+#include "typenode.hh"
+
 
 namespace baka {
 
