@@ -21,7 +21,7 @@ namespace baka {
             }
 
             // TODO: do statement
-            types::StatementNode* Body = this->ParseStatement();
+            types::StatementNode* Body = this->CompoundStatement();
             auto* Node = ASTALLOC.Alloc<types::DestructorNode>(DestructorIdentifier, Body);
 
             return Node;

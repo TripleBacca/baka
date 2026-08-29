@@ -25,7 +25,7 @@ namespace types {
 
         void Print(size_t Tabs = 0) const {
             INDENT(Tabs);
-            std::cout << "Enum(" << EnumName->GetName() << ")" << std::endl;
+            std::cout << "Enum(" << (EnumName ? EnumName->GetName() : "") << ")" << std::endl;
             for (const auto& value : EnumValues) {
                 value->Print(Tabs + 1);
             }

@@ -16,7 +16,7 @@ namespace types {
 
     class DeclarationIdentifierNode : public ASTNode
     {
-        size_t PointerCount;
+        size_t PointerCount = 0;
         std::variant<DeclarationIdentifierNode*, IdentifierNode*> VariableName;
         std::vector<ExpressionNode*> ArraySizes;
 

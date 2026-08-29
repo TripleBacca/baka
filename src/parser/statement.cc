@@ -5,7 +5,7 @@
 namespace baka {
     namespace parser {
         types::StatementNodeType Parser::DetermineStatementType() {
-            if (Check(types::TokenType::K_IF)) {
+            if (Check(types::TokenType::K_IF) || Check(types::TokenType::K_SWITCH)) {
                 return types::StatementNodeType::SelectionStatement;
             }
             else if (Check(types::TokenType::K_FOR) || Check(types::TokenType::K_WHILE) || Check(types::TokenType::K_DO)) {
