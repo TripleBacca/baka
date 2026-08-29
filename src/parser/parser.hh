@@ -34,7 +34,8 @@ namespace baka {
 namespace parser {
     struct ParserSTE
     {
-        bool isDefined = false;
+        bool isStruct = false;
+        bool isStructDefined = false; // this is onyl for struct. false for everything else by def
     };
 
     class Parser {
