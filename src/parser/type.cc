@@ -7,7 +7,7 @@
 namespace baka {
 namespace parser {
 
-    baka::types::IdentifierNode* Parser::ParseTypeIdentifier() {
+    types::IdentifierNode* Parser::ParseTypeIdentifier() {
         if(Check(types::TokenType::IDENTIFIER)) {
             types::IdentifierNode* Node =  ParseIdentifier();
             if(!LookupType(Node)) {

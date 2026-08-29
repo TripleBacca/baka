@@ -34,7 +34,7 @@ namespace parser {
 //     -> parse_factor      (unary ops: - ! ~)
 //         -> parse_postfix_exp   (postfix: ++ -- . -> [ ( )
 //             -> parse_primary_exp   (atoms: constants, identifiers, "(...)")
-
+//         -> try_parse_typename (on finding "(")
 
 
 
@@ -63,9 +63,9 @@ namespace parser {
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+            auto* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
 
-            types::PrimaryExpressionNode* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
+            auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
 
             return PrimaryExpressionNode;
         } else {
@@ -79,15 +79,21 @@ namespace parser {
     types::ExpressionNode* Parser::ParseFactor() {
         auto& CurrentToken = Peek();
 
+        if (Check(types::TokenType::LPAREN_ROUND))
+        {
+            // try parsing contents as a type name for c style cast
+
+        }
+
         if (detail::IsUnaryOperator(CurrentToken.TokenType_v)) {
             types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp[Advance().TokenType_v];
 
             types::ExpressionNode* Expr = ParseFactor();
 
             return ASTALLOC.Alloc<types::FactorNode>(UnaryOp, Expr);
-        } else  {
-            return ParsePostfixExpression();
         }
+
+        return ParsePostfixExpression();
     }
 
     // for ++, -- , [], ->, .
@@ -134,7 +140,7 @@ namespace parser {
 
                 auto& Identifier = Advance();
                 assert(std::holds_alternative<std::string_view>(Identifier.Value) && "identifier doesnt have string view");
-                types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+                auto* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
 
                 Left = ASTALLOC.Alloc<types::MemberPostfixExpr>(Left, IdentifierNode);
 

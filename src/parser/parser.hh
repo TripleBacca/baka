@@ -162,8 +162,8 @@ namespace parser {
 
         types::ExpressionNode* ParsePrimaryExpression();
 
-        bool IsUnaryOperator(types::TokenType type) const noexcept;
         types::ExpressionNode* ParseFactor();
+        types::TypeNode* TryParseTypeName();
 
         // for ++, -- , [], ->, .
         types::ExpressionNode* ParsePostfixExpression();
