@@ -15,7 +15,7 @@ namespace {
         {types::TokenType::K_BREAK, "K_BREAK"},
         {types::TokenType::K_CASE, "K_CASE"},
         {types::TokenType::K_CHAR, "K_CHAR"},
-        // {types::TokenType::K_CLASS, "K_CLASS"}, //Class is same as struct
+        {types::TokenType::K_CLASS, "K_CLASS"},
         {types::TokenType::K_CONST, "K_CONST"},
         {types::TokenType::K_CONTINUE, "K_CONTINUE"},
         {types::TokenType::K_DEFAULT, "K_DEFAULT"},

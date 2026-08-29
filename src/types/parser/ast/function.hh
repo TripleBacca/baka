@@ -19,18 +19,14 @@ namespace types {
         StatementNode* Body;
 
         bool IsStatic = false, IsConst = false;
-        bool isClassOrStruct = false, isEnum = false, isUnion = false, isUnsigned = false;
+        TypeSpecifierModifier Modifier = TypeSpecifierModifier::NONE;
 
     public:
-        FunctionNode(IdentifierNode* BindedReturnType, DeclarationIdentifierNode* funcType, StatementNode* body, bool IsStatic, bool IsConst, bool isClassOrStruct, bool isEnum, bool isUnion, bool isUnsigned) :
-            BoundReturnType(BindedReturnType), FuncType(funcType), Body(body), IsStatic(IsStatic), IsConst(IsConst), isClassOrStruct(isClassOrStruct), isEnum(isEnum), isUnion(isUnion), isUnsigned(isUnsigned) {
-            if(isUnsigned && !detail::isUnsignedTypeName(BoundReturnType->GetName())) {
+        FunctionNode(IdentifierNode* BindedReturnType, DeclarationIdentifierNode* funcType, StatementNode* body, bool IsStatic, bool IsConst, TypeSpecifierModifier modifier) :
+            BoundReturnType(BindedReturnType), FuncType(funcType), Body(body), IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier) {
+            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(BoundReturnType->GetName())) {
                 // todo throw error
                 assert(false);
-            }
-            if ((int)isClassOrStruct + (int)isEnum + (int)isUnion > 1) {
-                // todo throw error
-                assert(false && "Cannot be more than one of class/struct/enum/union");
             }
         }
 
@@ -44,7 +40,7 @@ namespace types {
             std::cout << "IsStatic: " << IsStatic << ", IsConst: " << IsConst << '\n';
 
             INDENT(Tabs+1);
-            std::cout << "isClassOrStruct: " << isClassOrStruct << ", isEnum: " << isEnum << ", isUnion" << isUnion << ", isUnsigned: " << isUnsigned << std::endl;
+            std::cout << "TypeSpecifierModifier"<< TypeSpecifierModifierToStr[Modifier] << "\n";
 
             INDENT(Tabs+1);
             std::cout << "FuncType: " << '\n';

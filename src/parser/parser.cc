@@ -52,12 +52,19 @@ namespace baka {
             std::vector<types::ASTNode*> body;
             while (!Check(types::TokenType::EOF_TOKEN)) {
 
-                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum ,classes also
+                if (Check(types::TokenType::K_STRUCT)) { // TODO: enum , unions also
                     auto Struct = this->ParseStruct();
                     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
                         body.push_back(std::get<types::StructDefinitionNode*>(Struct));
                     } else {
                         body.push_back(std::get<types::StructDeclarationNode*>(Struct));
+                    }
+                }else if(Check(types::TokenType::K_CLASS)) {
+                    auto Class = this->ParseClass();
+                    if (std::holds_alternative<types::ClassDefinitionNode*>(Class)) {
+                        body.push_back(std::get<types::ClassDefinitionNode*>(Class));
+                    } else {
+                        body.push_back(std::get<types::ClassDeclarationNode*>(Class));
                     }
                 }
             }

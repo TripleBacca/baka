@@ -8,7 +8,6 @@ namespace baka {
     namespace types {
         class ProgramNode : public ASTNode {
             std::vector<ASTNode*> Body;
-            // TODO: should have a vector of declarations
 
         public:
             ProgramNode(std::vector<ASTNode*> body) : Body(std::move(body)) {

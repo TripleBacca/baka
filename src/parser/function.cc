@@ -16,23 +16,22 @@ namespace baka
 {
 	namespace parser
 	{
-		types::FunctionParameter* Parser::ParseFunctionParameter()
-		{
+		types::FunctionParameter* Parser::ParseFunctionParameter() {
 			// TODO: need to test dis
-			bool isStructOrClass = Match(types::TokenType::K_STRUCT); // eat
-			bool isEnum = Match(types::TokenType::K_ENUM); // eat
-			bool isUnion = Match(types::TokenType::K_UNION); // eat
 
-			bool isUnsigned = Match(types::TokenType::K_UNSIGNED);
+			types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
 			bool IsConst = false;
-			if (Match(types::TokenType::K_CONST))
-			{
+			if (Match(types::TokenType::K_CONST)) {
 				IsConst = true;
 			}
 
-			if (!isTypeName(this->Peek()))
-			{
+			Modifier = DetermineTypeSpecifierModifierType();
+			if (Modifier != types::TypeSpecifierModifier::NONE) {
+				this->Advance();
+			}
+
+			if (!isTypeName(this->Peek())) {
 				// throw error
 				assert(false);
 			}
@@ -42,8 +41,8 @@ namespace baka
 			types::SingleDeclarationNode* Node = ParseSingleDeclaration();
 
 			// TODO: fix these disgusting constructors
-			auto* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, TypeName, Node, isStructOrClass, isEnum,
-			                                                           isUnion, isUnsigned);
+
+			auto* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, Modifier, TypeName, Node);
 			return Parameter;
 		}
 
@@ -91,14 +90,10 @@ namespace baka
 		{
 			size_t prev = current;
 
-			bool isUnsigned = false;
+			types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
 			bool IsStatic = false;
 			bool IsConst = false;
-
-			bool isClassOrStruct = false;
-			bool isEnum = false;
-			bool isUnion = false;
 
 			while (Check(types::TokenType::K_STATIC) || Check(types::TokenType::K_CONST))
 			{
@@ -112,11 +107,10 @@ namespace baka
 				}
 			}
 
-			isClassOrStruct = Match(types::TokenType::K_STRUCT);
-			isEnum = Match(types::TokenType::K_ENUM);
-			isUnion = Match(types::TokenType::K_UNION);
-
-			isUnsigned = Match(types::TokenType::K_UNSIGNED);
+			Modifier = DetermineTypeSpecifierModifierType();
+			if (Modifier != types::TypeSpecifierModifier::NONE) {
+				this->Advance();
+			}
 
 
             types::IdentifierNode* ReturnTypeBindedIdentifier = this->ParseTypeIdentifier();
@@ -144,7 +138,7 @@ namespace baka
 			types::StatementNode* Body = this->CompoundStatement();
 
 			return ASTALLOC.Alloc<types::FunctionNode>(ReturnTypeBindedIdentifier, FunctionTypeDecl, Body, IsStatic,
-			                                           IsConst, isClassOrStruct, isEnum, isUnion, isUnsigned);
+			                                           IsConst, Modifier);
 		}
 	}
 }

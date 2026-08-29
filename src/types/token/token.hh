@@ -13,7 +13,7 @@ namespace types {
         K_BREAK,
         K_CASE,
         K_CHAR,
-        // K_CLASS,
+        K_CLASS,
         K_CONST,
         K_CONTINUE,
         K_DELETE,

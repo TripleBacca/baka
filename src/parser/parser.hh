@@ -12,6 +12,7 @@
 #include <span>
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
+#include "types/parser/ast/class.hh"
 #include "types/parser/ast/program.hh"
 #include "types/parser/ast/constructor.hh"
 #include "types/parser/ast/destructor.hh"
@@ -91,6 +92,7 @@ namespace parser {
         types::FunctionParameter* ParseFunctionParameter();
         types::FunctionParameterList* ParseFunctionParameterList();
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
+        std::variant<types::ClassDefinitionNode*, types::ClassDeclarationNode*> ParseClass();
         types::StructBodyNode* ParseStructBody(types::IdentifierNode* ParentName);
 
         types::UnionNode* ParseUnion();
@@ -123,6 +125,7 @@ namespace parser {
 
         types::ExpressionStatementNode* ParseExpressionStatement();
 
+        types::TypeSpecifierModifier DetermineTypeSpecifierModifierType() const;
         types::StatementNodeType DetermineStatementType();
         types::EnumNode* ParseEnumDecl();
 
