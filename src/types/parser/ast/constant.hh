@@ -46,7 +46,6 @@ namespace baka {
 
             public:
                 ConstantTNode(const base::SLString& val) : Value(val) {
-                    int x = 1;
                 }
 
                 void Print(size_t Tabs = 0) const override {
