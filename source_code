@@ -1,29 +1,3 @@
 int a = 2;
-
-enum balls {
-    hairy,
-    not_hairy,
-};
-
-struct X {
-    int *y, z;
-};
-
-int foo() {
-    int b = 2;
-    int a = 2;
-    return a + b;
-}
-
-void solve() {
-    print(foo());
-}
-
-int main() {
-    int tc;
-    cin(tc);
-
-    while(tc--) {
-        solve();
-    }
-}
+typedef int x;
+x b = 3;

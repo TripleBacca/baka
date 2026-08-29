@@ -65,6 +65,17 @@ public:
         return true;
     }
 
+    bool RegisterOrReplaceType(std::string_view Symbol, SymbolTableEntry Entry) {
+        // true if symbol is new
+        auto it = Scopes.back().find(Symbol);
+        if (it != Scopes.back().end()) {
+            it->second = std::move(Entry);
+            return false;
+        }
+        Scopes.back().insert({Symbol, std::move(Entry)});
+        return true;
+    }
+
     //TODO GP hash does not guarantee pointer stability need to edit this to not return a pointer
     SymbolTableEntry* GetEntry(std::string_view Symbol) {
         for (auto it = Scopes.rbegin(); it != Scopes.rend(); ++it) {

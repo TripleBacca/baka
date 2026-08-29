@@ -28,7 +28,7 @@ namespace parser {
 
         types::DeclarationIdentifierNode* Variable = ParseDeclarationIdentifier();
         // doesnt matter if typedef is already done on that variable name
-        AddType(Variable->getIdentifier());
+        RegisterOrReplaceType(Variable->getIdentifier());
 
         if(!Match(types::TokenType::SEMICOLON)) {
             // todo throw error
