@@ -28,10 +28,10 @@ namespace parser {
             auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
             if (!LookupType(StructIdentifier)) {
                 AddType(StructIdentifier);
-                GetParserSTE(StructIdentifier)->isStruct = true;
+                GetParserSTE(StructIdentifier)->SetIsStruct();
 
             } else {
-                if(!GetParserSTE(StructIdentifier)->isStruct) {
+                if(!GetParserSTE(StructIdentifier)->IsStruct()) {
                     // TODO throw error
                     assert(false && "Not a struct");
                 }
@@ -43,9 +43,9 @@ namespace parser {
         // surely a definition
         if(LookupType(StructIdentifier)) {
             // TODO throw error
-            if(GetParserSTE(StructIdentifier)->isStructDefined) {
+            if(GetParserSTE(StructIdentifier)->IsStructDefined()) {
                 assert(false && "Struct already defined");
-            } else if(!GetParserSTE(StructIdentifier)->isStruct) {
+            } else if(!GetParserSTE(StructIdentifier)->IsStruct()) {
                 assert(false && "Not a struct");
             }
         }
@@ -58,7 +58,7 @@ namespace parser {
                 assert(false);
             }
             ParentStructIdentifier = this->ParseIdentifier();
-            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->isStructDefined) {
+            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined()) {
                 // todo throw error
                 assert(false && "Parent struct/class not found in symbol table");
             }
@@ -66,9 +66,9 @@ namespace parser {
 
         if (!LookupType(StructIdentifier)) {
             AddType(StructIdentifier);
-            GetParserSTE(StructIdentifier)->isStruct = true;
+            GetParserSTE(StructIdentifier)->SetIsStruct();
         }
-        GetParserSTE(StructIdentifier)->isStructDefined = true;
+        GetParserSTE(StructIdentifier)->SetIsStructDefined();
         EnterScope();
 
         if (!this->Check(types::TokenType::LPAREN_CURLY)) {

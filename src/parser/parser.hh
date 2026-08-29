@@ -34,8 +34,24 @@ namespace baka {
 namespace parser {
     struct ParserSTE
     {
-        bool isStruct = false;
-        bool isStructDefined = false; // this is onyl for struct. false for everything else by def
+        private:
+            uint8_t flag = 0;
+
+        static constexpr uint8_t IS_STRUCT = 1 << 0;
+        static constexpr uint8_t IS_STRUCT_DEFINED = 1 << 1;
+
+        public:
+            bool IsStruct() const noexcept { return flag & IS_STRUCT; }
+            bool IsStructDefined() const noexcept { return flag & IS_STRUCT_DEFINED; }
+
+            void SetIsStruct() noexcept { flag |= IS_STRUCT; }
+            void SetIsStructDefined() {
+                if(!IsStruct()) {
+                    throw std::runtime_error("Cannot set struct defined flag on non-struct type");
+                }
+                flag |= IS_STRUCT_DEFINED;
+            }
+
     };
 
     class Parser {

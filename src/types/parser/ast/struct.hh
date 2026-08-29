@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <vector>
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/structBody.hh"
