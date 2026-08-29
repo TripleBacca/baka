@@ -171,7 +171,7 @@ namespace types {
             std::cout << "DeclarationList(" << "\n";
             INDENT(Tabs + 1);
             std::cout << "IsStatic: " << IsStatic << ", IsConst: " << IsConst << "\n";
-            std::cout << "TypeSpecifierModifier"<< TypeSpecifierModifierToStr[Modifier] << "\n";
+            std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {
@@ -210,7 +210,7 @@ namespace types {
             INDENT(Tabs + 1);
             std::cout << "IsConst: " << IsConst << "\n";
             INDENT(Tabs + 1);
-            std::cout << "TypeSpecifierModifier"<< TypeSpecifierModifierToStr[Modifier] << "\n";
+            std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";
             if (TypeName) {
                 TypeName->Print(Tabs + 1);
             } else {

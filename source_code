@@ -1,8 +1,29 @@
-union balls {
-    int x,y;
-    bool z;
+int a = 2;
 
-    balls(int x) {}
-
-    ~balls() {}
+enum balls {
+    hairy,
+    not_hairy,
 };
+
+struct X {
+    int *y, z;
+};
+
+int foo() {
+    int b = 2;
+    int a = 2;
+    return a + b;
+}
+
+void solve() {
+    print(foo());
+}
+
+int main() {
+    int tc;
+    cin(tc);
+
+    while(tc--) {
+        solve();
+    }
+}

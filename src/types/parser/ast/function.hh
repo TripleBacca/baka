@@ -40,7 +40,7 @@ namespace types {
             std::cout << "IsStatic: " << IsStatic << ", IsConst: " << IsConst << '\n';
 
             INDENT(Tabs+1);
-            std::cout << "TypeSpecifierModifier"<< TypeSpecifierModifierToStr[Modifier] << "\n";
+            std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";
 
             INDENT(Tabs+1);
             std::cout << "FuncType: " << '\n';
