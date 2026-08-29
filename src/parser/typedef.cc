@@ -19,7 +19,7 @@ namespace parser {
 
         bool isConst = Match(types::TokenType::K_CONST);
 
-        types::TypeSpecifierModifier Modifier = DetermineTypeSpecifierModifierType();
+        types::TypeSpecifierModifier Modifier = DetermineTypeSpecifierModifier();
         if (Modifier != types::TypeSpecifierModifier::NONE) {
             this->Advance();
         }

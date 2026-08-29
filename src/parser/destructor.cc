@@ -7,6 +7,7 @@ namespace baka {
     namespace parser {
         types::DestructorNode* Parser::ParseDestructor(types::IdentifierNode* ParentName) {
             if (!this->Match(types::TokenType::OP_TILDE)) {
+                assert(false);
                 // throw error
             }
 
@@ -17,10 +18,12 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 
             if (!this->Match(types::TokenType::RPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 

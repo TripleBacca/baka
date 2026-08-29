@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include "types/parser/ast/ast_node.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/typedef.hh"
@@ -12,10 +11,12 @@ namespace baka {
     namespace parser {
         types::ForBlockStatementNode* Parser::ForBlockStatement() {
             if (!this->Match(types::TokenType::K_FOR)) {
+                assert(false);
                 // throw error
             }
 
             if (!Match(types::TokenType::LPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 
@@ -67,10 +68,12 @@ namespace baka {
 
         types::WhileBlockStatementNode* Parser::WhileBlockStatement() {
             if (!this->Match(types::TokenType::K_WHILE)) {
+                assert(false);
                 // throw error
             }
 
             if (!Match(types::TokenType::LPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 
@@ -84,6 +87,7 @@ namespace baka {
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 
@@ -94,16 +98,19 @@ namespace baka {
 
         types::DoWhileBlockStatementNode* Parser::DoWhileBlockStatement() {
             if (!this->Match(types::TokenType::K_DO)) {
+                assert(false);
                 // throw error
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
             if (!this->Match(types::TokenType::K_WHILE)) {
+                assert(false);
                 // throw error
             }
 
             if (!Match(types::TokenType::LPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
 
@@ -116,10 +123,12 @@ namespace baka {
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
+                assert(false);
                 // throw error
             }
             if (!Match(types::TokenType::SEMICOLON)) {
                 // throw error
+                assert(false);
             }
 
             types::DoWhileBlockStatementNode* Node = ASTALLOC.Alloc<types::DoWhileBlockStatementNode>(Cond, Label, Body);
@@ -138,6 +147,7 @@ namespace baka {
             }
             else {
                 // throw error
+                assert(false);
                 return nullptr;
             }
         }
