@@ -7,6 +7,7 @@
 #include "types/parser/ast/initializer.hh"
 #include "types/parser/ast/statement.hh"
 #include "types/parser/ast/structBody.hh"
+#include "types/parser/ast/union.hh"
 #include "types/token/all.hh"
 #include <span>
 #include "types/parser/ast/expression.hh"
@@ -33,7 +34,24 @@ namespace baka {
 namespace parser {
     struct ParserSTE
     {
-        bool isDefined = false;
+        private:
+            uint8_t flag = 0;
+
+        static constexpr uint8_t IS_STRUCT = 1 << 0;
+        static constexpr uint8_t IS_STRUCT_DEFINED = 1 << 1;
+
+        public:
+            bool IsStruct() const noexcept { return flag & IS_STRUCT; }
+            bool IsStructDefined() const noexcept { return flag & IS_STRUCT_DEFINED; }
+
+            void SetIsStruct() noexcept { flag |= IS_STRUCT; }
+            void SetIsStructDefined() {
+                if(!IsStruct()) {
+                    throw std::runtime_error("Cannot set struct defined flag on non-struct type");
+                }
+                flag |= IS_STRUCT_DEFINED;
+            }
+
     };
 
     class Parser {
@@ -75,6 +93,8 @@ namespace parser {
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
         types::StructBodyNode* ParseStructBody(types::IdentifierNode* ParentName);
 
+        types::UnionNode* ParseUnion();
+        types::UnionBodyNode* ParseUnionBody(types::IdentifierNode* ParentName);
 
         types::IdentifierNode* ParseTypeIdentifier();
 

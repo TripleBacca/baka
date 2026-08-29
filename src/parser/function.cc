@@ -119,8 +119,7 @@ namespace baka
 			isUnsigned = Match(types::TokenType::K_UNSIGNED);
 
 
-			// TODO: use TypeNode
-			types::IdentifierNode* ReturnTypeBindedIdentifier = this->ParseTypeIdentifier();
+            types::IdentifierNode* ReturnTypeBindedIdentifier = this->ParseTypeIdentifier();
 
 			// int (*foo())();
 

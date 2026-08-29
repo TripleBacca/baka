@@ -1,1 +1,8 @@
-int foo(int x) {}
+union balls {
+    int x,y;
+    bool z;
+
+    balls(int x) {}
+
+    ~balls() {}
+};

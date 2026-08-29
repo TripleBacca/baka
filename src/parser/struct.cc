@@ -28,14 +28,26 @@ namespace parser {
             auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
             if (!LookupType(StructIdentifier)) {
                 AddType(StructIdentifier);
+                GetParserSTE(StructIdentifier)->SetIsStruct();
+
+            } else {
+                if(!GetParserSTE(StructIdentifier)->IsStruct()) {
+                    // TODO throw error
+                    assert(false && "Not a struct");
+                }
+
             }
             return Node;
         }
 
         // surely a definition
-        if(LookupType(StructIdentifier) && GetParserSTE(StructIdentifier)->isDefined) {
+        if(LookupType(StructIdentifier)) {
             // TODO throw error
-            assert(false && "Struct already defined");
+            if(GetParserSTE(StructIdentifier)->IsStructDefined()) {
+                assert(false && "Struct already defined");
+            } else if(!GetParserSTE(StructIdentifier)->IsStruct()) {
+                assert(false && "Not a struct");
+            }
         }
 
         types::IdentifierNode* ParentStructIdentifier = nullptr;
@@ -46,14 +58,17 @@ namespace parser {
                 assert(false);
             }
             ParentStructIdentifier = this->ParseIdentifier();
-            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->isDefined) {
+            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined()) {
                 // todo throw error
                 assert(false && "Parent struct/class not found in symbol table");
             }
         }
 
-        if (!LookupType(StructIdentifier)) AddType(StructIdentifier);
-        GetParserSTE(StructIdentifier)->isDefined = true;
+        if (!LookupType(StructIdentifier)) {
+            AddType(StructIdentifier);
+            GetParserSTE(StructIdentifier)->SetIsStruct();
+        }
+        GetParserSTE(StructIdentifier)->SetIsStructDefined();
         EnterScope();
 
         if (!this->Check(types::TokenType::LPAREN_CURLY)) {
