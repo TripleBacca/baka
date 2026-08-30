@@ -71,6 +71,7 @@ namespace parser {
             return PrimaryExpressionNode;
         } else {
             // TODO: throw error
+            assert(false);
         }
 
         return nullptr;

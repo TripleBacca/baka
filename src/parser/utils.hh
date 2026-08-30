@@ -15,6 +15,9 @@ namespace detail {
             case types::TokenType::LITERAL_FP:
             case types::TokenType::LITERAL_STRING:
             case types::TokenType::LITERAL_INTEGER:
+            case types::TokenType::K_TRUE:
+            case types::TokenType::K_FALSE:
+            case types::TokenType::K_NULLPTR:
                 return true;
             default:
                 return false;

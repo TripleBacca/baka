@@ -23,6 +23,8 @@ namespace baka {
         // long long
         // unsigned int
         // unsigned long long
+        // bool
+        // nullptr
 
         // this guy creates copy for storing
         template<class T>
@@ -51,6 +53,15 @@ namespace baka {
                 void Print(size_t Tabs = 0) const override {
                     INDENT(Tabs);
                     std::cout << "Constant(" << Value << ")" << std::endl;
+                }
+        };
+
+        template<>
+        class ConstantTNode<std::nullptr_t> : public ConstantNode {
+            public:
+                void Print(size_t Tabs = 0) const override {
+                    INDENT(Tabs);
+                    std::cout << "Constant(nullptr)" << std::endl;
                 }
         };
 

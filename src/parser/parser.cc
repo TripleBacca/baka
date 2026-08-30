@@ -126,6 +126,16 @@ namespace baka {
             CONSTANT_NODE(long long);
             CONSTANT_NODE(unsigned int);
             CONSTANT_NODE(unsigned long long);
+            else if (Check(types::TokenType::K_TRUE)) {
+                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<bool>>(true);
+                return cn;
+            } else if (Check(types::TokenType::K_FALSE)) {
+                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<bool>>(false);
+                return cn;
+            } else if (Check(types::TokenType::K_NULLPTR)) {
+                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<std::nullptr_t>>();
+                return cn;
+            }
 
             // todo throw error
             assert(false);
