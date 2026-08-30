@@ -1,0 +1,1485 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/06_control_flow.cpp
+Driver::OptimisticDefects: 6
+Driver::SourceCode: 
+int classify(int x) {
+    if (x > 0) {
+        return 1;
+    } else if (x < 0) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
+int count_until(int limit) {
+    int sum = 0;
+    for (int i = 0; i < limit; i = i + 1) {
+        if (sum >= 100) {
+            break;
+        }
+        sum = sum + i;
+    }
+    return sum;
+}
+
+int skip_evens(int limit) {
+    int total = 0;
+    int n = 0;
+    while (n < limit) {
+        n = n + 1;
+        if (n % 2 == 0) {
+            continue;
+        }
+        total = total + n;
+    }
+    return total;
+}
+
+int poll_until(int target) {
+    int value = 0;
+    do {
+        value = value + 1;
+    } while (value < target);
+    return value;
+}
+
+int switch_demo(int key) {
+    int result = 0;
+    switch (key) {
+    case 1:
+        result = 1000;
+        break;
+    case 2:
+        result = 2000;
+    case 3:
+        result = result + 5;
+        break;
+    default:
+        result = -1;
+    }
+    return result;
+}
+
+int goto_demo(int x) {
+    int y = 0;
+    if (x == 0) {
+        goto zero;
+    }
+    y = 1;
+zero:
+    return y;
+}
+
+int main() {
+    int a = classify(10);
+    int b = classify(-5);
+    int c = classify(0);
+    int d = count_until(50);
+    int e = skip_evens(10);
+    int f = poll_until(7);
+    int g = switch_demo(2);
+    int h = switch_demo(9);
+    int i = goto_demo(0);
+    return a + b + c + d + e + f + g + h + i;
+}
+Lexer::LexerOutput: 362 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+classify                  IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+x                         IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+>                         OP_GT                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+else                      K_ELSE                
+if                        K_IF                  
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+<                         OP_LT                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+-                         OP_UNARY_MINUS        
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+else                      K_ELSE                
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+int                       K_INT                 
+count_until               IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+limit                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+sum                       IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+i                         IDENTIFIER            
+<                         OP_LT                 
+limit                     IDENTIFIER            
+;                         SEMICOLON             
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+sum                       IDENTIFIER            
+>=                        OP_GE                 
+100 (int)                 LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+break                     K_BREAK               
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+sum                       IDENTIFIER            
+=                         OP_ASSIGN             
+sum                       IDENTIFIER            
++                         OP_PLUS               
+i                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+sum                       IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+skip_evens                IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+limit                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+n                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+n                         IDENTIFIER            
+<                         OP_LT                 
+limit                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+n                         IDENTIFIER            
+=                         OP_ASSIGN             
+n                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+if                        K_IF                  
+(                         LPAREN_ROUND          
+n                         IDENTIFIER            
+%                         OP_MOD                
+2 (int)                   LITERAL_INTEGER       
+==                        OP_EQ                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+continue                  K_CONTINUE            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+total                     IDENTIFIER            
++                         OP_PLUS               
+n                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+total                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+poll_until                IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+target                    IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+do                        K_DO                  
+{                         LPAREN_CURLY          
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+value                     IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+<                         OP_LT                 
+target                    IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+value                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+switch_demo               IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+key                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+switch                    K_SWITCH              
+(                         LPAREN_ROUND          
+key                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+case                      K_CASE                
+1 (int)                   LITERAL_INTEGER       
+:                         OP_COLON              
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+1000 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+break                     K_BREAK               
+;                         SEMICOLON             
+case                      K_CASE                
+2 (int)                   LITERAL_INTEGER       
+:                         OP_COLON              
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+2000 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+case                      K_CASE                
+3 (int)                   LITERAL_INTEGER       
+:                         OP_COLON              
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+result                    IDENTIFIER            
++                         OP_PLUS               
+5 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+break                     K_BREAK               
+;                         SEMICOLON             
+default                   K_DEFAULT             
+:                         OP_COLON              
+result                    IDENTIFIER            
+=                         OP_ASSIGN             
+-                         OP_UNARY_MINUS        
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+result                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+goto_demo                 IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+x                         IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+if                        K_IF                  
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+==                        OP_EQ                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+goto                      K_GOTO                
+zero                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+zero                      IDENTIFIER            
+:                         OP_COLON              
+return                    K_RETURN              
+y                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+classify                  IDENTIFIER            
+(                         LPAREN_ROUND          
+10 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+b                         IDENTIFIER            
+=                         OP_ASSIGN             
+classify                  IDENTIFIER            
+(                         LPAREN_ROUND          
+-                         OP_UNARY_MINUS        
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+classify                  IDENTIFIER            
+(                         LPAREN_ROUND          
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+d                         IDENTIFIER            
+=                         OP_ASSIGN             
+count_until               IDENTIFIER            
+(                         LPAREN_ROUND          
+50 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+e                         IDENTIFIER            
+=                         OP_ASSIGN             
+skip_evens                IDENTIFIER            
+(                         LPAREN_ROUND          
+10 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+f                         IDENTIFIER            
+=                         OP_ASSIGN             
+poll_until                IDENTIFIER            
+(                         LPAREN_ROUND          
+7 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+g                         IDENTIFIER            
+=                         OP_ASSIGN             
+switch_demo               IDENTIFIER            
+(                         LPAREN_ROUND          
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+h                         IDENTIFIER            
+=                         OP_ASSIGN             
+switch_demo               IDENTIFIER            
+(                         LPAREN_ROUND          
+9 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+goto_demo                 IDENTIFIER            
+(                         LPAREN_ROUND          
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+a                         IDENTIFIER            
++                         OP_PLUS               
+b                         IDENTIFIER            
++                         OP_PLUS               
+c                         IDENTIFIER            
++                         OP_PLUS               
+d                         IDENTIFIER            
++                         OP_PLUS               
+e                         IDENTIFIER            
++                         OP_PLUS               
+f                         IDENTIFIER            
++                         OP_PLUS               
+g                         IDENTIFIER            
++                         OP_PLUS               
+h                         IDENTIFIER            
++                         OP_PLUS               
+i                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(classify)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(x)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            If Super Block(
+                If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_GT,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        Return(
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(1)
+                                )
+                            )
+                        )
+                    )
+                )
+                Else If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_LT,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        Return(
+                            CommaExpression(
+                                Factor(
+                                    UnaryOp: OP_UNARY_MINUS,
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+                Else(
+                    CompoundStatement(
+                        Return(
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(count_until)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(limit)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(sum)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            For(
+                DeclarationList(
+                    IsStatic: 0, IsConst: 0
+                    TypeSpecifierModifier: None
+                    Identifier(int)
+                    SingleDeclarationNode(
+                        DeclarationIdentifier(
+                            PointerCount: 0
+                                Identifier(i)
+                            ArraySizes: 
+                        )
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        PrimaryExpression(
+                            Identifier(limit)
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(i)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+                Label: nullptr
+                CompoundStatement(
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_GE,
+                                    PrimaryExpression(
+                                        Identifier(sum)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(100)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                Break(
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(sum)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(sum)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(i)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(sum)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(skip_evens)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(limit)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(total)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(n)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            While(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(n)
+                        )
+                        PrimaryExpression(
+                            Identifier(limit)
+                        )
+                    )
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(n)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(n)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_EQ,
+                                    BinaryExpression(
+                                        BinaryOp: OP_MOD,
+                                        PrimaryExpression(
+                                            Identifier(n)
+                                        )
+                                        PrimaryExpression(
+                                            Constant(2)
+                                        )
+                                    )
+                                    PrimaryExpression(
+                                        Constant(0)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                Continue(
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(total)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(total)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(n)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(total)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(poll_until)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(target)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(value)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            Do While(
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(value)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(value)
+                        )
+                        PrimaryExpression(
+                            Identifier(target)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(value)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(switch_demo)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(key)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(result)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            Switch(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(key)
+                    )
+                )
+                CompoundStatement(
+                    Case Label(CommaExpression(
+    PrimaryExpression(
+        Constant(1)
+    )
+)
+:
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(result)
+                                )
+                                PrimaryExpression(
+                                    Constant(1000)
+                                )
+                            )
+                        )
+                    )
+                    Break(
+                    )
+                    Case Label(CommaExpression(
+    PrimaryExpression(
+        Constant(2)
+    )
+)
+:
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(result)
+                                )
+                                PrimaryExpression(
+                                    Constant(2000)
+                                )
+                            )
+                        )
+                    )
+                    Case Label(CommaExpression(
+    PrimaryExpression(
+        Constant(3)
+    )
+)
+:
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(result)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(result)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(5)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    Break(
+                    )
+                    Default Label(:
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(result)
+                                )
+                                Factor(
+                                    UnaryOp: OP_UNARY_MINUS,
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(result)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(goto_demo)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(x)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(y)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            If Super Block(
+                If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_EQ,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        Goto(
+                            Identifier(zero)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            Goto Label(Identifier(zero)
+:
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(y)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(a)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(classify)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(10)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(b)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(classify)
+                            )
+                            CommaExpression(
+                                Factor(
+                                    UnaryOp: OP_UNARY_MINUS,
+                                    PrimaryExpression(
+                                        Constant(5)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(c)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(classify)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(d)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(count_until)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(50)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(e)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(skip_evens)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(10)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(f)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(poll_until)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(7)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(g)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(switch_demo)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(2)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(h)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(switch_demo)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(9)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(i)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(goto_demo)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        BinaryExpression(
+                                            BinaryOp: OP_ADD,
+                                            BinaryExpression(
+                                                BinaryOp: OP_ADD,
+                                                BinaryExpression(
+                                                    BinaryOp: OP_ADD,
+                                                    PrimaryExpression(
+                                                        Identifier(a)
+                                                    )
+                                                    PrimaryExpression(
+                                                        Identifier(b)
+                                                    )
+                                                )
+                                                PrimaryExpression(
+                                                    Identifier(c)
+                                                )
+                                            )
+                                            PrimaryExpression(
+                                                Identifier(d)
+                                            )
+                                        )
+                                        PrimaryExpression(
+                                            Identifier(e)
+                                        )
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(f)
+                                    )
+                                )
+                                PrimaryExpression(
+                                    Identifier(g)
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(h)
+                            )
+                        )
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

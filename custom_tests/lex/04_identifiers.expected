@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
-Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/04_identifiers.cpp
+Gctx::UptoStage: LEX
+Gctx::SourceFile: custom_tests/lex/04_identifiers.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 

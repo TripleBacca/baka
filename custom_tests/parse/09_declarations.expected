@@ -1,0 +1,807 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/09_declarations.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+static int global_variable = 100;
+const int max_value = 1000;
+
+typedef int Number;
+
+int main() {
+    int a, b, c;
+    a = 1;
+    b = 2;
+    c = a + b;
+
+    int x = 5, y = 6;
+    int z = x * y;
+
+    int arr[3] = {1, 2, 3};
+    int multi[2][3];
+    multi[0][0] = 1;
+    multi[1][2] = 2;
+
+    int* ptr = &x;
+    *ptr = 10;
+
+    char name[8] = "hello";
+    char letter = 'A';
+    float ratio = 0.75;
+    double precise = 3.14159;
+
+    Number alias = 42;
+    const int fixed = alias / 2;
+
+    return a + b + c + z + arr[0] + multi[1][2] + *ptr + name[0] + letter + ratio + precise + alias + fixed;
+}
+Lexer::LexerOutput: 191 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+static                    K_STATIC              
+int                       K_INT                 
+global_variable           IDENTIFIER            
+=                         OP_ASSIGN             
+100 (int)                 LITERAL_INTEGER       
+;                         SEMICOLON             
+const                     K_CONST               
+int                       K_INT                 
+max_value                 IDENTIFIER            
+=                         OP_ASSIGN             
+1000 (int)                LITERAL_INTEGER       
+;                         SEMICOLON             
+typedef                   K_TYPEDEF             
+int                       K_INT                 
+Number                    IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+a                         IDENTIFIER            
+,                         OP_COMMA              
+b                         IDENTIFIER            
+,                         OP_COMMA              
+c                         IDENTIFIER            
+;                         SEMICOLON             
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+b                         IDENTIFIER            
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+a                         IDENTIFIER            
++                         OP_PLUS               
+b                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+5 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+6 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+z                         IDENTIFIER            
+=                         OP_ASSIGN             
+x                         IDENTIFIER            
+*                         OP_MUL                
+y                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+arr                       IDENTIFIER            
+[                         LPAREN_SQUARE         
+3 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+{                         LPAREN_CURLY          
+1 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+2 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+3 (int)                   LITERAL_INTEGER       
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+multi                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+[                         LPAREN_SQUARE         
+3 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+multi                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+multi                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+*                         OP_MUL                
+ptr                       IDENTIFIER            
+=                         OP_ASSIGN             
+&                         OP_BIT_AND            
+x                         IDENTIFIER            
+;                         SEMICOLON             
+*                         OP_MUL                
+ptr                       IDENTIFIER            
+=                         OP_ASSIGN             
+10 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+char                      K_CHAR                
+name                      IDENTIFIER            
+[                         LPAREN_SQUARE         
+8 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+"hello"                   LITERAL_STRING        
+;                         SEMICOLON             
+char                      K_CHAR                
+letter                    IDENTIFIER            
+=                         OP_ASSIGN             
+'A'                       LITERAL_CHARACTER     
+;                         SEMICOLON             
+float                     K_FLOAT               
+ratio                     IDENTIFIER            
+=                         OP_ASSIGN             
+0.75 (double)             LITERAL_FP            
+;                         SEMICOLON             
+double                    K_DOUBLE              
+precise                   IDENTIFIER            
+=                         OP_ASSIGN             
+3.14159 (double)          LITERAL_FP            
+;                         SEMICOLON             
+Number                    IDENTIFIER            
+alias                     IDENTIFIER            
+=                         OP_ASSIGN             
+42 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+const                     K_CONST               
+int                       K_INT                 
+fixed                     IDENTIFIER            
+=                         OP_ASSIGN             
+alias                     IDENTIFIER            
+/                         OP_DIV                
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+a                         IDENTIFIER            
++                         OP_PLUS               
+b                         IDENTIFIER            
++                         OP_PLUS               
+c                         IDENTIFIER            
++                         OP_PLUS               
+z                         IDENTIFIER            
++                         OP_PLUS               
+arr                       IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
++                         OP_PLUS               
+multi                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
++                         OP_PLUS               
+*                         OP_MUL                
+ptr                       IDENTIFIER            
++                         OP_PLUS               
+name                      IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
++                         OP_PLUS               
+letter                    IDENTIFIER            
++                         OP_PLUS               
+ratio                     IDENTIFIER            
++                         OP_PLUS               
+precise                   IDENTIFIER            
++                         OP_PLUS               
+alias                     IDENTIFIER            
++                         OP_PLUS               
+fixed                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    DeclarationList(
+        IsStatic: 1, IsConst: 0
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(global_variable)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Constant(100)
+                )
+            )
+        )
+    )
+    DeclarationList(
+        IsStatic: 0, IsConst: 1
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(max_value)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Constant(1000)
+                )
+            )
+        )
+    )
+    Typedef(
+        isConst = 0
+        Identifier(int)
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(Number)
+            ArraySizes: 
+        )
+        Modifier: None
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(a)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(b)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(c)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(a)
+                        )
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(b)
+                        )
+                        PrimaryExpression(
+                            Constant(2)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(c)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(a)
+                            )
+                            PrimaryExpression(
+                                Identifier(b)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(5)
+                        )
+                    )
+                )
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(y)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(6)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(z)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        BinaryExpression(
+                            BinaryOp: OP_MUL,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Identifier(y)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(arr)
+                        ArraySizes: 
+                            PrimaryExpression(
+                                Constant(3)
+                            )
+                    )
+                    InitializerNode(
+                        Expressions: 3
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                        )
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(3)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(multi)
+                        ArraySizes: 
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                            PrimaryExpression(
+                                Constant(3)
+                            )
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        IndexPostfixExpr(
+                            IndexPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(multi)
+                                )
+                                CommaExpression(
+                                    PrimaryExpression(
+                                        Constant(0)
+                                    )
+                                )
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        IndexPostfixExpr(
+                            IndexPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(multi)
+                                )
+                                CommaExpression(
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(2)
+                                )
+                            )
+                        )
+                        PrimaryExpression(
+                            Constant(2)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 1
+                            Identifier(ptr)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        Factor(
+                            UnaryOp: OP_ADDR_OF,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        Factor(
+                            UnaryOp: OP_DEREF,
+                            PrimaryExpression(
+                                Identifier(ptr)
+                            )
+                        )
+                        PrimaryExpression(
+                            Constant(10)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(char)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(name)
+                        ArraySizes: 
+                            PrimaryExpression(
+                                Constant(8)
+                            )
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(hello)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(char)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(letter)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(A)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(float)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(ratio)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0.75)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(double)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(precise)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(3.14159)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Number)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(alias)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(42)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 1
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(fixed)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        BinaryExpression(
+                            BinaryOp: OP_DIV,
+                            PrimaryExpression(
+                                Identifier(alias)
+                            )
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        BinaryExpression(
+                                            BinaryOp: OP_ADD,
+                                            BinaryExpression(
+                                                BinaryOp: OP_ADD,
+                                                BinaryExpression(
+                                                    BinaryOp: OP_ADD,
+                                                    BinaryExpression(
+                                                        BinaryOp: OP_ADD,
+                                                        BinaryExpression(
+                                                            BinaryOp: OP_ADD,
+                                                            BinaryExpression(
+                                                                BinaryOp: OP_ADD,
+                                                                BinaryExpression(
+                                                                    BinaryOp: OP_ADD,
+                                                                    PrimaryExpression(
+                                                                        Identifier(a)
+                                                                    )
+                                                                    PrimaryExpression(
+                                                                        Identifier(b)
+                                                                    )
+                                                                )
+                                                                PrimaryExpression(
+                                                                    Identifier(c)
+                                                                )
+                                                            )
+                                                            PrimaryExpression(
+                                                                Identifier(z)
+                                                            )
+                                                        )
+                                                        IndexPostfixExpr(
+                                                            PrimaryExpression(
+                                                                Identifier(arr)
+                                                            )
+                                                            CommaExpression(
+                                                                PrimaryExpression(
+                                                                    Constant(0)
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                    IndexPostfixExpr(
+                                                        IndexPostfixExpr(
+                                                            PrimaryExpression(
+                                                                Identifier(multi)
+                                                            )
+                                                            CommaExpression(
+                                                                PrimaryExpression(
+                                                                    Constant(1)
+                                                                )
+                                                            )
+                                                        )
+                                                        CommaExpression(
+                                                            PrimaryExpression(
+                                                                Constant(2)
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                                Factor(
+                                                    UnaryOp: OP_DEREF,
+                                                    PrimaryExpression(
+                                                        Identifier(ptr)
+                                                    )
+                                                )
+                                            )
+                                            IndexPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(name)
+                                                )
+                                                CommaExpression(
+                                                    PrimaryExpression(
+                                                        Constant(0)
+                                                    )
+                                                )
+                                            )
+                                        )
+                                        PrimaryExpression(
+                                            Identifier(letter)
+                                        )
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(ratio)
+                                    )
+                                )
+                                PrimaryExpression(
+                                    Identifier(precise)
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(alias)
+                            )
+                        )
+                        PrimaryExpression(
+                            Identifier(fixed)
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

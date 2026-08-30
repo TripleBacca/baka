@@ -1,0 +1,588 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/22_class_destructors.cpp
+Driver::OptimisticDefects: 4
+Driver::SourceCode: 
+class Buffer {
+    int capacity;
+    int used;
+
+    Buffer() {
+        capacity = 16;
+        used = 0;
+    }
+
+    Buffer(int cap) {
+        capacity = cap;
+        used = 0;
+    }
+
+    ~Buffer() {
+        capacity = 0;
+        used = 0;
+    }
+
+    void fill(int amount) {
+        used = used + amount;
+    }
+
+    int free_space() {
+        return capacity - used;
+    }
+};
+
+class TrackedBuffer : Buffer {
+    int serial;
+
+    TrackedBuffer() {
+        serial = 0;
+    }
+
+    ~TrackedBuffer() {
+        serial = -1;
+    }
+};
+
+int main() {
+    Buffer b;
+    b.fill(4);
+    b.fill(2);
+    int remaining = b.free_space();
+    TrackedBuffer t;
+    return remaining + t.free_space();
+}
+Lexer::LexerOutput: 153 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+class                     K_CLASS               
+Buffer                    IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+capacity                  IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+used                      IDENTIFIER            
+;                         SEMICOLON             
+Buffer                    IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+capacity                  IDENTIFIER            
+=                         OP_ASSIGN             
+16 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+used                      IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+Buffer                    IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+cap                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+capacity                  IDENTIFIER            
+=                         OP_ASSIGN             
+cap                       IDENTIFIER            
+;                         SEMICOLON             
+used                      IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+~                         OP_TILDE              
+Buffer                    IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+capacity                  IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+used                      IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+void                      K_VOID                
+fill                      IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+amount                    IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+used                      IDENTIFIER            
+=                         OP_ASSIGN             
+used                      IDENTIFIER            
++                         OP_PLUS               
+amount                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+free_space                IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+capacity                  IDENTIFIER            
+-                         OP_UNARY_MINUS        
+used                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+class                     K_CLASS               
+TrackedBuffer             IDENTIFIER            
+:                         OP_COLON              
+Buffer                    IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+serial                    IDENTIFIER            
+;                         SEMICOLON             
+TrackedBuffer             IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+serial                    IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+~                         OP_TILDE              
+TrackedBuffer             IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+serial                    IDENTIFIER            
+=                         OP_ASSIGN             
+-                         OP_UNARY_MINUS        
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Buffer                    IDENTIFIER            
+b                         IDENTIFIER            
+;                         SEMICOLON             
+b                         IDENTIFIER            
+.                         OP_DOT                
+fill                      IDENTIFIER            
+(                         LPAREN_ROUND          
+4 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+b                         IDENTIFIER            
+.                         OP_DOT                
+fill                      IDENTIFIER            
+(                         LPAREN_ROUND          
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+remaining                 IDENTIFIER            
+=                         OP_ASSIGN             
+b                         IDENTIFIER            
+.                         OP_DOT                
+free_space                IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+TrackedBuffer             IDENTIFIER            
+t                         IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+remaining                 IDENTIFIER            
++                         OP_PLUS               
+t                         IDENTIFIER            
+.                         OP_DOT                
+free_space                IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Class(
+        Identifier(Buffer)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(capacity)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(used)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(fill)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                            FunctionParameter(
+                                IsConst: 0
+                                TypeSpecifierModifier: None
+                                Identifier(int)
+                                SingleDeclarationNode(
+                                    DeclarationIdentifier(
+                                        PointerCount: 0
+                                            Identifier(amount)
+                                        ArraySizes: 
+                                    )
+                                    Initialization : nullptr
+                                )
+                            )
+                        )
+                )
+                ReturnType: 
+                Identifier(void)
+                FunctionBody:
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(used)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(used)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(amount)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(free_space)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(int)
+                FunctionBody:
+                CompoundStatement(
+                    Return(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_SUB,
+                                PrimaryExpression(
+                                    Identifier(capacity)
+                                )
+                                PrimaryExpression(
+                                    Identifier(used)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Constructor(
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(cap)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(capacity)
+                                )
+                                PrimaryExpression(
+                                    Identifier(cap)
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(used)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Destructor(
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(capacity)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(used)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Class(
+        Identifier(TrackedBuffer)
+        ParentClass : 
+            Identifier(Buffer)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(serial)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(serial)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Destructor(
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(serial)
+                                )
+                                Factor(
+                                    UnaryOp: OP_UNARY_MINUS,
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Buffer)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(b)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(b)
+                            )
+                            Identifier(fill)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Constant(4)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(b)
+                            )
+                            Identifier(fill)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(remaining)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(b)
+                                )
+                                Identifier(free_space)
+                            )
+                            CommaExpression(
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(TrackedBuffer)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(t)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        PrimaryExpression(
+                            Identifier(remaining)
+                        )
+                        FunctionCallPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(t)
+                                )
+                                Identifier(free_space)
+                            )
+                            CommaExpression(
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+
