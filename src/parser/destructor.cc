@@ -23,9 +23,10 @@ namespace baka {
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
                 ReportError("expected '(' after destructor name");
-            }
-
-            if (!this->Match(types::TokenType::RPAREN_ROUND)) {
+                if (SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::RPAREN_ROUND) {
+                    Advance();
+                }
+            } else if (!this->Match(types::TokenType::RPAREN_ROUND)) {
                 ReportError("expected ')' after destructor parameter list");
                 if (SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::RPAREN_ROUND) {
                     Advance();

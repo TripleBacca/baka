@@ -122,6 +122,9 @@ namespace baka {
             types::IdentifierNode* Label = nullptr;
             if (Match(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
+                if (LookupType(Label)) {
+                    ReportError("identifier cannot be a type name");
+                }
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
@@ -138,6 +141,9 @@ namespace baka {
             }
             return Node;
         }
+
+        // fix up the nullptr returning thing, return a sentinel instead
+
 
         types::DoWhileBlockStatementNode* Parser::DoWhileBlockStatement() {
             if (!this->Match(types::TokenType::K_DO)) {
@@ -186,7 +192,10 @@ namespace baka {
                 }
                 Errored = true;
             }
-            Match(types::TokenType::SEMICOLON);
+            if (!Match(types::TokenType::SEMICOLON)) {
+                ReportError("expected ';' after 'do ... while'");
+                Errored = true;
+            }
 
             types::DoWhileBlockStatementNode* Node = ASTALLOC.Alloc<types::DoWhileBlockStatementNode>(Cond, Label, Body);
             if (Errored) {
