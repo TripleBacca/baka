@@ -71,6 +71,7 @@ namespace parser {
 
             return PrimaryExpressionNode;
         } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::K_THIS) {
+            Advance();
 
             auto* ThisNode = ASTALLOC.Alloc<types::ThisNode>();
             auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ThisNode);
