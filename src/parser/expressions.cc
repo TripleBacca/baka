@@ -3,6 +3,7 @@
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/castFactorNode.hh"
+#include "types/parser/ast/operators.hh"
 #include "types/parser/ast/ternary.hh"
 #include "types/parser/ast/this.hh"
 #include "types/token/token.hh"
@@ -41,7 +42,7 @@ namespace parser {
 
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
         auto& ConstantOrIdentifierOrThis = Peek();
-        
+
 
         if(Match(types::TokenType::LPAREN_ROUND)) {
             types::ExpressionNode* Node = ParseCommaExpression();
@@ -108,11 +109,15 @@ namespace parser {
         }
 
         if (detail::IsUnaryOperator(Peek().TokenType_v)) {
-            types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp[Advance().TokenType_v];
+            types::ASTUnaryOp UnaryOp = types::TokenTypeToASTUnaryOp[Peek().TokenType_v];
 
-            types::ExpressionNode* Expr = ParseFactor();
-
-            return ASTALLOC.Alloc<types::FactorNode>(UnaryOp, Expr);
+            if(UnaryOp == types::ASTUnaryOp::OP_SIZEOF) {
+                return ParseSizeofExpression();
+            } else {
+                Advance();
+                types::ExpressionNode* Expr = ParseFactor();
+                return ASTALLOC.Alloc<types::FactorNode>(UnaryOp, Expr);
+            }
         }
 
         return ParsePostfixExpression();

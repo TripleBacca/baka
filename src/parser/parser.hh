@@ -162,6 +162,8 @@ namespace parser {
         types::ExpressionNode* ParseCommaExpression();
 
         types::ExpressionNode* ParsePrimaryExpression();
+        types::ExpressionNode* ParseSizeofExpression();
+
 
         types::ExpressionNode* ParseFactor();
         std::optional<types::TypeNode*> TryParseTypeName();

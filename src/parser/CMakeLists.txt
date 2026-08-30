@@ -24,6 +24,7 @@ set(EXEC_SOURCES
     union.cc
     typename.cc
     typedef.cc
+    sizeof.cc
 )
 
 add_library(parser
