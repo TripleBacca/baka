@@ -4,6 +4,11 @@
 
 namespace baka {
     namespace lexer {
-        std::vector<types::Token> Tokenize(std::string_view SourceCode);
+        struct Lexed {
+            std::vector<types::Token> Tokens;
+            std::vector<types::TokenSourceLocation> Locations;
+        };
+
+        Lexed Tokenize(std::string_view SourceCode);
     } // namespace lexer
 } // namespace baka

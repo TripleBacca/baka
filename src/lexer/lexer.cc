@@ -5,6 +5,7 @@
 #include <charconv>
 #include <climits>
 #include "base/base.hh"
+#include "line_index.hh"
 #include "memory/custom_strings.hh"
 #include "types/driver/defs.hh"
 #include "driver/gctx.hh"
@@ -16,10 +17,21 @@
 #define LEX_ERROR(STR, IDX) driver::Gctx::GenerateLineError(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
 #define LEX_WARN(STR, IDX) driver::Gctx::GenerateLineWarning(LineNo, IDX, LineIndex->CurrentLine(), STR, driver::Stage::LEX)
 
+#define EMIT_TOKEN(TT, VAL) \
+    TokenLocations.emplace_back(driver::Gctx::GetSourceFilePath(), LineNo, ColNo); \
+    Tokens.emplace_back((TT), (VAL))
+
+#define EMIT_TOKEN_AT(TT, VAL, COL) \
+    TokenLocations.emplace_back(driver::Gctx::GetSourceFilePath(), LineNo, (COL)); \
+    Tokens.emplace_back((TT), (VAL))
+
 namespace baka {
     namespace lexer {
-        std::vector<types::Token> Tokenize(std::string_view SourceCode) {
-            std::vector<types::Token> tokens;
+        Lexed Tokenize(std::string_view SourceCode) {
+            std::vector<types::Token> Tokens;
+
+            // todo: dont need to store line ctx if doing single file
+            std::vector<types::TokenSourceLocation> TokenLocations;
 
             size_t LineNo = 1;
             size_t ColNo = 1;
@@ -47,51 +59,51 @@ namespace baka {
 
                     std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
                     if (Kw_lexeme_to_type.contains(lexeme)) {
-                        tokens.emplace_back(Kw_lexeme_to_type.at(lexeme), lexeme);
+                        EMIT_TOKEN(Kw_lexeme_to_type.at(lexeme), lexeme);
                     }
                     else {
-                        tokens.emplace_back(types::TokenType::IDENTIFIER, lexeme);
+                        EMIT_TOKEN(types::TokenType::IDENTIFIER, lexeme);
                     }
                     lh = endIdx + 1;
                     ColNo += endIdx - startIdx + 1;
                 }
                 else if (curr == '@') {
-                    tokens.emplace_back(types::TokenType::AT, std::string_view("@"));
+                    EMIT_TOKEN(types::TokenType::AT, std::string_view("@"));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == '(') {
-                    tokens.emplace_back(types::TokenType::LPAREN_ROUND, std::string_view("("));
+                    EMIT_TOKEN(types::TokenType::LPAREN_ROUND, std::string_view("("));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == ')') {
-                    tokens.emplace_back(types::TokenType::RPAREN_ROUND, std::string_view(")"));
+                    EMIT_TOKEN(types::TokenType::RPAREN_ROUND, std::string_view(")"));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == '[') {
-                    tokens.emplace_back(types::TokenType::LPAREN_SQUARE, std::string_view("["));
+                    EMIT_TOKEN(types::TokenType::LPAREN_SQUARE, std::string_view("["));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == ']') {
-                    tokens.emplace_back(types::TokenType::RPAREN_SQUARE, std::string_view("]"));
+                    EMIT_TOKEN(types::TokenType::RPAREN_SQUARE, std::string_view("]"));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == '{') {
-                    tokens.emplace_back(types::TokenType::LPAREN_CURLY, std::string_view("{"));
+                    EMIT_TOKEN(types::TokenType::LPAREN_CURLY, std::string_view("{"));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == '}') {
-                    tokens.emplace_back(types::TokenType::RPAREN_CURLY, std::string_view("}"));
+                    EMIT_TOKEN(types::TokenType::RPAREN_CURLY, std::string_view("}"));
                     lh++;
                     ColNo++;
                 }
                 else if (curr == ';') {
-                    tokens.emplace_back(types::TokenType::SEMICOLON, std::string_view(";"));
+                    EMIT_TOKEN(types::TokenType::SEMICOLON, std::string_view(";"));
                     lh++;
                     ColNo++;
                 }
@@ -180,7 +192,7 @@ namespace baka {
                     ColNo += lh - Oldlh;
 
                     if (RQuoteSeen && CharSeen) {
-                        tokens.emplace_back(types::TokenType::LITERAL_CHARACTER, ActualChar);
+                        EMIT_TOKEN_AT(types::TokenType::LITERAL_CHARACTER, ActualChar, orgColNo);
 
                         if (CharLength > 1) {
                             LEX_WARN(
@@ -195,7 +207,7 @@ namespace baka {
                         if (!RQuoteSeen) {
                             LEX_ERROR("character literal not terminated", orgColNo);
                         }
-                        tokens.emplace_back(types::TokenType::UNKNOWN, ActualChar);
+                        EMIT_TOKEN_AT(types::TokenType::UNKNOWN, ActualChar, orgColNo);
                     }
                 }
                 else if (curr == '"') {
@@ -278,12 +290,12 @@ namespace baka {
                     ColNo += lh - Oldlh;
 
                     if (RQuoteSeen) {
-                        tokens.emplace_back(types::TokenType::LITERAL_STRING, std::move(str));
+                        EMIT_TOKEN_AT(types::TokenType::LITERAL_STRING, std::move(str), orgColNo);
                     }
                     else {
                         // must be invalid char
                         LEX_ERROR("string literal not terminated", orgColNo);
-                        tokens.emplace_back(types::TokenType::UNKNOWN, std::move(str));
+                        EMIT_TOKEN_AT(types::TokenType::UNKNOWN, std::move(str), orgColNo);
                     }
                 }
                 else if (std::isdigit(curr) ||
@@ -430,7 +442,7 @@ namespace baka {
                                     LEX_ERROR("Integer literal overflows int", orgColNo);
                                 }
                                 else {
-                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<int>(x));
+                                    EMIT_TOKEN_AT(types::TokenType::LITERAL_INTEGER, static_cast<int>(x), orgColNo);
                                 }
                             }
                             else {
@@ -451,7 +463,7 @@ namespace baka {
                                     LEX_ERROR("Integer literal overflows long", orgColNo);
                                 }
                                 else {
-                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER, static_cast<long long>(x));
+                                    EMIT_TOKEN_AT(types::TokenType::LITERAL_INTEGER, static_cast<long long>(x), orgColNo);
                                 }
                             }
                             else {
@@ -472,8 +484,8 @@ namespace baka {
                                     LEX_ERROR("Integer literal overflows unsigned int", orgColNo);
                                 }
                                 else {
-                                    tokens.emplace_back(types::TokenType::LITERAL_INTEGER,
-                                                        static_cast<unsigned int>(x));
+                                    EMIT_TOKEN_AT(types::TokenType::LITERAL_INTEGER,
+                                        static_cast<unsigned int>(x), orgColNo);
                                 }
                             }
                             else {
@@ -490,7 +502,7 @@ namespace baka {
                             auto [ptr, ec] = std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x,
                                                              numBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_INTEGER, x);
+                                EMIT_TOKEN_AT(types::TokenType::LITERAL_INTEGER, x, orgColNo);
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
@@ -508,7 +520,7 @@ namespace baka {
                             auto [ptr, ec] =
                                 std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x, fmtBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_FP, static_cast<float>(x));
+                                EMIT_TOKEN_AT(types::TokenType::LITERAL_FP, static_cast<float>(x), orgColNo);
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
@@ -526,7 +538,7 @@ namespace baka {
                             auto [ptr, ec] = std::from_chars(SourceCode.data() + startIdx, SourceCode.data() + lh, x,
                                                              fmtBase);
                             if (ec == std::errc()) {
-                                tokens.emplace_back(types::TokenType::LITERAL_FP, x);
+                                EMIT_TOKEN_AT(types::TokenType::LITERAL_FP, x, orgColNo);
                             }
                             else {
                                 LEX_ERROR("Not a valid numeric literal", orgColNo);
@@ -595,13 +607,13 @@ namespace baka {
                     if (curr == '.') {
                         // check for ellipsis
                         if (lh + 2 < SourceCode.size() && SourceCode[lh + 1] == '.' && SourceCode[lh + 2] == '.') {
-                            tokens.emplace_back(types::TokenType::OP_ELLIPSIS,
+                            EMIT_TOKEN(types::TokenType::OP_ELLIPSIS,
                                                 std::string_view(SourceCode.substr(lh, 3)));
                             lh += 3;
                             ColNo += 3;
                         }
                         else {
-                            tokens.emplace_back(types::TokenType::OP_DOT, std::string_view(SourceCode.substr(lh, 1)));
+                            EMIT_TOKEN(types::TokenType::OP_DOT, std::string_view(SourceCode.substr(lh, 1)));
                             lh++;
                             ColNo++;
                         }
@@ -617,7 +629,7 @@ namespace baka {
                             peek++;
                         }
                         std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
-                        tokens.emplace_back(lexeme_to_operator.at(lexeme), lexeme);
+                        EMIT_TOKEN(lexeme_to_operator.at(lexeme), lexeme);
                         lh = endIdx + 1;
                         ColNo += endIdx - startIdx + 1;
                     }
@@ -625,15 +637,15 @@ namespace baka {
                 else {
                     LEX_ERROR("Unknown token", ColNo);
 
-                    tokens.emplace_back(types::TokenType::UNKNOWN, std::string_view(SourceCode.data() + lh, 1));
+                    EMIT_TOKEN(types::TokenType::UNKNOWN, std::string_view(SourceCode.data() + lh, 1));
                     lh++;
                     ColNo++;
                 }
             }
             LineIndex->endLine(lh);
-            tokens.emplace_back(types::TokenType::EOF_TOKEN, std::string_view());
+            EMIT_TOKEN(types::TokenType::EOF_TOKEN, std::string_view());
 
-            return tokens;
+            return Lexed{std::move(Tokens), std::move(TokenLocations)};
         }
     } // namespace lexer
 } // namespace baka

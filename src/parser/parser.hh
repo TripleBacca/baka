@@ -10,6 +10,7 @@
 #include "types/parser/ast/typedef.hh"
 #include "types/parser/ast/union.hh"
 #include "types/token/all.hh"
+#include <initializer_list>
 #include <span>
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/struct.hh"
@@ -23,6 +24,7 @@
 #include "types/parser/ast/selectionStatement.hh"
 #include "types/parser/ast/iterationStatement.hh"
 #include "types/parser/ast/typenode.hh"
+#include "types/token/token.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -61,9 +63,10 @@ namespace parser {
         size_t current = 0;
         std::span<types::Token> Tokens;
         base::ParserSymbolTable<ParserSTE> TypeLookup;
+        std::span<types::TokenSourceLocation> TokenSourceLocations;
 
         public:
-        Parser(std::span<types::Token> Tokens) : Tokens(Tokens) {};
+        Parser(std::span<types::Token> Tokens, std::span<types::TokenSourceLocation> TokenSourceLocations) : Tokens(Tokens), TokenSourceLocations(TokenSourceLocations) {};
         types::ASTNode* Parse();
 
         // states needed for parser
@@ -101,6 +104,8 @@ namespace parser {
         bool Match(types::TokenType type);
         const types::Token& Peek() const noexcept;
         const types::Token& Previous() const;
+        void ReportError(std::string Message);
+        types::TokenType SkipTo(std::initializer_list<types::TokenType> TokenList);
 
         bool isTypeName(const types::Token& token);
 

@@ -4,6 +4,11 @@
 #include "types/parser/ast/program.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
+#include "base/line_index.hh"
+#include "driver/gctx.hh"
+#include "types/driver/defs.hh"
+#include <cassert>
+#include <initializer_list>
 #include <optional>
 #include <variant>
 
@@ -179,6 +184,47 @@ namespace baka {
 
         bool Parser::RegisterOrReplaceType(types::IdentifierNode* Identifier) {
             return TypeLookup.RegisterOrReplaceType(Identifier->GetName(), ParserSTE{});
+        }
+
+        void Parser::ReportError(std::string Message) {
+            if (TokenSourceLocations.empty()) return;
+
+            size_t idx = current;
+            if (idx >= TokenSourceLocations.size()) {
+                idx = TokenSourceLocations.size() - 1;
+            }
+
+            const auto& Loc = TokenSourceLocations[idx];
+            base::LineCtx LineCtx_v{Loc.LineNo, driver::Gctx::GetLineIndex().get()};
+            driver::Gctx::GenerateLineError(Loc.LineNo, Loc.Col, LineCtx_v, std::move(Message), driver::Stage::PARSE);
+        }
+
+        types::TokenType Parser::SkipTo(std::initializer_list<types::TokenType> TokenList) {
+
+            while (!Check(types::TokenType::EOF_TOKEN)) {
+                for (auto Sync : TokenList) {
+                    if (Check(Sync)) return Sync;
+                }
+
+                if (Check(types::TokenType::LPAREN_CURLY)) {
+                    int Depth = 0;
+                    do {
+                        if (Check(types::TokenType::LPAREN_CURLY)) {
+                            Depth++;
+                        } else if (Check(types::TokenType::RPAREN_CURLY)) {
+                            if (--Depth <= 0) {
+                                Advance();
+                                break;
+                            }
+                        }
+                        Advance();
+                    } while (!Check(types::TokenType::EOF_TOKEN));
+                    continue;
+                }
+
+                Advance();
+            }
+            return types::TokenType::EOF_TOKEN;
         }
 
     }
