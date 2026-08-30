@@ -217,15 +217,16 @@ namespace baka
 				if (ArraySize == nullptr) {
 				    // "expected expression" already reported deep; resync to the ']'
 					SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+					Match(types::TokenType::RPAREN_SQUARE);
 				} else {
 					Variable->appendArraySize(ArraySize);
 					if (!Match(types::TokenType::RPAREN_SQUARE))
 					{
 						ReportError("expected ']'");
 						SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+						Match(types::TokenType::RPAREN_SQUARE);
 					}
 				}
-				Match(types::TokenType::RPAREN_SQUARE);
 			}
 
 
