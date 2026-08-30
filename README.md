@@ -33,6 +33,15 @@ To use the compiler, run it with the desired flags and provide the source code f
  ```
 
 
+##### Parsing
+
+ To run the parser you can use the `--parse` flag to stop the compiler after the parsing phase.
+ To see more verbose logs about the AST created, you can use the `--verbose` flag.
+
+ ```bash
+ ./baka --verbose --parse --build_type release <source_code_file>
+ ```
+
 
 ### Featureset
 We are hoping we can support the following featureset:
@@ -65,9 +74,12 @@ We are hoping we can support the following featureset:
 - Multi-level pointers
 - Multi-dimensional arrays
 
+**Extra Features**
+- Loop Labels
+
 ### Stages Status
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
 - [ ] Semantic Analysis
 - [ ] Optimization Passes
 - [ ] Codegen
