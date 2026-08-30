@@ -1,3 +1,5 @@
 int main(void a) {
-    for() {}
+    do {
+
+    } while();
 }

@@ -5,7 +5,8 @@ mkdir -p $SUBMISSION_ROOT_DIR/src
 cp -r src/* $SUBMISSION_ROOT_DIR/src
 
 mkdir -p $SUBMISSION_ROOT_DIR/build
-cp -r custom_tests $SUBMISSION_ROOT_DIR/test
+mkdir -p $SUBMISSION_ROOT_DIR/test/lex
+cp -r custom_tests/lex/* $SUBMISSION_ROOT_DIR/test/lex
 cp custom_test_hook $SUBMISSION_ROOT_DIR/
 
 touch $SUBMISSION_ROOT_DIR/Makefile
@@ -20,7 +21,7 @@ find $SUBMISSION_ROOT_DIR/test -name '*.expected' -exec sed -i 's#custom_tests/#
 
 touch $SUBMISSION_ROOT_DIR/run.sh
 echo "#!/usr/bin/env bash
-./custom_test_hook" > $SUBMISSION_ROOT_DIR/run.sh
+./custom_test_hook lex" > $SUBMISSION_ROOT_DIR/run.sh
 chmod +x $SUBMISSION_ROOT_DIR/run.sh
 
 # build,bless,test and delete build files

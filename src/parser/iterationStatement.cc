@@ -120,7 +120,7 @@ namespace baka {
 
 
             types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
+            if (Match(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
                 if (LookupType(Label)) {
                     ReportError("identifier cannot be a type name");
@@ -172,7 +172,10 @@ namespace baka {
             }
 
             types::ExpressionNode* Cond = nullptr;
-            if (!Check(types::TokenType::RPAREN_ROUND)) {
+            if (Check(types::TokenType::RPAREN_ROUND)) {
+                ReportError("expected expression");
+                Errored = true;
+            } else {
                 Cond = this->Expression();
                 if (Cond == nullptr) {
                     Errored = true;
