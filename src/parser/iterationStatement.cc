@@ -120,7 +120,7 @@ namespace baka {
 
 
             types::IdentifierNode* Label = nullptr;
-            if (Match(types::TokenType::IDENTIFIER)) {
+            if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
                 if (LookupType(Label)) {
                     ReportError("identifier cannot be a type name");
@@ -182,7 +182,7 @@ namespace baka {
             Match(types::TokenType::SEMICOLON); // allow trailing semicolon
 
             types::IdentifierNode* Label = nullptr;
-            if (Match(types::TokenType::IDENTIFIER)) {
+            if (Check(types::TokenType::IDENTIFIER)) {
                 Label = this->ParseIdentifier();
             }
 

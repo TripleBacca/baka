@@ -11,7 +11,6 @@ namespace types {
 
     class StatementNode;
 
-    // deferred until StatementNode (declared in statement.hh) is complete
     template <typename T>
     void PrintStatementBody(T* Body, size_t Tabs) {
         Body->Print(Tabs);
