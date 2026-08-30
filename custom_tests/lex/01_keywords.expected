@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
-Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/01_keywords.cpp
+Gctx::UptoStage: LEX
+Gctx::SourceFile: custom_tests/lex/01_keywords.cpp
 Driver::OptimisticDefects: 6
 Driver::SourceCode: 
 
@@ -339,7 +339,7 @@ case                      K_CASE
 :                         OP_COLON              
 break                     K_BREAK               
 ;                         SEMICOLON             
-default                   IDENTIFIER            
+default                   K_DEFAULT             
 :                         OP_COLON              
 break                     K_BREAK               
 ;                         SEMICOLON             

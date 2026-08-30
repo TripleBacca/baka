@@ -1,0 +1,835 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/11_structures.cpp
+Driver::OptimisticDefects: 4
+Driver::SourceCode: 
+struct Point {
+    int x;
+    int y;
+};
+
+struct Rectangle {
+    Point top_left;
+    Point dimensions;
+};
+
+struct Line {
+    Point* base;
+};
+
+struct Shape : Rectangle {
+    int area;
+};
+
+int main() {
+    Point p;
+    p.x = 3;
+    p.y = 4;
+
+    Rectangle r;
+    r.top_left.x = 0;
+    r.top_left.y = 0;
+    r.dimensions.x = 10;
+    r.dimensions.y = 5;
+
+    Point points[2];
+    points[0] = p;
+    points[1].x = 7;
+
+    Point* ptr = &p;
+    ptr->y = 8;
+
+    Line line;
+    line.base = &p;
+
+    Shape s;
+    s.area = r.dimensions.x * r.dimensions.y;
+    s.top_left = p;
+
+    int width = sizeof(Point);
+    int height = sizeof(r);
+
+    return p.x + p.y + points[1].x + ptr->y + s.area + width + height;
+}
+Lexer::LexerOutput: 212 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+struct                    K_STRUCT              
+Point                     IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+x                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+y                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Rectangle                 IDENTIFIER            
+{                         LPAREN_CURLY          
+Point                     IDENTIFIER            
+top_left                  IDENTIFIER            
+;                         SEMICOLON             
+Point                     IDENTIFIER            
+dimensions                IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Line                      IDENTIFIER            
+{                         LPAREN_CURLY          
+Point                     IDENTIFIER            
+*                         OP_MUL                
+base                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Shape                     IDENTIFIER            
+:                         OP_COLON              
+Rectangle                 IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+area                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Point                     IDENTIFIER            
+p                         IDENTIFIER            
+;                         SEMICOLON             
+p                         IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+3 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+p                         IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+4 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+Rectangle                 IDENTIFIER            
+r                         IDENTIFIER            
+;                         SEMICOLON             
+r                         IDENTIFIER            
+.                         OP_DOT                
+top_left                  IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+r                         IDENTIFIER            
+.                         OP_DOT                
+top_left                  IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+r                         IDENTIFIER            
+.                         OP_DOT                
+dimensions                IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+10 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+r                         IDENTIFIER            
+.                         OP_DOT                
+dimensions                IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+5 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+Point                     IDENTIFIER            
+points                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+2 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+points                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+p                         IDENTIFIER            
+;                         SEMICOLON             
+points                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+.                         OP_DOT                
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+7 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+Point                     IDENTIFIER            
+*                         OP_MUL                
+ptr                       IDENTIFIER            
+=                         OP_ASSIGN             
+&                         OP_BIT_AND            
+p                         IDENTIFIER            
+;                         SEMICOLON             
+ptr                       IDENTIFIER            
+->                        OP_ARROW              
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+8 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+Line                      IDENTIFIER            
+line                      IDENTIFIER            
+;                         SEMICOLON             
+line                      IDENTIFIER            
+.                         OP_DOT                
+base                      IDENTIFIER            
+=                         OP_ASSIGN             
+&                         OP_BIT_AND            
+p                         IDENTIFIER            
+;                         SEMICOLON             
+Shape                     IDENTIFIER            
+s                         IDENTIFIER            
+;                         SEMICOLON             
+s                         IDENTIFIER            
+.                         OP_DOT                
+area                      IDENTIFIER            
+=                         OP_ASSIGN             
+r                         IDENTIFIER            
+.                         OP_DOT                
+dimensions                IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
+*                         OP_MUL                
+r                         IDENTIFIER            
+.                         OP_DOT                
+dimensions                IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
+;                         SEMICOLON             
+s                         IDENTIFIER            
+.                         OP_DOT                
+top_left                  IDENTIFIER            
+=                         OP_ASSIGN             
+p                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+width                     IDENTIFIER            
+=                         OP_ASSIGN             
+sizeof                    K_SIZEOF              
+(                         LPAREN_ROUND          
+Point                     IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+height                    IDENTIFIER            
+=                         OP_ASSIGN             
+sizeof                    K_SIZEOF              
+(                         LPAREN_ROUND          
+r                         IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+p                         IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
++                         OP_PLUS               
+p                         IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
++                         OP_PLUS               
+points                    IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+.                         OP_DOT                
+x                         IDENTIFIER            
++                         OP_PLUS               
+ptr                       IDENTIFIER            
+->                        OP_ARROW              
+y                         IDENTIFIER            
++                         OP_PLUS               
+s                         IDENTIFIER            
+.                         OP_DOT                
+area                      IDENTIFIER            
++                         OP_PLUS               
+width                     IDENTIFIER            
++                         OP_PLUS               
+height                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Struct(
+        Identifier(Point)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(y)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Struct(
+        Identifier(Rectangle)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(top_left)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(dimensions)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Struct(
+        Identifier(Line)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 1
+                            Identifier(base)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Struct(
+        Identifier(Shape)
+        ParentStruct : 
+            Identifier(Rectangle)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(area)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(p)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(p)
+                            )
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(3)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(p)
+                            )
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Constant(4)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Rectangle)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(r)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(r)
+                                )
+                                Identifier(top_left)
+                            )
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(r)
+                                )
+                                Identifier(top_left)
+                            )
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(r)
+                                )
+                                Identifier(dimensions)
+                            )
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(10)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(r)
+                                )
+                                Identifier(dimensions)
+                            )
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Constant(5)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(points)
+                        ArraySizes: 
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        IndexPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(points)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                        PrimaryExpression(
+                            Identifier(p)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            IndexPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(points)
+                                )
+                                CommaExpression(
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(7)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Point)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 1
+                            Identifier(ptr)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        Factor(
+                            UnaryOp: OP_ADDR_OF,
+                            PrimaryExpression(
+                                Identifier(p)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        ArrowPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(ptr)
+                            )
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Constant(8)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Line)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(line)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(line)
+                            )
+                            Identifier(base)
+                        )
+                        Factor(
+                            UnaryOp: OP_ADDR_OF,
+                            PrimaryExpression(
+                                Identifier(p)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Shape)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(s)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(s)
+                            )
+                            Identifier(area)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_MUL,
+                            MemberPostfixExpr(
+                                MemberPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(r)
+                                    )
+                                    Identifier(dimensions)
+                                )
+                                Identifier(x)
+                            )
+                            MemberPostfixExpr(
+                                MemberPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(r)
+                                    )
+                                    Identifier(dimensions)
+                                )
+                                Identifier(y)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(s)
+                            )
+                            Identifier(top_left)
+                        )
+                        PrimaryExpression(
+                            Identifier(p)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(width)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        SizeofNode(
+                            TypeNode(
+                                isConst: 0
+                                TypeSpecifierModifier: None
+                                Identifier(Point)
+                            )
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Variable: nullptr
+                                ArraySizes: 
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(height)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        SizeofNode(
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(r)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        BinaryExpression(
+                                            BinaryOp: OP_ADD,
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(p)
+                                                )
+                                                Identifier(x)
+                                            )
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(p)
+                                                )
+                                                Identifier(y)
+                                            )
+                                        )
+                                        MemberPostfixExpr(
+                                            IndexPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(points)
+                                                )
+                                                CommaExpression(
+                                                    PrimaryExpression(
+                                                        Constant(1)
+                                                    )
+                                                )
+                                            )
+                                            Identifier(x)
+                                        )
+                                    )
+                                    ArrowPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(ptr)
+                                        )
+                                        Identifier(y)
+                                    )
+                                )
+                                MemberPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(s)
+                                    )
+                                    Identifier(area)
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(width)
+                            )
+                        )
+                        PrimaryExpression(
+                            Identifier(height)
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

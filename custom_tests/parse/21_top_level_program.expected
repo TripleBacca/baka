@@ -1,0 +1,825 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/21_top_level_program.cpp
+Driver::OptimisticDefects: 4
+Driver::SourceCode: 
+typedef int Status;
+
+enum Level {
+    LOW,
+    MEDIUM,
+    HIGH
+};
+
+struct Vec2 {
+    int x;
+    int y;
+};
+
+union Variant {
+    int number;
+    char letter;
+};
+
+class Widget {
+    int id;
+
+    Widget() {
+        id = 0;
+    }
+
+    int get_id() {
+        return id;
+    }
+};
+
+int global_count = 0;
+static int static_bucket = 1;
+const int max_widgets = 64;
+
+Status global_status = MEDIUM;
+
+Vec2 make_vec(int a, int b) {
+    Vec2 v;
+    v.x = a;
+    v.y = b;
+    return v;
+}
+
+Level bump(Level l) {
+    return l;
+}
+
+int use_widget() {
+    Widget w;
+    return w.get_id();
+}
+
+int main() {
+    Status s = global_status;
+    Vec2 origin = make_vec(max_widgets, static_bucket);
+    Variant v;
+    v.number = 7;
+    int total = origin.x + origin.y + s + v.number + use_widget() + global_count;
+    return total;
+}
+Lexer::LexerOutput: 197 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+typedef                   K_TYPEDEF             
+int                       K_INT                 
+Status                    IDENTIFIER            
+;                         SEMICOLON             
+enum                      K_ENUM                
+Level                     IDENTIFIER            
+{                         LPAREN_CURLY          
+LOW                       IDENTIFIER            
+,                         OP_COMMA              
+MEDIUM                    IDENTIFIER            
+,                         OP_COMMA              
+HIGH                      IDENTIFIER            
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Vec2                      IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+x                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+y                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+union                     K_UNION               
+Variant                   IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+number                    IDENTIFIER            
+;                         SEMICOLON             
+char                      K_CHAR                
+letter                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+class                     K_CLASS               
+Widget                    IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+id                        IDENTIFIER            
+;                         SEMICOLON             
+Widget                    IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+id                        IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+get_id                    IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+id                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+global_count              IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+static                    K_STATIC              
+int                       K_INT                 
+static_bucket             IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+const                     K_CONST               
+int                       K_INT                 
+max_widgets               IDENTIFIER            
+=                         OP_ASSIGN             
+64 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+Status                    IDENTIFIER            
+global_status             IDENTIFIER            
+=                         OP_ASSIGN             
+MEDIUM                    IDENTIFIER            
+;                         SEMICOLON             
+Vec2                      IDENTIFIER            
+make_vec                  IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+a                         IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Vec2                      IDENTIFIER            
+v                         IDENTIFIER            
+;                         SEMICOLON             
+v                         IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+a                         IDENTIFIER            
+;                         SEMICOLON             
+v                         IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+b                         IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+v                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+Level                     IDENTIFIER            
+bump                      IDENTIFIER            
+(                         LPAREN_ROUND          
+Level                     IDENTIFIER            
+l                         IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+l                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+use_widget                IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Widget                    IDENTIFIER            
+w                         IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+w                         IDENTIFIER            
+.                         OP_DOT                
+get_id                    IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Status                    IDENTIFIER            
+s                         IDENTIFIER            
+=                         OP_ASSIGN             
+global_status             IDENTIFIER            
+;                         SEMICOLON             
+Vec2                      IDENTIFIER            
+origin                    IDENTIFIER            
+=                         OP_ASSIGN             
+make_vec                  IDENTIFIER            
+(                         LPAREN_ROUND          
+max_widgets               IDENTIFIER            
+,                         OP_COMMA              
+static_bucket             IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+Variant                   IDENTIFIER            
+v                         IDENTIFIER            
+;                         SEMICOLON             
+v                         IDENTIFIER            
+.                         OP_DOT                
+number                    IDENTIFIER            
+=                         OP_ASSIGN             
+7 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+origin                    IDENTIFIER            
+.                         OP_DOT                
+x                         IDENTIFIER            
++                         OP_PLUS               
+origin                    IDENTIFIER            
+.                         OP_DOT                
+y                         IDENTIFIER            
++                         OP_PLUS               
+s                         IDENTIFIER            
++                         OP_PLUS               
+v                         IDENTIFIER            
+.                         OP_DOT                
+number                    IDENTIFIER            
++                         OP_PLUS               
+use_widget                IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
++                         OP_PLUS               
+global_count              IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+total                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Typedef(
+        isConst = 0
+        Identifier(int)
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(Status)
+            ArraySizes: 
+        )
+        Modifier: None
+    )
+    Enum(Level)
+        Identifier(LOW)
+        Identifier(MEDIUM)
+        Identifier(HIGH)
+    )
+    Struct(
+        Identifier(Vec2)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(y)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Union(
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(number)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(char)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(letter)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Class(
+        Identifier(Widget)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(id)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(get_id)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(int)
+                FunctionBody:
+                CompoundStatement(
+                    Return(
+                        CommaExpression(
+                            PrimaryExpression(
+                                Identifier(id)
+                            )
+                        )
+                    )
+                )
+            )
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(id)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    DeclarationList(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(global_count)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Constant(0)
+                )
+            )
+        )
+    )
+    DeclarationList(
+        IsStatic: 1, IsConst: 0
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(static_bucket)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Constant(1)
+                )
+            )
+        )
+    )
+    DeclarationList(
+        IsStatic: 0, IsConst: 1
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(max_widgets)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Constant(64)
+                )
+            )
+        )
+    )
+    DeclarationList(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        Identifier(Status)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(global_status)
+                ArraySizes: 
+            )
+            InitializerNode(
+                Expressions: 1
+                PrimaryExpression(
+                    Identifier(MEDIUM)
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(make_vec)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(a)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(b)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Vec2)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Vec2)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(v)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(v)
+                            )
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Identifier(a)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(v)
+                            )
+                            Identifier(y)
+                        )
+                        PrimaryExpression(
+                            Identifier(b)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(v)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(bump)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Level)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(l)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Level)
+        FunctionBody:
+        CompoundStatement(
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(l)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(use_widget)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Widget)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(w)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Return(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(w)
+                            )
+                            Identifier(get_id)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Status)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(s)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Identifier(global_status)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Vec2)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(origin)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(make_vec)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(max_widgets)
+                                )
+                                PrimaryExpression(
+                                    Identifier(static_bucket)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Variant)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(v)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(v)
+                            )
+                            Identifier(number)
+                        )
+                        PrimaryExpression(
+                            Constant(7)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(total)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        BinaryExpression(
+                                            BinaryOp: OP_ADD,
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(origin)
+                                                )
+                                                Identifier(x)
+                                            )
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(origin)
+                                                )
+                                                Identifier(y)
+                                            )
+                                        )
+                                        PrimaryExpression(
+                                            Identifier(s)
+                                        )
+                                    )
+                                    MemberPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(v)
+                                        )
+                                        Identifier(number)
+                                    )
+                                )
+                                FunctionCallPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(use_widget)
+                                    )
+                                    CommaExpression(
+                                    )
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(global_count)
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(total)
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

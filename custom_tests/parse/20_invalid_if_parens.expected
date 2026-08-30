@@ -1,0 +1,133 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/20_invalid_if_parens.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+int main() {
+    int a = 10;
+    if a > 0 {
+        a = a - 1;
+    }
+    return a;
+}
+Lexer::LexerOutput: 27 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+10 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+if                        K_IF                  
+a                         IDENTIFIER            
+>                         OP_GT                 
+0 (int)                   LITERAL_INTEGER       
+{                         LPAREN_CURLY          
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+a                         IDENTIFIER            
+-                         OP_UNARY_MINUS        
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+a                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(a)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(10)
+                        )
+                    )
+                )
+            )
+            If Super Block(
+                If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_GT,
+                            PrimaryExpression(
+                                Identifier(a)
+                            )
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
+                                    PrimaryExpression(
+                                        Identifier(a)
+                                    )
+                                    BinaryExpression(
+                                        BinaryOp: OP_SUB,
+                                        PrimaryExpression(
+                                            Identifier(a)
+                                        )
+                                        PrimaryExpression(
+                                            Constant(1)
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(a)
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/20_invalid_if_parens.cpp:3:14: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	    if a > 0 {
+	             [38;2;255;0;0m^[0m
+Compilation failed due to 1 error(s)

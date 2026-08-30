@@ -6,12 +6,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 
-test_dir = ROOT / "custom_tests"
-if not test_dir.exists():
-    test_dir = ROOT / "test"
+custom_tests = ROOT / "custom_tests"
+if not custom_tests.exists():
+    custom_tests = ROOT / "test"
 
 COMPILER = ROOT / "build" / "baka"
 COMPILER_FLAGS = ["--verbose", "--build_type", "debug"]
+
+SUITES = {
+    "lex": (custom_tests / "lex", ["--lex"]),
+    "parse": (custom_tests / "parse", ["--parse"]),
+    "codegen": (custom_tests / "codegen", ["--codegen"]),
+}
 
 
 
@@ -75,27 +81,28 @@ def diff_lines(actual: str, expected: str) -> None:
 def main():
     os.chdir(ROOT)
 
-    tests = sorted(test_dir.glob("*.cpp"))
+    requested = [arg for arg in sys.argv[1:] if arg in SUITES]
+    suites = sorted(SUITES) if not requested else requested
 
-    if not tests:
-        print(f"no tests found in {test_dir}")
-        return 1
+    about_to_bless = "bless" in sys.argv[1:]
 
-    if "lex" in sys.argv[1:]:
-        stage_args = ["--lex"]
-    elif "parse" in sys.argv[1:]:
-        stage_args = ["--parse"]
-    elif "codegen" in sys.argv[1:]:
-        stage_args = ["--codegen"]
-    else:
-        stage_args = []
+    failures = 0
+    for name in suites:
+        test_dir, stage_args = SUITES[name]
 
-    if "bless" in sys.argv[1:]:
-        bless(tests, stage_args)
-        return 0
+        tests = sorted(test_dir.glob("*.cpp"))
 
+        if not tests:
+            if requested:
+                print(f"no tests found in {test_dir.relative_to(ROOT)}")
+            continue
 
-    return verify(tests, stage_args)
+        if about_to_bless:
+            bless(tests, stage_args)
+        else:
+            failures += verify(tests, stage_args)
+
+    return (1 if failures else 0)
 
 
 if __name__ == "__main__":

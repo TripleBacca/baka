@@ -1,0 +1,33 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/18_invalid_wrong_keyword.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+INT main() {
+    return 0;
+}
+Lexer::LexerOutput: 10 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+INT                       IDENTIFIER            
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+)
+
+custom_tests/parse/18_invalid_wrong_keyword.cpp:1:1: [38;2;255;0;0merror: [0munknown type name 'INT' (PARSE)
+	INT main() {
+	[38;2;255;0;0m^[0m
+Compilation failed due to 1 error(s)

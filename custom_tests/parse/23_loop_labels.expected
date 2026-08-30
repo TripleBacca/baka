@@ -1,0 +1,172 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/23_loop_labels.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+int main() {
+    int x = 0;
+    while (x < 5) top: x = x + 1;
+    for (;;) fin: x = x + 2;
+    return x;
+}
+Lexer::LexerOutput: 42 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+<                         OP_LT                 
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+top                       IDENTIFIER            
+:                         OP_COLON              
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+x                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+;                         SEMICOLON             
+;                         SEMICOLON             
+)                         RPAREN_ROUND          
+fin                       IDENTIFIER            
+:                         OP_COLON              
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+x                         IDENTIFIER            
++                         OP_PLUS               
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+x                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            While(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(5)
+                        )
+                    )
+                )
+                Goto Label(Identifier(top)
+:
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+            )
+            For(
+                Decl: nullptr
+                Cond: nullptr
+                Upd: nullptr
+                Label: nullptr
+                Goto Label(Identifier(fin)
+:
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(2)
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(x)
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+
