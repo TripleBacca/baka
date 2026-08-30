@@ -15,8 +15,13 @@ namespace parser {
         }
 
         if (!this->Check(types::TokenType::IDENTIFIER)) {
-            // todo throw error
-            assert(false && "Expected identifier after 'struct' keyword");
+            ReportError("expected identifier after 'struct' keyword");
+            auto Sync = SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+            if (Sync == types::TokenType::SEMICOLON) {
+                Advance();
+            }
+            return ASTALLOC.Alloc<types::StructDeclarationNode>(
+                ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?")));
         }
         types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
         if (Match(types::TokenType::SEMICOLON)) {
@@ -28,8 +33,7 @@ namespace parser {
 
             } else {
                 if(!GetParserSTE(StructIdentifier)->IsStruct()) {
-                    // TODO throw error
-                    assert(false && "Not a struct");
+                    ReportError("not a struct");
                 }
 
             }
@@ -40,9 +44,9 @@ namespace parser {
         if(LookupType(StructIdentifier)) {
             // TODO throw error
             if(GetParserSTE(StructIdentifier)->IsStructDefined()) {
-                assert(false && "Struct already defined");
+                ReportError("redefinition of struct");
             } else if(!GetParserSTE(StructIdentifier)->IsStruct()) {
-                assert(false && "Not a struct");
+                ReportError("not a struct");
             }
         }
 
@@ -50,13 +54,12 @@ namespace parser {
         if (this->Match(types::TokenType::OP_COLON))
         {
             if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // todo throw error
-                assert(false);
+                ReportError("expected identifier after ':'");
+            } else {
+                ParentStructIdentifier = this->ParseIdentifier();
             }
-            ParentStructIdentifier = this->ParseIdentifier();
-            if(!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined()) {
-                // todo throw error
-                assert(false && "Parent struct/class not found in symbol table");
+            if(ParentStructIdentifier && (!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined())) {
+                ReportError("parent struct/class not found in symbol table");
             }
         }
 
@@ -67,15 +70,18 @@ namespace parser {
         GetParserSTE(StructIdentifier)->SetIsStructDefined();
         EnterScope();
 
+        types::StructBodyNode* Body = nullptr;
         if (!this->Check(types::TokenType::LPAREN_CURLY)) {
-            // todo throw error
-            assert(false && "Expected '{' after struct/class declaration");
+            ReportError("expected '{' after struct/class declaration");
+            Body = ASTALLOC.Alloc<types::StructBodyNode>();
+        } else {
+            Body = this->ParseStructBody(StructIdentifier);
         }
-        types::StructBodyNode* Body = this->ParseStructBody(StructIdentifier);
-        if (!this->Match(types::TokenType::SEMICOLON))
+        if (!Match(types::TokenType::SEMICOLON))
         {
-            // todo throw error
-            assert(false && "Expected semicolon after struct/class body");
+            ReportError("expected ';' after struct/class body");
+            SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+            Match(types::TokenType::SEMICOLON);
         }
 
         types::StructDefinitionNode* Node = nullptr;

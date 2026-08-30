@@ -64,6 +64,7 @@ namespace parser {
         std::span<types::Token> Tokens;
         base::ParserSymbolTable<ParserSTE> TypeLookup;
         std::span<types::TokenSourceLocation> TokenSourceLocations;
+        size_t ReportedErrorCount = 0;
 
         public:
         Parser(std::span<types::Token> Tokens, std::span<types::TokenSourceLocation> TokenSourceLocations) : Tokens(Tokens), TokenSourceLocations(TokenSourceLocations) {};

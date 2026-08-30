@@ -5,14 +5,13 @@
 namespace baka {
     namespace parser {
         types::GotoLabelStatementNode* Parser::GotoLabelStatement() {
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // throw error
-            }
-
             types::IdentifierNode* Tag = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::OP_COLON)) {
-                // throw error
+                ReportError("expected ':' after label");
+                if (SkipTo({types::TokenType::OP_COLON, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::OP_COLON) {
+                    Advance();
+                }
             }
 
             // types::StatementNode* Stmt = this->Statement();
@@ -30,7 +29,10 @@ namespace baka {
             types::ExpressionNode* Tag = this->Expression();
 
             if (!this->Match(types::TokenType::OP_COLON)) {
-                // throw error
+                ReportError("expected ':' after case value");
+                if (SkipTo({types::TokenType::OP_COLON, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::OP_COLON) {
+                    Advance();
+                }
             }
 
             // types::StatementNode* Stmt = this->Statement();
@@ -46,7 +48,10 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::OP_COLON)) {
-                // throw error
+                ReportError("expected ':' after 'default'");
+                if (SkipTo({types::TokenType::OP_COLON, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::OP_COLON) {
+                    Advance();
+                }
             }
 
             types::StatementNode* Stmt = nullptr;

@@ -19,23 +19,28 @@ namespace parser {
             assert(false);
         }
 
-        types::IdentifierNode* UnionName = ParseIdentifier();
-        if(LookupType(UnionName)) {
-            // todo throw error;
-            assert(false);
+        types::IdentifierNode* UnionName = nullptr;
+        if(Check(types::TokenType::IDENTIFIER)) {
+            UnionName = ParseIdentifier();
+            if(LookupType(UnionName)) {
+                ReportError("redefinition of existing type");
+            }
+            AddType(UnionName);
+        } else if(!Check(types::TokenType::LPAREN_CURLY)) {
+            ReportError("expected identifier or '{' after 'union' keyword");
         }
-        AddType(UnionName);
 
         EnterScope();
 
         if(!Check(types::TokenType::LPAREN_CURLY)) {
-            // todo throw error;
-            assert(false && "expected LPAREN_CURLY");
+            ReportError("expected '{' after union name");
         }
         types::UnionBodyNode* Body = ParseUnionBody(UnionName);
         if(!Match(types::TokenType::SEMICOLON)) {
-            // todo throw error;
-            assert(false && "expected SEMICOLON");
+            ReportError("expected ';' after union body");
+            if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                Advance();
+            }
         }
 
         types::UnionNode* Node = ASTALLOC.Alloc<types::UnionNode>(Body);

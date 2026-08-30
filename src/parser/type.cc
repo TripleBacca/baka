@@ -11,8 +11,8 @@ namespace parser {
         if(Check(types::TokenType::IDENTIFIER)) {
             types::IdentifierNode* Node =  ParseIdentifier();
             if(!LookupType(Node)) {
-                // todo error
-                assert(false);
+                ReportError("unknown type name '" + std::string(Node->GetName()) + "'");
+                Node->setHasError();
             }
 
             return Node;
@@ -25,8 +25,21 @@ namespace parser {
                 }
             }
 
-            // todo error
-            assert(false);
+            std::string_view ErrName = "?";
+            if (std::holds_alternative<std::string_view>(Peek().Value)) {
+                ErrName = std::get<std::string_view>(Peek().Value);
+            }
+            if (Check(types::TokenType::IDENTIFIER)) {
+                ReportError("unknown type name '" + std::string(ErrName) + "'");
+            } else {
+                ReportError("expected identifier or '('");
+            }
+            if (!Check(types::TokenType::EOF_TOKEN)) {
+                Advance();
+            }
+            auto* Errored = ASTALLOC.Alloc<types::IdentifierNode>(ErrName);
+            Errored->setHasError();
+            return Errored;
         }
     }
 

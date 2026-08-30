@@ -29,12 +29,20 @@ namespace parser {
             }
 
             if(!Match(types::TokenType::RPAREN_CURLY)) {
-                // TODO throw error
-                assert(false);
+                ReportError("expected '}'");
+                auto Sync = SkipTo({types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON});
+                if (Sync == types::TokenType::RPAREN_CURLY) {
+                    Advance();
+                } else if (Sync == types::TokenType::SEMICOLON){
+                    Advance();
+                }
             }
 
         } else {
-            IntializerNodeRet->addExpression(ParseAssignmentExpression());
+            auto* Expr = ParseAssignmentExpression();
+            if (Expr) {
+                IntializerNodeRet->addExpression(Expr);
+            }
         }
 
         return IntializerNodeRet;

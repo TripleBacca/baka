@@ -1,7 +1,6 @@
 #pragma once
 #include "ast_node.hh"
 #include <iostream>
-#include "statement.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/utils.hh"
@@ -9,6 +8,14 @@
 
 namespace baka {
 namespace types {
+
+    class StatementNode;
+
+    // deferred until StatementNode (declared in statement.hh) is complete
+    template <typename T>
+    void PrintStatementBody(T* Body, size_t Tabs) {
+        Body->Print(Tabs);
+    }
 
     class FunctionNode : public ASTNode {
         // todo use DeclarationIdentifierNode
@@ -52,7 +59,7 @@ namespace types {
 
             INDENT(Tabs + 1);
             std::cout << "FunctionBody:" << '\n';
-            Body->Print(Tabs + 1);
+            PrintStatementBody(Body, Tabs + 1);
 
             INDENT(Tabs);
             std::cout << ")" << std::endl;

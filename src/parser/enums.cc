@@ -21,40 +21,52 @@ namespace parser {
 
         types::IdentifierNode* EnumName = nullptr;
         if(!Check(types::TokenType::LPAREN_CURLY)) { // supporting anonymous enums
-            EnumName = ParseIdentifier();
-            // enums cannot have fwd decl btw
-
-            if(LookupType(EnumName->GetName())) {
-                // todo throw error
-                assert(false);
+            if(!Check(types::TokenType::IDENTIFIER)) {
+                ReportError("expected identifier");
+            } else {
+                EnumName = ParseIdentifier();
+                // enums cannot have fwd decl btw
+                if(LookupType(EnumName->GetName())) {
+                    ReportError("redefinition of existing type");
+                }
+                AddType(EnumName);
             }
-            AddType(EnumName);
         }
 
         types::EnumNode* Enum = ASTALLOC.Alloc<types::EnumNode>(EnumName);
 
         if(!Match(types::TokenType::LPAREN_CURLY)) {
-            // todo throw error
-            assert(false);
+            ReportError("expected '{' after enum name");
+            if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                Advance();
+            }
+            return Enum;
         }
 
         do {
-            types::IdentifierNode* EnumValue = ParseIdentifier();
-            Enum->addEnumValue(EnumValue);
+            if(!Check(types::TokenType::IDENTIFIER)) {
+                ReportError("expected identifier in enumeration");
+                SkipTo({types::TokenType::OP_COMMA, types::TokenType::RPAREN_CURLY});
+            } else {
+                types::IdentifierNode* EnumValue = ParseIdentifier();
+                Enum->addEnumValue(EnumValue);
+            }
 
             if(!Match(types::TokenType::OP_COMMA)) {
                 if (!Match(types::TokenType::RPAREN_CURLY)) {
-                    // todo throw error
-                    assert(false);
+                    ReportError("expected '}' or ',' in enumeration");
+                    SkipTo({types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON});
                 }
                 break;
             }
 
-        } while(!Match(types::TokenType::RPAREN_CURLY));
+        } while(!Match(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN));
 
         if(!Match(types::TokenType::SEMICOLON)) {
-            // todo throw error
-            assert(false);
+            ReportError("expected ';' after enum definition");
+            if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                Advance();
+            }
         }
 
         return Enum;

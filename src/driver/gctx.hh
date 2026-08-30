@@ -30,7 +30,7 @@ namespace baka {
 
             // exceptions:
             std::vector<exceptions::CompilerLineError> CompilerLineErrors;
-            std::vector<exceptions::CompilerLineError> CompilerLineWarnings;
+            std::vector<exceptions::CompilerLineWarning> CompilerLineWarnings;
 
             std::vector<exceptions::CompilerGlobalError> CompilerGlobalErrors;
             std::vector<exceptions::CompilerGlobalWarning> CompilerGlobalWarnings;

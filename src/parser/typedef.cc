@@ -39,8 +39,10 @@ namespace parser {
         } while(Match(types::TokenType::OP_COMMA));
 
         if (!Match(types::TokenType::SEMICOLON)) {
-            // todo throw error
-            assert(false);
+            ReportError("expected ';' after typedef declaration");
+            if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                Advance();
+            }
         }
 
 

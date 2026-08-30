@@ -1,5 +1,7 @@
 int main() {
-    sizeof 2+2;
-    sizeof(3+3);
-    sizeof(int(*)());
+
+    int foo(=2) {
+        = 3;
+    }
+
 }

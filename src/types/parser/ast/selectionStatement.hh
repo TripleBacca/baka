@@ -26,7 +26,12 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "If(" << "\n";
 
-                Expr->Print(Tabs + 1);
+                if (Expr) {
+                    Expr->Print(Tabs + 1);
+                } else {
+                    INDENT(Tabs + 1);
+                    std::cout << "nullptr" << std::endl;
+                }
 
                 if (Body) Body->Print(Tabs + 1);
 
@@ -47,7 +52,12 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "Else If(" << "\n";
 
-                Expr->Print(Tabs + 1);
+                if (Expr) {
+                    Expr->Print(Tabs + 1);
+                } else {
+                    INDENT(Tabs + 1);
+                    std::cout << "nullptr" << std::endl;
+                }
 
                 if (Body) Body->Print(Tabs + 1);
 
@@ -113,7 +123,12 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "Switch(" << "\n";
 
-                Expr->Print(Tabs + 1);
+                if (Expr) {
+                    Expr->Print(Tabs + 1);
+                } else {
+                    INDENT(Tabs + 1);
+                    std::cout << "nullptr" << std::endl;
+                }
 
                 if (Body) Body->Print(Tabs + 1);
 

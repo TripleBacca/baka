@@ -9,12 +9,20 @@ namespace parser {
 
     types::ExpressionStatementNode* Parser::ParseExpressionStatement() {
         types::ExpressionNode* Expression = this->Expression();
-        if(!Match(types::TokenType::SEMICOLON)) {
-            // todo throw error
-            assert(false);
+        if (!Match(types::TokenType::SEMICOLON)) {
+            if (Expression != nullptr) {
+                ReportError("expected ';' after expression");
+            }
+            // expression error was already reported deeper; resync to the end of the doomed statement
+            if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                Advance();
+            }
         }
 
         types::ExpressionStatementNode* Node = ASTALLOC.Alloc<types::ExpressionStatementNode>(Expression);
+        if (Expression == nullptr) {
+            Node->setHasError();
+        }
         return Node;
     }
 }
