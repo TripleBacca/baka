@@ -16,11 +16,10 @@ namespace parser {
         types::StructBodyNode* Node = ASTALLOC.Alloc<types::StructBodyNode>();
 
         if(!Match(types::TokenType::LPAREN_CURLY)) {
-            // todo throw error
-            assert(false);
+            ReportError("expected '{'");
         }
 
-        while(!Match(types::TokenType::RPAREN_CURLY)) {
+        while(!Match(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN)) {
 
             auto isCtor = [&]() -> bool {
                 if(Peek().TokenType_v == types::TokenType::IDENTIFIER && Check2(types::TokenType::LPAREN_ROUND)) {

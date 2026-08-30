@@ -21,10 +21,10 @@ namespace baka {
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Goto Label(";
-                Tag->Print();
+                if (Tag) Tag->Print();
                 std::cout << ":\n";
 
-                Stmt->Print(Tabs + 1);
+                if (Stmt) Stmt->Print(Tabs + 1);
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -43,10 +43,10 @@ namespace baka {
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Case Label(";
-                Tag->Print();
+                if (Tag) Tag->Print();
                 std::cout << ":\n";
 
-                Stmt->Print(Tabs + 1);
+                if (Stmt) Stmt->Print(Tabs + 1);
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;
@@ -64,7 +64,7 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "Default Label(:\n";
 
-                Stmt->Print(Tabs + 1);
+                if (Stmt) Stmt->Print(Tabs + 1);
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;

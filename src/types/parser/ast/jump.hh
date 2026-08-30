@@ -39,7 +39,7 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "Goto(" << "\n";
 
-                Label->Print(Tabs + 1);
+                if (Label) Label->Print(Tabs + 1);
 
                 INDENT(Tabs);
                 std::cout << ")" << std::endl;

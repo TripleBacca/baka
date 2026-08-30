@@ -12,7 +12,10 @@ namespace baka {
             types::ExpressionNode* Expression = this->Expression();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
+                ReportError("expected ';' after return statement");
+                if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
             }
 
             types::ReturnStatementNode* Node = ASTALLOC.Alloc<types::ReturnStatementNode>(Expression);
@@ -24,14 +27,13 @@ namespace baka {
                 // throw error
             }
 
-            if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // throw error
-            }
-
             types::IdentifierNode* Label = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
+                ReportError("expected ';' after goto statement");
+                if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
             }
 
             types::GotoStatementNode* Node = ASTALLOC.Alloc<types::GotoStatementNode>(Label);
@@ -50,7 +52,10 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
+                ReportError("expected ';' after break statement");
+                if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
             }
 
             types::BreakStatementNode* Node = ASTALLOC.Alloc<types::BreakStatementNode>(Label);
@@ -68,7 +73,10 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                // throw error
+                ReportError("expected ';' after continue statement");
+                if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
             }
 
             types::ContinueStatementNode* Node = ASTALLOC.Alloc<types::ContinueStatementNode>(Label);

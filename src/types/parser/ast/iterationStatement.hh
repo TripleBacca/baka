@@ -86,7 +86,12 @@ namespace baka {
                 INDENT(Tabs);
                 std::cout << "While(" << "\n";
 
-                Cond->Print(Tabs + 1);
+                if (Cond) {
+                    Cond->Print(Tabs + 1);
+                } else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Cond: nullptr" << std::endl;
+                }
 
                 if (Label) {
                     INDENT(Tabs);
@@ -115,7 +120,12 @@ namespace baka {
 
                 if (Body) Body->Print(Tabs + 1);
 
-                Cond->Print(Tabs + 1);
+                if (Cond) {
+                    Cond->Print(Tabs + 1);
+                } else {
+                    INDENT(Tabs + 1);
+                    std::cout << "Cond: nullptr" << std::endl;
+                }
                 if (Label) {
                     INDENT(Tabs);
                     std::cout << ";\n";

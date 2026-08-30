@@ -96,21 +96,21 @@ int baka::driver::run(int argc, char* argv[]) {
 
     // Preprocessor(SourceCode); dont plan to do this
 
-    std::vector<types::Token> tokens;
+    lexer::Lexed Lexed;
 
     {
         // lexing
         if (Gctx::TillStage() >= Stage::LEX) {
-            tokens = lexer::Tokenize(SourceCode);
+            Lexed = lexer::Tokenize(SourceCode);
         }
         else {
             return 0;
         }
         if (isVerbose) {
-            std::cout << "Lexer::LexerOutput: " << tokens.size() << " Tokens" << '\n';
+            std::cout << "Lexer::LexerOutput: " << Lexed.Tokens.size() << " Tokens" << '\n';
         }
         PrintTokenTableHeader(std::cout);
-        for (const auto& token : tokens) {
+        for (const auto& token : Lexed.Tokens) {
             std::cout << token << '\n';
         }
         if (isVerbose) {
@@ -144,7 +144,8 @@ int baka::driver::run(int argc, char* argv[]) {
             return 0;
         }
 
-        parser::Parser Parser(tokens);
+
+        parser::Parser Parser(Lexed.Tokens, Lexed.Locations);
         types::ASTNode* Root = Parser.Parse();
 
         if(isVerbose) {

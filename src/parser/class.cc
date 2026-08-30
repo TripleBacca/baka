@@ -14,9 +14,13 @@ namespace baka {
 
 
             if (!this->Check(types::TokenType::IDENTIFIER)) {
-                // todo throw error
-                SkipTo({types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON});
-                assert(false && "Expected identifier after 'class' keyword");
+                ReportError("expected identifier after 'class' keyword");
+                auto Sync = SkipTo({types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON});
+                if (Sync == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
+                return ASTALLOC.Alloc<types::ClassDeclarationNode>(
+                    ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?")));
             }
 
             types::IdentifierNode *ClassIdentifier = this->ParseIdentifier();
@@ -28,9 +32,7 @@ namespace baka {
                     AddType(ClassIdentifier);
                     GetParserSTE(ClassIdentifier)->SetIsStruct();
                 } else if(!GetParserSTE(ClassIdentifier)->IsStruct()) {
-                    // TODO throw error
-                    SkipTo({types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON});
-                    assert(false && "Not a class");
+                    ReportError("not a class");
                 }
                 return Node;
             }
@@ -39,22 +41,21 @@ namespace baka {
             if (LookupType(ClassIdentifier)) {
                 // TODO throw error
                 if (GetParserSTE(ClassIdentifier)->IsStructDefined()) {
-                    assert(false && "Struct already defined");
+                    ReportError("redefinition of class");
                 } else if (!GetParserSTE(ClassIdentifier)->IsStruct()) {
-                    assert(false && "Not a struct");
+                    ReportError("not a class");
                 }
             }
 
             types::IdentifierNode *ParentStructIdentifier = nullptr;
             if (this->Match(types::TokenType::OP_COLON)) {
                 if (!this->Check(types::TokenType::IDENTIFIER)) {
-                    // todo throw error
-                    assert(false);
+                    ReportError("expected identifier after ':'");
+                } else {
+                    ParentStructIdentifier = this->ParseIdentifier();
                 }
-                ParentStructIdentifier = this->ParseIdentifier();
-                if (!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined()) {
-                    // todo throw error
-                    assert(false && "Parent struct/class not found in symbol table");
+                if (ParentStructIdentifier && (!LookupType(ParentStructIdentifier) || !GetParserSTE(ParentStructIdentifier)->IsStructDefined())) {
+                    ReportError("parent struct/class not found in symbol table");
                 }
             }
 
@@ -65,14 +66,17 @@ namespace baka {
             GetParserSTE(ClassIdentifier)->SetIsStructDefined();
             EnterScope();
 
+            types::StructBodyNode *Body = nullptr;
             if (!this->Check(types::TokenType::LPAREN_CURLY)) {
-                // todo throw error
-                assert(false && "Expected '{' after struct/class declaration");
+                ReportError("expected '{' after struct/class declaration");
+                Body = ASTALLOC.Alloc<types::StructBodyNode>();
+            } else {
+                Body = this->ParseStructBody(ClassIdentifier);
             }
-            types::StructBodyNode *Body = this->ParseStructBody(ClassIdentifier);
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                // todo throw error
-                assert(false && "Expected semicolon after struct/class body");
+                ReportError("expected ';' after struct/class body");
+                SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+                Match(types::TokenType::SEMICOLON);
             }
 
             types::ClassDefinitionNode *Node = nullptr;

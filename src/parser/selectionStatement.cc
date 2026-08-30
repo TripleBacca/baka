@@ -15,13 +15,27 @@ namespace baka {
 
             types::ExpressionNode* Expression = this->Expression();
 
+            if (Expression == nullptr) {
+                // condition failed; error already reported deep. resync to the closing
+                // paren or a semicolon so the offending tokens aren't re-parsed as a body
+                auto Sync = SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON});
+                if (Sync == types::TokenType::RPAREN_ROUND || Sync == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
+            }
+
             if (!Match(types::TokenType::RPAREN_ROUND)) {
-                // throw error
+                if (Expression != nullptr) {
+                    ReportError("expected ')'");
+                }
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
             types::IfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::IfSubBlockStatementNode>(Expression, Body);
+            if (Expression == nullptr) {
+                Node->setHasError();
+            }
             return Node;
         }
 
@@ -39,13 +53,25 @@ namespace baka {
 
             types::ExpressionNode* Expression = this->Expression();
 
+            if (Expression == nullptr) {
+                auto Sync = SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON});
+                if (Sync == types::TokenType::RPAREN_ROUND || Sync == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
+            }
+
             if (!Match(types::TokenType::RPAREN_ROUND)) {
-                // throw error
+                if (Expression != nullptr) {
+                    ReportError("expected ')'");
+                }
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
             types::ElseIfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::ElseIfSubBlockStatementNode>(Expression, Body);
+            if (Expression == nullptr) {
+                Node->setHasError();
+            }
             return Node;
         }
 
@@ -91,13 +117,25 @@ namespace baka {
 
             types::ExpressionNode* Expression = this->Expression();
 
+            if (Expression == nullptr) {
+                auto Sync = SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON});
+                if (Sync == types::TokenType::RPAREN_ROUND || Sync == types::TokenType::SEMICOLON) {
+                    Advance();
+                }
+            }
+
             if (!Match(types::TokenType::RPAREN_ROUND)) {
-                // throw error
+                if (Expression != nullptr) {
+                    ReportError("expected ')'");
+                }
             }
 
             types::StatementNode* Body = this->CompoundStatement();
 
             types::SwitchBlockStatementNode* Node = ASTALLOC.Alloc<types::SwitchBlockStatementNode>(Expression, Body);
+            if (Expression == nullptr) {
+                Node->setHasError();
+            }
             return Node;
         }
 

@@ -23,8 +23,8 @@ types::ExpressionNode* Parser::ParseSizeofExpression() {
 
         types::ExpressionNode* Expr = ParseFactor();
         if(!Expr) {
-            // todo throw error
-            assert(false);
+            // "expected expression" already reported deep
+            return nullptr;
         }
         return ASTALLOC.Alloc<types::SizeofNode>(Expr);
     }
@@ -39,15 +39,18 @@ types::ExpressionNode* Parser::ParseSizeofExpression() {
     } else {
         types::ExpressionNode* Expr = Expression();
         if(!Expr) {
-            // todo throw error
-            assert(false);
+            // "expected expression" already reported deep
+            return nullptr;
         }
         Result = Expr;
     }
 
     if(!Match(types::TokenType::RPAREN_ROUND)) {
-        // todo throw error
-        assert(false);
+        ReportError("expected ')'");
+        auto Sync = SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+        if (Sync != types::TokenType::EOF_TOKEN) {
+            Advance();
+        }
     }
 
     return ASTALLOC.Alloc<types::SizeofNode>(Result);

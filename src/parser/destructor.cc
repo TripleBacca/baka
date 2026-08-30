@@ -11,20 +11,25 @@ namespace baka {
                 // throw error
             }
 
-            types::IdentifierNode* DestructorIdentifier = this->ParseIdentifier();
-            if(DestructorIdentifier->GetName() != ParentName->GetName()) {
-                // throw error
-                assert(false);
+            types::IdentifierNode* DestructorIdentifier = nullptr;
+            if(!this->Check(types::TokenType::IDENTIFIER)) {
+                ReportError("expected identifier after '~'");
+            } else {
+                DestructorIdentifier = this->ParseIdentifier();
+            }
+            if(DestructorIdentifier && DestructorIdentifier->GetName() != ParentName->GetName()) {
+                ReportError("destructor name does not match the type name");
             }
 
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
-                assert(false);
-                // throw error
+                ReportError("expected '(' after destructor name");
             }
 
             if (!this->Match(types::TokenType::RPAREN_ROUND)) {
-                assert(false);
-                // throw error
+                ReportError("expected ')' after destructor parameter list");
+                if (SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::RPAREN_ROUND) {
+                    Advance();
+                }
             }
 
             types::StatementNode* Body = this->CompoundStatement();

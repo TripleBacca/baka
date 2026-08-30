@@ -91,6 +91,8 @@ namespace baka {
                     ProgramNode->addNode(Typedef);
                 } else if (auto PossibleFunction = TryParseFunction()) {
                     ProgramNode->addNode(PossibleFunction.value());
+                } else if (Check(types::TokenType::EOF_TOKEN)) {
+                    // TryParseFunction already consumed the rest of the file while bailing out
                 } else  {
                     auto* Node = ParseDeclarationList();
                     ProgramNode->addNode(Node);
@@ -142,8 +144,10 @@ namespace baka {
                 return cn;
             }
 
-            // todo throw error
-            assert(false);
+            ReportError("expected constant");
+            auto* cn = ASTALLOC.Alloc<types::ConstantTNode<int>>(0);
+            cn->setHasError();
+            return cn;
         }
 
         bool Parser::LookupType(types::IdentifierNode* Identifier) {
@@ -157,8 +161,7 @@ namespace baka {
         ParserSTE* Parser::GetParserSTE(types::IdentifierNode* Identifier) {
             auto* Entry = TypeLookup.GetEntry(Identifier->GetName());
             if (!Entry) {
-                // throw error
-                assert(false && "Type not found in symbol table");
+                ReportError("unknown type name '" + std::string(Identifier->GetName()) + "'");
             }
             return Entry;
         }
@@ -187,6 +190,8 @@ namespace baka {
         }
 
         void Parser::ReportError(std::string Message) {
+            ReportedErrorCount++;
+
             if (TokenSourceLocations.empty()) return;
 
             size_t idx = current;
@@ -195,7 +200,7 @@ namespace baka {
             }
 
             const auto& Loc = TokenSourceLocations[idx];
-            base::LineCtx LineCtx_v{Loc.LineNo, driver::Gctx::GetLineIndex().get()};
+            base::LineCtx LineCtx_v{Loc.LineNo - 1, driver::Gctx::GetLineIndex().get()};
             driver::Gctx::GenerateLineError(Loc.LineNo, Loc.Col, LineCtx_v, std::move(Message), driver::Stage::PARSE);
         }
 

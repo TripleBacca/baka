@@ -63,16 +63,14 @@ namespace baka
 				if (Match(types::TokenType::K_STATIC))
 				{
 					if (IsStatic) {
-						// todo throw error
-						assert(false && "Duplicate 'static' specifier");
+						ReportError("duplicate 'static' specifier");
 					}
 					IsStatic = true;
 				}
 				if (Match(types::TokenType::K_CONST))
 				{
 					if (IsConst) {
-						// todo throw error
-						assert(false && "Duplicate 'const' specifier");
+						ReportError("duplicate 'const' specifier");
 					}
 					IsConst = true;
 				}
@@ -88,9 +86,10 @@ namespace baka
 			std::vector<types::SingleDeclarationNode*> Declarations;
 			auto* Node = ParseSingleDeclaration();
 			if(Node == nullptr) {
-			    // idk if this faulure case is ever met
-				// todo throw error
-				assert(false && "Expected single declaration");
+				ReportError("expected single declaration");
+				Node = ASTALLOC.Alloc<types::SingleDeclarationNode>(
+				    ASTALLOC.Alloc<types::DeclarationIdentifierNode>(), nullptr);
+				Node->setHasError();
 			}
 
 			Declarations.push_back(Node);
@@ -101,10 +100,13 @@ namespace baka
 				Declarations.push_back(NextNode);
 			}
 
-			if (!Match(types::TokenType::SEMICOLON))
+			if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::EOF_TOKEN))
 			{
-				// TODO: throw error
-				assert(false && "Expected semicolon at the end of declaration list");
+				// e.g. "int a b = 2;" — a second identifier where ',' or ';' was expected
+				ReportError("expected ',' or ';' in declaration");
+				if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+					Advance();
+				}
 			}
 
 			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, Modifier, TypeName, std::move(Declarations));
@@ -117,8 +119,9 @@ namespace baka
 		{
 			auto* DeclarationIdentifer = ParseDeclarationIdentifier();
 			if(DeclarationIdentifer == nullptr) {
-				// todo throw error
-				assert(false && "Expected declaration identifier");
+				ReportError("expected declaration identifier");
+				DeclarationIdentifer = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+				DeclarationIdentifer->setHasError();
 			}
 
 			types::ExpressionNode* Initialization = nullptr;
@@ -152,8 +155,8 @@ namespace baka
 				auto* InnerDeclaration = ParseDeclarationIdentifier();
 				if(!Match(types::TokenType::RPAREN_ROUND))
 				{
-					// TODO: throw error
-					assert(false && "Expected ')'");
+					ReportError("expected ')'");
+					SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
 				}
 
 
@@ -163,17 +166,27 @@ namespace baka
 			{
 				if (!Check(types::TokenType::IDENTIFIER))
 				{
-					// TODO: throw error
-					assert(false && "Expected identifier");
+					std::string_view ErrName = "?";
+					if (std::holds_alternative<std::string_view>(Peek().Value)) {
+						ErrName = std::get<std::string_view>(Peek().Value);
+					}
+					ReportError("expected identifier");
+					if (!Check(types::TokenType::EOF_TOKEN)) {
+						Advance();
+					}
+					auto* Errored = ASTALLOC.Alloc<types::IdentifierNode>(ErrName);
+					Errored->setHasError();
+					Variable->setInnerDeclaration(Errored);
 				}
+				else
+				{
+					auto* Identifier = ParseIdentifier();
+					if(!InTypedef && LookupType(Identifier)) {
+						ReportError("identifier cannot be a type name");
+					}
 
-				auto* Identifier = ParseIdentifier();
-				if(!InTypedef && LookupType(Identifier)) {
-				    // todo throw error
-					assert(false && "Identifier already type");
+					Variable->setInnerDeclaration(Identifier);
 				}
-
-				Variable->setInnerDeclaration(Identifier);
 
 			}
 
@@ -191,8 +204,8 @@ namespace baka
 				auto* ParameterList = ParseFunctionParameterList();
 				if(!Match(types::TokenType::RPAREN_ROUND))
 				{
-					// TODO: throw error
-					assert(false && "Expected ')'");
+					ReportError("expected ')'");
+					SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
 				}
 				Variable->setFunctionParameters(ParameterList);
 			}
@@ -201,18 +214,18 @@ namespace baka
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
 				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
-				if(ArraySize == nullptr) {
-				    // todo throw error empty array expr
-					assert(false && "Expected array size");
+				if (ArraySize == nullptr) {
+				    // "expected expression" already reported deep; resync to the ']'
+					SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+				} else {
+					Variable->appendArraySize(ArraySize);
+					if (!Match(types::TokenType::RPAREN_SQUARE))
+					{
+						ReportError("expected ']'");
+						SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+					}
 				}
-
-				Variable->appendArraySize(ArraySize);
-
-				if (!Match(types::TokenType::RPAREN_SQUARE))
-				{
-					// TODO: throw error
-					assert(false && "Expected ']'");
-				}
+				Match(types::TokenType::RPAREN_SQUARE);
 			}
 
 
@@ -235,8 +248,8 @@ namespace baka
 				auto* InnerDeclaration = ParseAbstractDeclarator();
 				if(!Match(types::TokenType::RPAREN_ROUND))
 				{
-					// TODO: throw error
-					assert(false && "Expected ')'");
+					ReportError("expected ')'");
+					SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
 				}
 
 				Variable->setInnerDeclaration(InnerDeclaration);
@@ -246,8 +259,8 @@ namespace baka
 				auto* ParameterList = ParseFunctionParameterList();
 				if(!Match(types::TokenType::RPAREN_ROUND))
 				{
-					// TODO: throw error
-					assert(false && "Expected ')'");
+					ReportError("expected ')'");
+					SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
 				}
 				Variable->setFunctionParameters(ParameterList);
 			}
@@ -256,18 +269,18 @@ namespace baka
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
 				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
-				if(ArraySize == nullptr) {
-				    // todo throw error empty array expr
-					assert(false && "Expected array size");
+				if (ArraySize == nullptr) {
+				    // "expected expression" already reported deep; resync to the ']'
+					SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+				} else {
+					Variable->appendArraySize(ArraySize);
+					if (!Match(types::TokenType::RPAREN_SQUARE))
+					{
+						ReportError("expected ']'");
+						SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+					}
 				}
-
-				Variable->appendArraySize(ArraySize);
-
-				if (!Match(types::TokenType::RPAREN_SQUARE))
-				{
-					// TODO: throw error
-					assert(false && "Expected ']'");
-				}
+				Match(types::TokenType::RPAREN_SQUARE);
 			}
 
 			return Variable;

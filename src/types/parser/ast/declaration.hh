@@ -68,7 +68,12 @@ namespace types {
             std::cout << "ArraySizes: " << std::endl;
             for (const auto& ArraySize : ArraySizes)
             {
-                ArraySize->Print(Tabs + 2);
+                if (ArraySize) {
+                    ArraySize->Print(Tabs + 2);
+                } else {
+                    INDENT(Tabs + 2);
+                    std::cout << "nullptr" << std::endl;
+                }
             }
 
             if(FunctionParameters)
@@ -213,7 +218,7 @@ namespace types {
         public:
         FunctionParameter(bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
             IsConst(IsConst), Modifier(modifier), SDeclarationNode(SingleDeclarationNode), TypeName(TypeName) {
-            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
+            if(TypeName && modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
                 // todo throw error
                 assert(false);
             }

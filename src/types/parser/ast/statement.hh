@@ -2,6 +2,7 @@
 #include "ast_node.hh"
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/expression.hh"
+#include "types/parser/ast/function.hh"
 #include "types/parser/ast/typedef.hh"
 #include <variant>
 #include <vector>
@@ -26,9 +27,9 @@ namespace types {
 
     class CompoundStatementNode : public StatementNode
     {
-        std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*>> Statements;
+        std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*>> Statements;
     public:
-        CompoundStatementNode(std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*>> Statements) : Statements(std::move(Statements)) {}
+        CompoundStatementNode(std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*>> Statements) : Statements(std::move(Statements)) {}
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);
@@ -37,6 +38,10 @@ namespace types {
             for (const auto& Statement : Statements) {
                 if (std::holds_alternative<DeclarationList*>(Statement))
                     std::get<DeclarationList*>(Statement)->Print(Tabs + 1);
+                else if (std::holds_alternative<TypedefNode*>(Statement))
+                    std::get<TypedefNode*>(Statement)->Print(Tabs + 1);
+                else if (std::holds_alternative<FunctionNode*>(Statement))
+                    std::get<FunctionNode*>(Statement)->Print(Tabs + 1);
                 else
                     std::get<StatementNode*>(Statement)->Print(Tabs + 1);
             }

@@ -33,8 +33,10 @@ namespace baka
 			}
 
 			if (!isTypeName(this->Peek())) {
-				// throw error
-				assert(false);
+				ReportError("expected type name");
+				auto* ErroredParam = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, Modifier, nullptr, nullptr);
+				ErroredParam->setHasError();
+				return ErroredParam;
 			}
 			types::IdentifierNode* TypeName = ParseTypeIdentifier();
 
@@ -69,15 +71,21 @@ namespace baka
 
 				auto* FunctionParam = ParseFunctionParameter();
 
+				if (FunctionParam->hasError())
+				{
+					// the errored param consumed nothing; resync to the next separator so the
+					// enclosing declarator still sees a balanced parenthesized list
+					SkipTo({types::TokenType::OP_COMMA, types::TokenType::RPAREN_ROUND});
+				}
+
 				if (FunctionParam->hasInitalizer())
 				{
 					DefaultRunning = true;
 				}
 				else if (DefaultRunning)
 				{
-					// default shoudl be in end
-					// throw error
-					assert(false);
+					// default should be at the end
+					ReportError("default argument must be at the end of the parameter list");
 				}
 
 				Decls.push_back(FunctionParam);
@@ -90,6 +98,7 @@ namespace baka
 		std::optional<types::FunctionNode*> Parser::TryParseFunction()
 		{
 			size_t prev = current;
+			size_t ErrorsOnEntry = ReportedErrorCount;
 
 			types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
@@ -113,6 +122,23 @@ namespace baka
 				this->Advance();
 			}
 
+			if (!isTypeName(this->Peek()))
+			{
+				// not a plausible function/declaration start (e.g. a stray 'if' at top level)
+				std::string_view Name = "?";
+				if (std::holds_alternative<std::string_view>(Peek().Value)) {
+					Name = std::get<std::string_view>(Peek().Value);
+				}
+				if (Check(types::TokenType::IDENTIFIER)) {
+					ReportError("unknown type name '" + std::string(Name) + "'");
+				} else {
+					ReportError("expected identifier or '('");
+				}
+				if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+					Advance();
+				}
+				return std::nullopt;
+			}
 
             types::IdentifierNode* ReturnTypeBindedIdentifier = this->ParseTypeIdentifier();
 
@@ -125,12 +151,21 @@ namespace baka
 			types::DeclarationIdentifierNode* FunctionTypeDecl = this->ParseDeclarationIdentifier();
 			if (!FunctionTypeDecl)
 			{
-				// throw error
-				assert(false);
+				ReportError("expected declaration identifier after return type");
+				return std::nullopt;
 			}
 
 			if (!Check(types::TokenType::LPAREN_CURLY))
 			{
+				if (ReportedErrorCount != ErrorsOnEntry)
+				{
+					// the probe already reported an error; rolling back would re-parse the
+					// broken declaration and report it again. resync to the end instead.
+					if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
+						Advance();
+					}
+					return std::nullopt;
+				}
 				current = prev;
 				return std::nullopt;
 			}
