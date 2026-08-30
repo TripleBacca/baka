@@ -4,6 +4,7 @@
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/castFactorNode.hh"
 #include "types/parser/ast/ternary.hh"
+#include "types/parser/ast/this.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include <string_view>
@@ -38,12 +39,11 @@ namespace parser {
 //         -> try_parse_typename (on finding "(")
 
 
-
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
-        auto& ConstantOrIdentifier = Peek();
+        auto& ConstantOrIdentifierOrThis = Peek();
+        
 
         if(Match(types::TokenType::LPAREN_ROUND)) {
-            // TODO: can be a c style cast do later after symbol talbe
             types::ExpressionNode* Node = ParseCommaExpression();
             if(!Match(types::TokenType::RPAREN_ROUND)) {
                 // TODO: throw erorr
@@ -51,16 +51,16 @@ namespace parser {
             return Node;
         }
 
-        if (detail::isConstantToken(ConstantOrIdentifier.TokenType_v)) {
-            auto& Constant = ConstantOrIdentifier;
+        if (detail::isConstantToken(ConstantOrIdentifierOrThis.TokenType_v)) {
+            auto& Constant = ConstantOrIdentifierOrThis;
 
             auto* ConstantNode =  ParseConstantNode();
             Advance();
 
             return ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
 
-        } else if(ConstantOrIdentifier.TokenType_v == types::TokenType::IDENTIFIER) {
-            auto& Identifier = ConstantOrIdentifier;
+        } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::IDENTIFIER) {
+            auto& Identifier = ConstantOrIdentifierOrThis;
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
@@ -68,6 +68,11 @@ namespace parser {
 
             auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
 
+            return PrimaryExpressionNode;
+        } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::K_THIS) {
+
+            auto* ThisNode = ASTALLOC.Alloc<types::ThisNode>();
+            auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ThisNode);
             return PrimaryExpressionNode;
         } else {
             // TODO: throw error

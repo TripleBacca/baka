@@ -2,7 +2,6 @@
 #include "types/parser/ast/declaration.hh"
 #include "types/parser/ast/expression.hh"
 #include "types/parser/ast/typedef.hh"
-#include "types/token/pretty.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
 #include <variant>

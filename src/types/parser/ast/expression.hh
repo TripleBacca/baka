@@ -3,6 +3,7 @@
 #include "constant.hh"
 #include <variant>
 #include "identifier.hh"
+#include "types/parser/ast/this.hh"
 #include "utils.hh"
 #include "operators.hh"
 #include <vector>
@@ -24,11 +25,11 @@ namespace types {
     };
 
     class PrimaryExpressionNode : public ExpressionNode {
-        std::variant<ConstantNode*, IdentifierNode*> Expr;
+        std::variant<ConstantNode*, IdentifierNode*, ThisNode*> Expr;
 
         public:
 
-        PrimaryExpressionNode(std::variant<ConstantNode*, IdentifierNode*> Expr) : Expr(Expr) {}
+        PrimaryExpressionNode(std::variant<ConstantNode*, IdentifierNode*, ThisNode*> Expr) : Expr(Expr) {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -36,8 +37,10 @@ namespace types {
 
             if(std::holds_alternative<ConstantNode*>(Expr)) {
                 std::get<ConstantNode*>(Expr)->Print(Tabs + 1);
-            } else {
+            } else if(std::holds_alternative<IdentifierNode*>(Expr)) {
                 std::get<IdentifierNode*>(Expr)->Print(Tabs + 1);
+            } else if(std::holds_alternative<ThisNode*>(Expr)) {
+                std::get<ThisNode*>(Expr)->Print(Tabs + 1);
             }
 
             INDENT(Tabs);
