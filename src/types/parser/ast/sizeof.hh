@@ -15,30 +15,30 @@ namespace types {
 
         struct SizeofTypeVariant {
             TypeNode* Type;
-            DeclarationIdentifierNode* Variable;
+            DeclarationIdentifierNode* AbstractDecl;
         };
 
         std::variant<SizeofTypeVariant,
                     ExpressionNode*
-        > Expression;
+        > Payload;
 
-        SizeofNode(std::variant<SizeofTypeVariant, ExpressionNode*> Expression) : Expression(Expression) {}
+        SizeofNode(std::variant<SizeofTypeVariant, ExpressionNode*> Payload) : Payload(Payload) {}
 
         void Print(size_t Tabs = 0) const override
         {
             INDENT(Tabs);
             std::cout << "SizeofNode(\n";
 
-            if(std::holds_alternative<SizeofTypeVariant>(Expression)) {
-                const auto& Variant = std::get<SizeofTypeVariant>(Expression);
+            if(std::holds_alternative<SizeofTypeVariant>(Payload)) {
+                const auto& Variant = std::get<SizeofTypeVariant>(Payload);
                 if(Variant.Type) {
                     Variant.Type->Print(Tabs + 1);
                 }
-                if(Variant.Variable) {
-                    Variant.Variable->Print(Tabs + 1);
+                if(Variant.AbstractDecl) {
+                    Variant.AbstractDecl->Print(Tabs + 1);
                 }
             } else {
-                const auto& Expr = std::get<ExpressionNode*>(Expression);
+                const auto& Expr = std::get<ExpressionNode*>(Payload);
                 Expr->Print(Tabs + 1);
             }
 
