@@ -12,7 +12,7 @@ namespace baka {
                 ReportError("constructor name does not match the type name");
             }
 
-
+            // is ctor already checks for LPARENROUND so we dont need to sync here
             if (!this->Match(types::TokenType::LPAREN_ROUND)) {
                 ReportError("expected '(' after constructor name");
             }
