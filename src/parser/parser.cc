@@ -89,13 +89,18 @@ namespace baka {
                 } else if (Check(types::TokenType::K_TYPEDEF)) {
                     auto Typedef = this->ParseTypedef();
                     ProgramNode->addNode(Typedef);
-                } else if (auto PossibleFunction = TryParseFunction()) {
-                    ProgramNode->addNode(PossibleFunction.value());
-                } else if (Check(types::TokenType::EOF_TOKEN)) {
-                    // TryParseFunction already consumed the rest of the file while bailing out
-                } else  {
-                    auto* Node = ParseDeclarationList();
-                    ProgramNode->addNode(Node);
+                } else {
+                    auto PossibleFunction = TryParseFunction();
+
+                    if(PossibleFunction) {
+                        ProgramNode->addNode(PossibleFunction.value());
+                    } else {
+                        // try parse function could have munched entire file in err path
+                        if(!Check(types::TokenType::EOF_TOKEN)) {
+                            auto* Node = ParseDeclarationList();
+                            ProgramNode->addNode(Node);
+                        }
+                    }
                 }
             }
 
