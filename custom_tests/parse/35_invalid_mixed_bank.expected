@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/35_invalid_cascade_bank.cpp
+Gctx::SourceFile: custom_tests/parse/35_invalid_mixed_bank.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 typedef int Money;
@@ -14,7 +14,7 @@ struct Account {
 Account open_account(int id) {
     Account acc;
     acc.id = id;
-    acc.balance = 0;
+    acc..balance = 0;
     return acc
 }
 
@@ -32,7 +32,7 @@ Money withdraw(Account acc, Money amount) {
 }
 
 Money interest(Money value, int rate) {
-    return value * rate / 100
+    return (value > 50) ? value * rate / 100 value
 }
 
 Money clamp(Money value, Money lo, Money hi) {
@@ -50,9 +50,13 @@ int main() {
     Money taken = withdraw(a, 30);
     Money gain = interest(taken, 5);
     int total = a.balance + b.balance + taken + gain;
+    while (total < 0) {
+        break
+    }
+    goto settle
     return total;
 }
-Lexer::LexerOutput: 221 Tokens
+Lexer::LexerOutput: 240 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 typedef                   K_TYPEDEF             
@@ -87,6 +91,7 @@ id                        IDENTIFIER
 id                        IDENTIFIER            
 ;                         SEMICOLON             
 acc                       IDENTIFIER            
+.                         OP_DOT                
 .                         OP_DOT                
 balance                   IDENTIFIER            
 =                         OP_ASSIGN             
@@ -170,11 +175,18 @@ rate                      IDENTIFIER
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
 return                    K_RETURN              
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+>                         OP_GT                 
+50 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+?                         OP_QUESTION           
 value                     IDENTIFIER            
 *                         OP_MUL                
 rate                      IDENTIFIER            
 /                         OP_DIV                
 100 (int)                 LITERAL_INTEGER       
+value                     IDENTIFIER            
 }                         RPAREN_CURLY          
 Money                     IDENTIFIER            
 clamp                     IDENTIFIER            
@@ -271,6 +283,17 @@ taken                     IDENTIFIER
 +                         OP_PLUS               
 gain                      IDENTIFIER            
 ;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+total                     IDENTIFIER            
+<                         OP_LT                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+break                     K_BREAK               
+}                         RPAREN_CURLY          
+goto                      K_GOTO                
+settle                    IDENTIFIER            
 return                    K_RETURN              
 total                     IDENTIFIER            
 ;                         SEMICOLON             
@@ -381,20 +404,6 @@ Program(
                 )
             )
             ExpressionStatement(
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_ASSIGN,
-                        MemberPostfixExpr(
-                            PrimaryExpression(
-                                Identifier(acc)
-                            )
-                            Identifier(balance)
-                        )
-                        PrimaryExpression(
-                            Constant(0)
-                        )
-                    )
-                )
             )
             Return(
                 CommaExpression(
@@ -630,19 +639,35 @@ Program(
         CompoundStatement(
             Return(
                 CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_DIV,
+                    TernaryOpNode(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_GT,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Constant(50)
+                                )
+                            )
+                        )
                         BinaryExpression(
-                            BinaryOp: OP_MUL,
-                            PrimaryExpression(
-                                Identifier(value)
+                            BinaryOp: OP_DIV,
+                            BinaryExpression(
+                                BinaryOp: OP_MUL,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Identifier(rate)
+                                )
                             )
                             PrimaryExpression(
-                                Identifier(rate)
+                                Constant(100)
                             )
                         )
                         PrimaryExpression(
-                            Constant(100)
+                            Identifier(value)
                         )
                     )
                 )
@@ -907,36 +932,61 @@ Program(
                     )
                 )
             )
-            Return(
+            While(
                 CommaExpression(
-                    PrimaryExpression(
-                        Identifier(total)
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(total)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
                     )
                 )
+                CompoundStatement(
+                    Break(
+                    )
+                )
+            )
+            Goto(
+                Identifier(settle)
             )
         )
     )
 )
 
-custom_tests/parse/35_invalid_cascade_bank.cpp:12:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:11:9: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
+	    acc..balance = 0;
+	        [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_mixed_bank.cpp:12:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return acc
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:16:33: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:16:33: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    acc.balance = acc.balance + amount
 	                                [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (amount > acc.balance {
 	                             [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:29:27: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	    return value * rate / 100
-	                          [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:33:20: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:29:46: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+	    return (value > 50) ? value * rate / 100 value
+	                                             [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_mixed_bank.cpp:29:46: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return (value > 50) ? value * rate / 100 value
+	                                             [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_mixed_bank.cpp:33:20: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (value < lo {
 	                   [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:34:16: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:34:16: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	        return lo
 	               [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:43:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/35_invalid_mixed_bank.cpp:43:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    deposit(b, 50)
 	                 [38;2;255;0;0m^[0m
-Compilation failed due to 7 error(s)
+custom_tests/parse/35_invalid_mixed_bank.cpp:48:9: [38;2;255;0;0merror: [0mexpected ';' after break statement (PARSE)
+	        break
+	        [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_mixed_bank.cpp:50:10: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+	    goto settle
+	         [38;2;255;0;0m^[0m
+Compilation failed due to 11 error(s)

@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/37_invalid_cascade_inventory.cpp
+Gctx::SourceFile: custom_tests/parse/39_invalid_mixed_inventory.cpp
 Driver::OptimisticDefects: 6
 Driver::SourceCode: 
 struct Item {
@@ -36,7 +36,7 @@ int value(Item it) {
 int total_value(Inventory inv) {
     int total = 0;
     for (int i = 0; i < inv.count; i = i + 1) {
-        total = total + value(inv.items[i]);
+        total = (value(inv.items[i]) > 0) ? total + value(inv.items[i]) total;
     }
     return total
 }
@@ -82,7 +82,7 @@ int main() {
     int mx = max_value(inv);
     return total + found + best + mx;
 }
-Lexer::LexerOutput: 409 Tokens
+Lexer::LexerOutput: 424 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 struct                    K_STRUCT              
@@ -219,6 +219,20 @@ i                         IDENTIFIER
 {                         LPAREN_CURLY          
 total                     IDENTIFIER            
 =                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+)                         RPAREN_ROUND          
+>                         OP_GT                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+?                         OP_QUESTION           
 total                     IDENTIFIER            
 +                         OP_PLUS               
 value                     IDENTIFIER            
@@ -230,6 +244,7 @@ items                     IDENTIFIER
 i                         IDENTIFIER            
 ]                         RPAREN_SQUARE         
 )                         RPAREN_ROUND          
+total                     IDENTIFIER            
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
 return                    K_RETURN              
@@ -912,30 +927,63 @@ Program(
                                 PrimaryExpression(
                                     Identifier(total)
                                 )
-                                BinaryExpression(
-                                    BinaryOp: OP_ADD,
-                                    PrimaryExpression(
-                                        Identifier(total)
-                                    )
-                                    FunctionCallPostfixExpr(
-                                        PrimaryExpression(
-                                            Identifier(value)
-                                        )
-                                        CommaExpression(
-                                            IndexPostfixExpr(
-                                                MemberPostfixExpr(
-                                                    PrimaryExpression(
-                                                        Identifier(inv)
-                                                    )
-                                                    Identifier(items)
+                                TernaryOpNode(
+                                    CommaExpression(
+                                        BinaryExpression(
+                                            BinaryOp: OP_GT,
+                                            FunctionCallPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(value)
                                                 )
                                                 CommaExpression(
-                                                    PrimaryExpression(
-                                                        Identifier(i)
+                                                    IndexPostfixExpr(
+                                                        MemberPostfixExpr(
+                                                            PrimaryExpression(
+                                                                Identifier(inv)
+                                                            )
+                                                            Identifier(items)
+                                                        )
+                                                        CommaExpression(
+                                                            PrimaryExpression(
+                                                                Identifier(i)
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                            PrimaryExpression(
+                                                Constant(0)
+                                            )
+                                        )
+                                    )
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        PrimaryExpression(
+                                            Identifier(total)
+                                        )
+                                        FunctionCallPostfixExpr(
+                                            PrimaryExpression(
+                                                Identifier(value)
+                                            )
+                                            CommaExpression(
+                                                IndexPostfixExpr(
+                                                    MemberPostfixExpr(
+                                                        PrimaryExpression(
+                                                            Identifier(inv)
+                                                        )
+                                                        Identifier(items)
+                                                    )
+                                                    CommaExpression(
+                                                        PrimaryExpression(
+                                                            Identifier(i)
+                                                        )
                                                     )
                                                 )
                                             )
                                         )
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(total)
                                     )
                                 )
                             )
@@ -1638,25 +1686,28 @@ Program(
     )
 )
 
-custom_tests/parse/37_invalid_cascade_inventory.cpp:15:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:15:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return inv
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:35:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:33:73: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+	        total = (value(inv.items[i]) > 0) ? total + value(inv.items[i]) total;
+	                                                                        [38;2;255;0;0m^[0m
+custom_tests/parse/39_invalid_mixed_inventory.cpp:35:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return total
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:40:41: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:40:41: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    while (inv.items[i].id != target_id {
 	                                        [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:60:18: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:60:18: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    for (int i = 0 i < inv.count; i = i + 1) {
 	                 [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:60:44: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:60:44: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
 	    for (int i = 0 i < inv.count; i = i + 1) {
 	                                           [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:61:40: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:61:40: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value(inv.items[i]) > best {
 	                                       [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:71:39: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/39_invalid_mixed_inventory.cpp:71:39: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    inv.items[1] = make_item(2, 3, 200)
 	                                      [38;2;255;0;0m^[0m
-Compilation failed due to 7 error(s)
+Compilation failed due to 8 error(s)

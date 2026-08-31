@@ -15,7 +15,7 @@ int is_digit(char c) {
 
 char to_upper(char c) {
     if (c >= 'a' && c <= 'z') {
-        return c - 32
+        return (c > '0') ? c - 32 c
     }
     return c;
 }
@@ -35,6 +35,9 @@ int count_words(char s[10]) {
     int in_word = 0;
     int i = 0;
     while (s[i] != 0) {
+        if (words > 100) {
+            break
+        }
         if (is_digit(s[i]) == 0 {
             in_word = 1;
         } else {

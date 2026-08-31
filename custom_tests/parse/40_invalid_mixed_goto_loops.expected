@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/40_invalid_cascade_goto_loops.cpp
+Gctx::SourceFile: custom_tests/parse/40_invalid_mixed_goto_loops.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 int retry_input(int limit) {
@@ -24,11 +24,11 @@ int scan_rows(int rows) {
     int found = 0;
     int r = 0;
     while (r < rows; row_loop) {
-        r = r + 1
         if (r == 2) {
-            continue;
+            continue
         }
         found = found + r;
+        r = r + 1
     }
     return found;
 }
@@ -50,7 +50,7 @@ int loop_until_zero(int seed) {
     do {
         value = value - 1;
         if (value == 0 {
-            break;
+            break
         }
     } while (value > 0; unwind);
     return value
@@ -66,7 +66,7 @@ int main() {
     }
     return a + b + c + d;
 }
-Lexer::LexerOutput: 271 Tokens
+Lexer::LexerOutput: 269 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -152,11 +152,6 @@ rows                      IDENTIFIER
 row_loop                  IDENTIFIER            
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
-r                         IDENTIFIER            
-=                         OP_ASSIGN             
-r                         IDENTIFIER            
-+                         OP_PLUS               
-1 (int)                   LITERAL_INTEGER       
 if                        K_IF                  
 (                         LPAREN_ROUND          
 r                         IDENTIFIER            
@@ -165,7 +160,6 @@ r                         IDENTIFIER
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
 continue                  K_CONTINUE            
-;                         SEMICOLON             
 }                         RPAREN_CURLY          
 found                     IDENTIFIER            
 =                         OP_ASSIGN             
@@ -173,6 +167,11 @@ found                     IDENTIFIER
 +                         OP_PLUS               
 r                         IDENTIFIER            
 ;                         SEMICOLON             
+r                         IDENTIFIER            
+=                         OP_ASSIGN             
+r                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
 }                         RPAREN_CURLY          
 return                    K_RETURN              
 found                     IDENTIFIER            
@@ -260,7 +259,6 @@ value                     IDENTIFIER
 0 (int)                   LITERAL_INTEGER       
 {                         LPAREN_CURLY          
 break                     K_BREAK               
-;                         SEMICOLON             
 }                         RPAREN_CURLY          
 }                         RPAREN_CURLY          
 while                     K_WHILE               
@@ -580,6 +578,44 @@ Program(
             ;
                 Identifier(row_loop)
                 CompoundStatement(
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_EQ,
+                                    PrimaryExpression(
+                                        Identifier(r)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(2)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                Continue(
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(found)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(found)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(r)
+                                    )
+                                )
+                            )
+                        )
+                    )
                     ExpressionStatement(
                         CommaExpression(
                             BinaryExpression(
@@ -1063,22 +1099,28 @@ Program(
     )
 )
 
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	        goto parse
 	             [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:21:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:22:13: [38;2;255;0;0merror: [0mexpected ';' after continue statement (PARSE)
+	            continue
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:25:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        r = r + 1
 	                [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	            goto done
 	                 [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value == 0 {
 	                       [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:50:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:47:13: [38;2;255;0;0merror: [0mexpected ';' after break statement (PARSE)
+	            break
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:50:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return value
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:58:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops.cpp:58:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (a > 0 && b > 0 {
 	                       [38;2;255;0;0m^[0m
-Compilation failed due to 6 error(s)
+Compilation failed due to 8 error(s)
