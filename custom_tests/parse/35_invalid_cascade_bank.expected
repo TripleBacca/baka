@@ -918,25 +918,25 @@ Program(
     )
 )
 
-custom_tests/parse/35_invalid_cascade_bank.cpp:13:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:17:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    return acc.balance;
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:12:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return acc
+	           [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:16:33: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    acc.balance = acc.balance + amount
+	                                [38;2;255;0;0m^[0m
 custom_tests/parse/35_invalid_cascade_bank.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (amount > acc.balance {
 	                             [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:30:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:29:27: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return value * rate / 100
+	                          [38;2;255;0;0m^[0m
 custom_tests/parse/35_invalid_cascade_bank.cpp:33:20: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (value < lo {
 	                   [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:35:5: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	    }
-	    [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_cascade_bank.cpp:44:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    Money taken = withdraw(a, 30);
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:34:16: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	        return lo
+	               [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:43:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    deposit(b, 50)
+	                 [38;2;255;0;0m^[0m
 Compilation failed due to 7 error(s)

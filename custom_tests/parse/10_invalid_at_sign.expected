@@ -76,7 +76,7 @@ Program(
 custom_tests/parse/10_invalid_at_sign.cpp:2:13: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	    int a = @;
 	            [38;2;255;0;0m^[0m
-custom_tests/parse/10_invalid_at_sign.cpp:2:13: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/10_invalid_at_sign.cpp:2:11: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    int a = @;
-	            [38;2;255;0;0m^[0m
+	          [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)

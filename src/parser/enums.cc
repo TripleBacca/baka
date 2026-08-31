@@ -63,7 +63,7 @@ namespace parser {
         } while(!Match(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN));
 
         if(!Match(types::TokenType::SEMICOLON)) {
-            ReportError("expected ';' after enum definition");
+            ReportError("expected ';' after enum definition", true);
             if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                 Advance();
             }

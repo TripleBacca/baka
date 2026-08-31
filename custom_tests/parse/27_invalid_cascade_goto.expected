@@ -84,10 +84,10 @@ Program(
     )
 )
 
-custom_tests/parse/27_invalid_cascade_goto.cpp:3:5: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
-	    x = 5;
-	    [38;2;255;0;0m^[0m
-custom_tests/parse/27_invalid_cascade_goto.cpp:5:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    exit:
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/27_invalid_cascade_goto.cpp:2:10: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+	    goto exit
+	         [38;2;255;0;0m^[0m
+custom_tests/parse/27_invalid_cascade_goto.cpp:4:13: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    x = x + 1
+	            [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)

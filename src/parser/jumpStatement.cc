@@ -12,7 +12,7 @@ namespace baka {
             types::ExpressionNode* Expression = this->Expression();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                ReportError("expected ';' after return statement");
+                ReportError("expected ';' after return statement", true);
                 if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                     Advance();
                 }
@@ -30,7 +30,7 @@ namespace baka {
             types::IdentifierNode* Label = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                ReportError("expected ';' after goto statement");
+                ReportError("expected ';' after goto statement", true);
                 if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                     Advance();
                 }
@@ -52,7 +52,7 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                ReportError("expected ';' after break statement");
+                ReportError("expected ';' after break statement", true);
                 if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                     Advance();
                 }
@@ -73,7 +73,7 @@ namespace baka {
             }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
-                ReportError("expected ';' after continue statement");
+                ReportError("expected ';' after continue statement", true);
                 if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                     Advance();
                 }

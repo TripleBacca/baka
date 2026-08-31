@@ -1638,25 +1638,25 @@ Program(
     )
 )
 
-custom_tests/parse/37_invalid_cascade_inventory.cpp:16:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:36:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:15:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return inv
+	           [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:35:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return total
+	           [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_cascade_inventory.cpp:40:41: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    while (inv.items[i].id != target_id {
 	                                        [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:60:20: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/37_invalid_cascade_inventory.cpp:60:18: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    for (int i = 0 i < inv.count; i = i + 1) {
-	                   [38;2;255;0;0m^[0m
+	                 [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_cascade_inventory.cpp:60:44: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
 	    for (int i = 0 i < inv.count; i = i + 1) {
 	                                           [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_cascade_inventory.cpp:61:40: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value(inv.items[i]) > best {
 	                                       [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_cascade_inventory.cpp:72:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    inv.count = 2;
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:71:39: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    inv.items[1] = make_item(2, 3, 200)
+	                                      [38;2;255;0;0m^[0m
 Compilation failed due to 7 error(s)

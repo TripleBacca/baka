@@ -183,9 +183,9 @@ Program(
     )
 )
 
-custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp:4:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
-	    int z;
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp:3:13: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    int y = 5
+	            [38;2;255;0;0m^[0m
 custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp:9:19: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    while (a < 10 {
 	                  [38;2;255;0;0m^[0m

@@ -105,7 +105,7 @@ namespace parser {
         bool Match(types::TokenType type);
         const types::Token& Peek() const noexcept;
         const types::Token& Previous() const;
-        void ReportError(std::string Message);
+        void ReportError(std::string Message, bool ReportPreviousToken = false);
         types::TokenType SkipTo(std::initializer_list<types::TokenType> TokenList);
 
         bool isTypeName(const types::Token& token);

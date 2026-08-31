@@ -1307,15 +1307,15 @@ Program(
 custom_tests/parse/39_invalid_cascade_mathlib.cpp:2:15: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (x < 0 {
 	              [38;2;255;0;0m^[0m
-custom_tests/parse/39_invalid_cascade_mathlib.cpp:13:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    }
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/39_invalid_cascade_mathlib.cpp:12:21: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	        exp = exp - 1
+	                    [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_cascade_mathlib.cpp:20:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (n % d == 0 {
 	                       [38;2;255;0;0m^[0m
-custom_tests/parse/39_invalid_cascade_mathlib.cpp:35:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    }
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/39_invalid_cascade_mathlib.cpp:34:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	        b = a + t
+	                [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_cascade_mathlib.cpp:40:16: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (x < lo {
 	               [38;2;255;0;0m^[0m
