@@ -1,0 +1,1662 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/37_invalid_cascade_inventory.cpp
+Driver::OptimisticDefects: 6
+Driver::SourceCode: 
+struct Item {
+    int id;
+    int quantity;
+    int price;
+};
+
+struct Inventory {
+    Item items[10];
+    int count;
+};
+
+Inventory make_inventory() {
+    Inventory inv;
+    inv.count = 0;
+    return inv
+}
+
+Item make_item(int id, int quantity, int price) {
+    Item it;
+    it.id = id;
+    it.quantity = quantity;
+    it.price = price;
+    return it;
+}
+
+int value(Item it) {
+    return it.quantity * it.price;
+}
+
+int total_value(Inventory inv) {
+    int total = 0;
+    for (int i = 0; i < inv.count; i = i + 1) {
+        total = total + value(inv.items[i]);
+    }
+    return total
+}
+
+int find_item(Inventory inv, int target_id) {
+    int i = 0;
+    while (inv.items[i].id != target_id {
+        i = i + 1;
+    }
+    return i;
+}
+
+int cheapest_index(Inventory inv) {
+    int best = 0;
+    int i = 1;
+    while (i < inv.count) {
+        if (inv.items[i].price < inv.items[best].price) {
+            best = i;
+        }
+        i = i + 1;
+    }
+    return best;
+}
+
+int max_value(Inventory inv) {
+    int best = 0;
+    for (int i = 0 i < inv.count; i = i + 1) {
+        if (value(inv.items[i]) > best {
+            best = value(inv.items[i]);
+        }
+    }
+    return best;
+}
+
+int main() {
+    Inventory inv = make_inventory();
+    inv.items[0] = make_item(1, 5, 100);
+    inv.items[1] = make_item(2, 3, 200)
+    inv.count = 2;
+    int total = total_value(inv);
+    int found = find_item(inv, 2);
+    int best = cheapest_index(inv);
+    int mx = max_value(inv);
+    return total + found + best + mx;
+}
+Lexer::LexerOutput: 409 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+struct                    K_STRUCT              
+Item                      IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+id                        IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+quantity                  IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+price                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Inventory                 IDENTIFIER            
+{                         LPAREN_CURLY          
+Item                      IDENTIFIER            
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+10 (int)                  LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+int                       K_INT                 
+count                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+Inventory                 IDENTIFIER            
+make_inventory            IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+;                         SEMICOLON             
+inv                       IDENTIFIER            
+.                         OP_DOT                
+count                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+inv                       IDENTIFIER            
+}                         RPAREN_CURLY          
+Item                      IDENTIFIER            
+make_item                 IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+id                        IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+quantity                  IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+price                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Item                      IDENTIFIER            
+it                        IDENTIFIER            
+;                         SEMICOLON             
+it                        IDENTIFIER            
+.                         OP_DOT                
+id                        IDENTIFIER            
+=                         OP_ASSIGN             
+id                        IDENTIFIER            
+;                         SEMICOLON             
+it                        IDENTIFIER            
+.                         OP_DOT                
+quantity                  IDENTIFIER            
+=                         OP_ASSIGN             
+quantity                  IDENTIFIER            
+;                         SEMICOLON             
+it                        IDENTIFIER            
+.                         OP_DOT                
+price                     IDENTIFIER            
+=                         OP_ASSIGN             
+price                     IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+it                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+value                     IDENTIFIER            
+(                         LPAREN_ROUND          
+Item                      IDENTIFIER            
+it                        IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+it                        IDENTIFIER            
+.                         OP_DOT                
+quantity                  IDENTIFIER            
+*                         OP_MUL                
+it                        IDENTIFIER            
+.                         OP_DOT                
+price                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+total_value               IDENTIFIER            
+(                         LPAREN_ROUND          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+i                         IDENTIFIER            
+<                         OP_LT                 
+inv                       IDENTIFIER            
+.                         OP_DOT                
+count                     IDENTIFIER            
+;                         SEMICOLON             
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+total                     IDENTIFIER            
++                         OP_PLUS               
+value                     IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+total                     IDENTIFIER            
+}                         RPAREN_CURLY          
+int                       K_INT                 
+find_item                 IDENTIFIER            
+(                         LPAREN_ROUND          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+target_id                 IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+.                         OP_DOT                
+id                        IDENTIFIER            
+!=                        OP_NEQ                
+target_id                 IDENTIFIER            
+{                         LPAREN_CURLY          
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+i                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+cheapest_index            IDENTIFIER            
+(                         LPAREN_ROUND          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+best                      IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+i                         IDENTIFIER            
+<                         OP_LT                 
+inv                       IDENTIFIER            
+.                         OP_DOT                
+count                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+.                         OP_DOT                
+price                     IDENTIFIER            
+<                         OP_LT                 
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+best                      IDENTIFIER            
+]                         RPAREN_SQUARE         
+.                         OP_DOT                
+price                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+best                      IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+best                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+max_value                 IDENTIFIER            
+(                         LPAREN_ROUND          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+best                      IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+i                         IDENTIFIER            
+<                         OP_LT                 
+inv                       IDENTIFIER            
+.                         OP_DOT                
+count                     IDENTIFIER            
+;                         SEMICOLON             
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+i                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+)                         RPAREN_ROUND          
+>                         OP_GT                 
+best                      IDENTIFIER            
+{                         LPAREN_CURLY          
+best                      IDENTIFIER            
+=                         OP_ASSIGN             
+value                     IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+i                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+best                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Inventory                 IDENTIFIER            
+inv                       IDENTIFIER            
+=                         OP_ASSIGN             
+make_inventory            IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+0 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+make_item                 IDENTIFIER            
+(                         LPAREN_ROUND          
+1 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+5 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+100 (int)                 LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+inv                       IDENTIFIER            
+.                         OP_DOT                
+items                     IDENTIFIER            
+[                         LPAREN_SQUARE         
+1 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+=                         OP_ASSIGN             
+make_item                 IDENTIFIER            
+(                         LPAREN_ROUND          
+2 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+3 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+200 (int)                 LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+inv                       IDENTIFIER            
+.                         OP_DOT                
+count                     IDENTIFIER            
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+total_value               IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+found                     IDENTIFIER            
+=                         OP_ASSIGN             
+find_item                 IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+,                         OP_COMMA              
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+best                      IDENTIFIER            
+=                         OP_ASSIGN             
+cheapest_index            IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+mx                        IDENTIFIER            
+=                         OP_ASSIGN             
+max_value                 IDENTIFIER            
+(                         LPAREN_ROUND          
+inv                       IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+total                     IDENTIFIER            
++                         OP_PLUS               
+found                     IDENTIFIER            
++                         OP_PLUS               
+best                      IDENTIFIER            
++                         OP_PLUS               
+mx                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Struct(
+        Identifier(Item)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(id)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(quantity)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(price)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Struct(
+        Identifier(Inventory)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Item)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(items)
+                        ArraySizes: 
+                            PrimaryExpression(
+                                Constant(10)
+                            )
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(count)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(make_inventory)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(Inventory)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Inventory)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(inv)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(inv)
+                            )
+                            Identifier(count)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(inv)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(make_item)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(id)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(quantity)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(price)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Item)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Item)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(it)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(it)
+                            )
+                            Identifier(id)
+                        )
+                        PrimaryExpression(
+                            Identifier(id)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(it)
+                            )
+                            Identifier(quantity)
+                        )
+                        PrimaryExpression(
+                            Identifier(quantity)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(it)
+                            )
+                            Identifier(price)
+                        )
+                        PrimaryExpression(
+                            Identifier(price)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(it)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(value)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Item)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(it)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_MUL,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(it)
+                            )
+                            Identifier(quantity)
+                        )
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(it)
+                            )
+                            Identifier(price)
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(total_value)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Inventory)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(inv)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(total)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            For(
+                DeclarationList(
+                    IsStatic: 0, IsConst: 0
+                    TypeSpecifierModifier: None
+                    Identifier(int)
+                    SingleDeclarationNode(
+                        DeclarationIdentifier(
+                            PointerCount: 0
+                                Identifier(i)
+                            ArraySizes: 
+                        )
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(inv)
+                            )
+                            Identifier(count)
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(i)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+                Label: nullptr
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(total)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(total)
+                                    )
+                                    FunctionCallPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(value)
+                                        )
+                                        CommaExpression(
+                                            IndexPostfixExpr(
+                                                MemberPostfixExpr(
+                                                    PrimaryExpression(
+                                                        Identifier(inv)
+                                                    )
+                                                    Identifier(items)
+                                                )
+                                                CommaExpression(
+                                                    PrimaryExpression(
+                                                        Identifier(i)
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(total)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(find_item)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Inventory)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(inv)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(target_id)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(i)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            While(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_NEQ,
+                        MemberPostfixExpr(
+                            IndexPostfixExpr(
+                                MemberPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(inv)
+                                    )
+                                    Identifier(items)
+                                )
+                                CommaExpression(
+                                    PrimaryExpression(
+                                        Identifier(i)
+                                    )
+                                )
+                            )
+                            Identifier(id)
+                        )
+                        PrimaryExpression(
+                            Identifier(target_id)
+                        )
+                    )
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(i)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(i)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(i)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(cheapest_index)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Inventory)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(inv)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(best)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(i)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            While(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_LT,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(inv)
+                            )
+                            Identifier(count)
+                        )
+                    )
+                )
+                CompoundStatement(
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_LT,
+                                    MemberPostfixExpr(
+                                        IndexPostfixExpr(
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(inv)
+                                                )
+                                                Identifier(items)
+                                            )
+                                            CommaExpression(
+                                                PrimaryExpression(
+                                                    Identifier(i)
+                                                )
+                                            )
+                                        )
+                                        Identifier(price)
+                                    )
+                                    MemberPostfixExpr(
+                                        IndexPostfixExpr(
+                                            MemberPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(inv)
+                                                )
+                                                Identifier(items)
+                                            )
+                                            CommaExpression(
+                                                PrimaryExpression(
+                                                    Identifier(best)
+                                                )
+                                            )
+                                        )
+                                        Identifier(price)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                ExpressionStatement(
+                                    CommaExpression(
+                                        BinaryExpression(
+                                            BinaryOp: OP_ASSIGN,
+                                            PrimaryExpression(
+                                                Identifier(best)
+                                            )
+                                            PrimaryExpression(
+                                                Identifier(i)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(i)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(i)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(best)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(max_value)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Inventory)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(inv)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(best)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            For(
+                DeclarationList(
+                    IsStatic: 0, IsConst: 0
+                    TypeSpecifierModifier: None
+                    Identifier(int)
+                    SingleDeclarationNode(
+                        DeclarationIdentifier(
+                            PointerCount: 0
+                                Identifier(i)
+                            ArraySizes: 
+                        )
+                        InitializerNode(
+                            Expressions: 1
+                            PrimaryExpression(
+                                Constant(0)
+                            )
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(i)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(i)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+                Upd: nullptr
+                Label: nullptr
+                CompoundStatement(
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_GT,
+                                    FunctionCallPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(value)
+                                        )
+                                        CommaExpression(
+                                            IndexPostfixExpr(
+                                                MemberPostfixExpr(
+                                                    PrimaryExpression(
+                                                        Identifier(inv)
+                                                    )
+                                                    Identifier(items)
+                                                )
+                                                CommaExpression(
+                                                    PrimaryExpression(
+                                                        Identifier(i)
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(best)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                ExpressionStatement(
+                                    CommaExpression(
+                                        BinaryExpression(
+                                            BinaryOp: OP_ASSIGN,
+                                            PrimaryExpression(
+                                                Identifier(best)
+                                            )
+                                            FunctionCallPostfixExpr(
+                                                PrimaryExpression(
+                                                    Identifier(value)
+                                                )
+                                                CommaExpression(
+                                                    IndexPostfixExpr(
+                                                        MemberPostfixExpr(
+                                                            PrimaryExpression(
+                                                                Identifier(inv)
+                                                            )
+                                                            Identifier(items)
+                                                        )
+                                                        CommaExpression(
+                                                            PrimaryExpression(
+                                                                Identifier(i)
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(best)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Inventory)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(inv)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(make_inventory)
+                            )
+                            CommaExpression(
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        IndexPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                                Identifier(items)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(make_item)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(1)
+                                )
+                                PrimaryExpression(
+                                    Constant(5)
+                                )
+                                PrimaryExpression(
+                                    Constant(100)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        IndexPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                                Identifier(items)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(1)
+                                )
+                            )
+                        )
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(make_item)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(2)
+                                )
+                                PrimaryExpression(
+                                    Constant(3)
+                                )
+                                PrimaryExpression(
+                                    Constant(200)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(total)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(total_value)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(found)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(find_item)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                                PrimaryExpression(
+                                    Constant(2)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(best)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(cheapest_index)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(mx)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(max_value)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(inv)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                PrimaryExpression(
+                                    Identifier(total)
+                                )
+                                PrimaryExpression(
+                                    Identifier(found)
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(best)
+                            )
+                        )
+                        PrimaryExpression(
+                            Identifier(mx)
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/37_invalid_cascade_inventory.cpp:16:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	}
+	[38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:36:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	}
+	[38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:40:41: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	    while (inv.items[i].id != target_id {
+	                                        [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:60:20: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    for (int i = 0 i < inv.count; i = i + 1) {
+	                   [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:60:44: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
+	    for (int i = 0 i < inv.count; i = i + 1) {
+	                                           [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:61:40: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	        if (value(inv.items[i]) > best {
+	                                       [38;2;255;0;0m^[0m
+custom_tests/parse/37_invalid_cascade_inventory.cpp:72:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    inv.count = 2;
+	    [38;2;255;0;0m^[0m
+Compilation failed due to 7 error(s)

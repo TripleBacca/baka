@@ -1,14 +1,14 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/19_invalid_missing_expression.cpp
+Gctx::SourceFile: custom_tests/parse/10_invalid_at_sign.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 int main() {
-    int a = ;
-    return a;
+    int a = @;
+    return 0;
 }
-Lexer::LexerOutput: 14 Tokens
+Lexer::LexerOutput: 15 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -19,9 +19,10 @@ main                      IDENTIFIER
 int                       K_INT                 
 a                         IDENTIFIER            
 =                         OP_ASSIGN             
+@                         AT                    
 ;                         SEMICOLON             
 return                    K_RETURN              
-a                         IDENTIFIER            
+0 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
                           EOF_TOKEN             
@@ -64,7 +65,7 @@ Program(
             Return(
                 CommaExpression(
                     PrimaryExpression(
-                        Identifier(a)
+                        Constant(0)
                     )
                 )
             )
@@ -72,7 +73,10 @@ Program(
     )
 )
 
-custom_tests/parse/19_invalid_missing_expression.cpp:2:13: [38;2;255;0;0merror: [0mexpected expression (PARSE)
-	    int a = ;
+custom_tests/parse/10_invalid_at_sign.cpp:2:13: [38;2;255;0;0merror: [0mexpected expression (PARSE)
+	    int a = @;
 	            [38;2;255;0;0m^[0m
-Compilation failed due to 1 error(s)
+custom_tests/parse/10_invalid_at_sign.cpp:2:13: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    int a = @;
+	            [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

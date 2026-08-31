@@ -1,25 +1,24 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/20_invalid_while_label_typename.cpp
+Gctx::SourceFile: custom_tests/parse/33_invalid_cascade_member_name.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
-struct Marker {
+struct Vec {
     int x;
 };
 
 int main() {
-    int x = 0;
-    while (x < 5 Marker Marker) {
-        x = x + 1;
-    }
-    return x;
+    Vec v;
+    v. = 5;
+    v-> = 6;
+    return v.x;
 }
-Lexer::LexerOutput: 39 Tokens
+Lexer::LexerOutput: 33 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 struct                    K_STRUCT              
-Marker                    IDENTIFIER            
+Vec                       IDENTIFIER            
 {                         LPAREN_CURLY          
 int                       K_INT                 
 x                         IDENTIFIER            
@@ -31,28 +30,22 @@ main                      IDENTIFIER
 (                         LPAREN_ROUND          
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
-int                       K_INT                 
-x                         IDENTIFIER            
-=                         OP_ASSIGN             
-0 (int)                   LITERAL_INTEGER       
+Vec                       IDENTIFIER            
+v                         IDENTIFIER            
 ;                         SEMICOLON             
-while                     K_WHILE               
-(                         LPAREN_ROUND          
-x                         IDENTIFIER            
-<                         OP_LT                 
+v                         IDENTIFIER            
+.                         OP_DOT                
+=                         OP_ASSIGN             
 5 (int)                   LITERAL_INTEGER       
-Marker                    IDENTIFIER            
-Marker                    IDENTIFIER            
-)                         RPAREN_ROUND          
-{                         LPAREN_CURLY          
-x                         IDENTIFIER            
-=                         OP_ASSIGN             
-x                         IDENTIFIER            
-+                         OP_PLUS               
-1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
-}                         RPAREN_CURLY          
+v                         IDENTIFIER            
+->                        OP_ARROW              
+=                         OP_ASSIGN             
+6 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
 return                    K_RETURN              
+v                         IDENTIFIER            
+.                         OP_DOT                
 x                         IDENTIFIER            
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
@@ -63,7 +56,7 @@ Lexer: Lexing stage completed
 Parser::AST: 
 Program(
     Struct(
-        Identifier(Marker)
+        Identifier(Vec)
         StructBodyNode(
             DeclarationList(
                 IsStatic: 0, IsConst: 0
@@ -99,40 +92,27 @@ Program(
             DeclarationList(
                 IsStatic: 0, IsConst: 0
                 TypeSpecifierModifier: None
-                Identifier(int)
+                Identifier(Vec)
                 SingleDeclarationNode(
                     DeclarationIdentifier(
                         PointerCount: 0
-                            Identifier(x)
+                            Identifier(v)
                         ArraySizes: 
                     )
-                    InitializerNode(
-                        Expressions: 1
-                        PrimaryExpression(
-                            Constant(0)
-                        )
-                    )
+                    Initialization : nullptr
                 )
             )
-            While(
+            ExpressionStatement(
+            )
+            ExpressionStatement(
+            )
+            Return(
                 CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_LT,
+                    MemberPostfixExpr(
                         PrimaryExpression(
-                            Identifier(x)
+                            Identifier(v)
                         )
-                        PrimaryExpression(
-                            Constant(5)
-                        )
-                    )
-                )
-            ;
-                Identifier(Marker)
-                ExpressionStatement(
-                    CommaExpression(
-                        PrimaryExpression(
-                            Identifier(Marker)
-                        )
+                        Identifier(x)
                     )
                 )
             )
@@ -140,13 +120,10 @@ Program(
     )
 )
 
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0midentifier cannot be a type name (PARSE)
-	    while (x < 5 Marker Marker) {
-	                        [38;2;255;0;0m^[0m
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
-	    while (x < 5 Marker Marker) {
-	                        [38;2;255;0;0m^[0m
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:31: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    while (x < 5 Marker Marker) {
-	                              [38;2;255;0;0m^[0m
-Compilation failed due to 3 error(s)
+custom_tests/parse/33_invalid_cascade_member_name.cpp:7:8: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
+	    v. = 5;
+	       [38;2;255;0;0m^[0m
+custom_tests/parse/33_invalid_cascade_member_name.cpp:8:9: [38;2;255;0;0merror: [0mexpected identifier after '->' (PARSE)
+	    v-> = 6;
+	        [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

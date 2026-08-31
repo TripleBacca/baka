@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/16_invalid_missing_semicolon.cpp
+Gctx::SourceFile: custom_tests/parse/12_invalid_missing_semicolon.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 int main() {
@@ -68,7 +68,7 @@ Program(
     )
 )
 
-custom_tests/parse/16_invalid_missing_semicolon.cpp:3:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/12_invalid_missing_semicolon.cpp:3:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    return a;
 	    [38;2;255;0;0m^[0m
 Compilation failed due to 1 error(s)

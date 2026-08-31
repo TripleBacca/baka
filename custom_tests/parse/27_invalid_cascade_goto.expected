@@ -1,0 +1,93 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/27_invalid_cascade_goto.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+int main() {
+    goto exit
+    x = 5;
+    x = x + 1
+    exit:
+    return x;
+}
+Lexer::LexerOutput: 23 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+goto                      K_GOTO                
+exit                      IDENTIFIER            
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+5 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+x                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+exit                      IDENTIFIER            
+:                         OP_COLON              
+return                    K_RETURN              
+x                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            Goto(
+                Identifier(exit)
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/27_invalid_cascade_goto.cpp:3:5: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+	    x = 5;
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/27_invalid_cascade_goto.cpp:5:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    exit:
+	    [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

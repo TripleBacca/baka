@@ -1,24 +1,39 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/19_invalid_for_label_typename.cpp
+Gctx::SourceFile: custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
-typedef int TNum;
+struct Broken {
+    int x;
+    int y = 5
+    int z;
+};
 
 int main() {
-    int x = 0;
-    for (x = 0; x < 5; x = x + 1; TNum) {
-        x = x + 1;
+    int a = 1;
+    while (a < 10 {
+        a = a + 1;
     }
-    return x;
+    return a;
 }
-Lexer::LexerOutput: 45 Tokens
+Lexer::LexerOutput: 43 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
-typedef                   K_TYPEDEF             
+struct                    K_STRUCT              
+Broken                    IDENTIFIER            
+{                         LPAREN_CURLY          
 int                       K_INT                 
-TNum                      IDENTIFIER            
+x                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+y                         IDENTIFIER            
+=                         OP_ASSIGN             
+5 (int)                   LITERAL_INTEGER       
+int                       K_INT                 
+z                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
 ;                         SEMICOLON             
 int                       K_INT                 
 main                      IDENTIFIER            
@@ -26,38 +41,25 @@ main                      IDENTIFIER
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
 int                       K_INT                 
-x                         IDENTIFIER            
+a                         IDENTIFIER            
 =                         OP_ASSIGN             
-0 (int)                   LITERAL_INTEGER       
-;                         SEMICOLON             
-for                       K_FOR                 
-(                         LPAREN_ROUND          
-x                         IDENTIFIER            
-=                         OP_ASSIGN             
-0 (int)                   LITERAL_INTEGER       
-;                         SEMICOLON             
-x                         IDENTIFIER            
-<                         OP_LT                 
-5 (int)                   LITERAL_INTEGER       
-;                         SEMICOLON             
-x                         IDENTIFIER            
-=                         OP_ASSIGN             
-x                         IDENTIFIER            
-+                         OP_PLUS               
 1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
-TNum                      IDENTIFIER            
-)                         RPAREN_ROUND          
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+<                         OP_LT                 
+10 (int)                  LITERAL_INTEGER       
 {                         LPAREN_CURLY          
-x                         IDENTIFIER            
+a                         IDENTIFIER            
 =                         OP_ASSIGN             
-x                         IDENTIFIER            
+a                         IDENTIFIER            
 +                         OP_PLUS               
 1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
 return                    K_RETURN              
-x                         IDENTIFIER            
+a                         IDENTIFIER            
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
                           EOF_TOKEN             
@@ -66,15 +68,41 @@ Lexer: Lexing stage completed
 
 Parser::AST: 
 Program(
-    Typedef(
-        isConst = 0
-        Identifier(int)
-        DeclarationIdentifier(
-            PointerCount: 0
-                Identifier(TNum)
-            ArraySizes: 
+    Struct(
+        Identifier(Broken)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(y)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(5)
+                        )
+                    )
+                )
+            )
         )
-        Modifier: None
     )
     Function(
         IsStatic: 0, IsConst: 0
@@ -99,70 +127,41 @@ Program(
                 SingleDeclarationNode(
                     DeclarationIdentifier(
                         PointerCount: 0
-                            Identifier(x)
+                            Identifier(a)
                         ArraySizes: 
                     )
                     InitializerNode(
                         Expressions: 1
                         PrimaryExpression(
-                            Constant(0)
+                            Constant(1)
                         )
                     )
                 )
             )
-            For(
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_ASSIGN,
-                        PrimaryExpression(
-                            Identifier(x)
-                        )
-                        PrimaryExpression(
-                            Constant(0)
-                        )
-                    )
-                )
+            While(
                 CommaExpression(
                     BinaryExpression(
                         BinaryOp: OP_LT,
                         PrimaryExpression(
-                            Identifier(x)
+                            Identifier(a)
                         )
                         PrimaryExpression(
-                            Constant(5)
+                            Constant(10)
                         )
                     )
                 )
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_ASSIGN,
-                        PrimaryExpression(
-                            Identifier(x)
-                        )
-                        BinaryExpression(
-                            BinaryOp: OP_ADD,
-                            PrimaryExpression(
-                                Identifier(x)
-                            )
-                            PrimaryExpression(
-                                Constant(1)
-                            )
-                        )
-                    )
-                )
-                Identifier(TNum)
                 CompoundStatement(
                     ExpressionStatement(
                         CommaExpression(
                             BinaryExpression(
                                 BinaryOp: OP_ASSIGN,
                                 PrimaryExpression(
-                                    Identifier(x)
+                                    Identifier(a)
                                 )
                                 BinaryExpression(
                                     BinaryOp: OP_ADD,
                                     PrimaryExpression(
-                                        Identifier(x)
+                                        Identifier(a)
                                     )
                                     PrimaryExpression(
                                         Constant(1)
@@ -176,7 +175,7 @@ Program(
             Return(
                 CommaExpression(
                     PrimaryExpression(
-                        Identifier(x)
+                        Identifier(a)
                     )
                 )
             )
@@ -184,7 +183,10 @@ Program(
     )
 )
 
-custom_tests/parse/19_invalid_for_label_typename.cpp:5:39: [38;2;255;0;0merror: [0midentifier cannot be a type name (PARSE)
-	    for (x = 0; x < 5; x = x + 1; TNum) {
-	                                      [38;2;255;0;0m^[0m
-Compilation failed due to 1 error(s)
+custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp:4:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    int z;
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/31_invalid_cascade_multiple_constructs.cpp:9:19: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	    while (a < 10 {
+	                  [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)
