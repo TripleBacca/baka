@@ -76,6 +76,45 @@ We are hoping we can support the following featureset:
 
 **Extra Features**
 - Loop Labels
+Loop labels allow the user to break or continue out until a specific loop.
+This allows the user to annotate loops and write cleaner nested loops.
+
+e.g.
+without labels
+```
+bool found = false;
+while(stream.hasItems()){
+    int val = stream.getNext();
+    for(int i = 0; i < len; i++){
+        if(val == candidates[i]){
+            found = true;
+            break;
+        }
+    }
+    if(found){
+        break;//extra break needed to break out of outer loop
+    }
+}
+if(found){
+//An item in the stream is in the array `candidates`
+}
+```
+with labels
+```
+bool found = false;
+while(stream.hasItems();loopy){
+    int val = stream.getNext();
+    for(int i = 0; i < len; i++){
+        if(val == candidates[i]){
+            found = true;
+            break loopy;
+        }
+    }
+}
+if(found){
+//An item in the stream is in the array `candidates`
+}
+```
 
 ### Stages Status
 - [x] Lexer
