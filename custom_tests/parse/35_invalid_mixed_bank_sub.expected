@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/35_invalid_mixed_bank.cpp
+Gctx::SourceFile: custom_tests/parse/35_invalid_mixed_bank_sub.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 typedef int Money;
@@ -856,25 +856,25 @@ Program(
     )
 )
 
-custom_tests/parse/35_invalid_mixed_bank.cpp:11:9: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:11:9: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
 	    acc..balance = 0;
 	        [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:12:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:12:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return acc
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (amount > acc.balance {
 	                             [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:31:44: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:31:44: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
 	    return (value > 50) ? cut * rate / 100 value;
 	                                           [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:38:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:38:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    deposit(b, 50)
 	                 [38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:43:1: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:43:1: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
 	}
 	[38;2;255;0;0m^[0m
-custom_tests/parse/35_invalid_mixed_bank.cpp:45:16: [38;2;255;0;0merror: [0mredefinition of struct (PARSE)
+custom_tests/parse/35_invalid_mixed_bank_sub.cpp:45:16: [38;2;255;0;0merror: [0mredefinition of struct (PARSE)
 	struct Account {
 	               [38;2;255;0;0m^[0m
 Compilation failed due to 7 error(s)

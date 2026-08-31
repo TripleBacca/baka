@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/40_invalid_mixed_goto_loops.cpp
+Gctx::SourceFile: custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 int retry_input(int limit) {
@@ -1180,25 +1180,25 @@ Program(
     )
 )
 
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	        goto parse
 	             [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:22:13: [38;2;255;0;0merror: [0mexpected ';' after continue statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:22:13: [38;2;255;0;0merror: [0mexpected ';' after continue statement (PARSE)
 	            continue
 	            [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:33:37: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:33:37: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
 	        total = (i > 2) ? total + i total;
 	                                    [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	            goto done
 	                 [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value == 0 {
 	                       [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:60:5: [38;2;255;0;0merror: [0mexpected identifier after '->' (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:60:5: [38;2;255;0;0merror: [0mexpected identifier after '->' (PARSE)
 	    int size = sizeof;
 	    [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_mixed_goto_loops.cpp:64:25: [38;2;255;0;0merror: [0mparent struct/class not found in symbol table (PARSE)
+custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:64:25: [38;2;255;0;0merror: [0mparent struct/class not found in symbol table (PARSE)
 	struct Account : Ledger {
 	                        [38;2;255;0;0m^[0m
 Compilation failed due to 7 error(s)

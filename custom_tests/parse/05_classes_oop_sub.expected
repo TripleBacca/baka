@@ -1,0 +1,587 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/05_classes_oop_sub.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+class Counter {
+    int value;
+
+    Counter() {
+        value = 0;
+    }
+
+    void reset() {
+        value = 0;
+    }
+
+    void increment() {
+        value = value + 1;
+    }
+
+    int get() {
+        return value;
+    }
+};
+
+class DerivedCounter : Counter {
+    int extra;
+
+    DerivedCounter() {
+        extra = 0;
+    }
+
+    void add(int amount) {
+        extra = extra + amount;
+    }
+};
+
+int main() {
+    Counter c;
+    c.increment();
+    c.increment();
+    int base = c.get();
+    c.reset();
+
+    DerivedCounter d;
+    d.add(5);
+    d.increment();
+
+    return base + d.get();
+}
+Lexer::LexerOutput: 143 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+class                     K_CLASS               
+Counter                   IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+value                     IDENTIFIER            
+;                         SEMICOLON             
+Counter                   IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+void                      K_VOID                
+reset                     IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+void                      K_VOID                
+increment                 IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+value                     IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+get                       IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+value                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+class                     K_CLASS               
+DerivedCounter            IDENTIFIER            
+:                         OP_COLON              
+Counter                   IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+extra                     IDENTIFIER            
+;                         SEMICOLON             
+DerivedCounter            IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+extra                     IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+void                      K_VOID                
+add                       IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+amount                    IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+extra                     IDENTIFIER            
+=                         OP_ASSIGN             
+extra                     IDENTIFIER            
++                         OP_PLUS               
+amount                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Counter                   IDENTIFIER            
+c                         IDENTIFIER            
+;                         SEMICOLON             
+c                         IDENTIFIER            
+.                         OP_DOT                
+increment                 IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+c                         IDENTIFIER            
+.                         OP_DOT                
+increment                 IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+base                      IDENTIFIER            
+=                         OP_ASSIGN             
+c                         IDENTIFIER            
+.                         OP_DOT                
+get                       IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+c                         IDENTIFIER            
+.                         OP_DOT                
+reset                     IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+DerivedCounter            IDENTIFIER            
+d                         IDENTIFIER            
+;                         SEMICOLON             
+d                         IDENTIFIER            
+.                         OP_DOT                
+add                       IDENTIFIER            
+(                         LPAREN_ROUND          
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+d                         IDENTIFIER            
+.                         OP_DOT                
+increment                 IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+base                      IDENTIFIER            
++                         OP_PLUS               
+d                         IDENTIFIER            
+.                         OP_DOT                
+get                       IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Class(
+        Identifier(Counter)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(value)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(reset)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(void)
+                FunctionBody:
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(increment)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(void)
+                FunctionBody:
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(value)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(get)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(int)
+                FunctionBody:
+                CompoundStatement(
+                    Return(
+                        CommaExpression(
+                            PrimaryExpression(
+                                Identifier(value)
+                            )
+                        )
+                    )
+                )
+            )
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Class(
+        Identifier(DerivedCounter)
+        ParentClass : 
+            Identifier(Counter)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(extra)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(add)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                            FunctionParameter(
+                                IsConst: 0
+                                TypeSpecifierModifier: None
+                                Identifier(int)
+                                SingleDeclarationNode(
+                                    DeclarationIdentifier(
+                                        PointerCount: 0
+                                            Identifier(amount)
+                                        ArraySizes: 
+                                    )
+                                    Initialization : nullptr
+                                )
+                            )
+                        )
+                )
+                ReturnType: 
+                Identifier(void)
+                FunctionBody:
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(extra)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(extra)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(amount)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(extra)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Counter)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(c)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(c)
+                            )
+                            Identifier(increment)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(c)
+                            )
+                            Identifier(increment)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(base)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(c)
+                                )
+                                Identifier(get)
+                            )
+                            CommaExpression(
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(c)
+                            )
+                            Identifier(reset)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(DerivedCounter)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(d)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(d)
+                            )
+                            Identifier(add)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Constant(5)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(d)
+                            )
+                            Identifier(increment)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        PrimaryExpression(
+                            Identifier(base)
+                        )
+                        FunctionCallPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(d)
+                                )
+                                Identifier(get)
+                            )
+                            CommaExpression(
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

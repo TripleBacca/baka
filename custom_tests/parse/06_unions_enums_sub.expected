@@ -1,0 +1,493 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/06_unions_enums_sub.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+typedef int Sid;
+
+enum Weekday {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+};
+
+union Value {
+    int int_value;
+    float float_value;
+    char char_value;
+};
+
+union Tagged {
+    int tag;
+    Value payload;
+};
+
+int main() {
+    Sid id = 99;
+    Sid next = id + 1;
+
+    Weekday day = FRIDAY;
+
+    Value v;
+    v.int_value = 42;
+    v.float_value = 1.5;
+
+    Tagged t;
+    t.tag = 1;
+    t.payload.int_value = 7;
+
+    return id + next + day + v.int_value + t.tag + t.payload.int_value;
+}
+Lexer::LexerOutput: 124 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+typedef                   K_TYPEDEF             
+int                       K_INT                 
+Sid                       IDENTIFIER            
+;                         SEMICOLON             
+enum                      K_ENUM                
+Weekday                   IDENTIFIER            
+{                         LPAREN_CURLY          
+MONDAY                    IDENTIFIER            
+,                         OP_COMMA              
+TUESDAY                   IDENTIFIER            
+,                         OP_COMMA              
+WEDNESDAY                 IDENTIFIER            
+,                         OP_COMMA              
+THURSDAY                  IDENTIFIER            
+,                         OP_COMMA              
+FRIDAY                    IDENTIFIER            
+,                         OP_COMMA              
+SATURDAY                  IDENTIFIER            
+,                         OP_COMMA              
+SUNDAY                    IDENTIFIER            
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+union                     K_UNION               
+Value                     IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+int_value                 IDENTIFIER            
+;                         SEMICOLON             
+float                     K_FLOAT               
+float_value               IDENTIFIER            
+;                         SEMICOLON             
+char                      K_CHAR                
+char_value                IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+union                     K_UNION               
+Tagged                    IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+tag                       IDENTIFIER            
+;                         SEMICOLON             
+Value                     IDENTIFIER            
+payload                   IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Sid                       IDENTIFIER            
+id                        IDENTIFIER            
+=                         OP_ASSIGN             
+99 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+Sid                       IDENTIFIER            
+next                      IDENTIFIER            
+=                         OP_ASSIGN             
+id                        IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+Weekday                   IDENTIFIER            
+day                       IDENTIFIER            
+=                         OP_ASSIGN             
+FRIDAY                    IDENTIFIER            
+;                         SEMICOLON             
+Value                     IDENTIFIER            
+v                         IDENTIFIER            
+;                         SEMICOLON             
+v                         IDENTIFIER            
+.                         OP_DOT                
+int_value                 IDENTIFIER            
+=                         OP_ASSIGN             
+42 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+v                         IDENTIFIER            
+.                         OP_DOT                
+float_value               IDENTIFIER            
+=                         OP_ASSIGN             
+1.5 (double)              LITERAL_FP            
+;                         SEMICOLON             
+Tagged                    IDENTIFIER            
+t                         IDENTIFIER            
+;                         SEMICOLON             
+t                         IDENTIFIER            
+.                         OP_DOT                
+tag                       IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+t                         IDENTIFIER            
+.                         OP_DOT                
+payload                   IDENTIFIER            
+.                         OP_DOT                
+int_value                 IDENTIFIER            
+=                         OP_ASSIGN             
+7 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+id                        IDENTIFIER            
++                         OP_PLUS               
+next                      IDENTIFIER            
++                         OP_PLUS               
+day                       IDENTIFIER            
++                         OP_PLUS               
+v                         IDENTIFIER            
+.                         OP_DOT                
+int_value                 IDENTIFIER            
++                         OP_PLUS               
+t                         IDENTIFIER            
+.                         OP_DOT                
+tag                       IDENTIFIER            
++                         OP_PLUS               
+t                         IDENTIFIER            
+.                         OP_DOT                
+payload                   IDENTIFIER            
+.                         OP_DOT                
+int_value                 IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Typedef(
+        isConst = 0
+        Identifier(int)
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(Sid)
+            ArraySizes: 
+        )
+        Modifier: None
+    )
+    Enum(Weekday)
+        Identifier(MONDAY)
+        Identifier(TUESDAY)
+        Identifier(WEDNESDAY)
+        Identifier(THURSDAY)
+        Identifier(FRIDAY)
+        Identifier(SATURDAY)
+        Identifier(SUNDAY)
+    )
+    Union(
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(int_value)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(float)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(float_value)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(char)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(char_value)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Union(
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(tag)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Value)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(payload)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Sid)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(id)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(99)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Sid)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(next)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(id)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Weekday)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(day)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Identifier(FRIDAY)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Value)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(v)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(v)
+                            )
+                            Identifier(int_value)
+                        )
+                        PrimaryExpression(
+                            Constant(42)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(v)
+                            )
+                            Identifier(float_value)
+                        )
+                        PrimaryExpression(
+                            Constant(1.5)
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Tagged)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(t)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(t)
+                            )
+                            Identifier(tag)
+                        )
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(t)
+                                )
+                                Identifier(payload)
+                            )
+                            Identifier(int_value)
+                        )
+                        PrimaryExpression(
+                            Constant(7)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ADD,
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        PrimaryExpression(
+                                            Identifier(id)
+                                        )
+                                        PrimaryExpression(
+                                            Identifier(next)
+                                        )
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(day)
+                                    )
+                                )
+                                MemberPostfixExpr(
+                                    PrimaryExpression(
+                                        Identifier(v)
+                                    )
+                                    Identifier(int_value)
+                                )
+                            )
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(t)
+                                )
+                                Identifier(tag)
+                            )
+                        )
+                        MemberPostfixExpr(
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(t)
+                                )
+                                Identifier(payload)
+                            )
+                            Identifier(int_value)
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

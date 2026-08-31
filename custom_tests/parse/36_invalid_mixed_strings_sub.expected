@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/36_invalid_mixed_strings.cpp
+Gctx::SourceFile: custom_tests/parse/36_invalid_mixed_strings_sub.cpp
 Driver::OptimisticDefects: 6
 Driver::SourceCode: 
 int str_len(char s[10]) {
@@ -1486,31 +1486,31 @@ Program(
     )
 )
 
-custom_tests/parse/36_invalid_mixed_strings.cpp:4:17: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:4:17: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
 	        len = s..len;
 	                [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:18:35: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:18:35: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
 	        return (c > '0') ? c - 32 c
 	                                  [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:18:35: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:18:35: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	        return (c > '0') ? c - 32 c
 	                                  [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:26:28: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:26:28: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (s[i] == target {
 	                           [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:37:33: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:37:33: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (is_digit(s[i]) == 0 {
 	                                [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:40:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:40:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        i = i + 1
 	                [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:64:23: [38;2;255;0;0merror: [0mexpected expression (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:64:23: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	    int bytes = sizeof;
 	                      [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:67:1: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:67:1: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
 	}
 	[38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_mixed_strings.cpp:69:28: [38;2;255;0;0merror: [0mparent struct/class not found in symbol table (PARSE)
+custom_tests/parse/36_invalid_mixed_strings_sub.cpp:69:28: [38;2;255;0;0merror: [0mparent struct/class not found in symbol table (PARSE)
 	struct StrBuf : MissingStr {
 	                           [38;2;255;0;0m^[0m
 Compilation failed due to 9 error(s)

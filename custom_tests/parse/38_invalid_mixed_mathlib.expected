@@ -34,23 +34,11 @@ int is_prime(int n) {
 int nth_fib(int n) {
     int a = 0;
     int b = 1;
+    int t = a.;
     for (int i = 0; i < n; i = i + 1; fibbing) {
-        continue
-        int t = a;
-        a = b;
-        b = a + t
+        b = a + t;
     }
     return a;
-}
-
-int clamp(int x, int lo, int hi) {
-    if (x < lo {
-        return lo;
-    }
-    if (x > hi {
-        return hi;
-    }
-    return x;
 }
 
 int sqrtish(int n) {
@@ -61,16 +49,26 @@ int sqrtish(int n) {
     return approx;
 }
 
+struct Span {
+    int hi;
+};
+
+struct Span {
+    int hi;
+};
+
 int main() {
+    int (*fn)(int a, int b) = 0;
     int a = abs(-4);
     int b = pow2(2, 5);
     int c = is_prime(17);
     int d = nth_fib(8);
-    int e = clamp(12, 0, 10);
+    int q = (int)(a);
     int s = sqrtish(50);
-    return a + b + c + d + e + s;
+    int arr[
+    return a + b + c + d + q + s;
 }
-Lexer::LexerOutput: 318 Tokens
+Lexer::LexerOutput: 310 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -205,6 +203,12 @@ b                         IDENTIFIER
 =                         OP_ASSIGN             
 1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
+int                       K_INT                 
+t                         IDENTIFIER            
+=                         OP_ASSIGN             
+a                         IDENTIFIER            
+.                         OP_DOT                
+;                         SEMICOLON             
 for                       K_FOR                 
 (                         LPAREN_ROUND          
 int                       K_INT                 
@@ -225,61 +229,15 @@ i                         IDENTIFIER
 fibbing                   IDENTIFIER            
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
-continue                  K_CONTINUE            
-int                       K_INT                 
-t                         IDENTIFIER            
-=                         OP_ASSIGN             
-a                         IDENTIFIER            
-;                         SEMICOLON             
-a                         IDENTIFIER            
-=                         OP_ASSIGN             
-b                         IDENTIFIER            
-;                         SEMICOLON             
 b                         IDENTIFIER            
 =                         OP_ASSIGN             
 a                         IDENTIFIER            
 +                         OP_PLUS               
 t                         IDENTIFIER            
+;                         SEMICOLON             
 }                         RPAREN_CURLY          
 return                    K_RETURN              
 a                         IDENTIFIER            
-;                         SEMICOLON             
-}                         RPAREN_CURLY          
-int                       K_INT                 
-clamp                     IDENTIFIER            
-(                         LPAREN_ROUND          
-int                       K_INT                 
-x                         IDENTIFIER            
-,                         OP_COMMA              
-int                       K_INT                 
-lo                        IDENTIFIER            
-,                         OP_COMMA              
-int                       K_INT                 
-hi                        IDENTIFIER            
-)                         RPAREN_ROUND          
-{                         LPAREN_CURLY          
-if                        K_IF                  
-(                         LPAREN_ROUND          
-x                         IDENTIFIER            
-<                         OP_LT                 
-lo                        IDENTIFIER            
-{                         LPAREN_CURLY          
-return                    K_RETURN              
-lo                        IDENTIFIER            
-;                         SEMICOLON             
-}                         RPAREN_CURLY          
-if                        K_IF                  
-(                         LPAREN_ROUND          
-x                         IDENTIFIER            
->                         OP_GT                 
-hi                        IDENTIFIER            
-{                         LPAREN_CURLY          
-return                    K_RETURN              
-hi                        IDENTIFIER            
-;                         SEMICOLON             
-}                         RPAREN_CURLY          
-return                    K_RETURN              
-x                         IDENTIFIER            
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
 int                       K_INT                 
@@ -316,11 +274,42 @@ return                    K_RETURN
 approx                    IDENTIFIER            
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
+struct                    K_STRUCT              
+Span                      IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+hi                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Span                      IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+hi                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
 int                       K_INT                 
 main                      IDENTIFIER            
 (                         LPAREN_ROUND          
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
+int                       K_INT                 
+(                         LPAREN_ROUND          
+*                         OP_MUL                
+fn                        IDENTIFIER            
+)                         RPAREN_ROUND          
+(                         LPAREN_ROUND          
+int                       K_INT                 
+a                         IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
 int                       K_INT                 
 a                         IDENTIFIER            
 =                         OP_ASSIGN             
@@ -357,15 +346,13 @@ nth_fib                   IDENTIFIER
 )                         RPAREN_ROUND          
 ;                         SEMICOLON             
 int                       K_INT                 
-e                         IDENTIFIER            
+q                         IDENTIFIER            
 =                         OP_ASSIGN             
-clamp                     IDENTIFIER            
 (                         LPAREN_ROUND          
-12 (int)                  LITERAL_INTEGER       
-,                         OP_COMMA              
-0 (int)                   LITERAL_INTEGER       
-,                         OP_COMMA              
-10 (int)                  LITERAL_INTEGER       
+int                       K_INT                 
+)                         RPAREN_ROUND          
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
 )                         RPAREN_ROUND          
 ;                         SEMICOLON             
 int                       K_INT                 
@@ -376,6 +363,9 @@ sqrtish                   IDENTIFIER
 50 (int)                  LITERAL_INTEGER       
 )                         RPAREN_ROUND          
 ;                         SEMICOLON             
+int                       K_INT                 
+arr                       IDENTIFIER            
+[                         LPAREN_SQUARE         
 return                    K_RETURN              
 a                         IDENTIFIER            
 +                         OP_PLUS               
@@ -385,7 +375,7 @@ c                         IDENTIFIER
 +                         OP_PLUS               
 d                         IDENTIFIER            
 +                         OP_PLUS               
-e                         IDENTIFIER            
+q                         IDENTIFIER            
 +                         OP_PLUS               
 s                         IDENTIFIER            
 ;                         SEMICOLON             
@@ -794,6 +784,21 @@ Program(
                     )
                 )
             )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(t)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 0
+                    )
+                )
+            )
             For(
                 DeclarationList(
                     IsStatic: 0, IsConst: 0
@@ -843,21 +848,6 @@ Program(
                 )
                 Identifier(fibbing)
                 CompoundStatement(
-                    Continue(
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(a)
-                                )
-                                PrimaryExpression(
-                                    Identifier(b)
-                                )
-                            )
-                        )
-                    )
                     ExpressionStatement(
                         CommaExpression(
                             BinaryExpression(
@@ -883,118 +873,6 @@ Program(
                 CommaExpression(
                     PrimaryExpression(
                         Identifier(a)
-                    )
-                )
-            )
-        )
-    )
-    Function(
-        IsStatic: 0, IsConst: 0
-        TypeSpecifierModifier: None
-        FuncType: 
-        DeclarationIdentifier(
-            PointerCount: 0
-                Identifier(clamp)
-            ArraySizes: 
-            FunctionParameters: 
-                Args(
-                    FunctionParameter(
-                        IsConst: 0
-                        TypeSpecifierModifier: None
-                        Identifier(int)
-                        SingleDeclarationNode(
-                            DeclarationIdentifier(
-                                PointerCount: 0
-                                    Identifier(x)
-                                ArraySizes: 
-                            )
-                            Initialization : nullptr
-                        )
-                    )
-                    FunctionParameter(
-                        IsConst: 0
-                        TypeSpecifierModifier: None
-                        Identifier(int)
-                        SingleDeclarationNode(
-                            DeclarationIdentifier(
-                                PointerCount: 0
-                                    Identifier(lo)
-                                ArraySizes: 
-                            )
-                            Initialization : nullptr
-                        )
-                    )
-                    FunctionParameter(
-                        IsConst: 0
-                        TypeSpecifierModifier: None
-                        Identifier(int)
-                        SingleDeclarationNode(
-                            DeclarationIdentifier(
-                                PointerCount: 0
-                                    Identifier(hi)
-                                ArraySizes: 
-                            )
-                            Initialization : nullptr
-                        )
-                    )
-                )
-        )
-        ReturnType: 
-        Identifier(int)
-        FunctionBody:
-        CompoundStatement(
-            If Super Block(
-                If(
-                    CommaExpression(
-                        BinaryExpression(
-                            BinaryOp: OP_LT,
-                            PrimaryExpression(
-                                Identifier(x)
-                            )
-                            PrimaryExpression(
-                                Identifier(lo)
-                            )
-                        )
-                    )
-                    CompoundStatement(
-                        Return(
-                            CommaExpression(
-                                PrimaryExpression(
-                                    Identifier(lo)
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-            If Super Block(
-                If(
-                    CommaExpression(
-                        BinaryExpression(
-                            BinaryOp: OP_GT,
-                            PrimaryExpression(
-                                Identifier(x)
-                            )
-                            PrimaryExpression(
-                                Identifier(hi)
-                            )
-                        )
-                    )
-                    CompoundStatement(
-                        Return(
-                            CommaExpression(
-                                PrimaryExpression(
-                                    Identifier(hi)
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-            Return(
-                CommaExpression(
-                    PrimaryExpression(
-                        Identifier(x)
                     )
                 )
             )
@@ -1098,6 +976,42 @@ Program(
             )
         )
     )
+    Struct(
+        Identifier(Span)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(hi)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Struct(
+        Identifier(Span)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(hi)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
     Function(
         IsStatic: 0, IsConst: 0
         TypeSpecifierModifier: None
@@ -1114,6 +1028,57 @@ Program(
         Identifier(int)
         FunctionBody:
         CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            DeclarationIdentifier(
+                                PointerCount: 1
+                                    Identifier(fn)
+                                ArraySizes: 
+                            )
+                        ArraySizes: 
+                        FunctionParameters: 
+                            Args(
+                                FunctionParameter(
+                                    IsConst: 0
+                                    TypeSpecifierModifier: None
+                                    Identifier(int)
+                                    SingleDeclarationNode(
+                                        DeclarationIdentifier(
+                                            PointerCount: 0
+                                                Identifier(a)
+                                            ArraySizes: 
+                                        )
+                                        Initialization : nullptr
+                                    )
+                                )
+                                FunctionParameter(
+                                    IsConst: 0
+                                    TypeSpecifierModifier: None
+                                    Identifier(int)
+                                    SingleDeclarationNode(
+                                        DeclarationIdentifier(
+                                            PointerCount: 0
+                                                Identifier(b)
+                                            ArraySizes: 
+                                        )
+                                        Initialization : nullptr
+                                    )
+                                )
+                            )
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
             DeclarationList(
                 IsStatic: 0, IsConst: 0
                 TypeSpecifierModifier: None
@@ -1227,24 +1192,25 @@ Program(
                 SingleDeclarationNode(
                     DeclarationIdentifier(
                         PointerCount: 0
-                            Identifier(e)
+                            Identifier(q)
                         ArraySizes: 
                     )
                     InitializerNode(
                         Expressions: 1
-                        FunctionCallPostfixExpr(
-                            PrimaryExpression(
-                                Identifier(clamp)
+                        CastFactor(
+                            TypeNode(
+                                isConst: 0
+                                TypeSpecifierModifier: None
+                                Identifier(int)
+                            )
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Variable: nullptr
+                                ArraySizes: 
                             )
                             CommaExpression(
                                 PrimaryExpression(
-                                    Constant(12)
-                                )
-                                PrimaryExpression(
-                                    Constant(0)
-                                )
-                                PrimaryExpression(
-                                    Constant(10)
+                                    Identifier(a)
                                 )
                             )
                         )
@@ -1276,43 +1242,6 @@ Program(
                     )
                 )
             )
-            Return(
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_ADD,
-                        BinaryExpression(
-                            BinaryOp: OP_ADD,
-                            BinaryExpression(
-                                BinaryOp: OP_ADD,
-                                BinaryExpression(
-                                    BinaryOp: OP_ADD,
-                                    BinaryExpression(
-                                        BinaryOp: OP_ADD,
-                                        PrimaryExpression(
-                                            Identifier(a)
-                                        )
-                                        PrimaryExpression(
-                                            Identifier(b)
-                                        )
-                                    )
-                                    PrimaryExpression(
-                                        Identifier(c)
-                                    )
-                                )
-                                PrimaryExpression(
-                                    Identifier(d)
-                                )
-                            )
-                            PrimaryExpression(
-                                Identifier(e)
-                            )
-                        )
-                        PrimaryExpression(
-                            Identifier(s)
-                        )
-                    )
-                )
-            )
         )
     )
 )
@@ -1329,22 +1258,19 @@ custom_tests/parse/38_invalid_mixed_mathlib.cpp:12:21: [38;2;255;0;0merror: [0
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:20:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (n % d == 0 {
 	                       [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:32:9: [38;2;255;0;0merror: [0mexpected ';' after continue statement (PARSE)
-	        continue
-	        [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:35:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	        b = a + t
-	                [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:41:16: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
-	    if (x < lo {
-	               [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:44:16: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
-	    if (x > hi {
-	               [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:53:27: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/38_invalid_mixed_mathlib.cpp:31:15: [38;2;255;0;0merror: [0mexpected identifier after '.' (PARSE)
+	    int t = a.;
+	              [38;2;255;0;0m^[0m
+custom_tests/parse/38_invalid_mixed_mathlib.cpp:41:27: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        approx = approx + 1
 	                          [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_mixed_mathlib.cpp:54:40: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
+custom_tests/parse/38_invalid_mixed_mathlib.cpp:42:40: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
 	    } while (approx * approx < n; guess)
 	                                       [38;2;255;0;0m^[0m
-Compilation failed due to 10 error(s)
+custom_tests/parse/38_invalid_mixed_mathlib.cpp:50:13: [38;2;255;0;0merror: [0mredefinition of struct (PARSE)
+	struct Span {
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/38_invalid_mixed_mathlib.cpp:63:5: [38;2;255;0;0merror: [0mexpected expression (PARSE)
+	    return a + b + c + d + q + s;
+	    [38;2;255;0;0m^[0m
+Compilation failed due to 9 error(s)
