@@ -28,8 +28,9 @@
     base::LineCtx LineCtx_v; \
     std::string Message; \
     driver::Stage Stage; \
+    bool isAtEnd  = false; \
     public: \
-    name(types::TokenSourceLocation sourceLocation, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage) : sourceLocation(sourceLocation), LineCtx_v(LineCtx_v), Message(std::move(Message)), Stage(Stage) {} \
+    name(types::TokenSourceLocation sourceLocation, base::LineCtx LineCtx_v, std::string Message, driver::Stage Stage, bool isAtEnd) : sourceLocation(sourceLocation), LineCtx_v(LineCtx_v), Message(std::move(Message)), Stage(Stage), isAtEnd(isAtEnd) {} \
     types::TokenSourceLocation getSourceLocation() const override { \
         return sourceLocation; \
     } \
@@ -38,10 +39,12 @@
         os << sourceLocation.FilePath << ":" << sourceLocation.LineNo << ":" << sourceLocation.Col << ": "  \
         << ansii << error_type_str << ": " << CLEAR_ANSII \
         << Message << " (" << to_string_view(Stage) << ")\n" \
-        << '\t' << LineCtx_v \
         << '\t'; \
-        \
-        for(int i = 0; i < sourceLocation.Col-1; i++) os << ' '; \
+        auto LenghtBef = os.tellp(); \
+        os << LineCtx_v; \
+        auto LenghtAft = os.tellp(); \
+        os << '\t'; \
+        for(int i = 0; i < (isAtEnd ? (LenghtAft - LenghtBef - 1) : sourceLocation.Col-1); i++) os << ' '; \
         os << ansii << '^' << CLEAR_ANSII; \
         \
         return os.str(); \
