@@ -1,0 +1,112 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/28_invalid_cascade_struct.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+struct A {
+    int x = 5
+    int y;
+}
+
+struct B {
+    int z;
+};
+
+int main() {
+    return 0;
+}
+Lexer::LexerOutput: 29 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+struct                    K_STRUCT              
+A                         IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+5 (int)                   LITERAL_INTEGER       
+int                       K_INT                 
+y                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+struct                    K_STRUCT              
+B                         IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+z                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Struct(
+        Identifier(A)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(5)
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Constant(0)
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/28_invalid_cascade_struct.cpp:3:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    int y;
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/28_invalid_cascade_struct.cpp:6:1: [38;2;255;0;0merror: [0mexpected ';' after struct/class body (PARSE)
+	struct B {
+	[38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

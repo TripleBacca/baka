@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/21_top_level_program.cpp
+Gctx::SourceFile: custom_tests/parse/07_top_level_program.cpp
 Driver::OptimisticDefects: 4
 Driver::SourceCode: 
 typedef int Status;

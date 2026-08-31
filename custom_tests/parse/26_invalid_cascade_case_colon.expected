@@ -1,17 +1,21 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/21_invalid_do_while_semicolon.cpp
+Gctx::SourceFile: custom_tests/parse/26_invalid_cascade_case_colon.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 int main() {
     int x = 0;
-    do {
-        x = x + 1;
-    } while (x < 3)
+    switch (x) {
+        case 1
+            x = x + 1;
+            break;
+        default:
+            x = 0;
+    }
     return x;
 }
-Lexer::LexerOutput: 30 Tokens
+Lexer::LexerOutput: 37 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -24,21 +28,28 @@ x                         IDENTIFIER
 =                         OP_ASSIGN             
 0 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
-do                        K_DO                  
+switch                    K_SWITCH              
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+)                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
+case                      K_CASE                
+1 (int)                   LITERAL_INTEGER       
 x                         IDENTIFIER            
 =                         OP_ASSIGN             
 x                         IDENTIFIER            
 +                         OP_PLUS               
 1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
-}                         RPAREN_CURLY          
-while                     K_WHILE               
-(                         LPAREN_ROUND          
+break                     K_BREAK               
+;                         SEMICOLON             
+default                   K_DEFAULT             
+:                         OP_COLON              
 x                         IDENTIFIER            
-<                         OP_LT                 
-3 (int)                   LITERAL_INTEGER       
-)                         RPAREN_ROUND          
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
 return                    K_RETURN              
 x                         IDENTIFIER            
 ;                         SEMICOLON             
@@ -83,8 +94,26 @@ Program(
                     )
                 )
             )
-            Do While(
+            Switch(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(x)
+                    )
+                )
                 CompoundStatement(
+                    Case Label(CommaExpression(
+    PrimaryExpression(
+        Constant(1)
+    )
+)
+:
+                    )
+                    ExpressionStatement(
+                    )
+                    Break(
+                    )
+                    Default Label(:
+                    )
                     ExpressionStatement(
                         CommaExpression(
                             BinaryExpression(
@@ -92,27 +121,10 @@ Program(
                                 PrimaryExpression(
                                     Identifier(x)
                                 )
-                                BinaryExpression(
-                                    BinaryOp: OP_ADD,
-                                    PrimaryExpression(
-                                        Identifier(x)
-                                    )
-                                    PrimaryExpression(
-                                        Constant(1)
-                                    )
+                                PrimaryExpression(
+                                    Constant(0)
                                 )
                             )
-                        )
-                    )
-                )
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_LT,
-                        PrimaryExpression(
-                            Identifier(x)
-                        )
-                        PrimaryExpression(
-                            Constant(3)
                         )
                     )
                 )
@@ -128,7 +140,10 @@ Program(
     )
 )
 
-custom_tests/parse/21_invalid_do_while_semicolon.cpp:6:5: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
-	    return x;
-	    [38;2;255;0;0m^[0m
-Compilation failed due to 1 error(s)
+custom_tests/parse/26_invalid_cascade_case_colon.cpp:5:13: [38;2;255;0;0merror: [0mexpected ':' after case value (PARSE)
+	            x = x + 1;
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/26_invalid_cascade_case_colon.cpp:5:22: [38;2;255;0;0merror: [0mexpected expression (PARSE)
+	            x = x + 1;
+	                     [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

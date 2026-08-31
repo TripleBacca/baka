@@ -1,0 +1,942 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/35_invalid_cascade_bank.cpp
+Driver::OptimisticDefects: 4
+Driver::SourceCode: 
+typedef int Money;
+
+struct Account {
+    int id;
+    Money balance;
+};
+
+Account open_account(int id) {
+    Account acc;
+    acc.id = id;
+    acc.balance = 0;
+    return acc
+}
+
+Money deposit(Account acc, Money amount) {
+    acc.balance = acc.balance + amount
+    return acc.balance;
+}
+
+Money withdraw(Account acc, Money amount) {
+    if (amount > acc.balance {
+        amount = acc.balance;
+    }
+    acc.balance = acc.balance - amount;
+    return amount;
+}
+
+Money interest(Money value, int rate) {
+    return value * rate / 100
+}
+
+Money clamp(Money value, Money lo, Money hi) {
+    if (value < lo {
+        return lo
+    }
+    return hi;
+}
+
+int main() {
+    Account a = open_account(1);
+    Account b = open_account(2);
+    deposit(a, 100);
+    deposit(b, 50)
+    Money taken = withdraw(a, 30);
+    Money gain = interest(taken, 5);
+    int total = a.balance + b.balance + taken + gain;
+    return total;
+}
+Lexer::LexerOutput: 221 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+typedef                   K_TYPEDEF             
+int                       K_INT                 
+Money                     IDENTIFIER            
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Account                   IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+id                        IDENTIFIER            
+;                         SEMICOLON             
+Money                     IDENTIFIER            
+balance                   IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+Account                   IDENTIFIER            
+open_account              IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+id                        IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Account                   IDENTIFIER            
+acc                       IDENTIFIER            
+;                         SEMICOLON             
+acc                       IDENTIFIER            
+.                         OP_DOT                
+id                        IDENTIFIER            
+=                         OP_ASSIGN             
+id                        IDENTIFIER            
+;                         SEMICOLON             
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+acc                       IDENTIFIER            
+}                         RPAREN_CURLY          
+Money                     IDENTIFIER            
+deposit                   IDENTIFIER            
+(                         LPAREN_ROUND          
+Account                   IDENTIFIER            
+acc                       IDENTIFIER            
+,                         OP_COMMA              
+Money                     IDENTIFIER            
+amount                    IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+=                         OP_ASSIGN             
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
++                         OP_PLUS               
+amount                    IDENTIFIER            
+return                    K_RETURN              
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+Money                     IDENTIFIER            
+withdraw                  IDENTIFIER            
+(                         LPAREN_ROUND          
+Account                   IDENTIFIER            
+acc                       IDENTIFIER            
+,                         OP_COMMA              
+Money                     IDENTIFIER            
+amount                    IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+amount                    IDENTIFIER            
+>                         OP_GT                 
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+{                         LPAREN_CURLY          
+amount                    IDENTIFIER            
+=                         OP_ASSIGN             
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+=                         OP_ASSIGN             
+acc                       IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
+-                         OP_UNARY_MINUS        
+amount                    IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+amount                    IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+Money                     IDENTIFIER            
+interest                  IDENTIFIER            
+(                         LPAREN_ROUND          
+Money                     IDENTIFIER            
+value                     IDENTIFIER            
+,                         OP_COMMA              
+int                       K_INT                 
+rate                      IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+value                     IDENTIFIER            
+*                         OP_MUL                
+rate                      IDENTIFIER            
+/                         OP_DIV                
+100 (int)                 LITERAL_INTEGER       
+}                         RPAREN_CURLY          
+Money                     IDENTIFIER            
+clamp                     IDENTIFIER            
+(                         LPAREN_ROUND          
+Money                     IDENTIFIER            
+value                     IDENTIFIER            
+,                         OP_COMMA              
+Money                     IDENTIFIER            
+lo                        IDENTIFIER            
+,                         OP_COMMA              
+Money                     IDENTIFIER            
+hi                        IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+<                         OP_LT                 
+lo                        IDENTIFIER            
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+lo                        IDENTIFIER            
+}                         RPAREN_CURLY          
+return                    K_RETURN              
+hi                        IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+Account                   IDENTIFIER            
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+open_account              IDENTIFIER            
+(                         LPAREN_ROUND          
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+Account                   IDENTIFIER            
+b                         IDENTIFIER            
+=                         OP_ASSIGN             
+open_account              IDENTIFIER            
+(                         LPAREN_ROUND          
+2 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+deposit                   IDENTIFIER            
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+,                         OP_COMMA              
+100 (int)                 LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+deposit                   IDENTIFIER            
+(                         LPAREN_ROUND          
+b                         IDENTIFIER            
+,                         OP_COMMA              
+50 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+Money                     IDENTIFIER            
+taken                     IDENTIFIER            
+=                         OP_ASSIGN             
+withdraw                  IDENTIFIER            
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+,                         OP_COMMA              
+30 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+Money                     IDENTIFIER            
+gain                      IDENTIFIER            
+=                         OP_ASSIGN             
+interest                  IDENTIFIER            
+(                         LPAREN_ROUND          
+taken                     IDENTIFIER            
+,                         OP_COMMA              
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+total                     IDENTIFIER            
+=                         OP_ASSIGN             
+a                         IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
++                         OP_PLUS               
+b                         IDENTIFIER            
+.                         OP_DOT                
+balance                   IDENTIFIER            
++                         OP_PLUS               
+taken                     IDENTIFIER            
++                         OP_PLUS               
+gain                      IDENTIFIER            
+;                         SEMICOLON             
+return                    K_RETURN              
+total                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Typedef(
+        isConst = 0
+        Identifier(int)
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(Money)
+            ArraySizes: 
+        )
+        Modifier: None
+    )
+    Struct(
+        Identifier(Account)
+        StructBodyNode(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(id)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Money)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(balance)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(open_account)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(id)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Account)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Account)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(acc)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(acc)
+                            )
+                            Identifier(id)
+                        )
+                        PrimaryExpression(
+                            Identifier(id)
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(acc)
+                            )
+                            Identifier(balance)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(acc)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(deposit)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Account)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(acc)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(amount)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Money)
+        FunctionBody:
+        CompoundStatement(
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(acc)
+                            )
+                            Identifier(balance)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(acc)
+                                )
+                                Identifier(balance)
+                            )
+                            PrimaryExpression(
+                                Identifier(amount)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(withdraw)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Account)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(acc)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(amount)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Money)
+        FunctionBody:
+        CompoundStatement(
+            If Super Block(
+                If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_GT,
+                            PrimaryExpression(
+                                Identifier(amount)
+                            )
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(acc)
+                                )
+                                Identifier(balance)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
+                                    PrimaryExpression(
+                                        Identifier(amount)
+                                    )
+                                    MemberPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(acc)
+                                        )
+                                        Identifier(balance)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        MemberPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(acc)
+                            )
+                            Identifier(balance)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_SUB,
+                            MemberPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(acc)
+                                )
+                                Identifier(balance)
+                            )
+                            PrimaryExpression(
+                                Identifier(amount)
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(amount)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(interest)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(value)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(int)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(rate)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Money)
+        FunctionBody:
+        CompoundStatement(
+            Return(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_DIV,
+                        BinaryExpression(
+                            BinaryOp: OP_MUL,
+                            PrimaryExpression(
+                                Identifier(value)
+                            )
+                            PrimaryExpression(
+                                Identifier(rate)
+                            )
+                        )
+                        PrimaryExpression(
+                            Constant(100)
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(clamp)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(value)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(lo)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                    FunctionParameter(
+                        IsConst: 0
+                        TypeSpecifierModifier: None
+                        Identifier(Money)
+                        SingleDeclarationNode(
+                            DeclarationIdentifier(
+                                PointerCount: 0
+                                    Identifier(hi)
+                                ArraySizes: 
+                            )
+                            Initialization : nullptr
+                        )
+                    )
+                )
+        )
+        ReturnType: 
+        Identifier(Money)
+        FunctionBody:
+        CompoundStatement(
+            If Super Block(
+                If(
+                    CommaExpression(
+                        BinaryExpression(
+                            BinaryOp: OP_LT,
+                            PrimaryExpression(
+                                Identifier(value)
+                            )
+                            PrimaryExpression(
+                                Identifier(lo)
+                            )
+                        )
+                    )
+                    CompoundStatement(
+                        Return(
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(lo)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(hi)
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Account)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(a)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(open_account)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(1)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Account)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(b)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(open_account)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(2)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        PrimaryExpression(
+                            Identifier(deposit)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Identifier(a)
+                            )
+                            PrimaryExpression(
+                                Constant(100)
+                            )
+                        )
+                    )
+                )
+            )
+            ExpressionStatement(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        PrimaryExpression(
+                            Identifier(deposit)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Identifier(b)
+                            )
+                            PrimaryExpression(
+                                Constant(50)
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(Money)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(gain)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(interest)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(taken)
+                                )
+                                PrimaryExpression(
+                                    Constant(5)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(total)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            BinaryExpression(
+                                BinaryOp: OP_ADD,
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    MemberPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(a)
+                                        )
+                                        Identifier(balance)
+                                    )
+                                    MemberPostfixExpr(
+                                        PrimaryExpression(
+                                            Identifier(b)
+                                        )
+                                        Identifier(balance)
+                                    )
+                                )
+                                PrimaryExpression(
+                                    Identifier(taken)
+                                )
+                            )
+                            PrimaryExpression(
+                                Identifier(gain)
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(total)
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/35_invalid_cascade_bank.cpp:13:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	}
+	[38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:17:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    return acc.balance;
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:21:30: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	    if (amount > acc.balance {
+	                             [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:30:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	}
+	[38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:33:20: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+	    if (value < lo {
+	                   [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:35:5: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    }
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/35_invalid_cascade_bank.cpp:44:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    Money taken = withdraw(a, 30);
+	    [38;2;255;0;0m^[0m
+Compilation failed due to 7 error(s)

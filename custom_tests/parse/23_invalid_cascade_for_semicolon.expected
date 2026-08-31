@@ -1,17 +1,17 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/21_invalid_do_while_semicolon.cpp
+Gctx::SourceFile: custom_tests/parse/23_invalid_cascade_for_semicolon.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 int main() {
     int x = 0;
-    do {
+    for (x = 0 x < 5; x = x + 1) {
         x = x + 1;
-    } while (x < 3)
+    }
     return x;
 }
-Lexer::LexerOutput: 30 Tokens
+Lexer::LexerOutput: 38 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -24,7 +24,21 @@ x                         IDENTIFIER
 =                         OP_ASSIGN             
 0 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
-do                        K_DO                  
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+x                         IDENTIFIER            
+<                         OP_LT                 
+5 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+x                         IDENTIFIER            
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
 x                         IDENTIFIER            
 =                         OP_ASSIGN             
@@ -33,12 +47,6 @@ x                         IDENTIFIER
 1 (int)                   LITERAL_INTEGER       
 ;                         SEMICOLON             
 }                         RPAREN_CURLY          
-while                     K_WHILE               
-(                         LPAREN_ROUND          
-x                         IDENTIFIER            
-<                         OP_LT                 
-3 (int)                   LITERAL_INTEGER       
-)                         RPAREN_ROUND          
 return                    K_RETURN              
 x                         IDENTIFIER            
 ;                         SEMICOLON             
@@ -83,7 +91,37 @@ Program(
                     )
                 )
             )
-            Do While(
+            For(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        PrimaryExpression(
+                            Constant(0)
+                        )
+                    )
+                )
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_ASSIGN,
+                        PrimaryExpression(
+                            Identifier(x)
+                        )
+                        BinaryExpression(
+                            BinaryOp: OP_ADD,
+                            PrimaryExpression(
+                                Identifier(x)
+                            )
+                            PrimaryExpression(
+                                Constant(1)
+                            )
+                        )
+                    )
+                )
+                Upd: nullptr
+                Label: nullptr
                 CompoundStatement(
                     ExpressionStatement(
                         CommaExpression(
@@ -105,17 +143,6 @@ Program(
                         )
                     )
                 )
-                CommaExpression(
-                    BinaryExpression(
-                        BinaryOp: OP_LT,
-                        PrimaryExpression(
-                            Identifier(x)
-                        )
-                        PrimaryExpression(
-                            Constant(3)
-                        )
-                    )
-                )
             )
             Return(
                 CommaExpression(
@@ -128,7 +155,10 @@ Program(
     )
 )
 
-custom_tests/parse/21_invalid_do_while_semicolon.cpp:6:5: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
-	    return x;
-	    [38;2;255;0;0m^[0m
-Compilation failed due to 1 error(s)
+custom_tests/parse/23_invalid_cascade_for_semicolon.cpp:3:16: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
+	    for (x = 0 x < 5; x = x + 1) {
+	               [38;2;255;0;0m^[0m
+custom_tests/parse/23_invalid_cascade_for_semicolon.cpp:3:32: [38;2;255;0;0merror: [0mexpected ';' in 'for' statement specifier (PARSE)
+	    for (x = 0 x < 5; x = x + 1) {
+	                               [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

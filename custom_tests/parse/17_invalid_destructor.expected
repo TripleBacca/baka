@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/24_invalid_destructor.cpp
+Gctx::SourceFile: custom_tests/parse/17_invalid_destructor.cpp
 Driver::OptimisticDefects: 2
 Driver::SourceCode: 
 class BrokenMissingParen {
@@ -56,19 +56,15 @@ Program(
     Class(
         Identifier(BrokenMissingParen)
         StructBodyNode(
-            DeclarationList(
-                IsStatic: 0, IsConst: 0
-                TypeSpecifierModifier: Class
-                Identifier(BrokenEmptyParen)
-                SingleDeclarationNode(
-                    DeclarationIdentifier(
-                        PointerCount: 0
-                            Identifier({)
-                        ArraySizes: 
-                    )
-                    Initialization : nullptr
+            Destructor(
+                CompoundStatement(
                 )
             )
+        )
+    )
+    Class(
+        Identifier(BrokenEmptyParen)
+        StructBodyNode(
             Destructor(
                 CompoundStatement(
                 )
@@ -78,19 +74,6 @@ Program(
     Class(
         Identifier(BrokenNoName)
         StructBodyNode(
-            DeclarationList(
-                IsStatic: 0, IsConst: 0
-                TypeSpecifierModifier: None
-                Identifier()
-                SingleDeclarationNode(
-                    DeclarationIdentifier(
-                        PointerCount: 0
-                            Identifier()
-                        ArraySizes: 
-                    )
-                    Initialization : nullptr
-                )
-            )
             Destructor(
                 CompoundStatement(
                 )
@@ -99,38 +82,16 @@ Program(
     )
 )
 
-custom_tests/parse/24_invalid_destructor.cpp:2:25: [38;2;255;0;0merror: [0mexpected '(' after destructor name (PARSE)
+custom_tests/parse/17_invalid_destructor.cpp:2:25: [38;2;255;0;0merror: [0mexpected '(' after destructor name (PARSE)
 	    ~BrokenMissingParen {
 	                        [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:4:1: [38;2;255;0;0merror: [0mexpected '{' (PARSE)
-	};
-	[38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:4:2: [38;2;255;0;0merror: [0mexpected identifier or '(' (PARSE)
-	};
-	 [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:6:24: [38;2;255;0;0merror: [0munknown type name 'BrokenEmptyParen' (PARSE)
-	class BrokenEmptyParen {
-	                       [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:6:24: [38;2;255;0;0merror: [0mexpected identifier (PARSE)
-	class BrokenEmptyParen {
-	                       [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:7:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/17_invalid_destructor.cpp:7:25: [38;2;255;0;0merror: [0mexpected '{' for destructor body (PARSE)
 	    ~BrokenEmptyParen() ;
-	    [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:11:7: [38;2;255;0;0merror: [0mexpected identifier after '~' (PARSE)
+	                        [38;2;255;0;0m^[0m
+custom_tests/parse/17_invalid_destructor.cpp:11:7: [38;2;255;0;0merror: [0mexpected identifier after '~' (PARSE)
 	    ~ {
 	      [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:11:7: [38;2;255;0;0merror: [0mexpected '(' after destructor name (PARSE)
+custom_tests/parse/17_invalid_destructor.cpp:11:7: [38;2;255;0;0merror: [0mexpected '(' after destructor name (PARSE)
 	    ~ {
 	      [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:13:1: [38;2;255;0;0merror: [0mexpected '{' (PARSE)
-	};	[38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:13:2: [38;2;255;0;0merror: [0mexpected identifier or '(' (PARSE)
-	};	 [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:13:3: [38;2;255;0;0merror: [0mexpected identifier or '(' (PARSE)
-	};	  [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:13:3: [38;2;255;0;0merror: [0mexpected identifier (PARSE)
-	};	  [38;2;255;0;0m^[0m
-custom_tests/parse/24_invalid_destructor.cpp:13:3: [38;2;255;0;0merror: [0mexpected ';' after struct/class body (PARSE)
-	};	  [38;2;255;0;0m^[0m
-Compilation failed due to 13 error(s)
+Compilation failed due to 4 error(s)
