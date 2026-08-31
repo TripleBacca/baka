@@ -150,3 +150,10 @@ There are certain features we are not supporting:
 - [ ] Semantic Analysis
 - [ ] Optimization Passes
 - [ ] Codegen
+
+
+#### Made By:
+- Satindra Ramalingam (24114087)
+- Shaurya Goel (24114090)
+- Tanmay Arya (24114099)
+- Abhinav Shresth (24115008)

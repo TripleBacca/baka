@@ -1,12 +1,12 @@
 help:
 	@printf "baka : C++ like language compiler\n"
-	@printf "make help \t\t\t show this help file\n"
-	@printf "make build \t\t\t build the compiler\n"
-	@printf "make test \t\t\t test the compiler\n"
-	@printf "make clean \t\t\t clean up build artifacts\n"
-	@printf "make lex file=path/to/file \t run the compiler till the lexer stage\n"
-	@printf "make parse file=path/to/file \t run the compiler till the parser stage\n"
-	@printf "make parse-folder dir=path/to/dir \t run parser on all .cpp files in dir recursively, output to .out files\n"
+	@printf "make help \t\t\t\t show this help file\n"
+	@printf "make build \t\t\t\t build the compiler\n"
+	@printf "make test \t\t\t\t test the compiler\n"
+	@printf "make clean \t\t\t\t clean up build artifacts\n"
+	@printf "make lex file=path/to/file \t\t run the compiler till the lexer stage\n"
+	@printf "make parse file=path/to/file \t\t run the compiler till the parser stage\n"
+	@printf "make parse-folder dir=path/to/dir \t run parser on all files in dir recursively, output to .out files\n"
 
 test: build
 	./custom_test_hook $(STAGE_ARGS)
