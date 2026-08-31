@@ -83,9 +83,9 @@ namespace baka {
 
             // exception stuff:
             static void GenerateLineWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
-                                        driver::Stage Stage);
+                                        driver::Stage Stage, bool isAtEnd = false);
             static void GenerateLineError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
-                                      driver::Stage Stage);
+                                      driver::Stage Stage, bool isAtEnd = false);
 
             static void GenerateGlobalWarning(std::string Message,
                                         driver::Stage Stage);

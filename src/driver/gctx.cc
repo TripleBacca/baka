@@ -64,18 +64,18 @@ void baka::driver::Gctx::GenerateGlobalWarning(std::string Message, driver::Stag
 
 
 void baka::driver::Gctx::GenerateLineError(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
-                                       driver::Stage Stage) {
+                                       driver::Stage Stage, bool isAtEnd) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
-        gctx.CompilerLineErrors.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
+        gctx.CompilerLineErrors.emplace_back(TokenLoc, LineCtx_v, Message, Stage, isAtEnd);
     });
 }
 
 void baka::driver::Gctx::GenerateLineWarning(size_t LineNo, size_t ColNo, base::LineCtx LineCtx_v, std::string Message,
-                                         driver::Stage Stage) {
+                                         driver::Stage Stage, bool isAtEnd) {
     Gctx::ModifyGctx([&](Gctx_t& gctx) {
         types::TokenSourceLocation TokenLoc = {gctx.SourceFilePath, LineNo, ColNo};
-        gctx.CompilerLineWarnings.emplace_back(TokenLoc, LineCtx_v, Message, Stage);
+        gctx.CompilerLineWarnings.emplace_back(TokenLoc, LineCtx_v, Message, Stage, isAtEnd);
     });
 }
 

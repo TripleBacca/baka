@@ -208,7 +208,7 @@ namespace baka {
 
             const auto& Loc = TokenSourceLocations[idx];
             base::LineCtx LineCtx_v{Loc.LineNo - 1, driver::Gctx::GetLineIndex().get()};
-            driver::Gctx::GenerateLineError(Loc.LineNo, Loc.Col, LineCtx_v, std::move(Message), driver::Stage::PARSE);
+            driver::Gctx::GenerateLineError(Loc.LineNo, Loc.Col, LineCtx_v, std::move(Message), driver::Stage::PARSE, ReportPreviousToken);
         }
 
         types::TokenType Parser::SkipTo(std::initializer_list<types::TokenType> TokenList) {

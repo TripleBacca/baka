@@ -6,7 +6,12 @@ cp -r src/* $SUBMISSION_ROOT_DIR/src
 
 mkdir -p $SUBMISSION_ROOT_DIR/build
 mkdir -p $SUBMISSION_ROOT_DIR/test/parse
+
+# what do we want?
 cp -r custom_tests/parse/* $SUBMISSION_ROOT_DIR/test/parse
+
+
+
 cp custom_test_hook $SUBMISSION_ROOT_DIR/
 
 touch $SUBMISSION_ROOT_DIR/Makefile

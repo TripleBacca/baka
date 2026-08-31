@@ -67,7 +67,7 @@ We are hoping we can support the following featureset:
 
 ### Stages Status
 - [x] Lexer
-- [ ] Parser
+- [x] Parser
 - [ ] Semantic Analysis
 - [ ] Optimization Passes
 - [ ] Codegen
