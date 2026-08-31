@@ -9,7 +9,7 @@ make build
 ```
 baka does not have a preprocessor and thus does not support preprocessor directives.
 
-##### Command Line Flags:
+#### Command Line Flags:
 - `--lex` - run only the lexer and print/output tokens
 - `--parse` - run up through parsing and output the AST
 - `--codegen` - run the full pipeline and emit generated code
@@ -23,7 +23,7 @@ To use the compiler, run it with the desired flags and provide the source code f
 ```
 
 
-##### Lexing
+#### Lexing
 
  To run the lexer you can use the `--lex` flag to stop the compiler after the lexing phase.
  To see more verbose logs about the various tokens identified, you can use the `--verbose` flag.
@@ -33,7 +33,7 @@ To use the compiler, run it with the desired flags and provide the source code f
  ```
 
 
-##### Parsing
+#### Parsing
 
  To run the parser you can use the `--parse` flag to stop the compiler after the parsing phase.
  To see more verbose logs about the AST created, you can use the `--verbose` flag.
@@ -75,12 +75,12 @@ We are hoping we can support the following featureset:
 - Multi-dimensional arrays
 
 **Extra Features**
-- Loop Labels
-Loop labels allow the user to break or continue out until a specific loop.
-This allows the user to annotate loops and write cleaner nested loops.
+- Loop Labels:
+    Allows programmers to break or continue out until a specific loop. This feature lets you annotate loops with labels and write cleaner and more readable nested loop control flow.
 
-e.g.
-without labels
+#### A scenario where this makes code cleaner:
+
+##### Without Loop Annotation Labels:
 ```
 bool found = false;
 while(stream.hasItems()){
@@ -92,27 +92,30 @@ while(stream.hasItems()){
         }
     }
     if(found){
-        break;//extra break needed to break out of outer loop
+        // extra break needed to break out of outer loop
+        break;
     }
 }
 if(found){
-//An item in the stream is in the array `candidates`
+    // An item in the stream is in the array `candidates`
 }
 ```
-with labels
+
+
+##### With Loop Annotation Labels:
 ```
 bool found = false;
-while(stream.hasItems();loopy){
+while(stream.hasItems(); LoopLabel1){
     int val = stream.getNext();
     for(int i = 0; i < len; i++){
         if(val == candidates[i]){
             found = true;
-            break loopy;
+            break LoopLabel1;
         }
     }
 }
 if(found){
-//An item in the stream is in the array `candidates`
+    // An item in the stream is in the array `candidates`
 }
 ```
 
