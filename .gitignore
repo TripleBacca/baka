@@ -7,3 +7,4 @@ source_code
 submissions/*
 compiler-explorer
 Justfile.private
+src/cmake-build-debug
