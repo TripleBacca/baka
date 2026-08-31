@@ -128,7 +128,7 @@ Program(
     )
 )
 
-custom_tests/parse/21_invalid_do_while_semicolon.cpp:6:5: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
-	    return x;
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/21_invalid_do_while_semicolon.cpp:5:19: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
+	    } while (x < 3)
+	                  [38;2;255;0;0m^[0m
 Compilation failed due to 1 error(s)

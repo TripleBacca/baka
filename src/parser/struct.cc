@@ -79,7 +79,7 @@ namespace parser {
         }
         if (!Match(types::TokenType::SEMICOLON))
         {
-            ReportError("expected ';' after struct/class body");
+            ReportError("expected ';' after struct/class body", true);
             SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
             Match(types::TokenType::SEMICOLON);
         }

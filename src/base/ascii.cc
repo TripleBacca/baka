@@ -5,8 +5,6 @@ namespace baka::base {
         return std::isprint(c) || c == '\t' || c == '\v' || c == '\f' || c == '\r';
     }
 
-    
-    
     bool isSimpleEscapeSequenceChar(char c) {
         return c == '\\' || c == '\"' || c == '\'' || c == '?' || c == 'a' || c == 'b' || c == 'f' || c == 'n' || c == 'r' ||
             c == 't' || c == 'v';

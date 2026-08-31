@@ -196,7 +196,7 @@ namespace baka {
                 Errored = true;
             }
             if (!Match(types::TokenType::SEMICOLON)) {
-                ReportError("expected ';' after 'do ... while'");
+                ReportError("expected ';' after 'do ... while'", true);
                 Errored = true;
             }
 

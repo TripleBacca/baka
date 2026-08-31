@@ -117,9 +117,9 @@ Program(
     )
 )
 
-custom_tests/parse/30_invalid_cascade_stray_block.cpp:4:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    {
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/30_invalid_cascade_stray_block.cpp:3:13: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    x = x + 1
+	            [38;2;255;0;0m^[0m
 custom_tests/parse/30_invalid_cascade_stray_block.cpp:9:5: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	    return x;
 	    [38;2;255;0;0m^[0m

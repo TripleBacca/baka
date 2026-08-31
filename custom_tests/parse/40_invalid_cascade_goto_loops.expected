@@ -1063,21 +1063,21 @@ Program(
     )
 )
 
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:11:5: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
-	    }
-	    [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:22:9: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	        if (r == 2) {
-	        [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:36:9: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
-	        }
-	        [38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_cascade_goto_loops.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+	        goto parse
+	             [38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_cascade_goto_loops.cpp:21:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	        r = r + 1
+	                [38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_cascade_goto_loops.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
+	            goto done
+	                 [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_cascade_goto_loops.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value == 0 {
 	                       [38;2;255;0;0m^[0m
-custom_tests/parse/40_invalid_cascade_goto_loops.cpp:51:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
+custom_tests/parse/40_invalid_cascade_goto_loops.cpp:50:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return value
+	           [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_cascade_goto_loops.cpp:58:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (a > 0 && b > 0 {
 	                       [38;2;255;0;0m^[0m

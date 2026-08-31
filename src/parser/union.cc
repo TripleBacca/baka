@@ -37,7 +37,7 @@ namespace parser {
         }
         types::UnionBodyNode* Body = ParseUnionBody(UnionName);
         if(!Match(types::TokenType::SEMICOLON)) {
-            ReportError("expected ';' after union body");
+            ReportError("expected ';' after union body", true);
             if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                 Advance();
             }

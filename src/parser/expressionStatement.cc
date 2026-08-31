@@ -11,7 +11,7 @@ namespace parser {
         types::ExpressionNode* Expression = this->Expression();
         if (!Match(types::TokenType::SEMICOLON)) {
             if (Expression != nullptr) {
-                ReportError("expected ';' after expression");
+                ReportError("expected ';' after expression", true);
             }
             // expression error was already reported deeper; resync to the end of the doomed statement
             if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {

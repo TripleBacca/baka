@@ -103,7 +103,7 @@ namespace baka
 			if (!Match(types::TokenType::SEMICOLON) && !Check(types::TokenType::EOF_TOKEN))
 			{
 				// e.g. "int a b = 2;" — a second identifier where ',' or ';' was expected
-				ReportError("expected ',' or ';' in declaration");
+				ReportError("expected ',' or ';' in declaration", true);
 				if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
 					Advance();
 				}

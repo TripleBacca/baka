@@ -1312,21 +1312,21 @@ Program(
     )
 )
 
-custom_tests/parse/36_invalid_cascade_calculator.cpp:7:1: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	}
-	[38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_cascade_calculator.cpp:6:16: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	    return a - b
+	               [38;2;255;0;0m^[0m
 custom_tests/parse/36_invalid_cascade_calculator.cpp:18:16: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (b == 0 {
 	               [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_cascade_calculator.cpp:37:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    }
-	    [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_cascade_calculator.cpp:46:9: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	        break;
-	        [38;2;255;0;0m^[0m
-custom_tests/parse/36_invalid_cascade_calculator.cpp:61:5: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
-	    int e = mod(a, b);
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_cascade_calculator.cpp:36:13: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	        b = r
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_cascade_calculator.cpp:45:26: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	        result = add(x, y)
+	                         [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_cascade_calculator.cpp:60:19: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+	    int d = fact(5)
+	                  [38;2;255;0;0m^[0m
 custom_tests/parse/36_invalid_cascade_calculator.cpp:62:15: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (e > 0 {
 	              [38;2;255;0;0m^[0m

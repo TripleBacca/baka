@@ -7,6 +7,7 @@
 #include "base/line_index.hh"
 #include "driver/gctx.hh"
 #include "types/driver/defs.hh"
+#include <algorithm>
 #include <cassert>
 #include <initializer_list>
 #include <optional>
@@ -194,15 +195,16 @@ namespace baka {
             return TypeLookup.RegisterOrReplaceType(Identifier->GetName(), ParserSTE{});
         }
 
-        void Parser::ReportError(std::string Message) {
+        void Parser::ReportError(std::string Message, bool ReportPreviousToken) {
             ReportedErrorCount++;
 
             if (TokenSourceLocations.empty()) return;
 
             size_t idx = current;
-            if (idx >= TokenSourceLocations.size()) {
-                idx = TokenSourceLocations.size() - 1;
-            }
+            if(ReportPreviousToken) idx--;
+
+            idx = std::clamp(idx, 0uz, TokenSourceLocations.size() - 1);
+
 
             const auto& Loc = TokenSourceLocations[idx];
             base::LineCtx LineCtx_v{Loc.LineNo - 1, driver::Gctx::GetLineIndex().get()};

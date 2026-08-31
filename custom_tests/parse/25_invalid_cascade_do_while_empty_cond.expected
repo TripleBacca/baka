@@ -137,7 +137,7 @@ Program(
 custom_tests/parse/25_invalid_cascade_do_while_empty_cond.cpp:5:14: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	    } while ();
 	             [38;2;255;0;0m^[0m
-custom_tests/parse/25_invalid_cascade_do_while_empty_cond.cpp:7:5: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
-	    return x;
-	    [38;2;255;0;0m^[0m
+custom_tests/parse/25_invalid_cascade_do_while_empty_cond.cpp:6:13: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	    x = x + 1
+	            [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)
