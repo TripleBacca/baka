@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Adapter that lets Compiler Explorer drive baka, a parse-only compiler.
+#
+# CE invokes compilers with GCC-style flags (-S -o ...) and expects assembly on
+# the -o path plus a --version response for its version probe. baka emits the
+# lexer dump, AST and diagnostics to stdout instead, so this shim:
+#   1. answers the --version probe,
+#   2. swallows all GCC-style flags,
+#   3. runs baka on the real source file,
+#   4. writes baka's output to the -o file so the Assembly pane shows the tree.
+
+set -euo pipefail
+
+BAKA="${BAKA:-/opt/baka/bin/baka}"
+
+args=("$@")
+input=""
+output=""
+
+for ((i = 0; i < ${#args[@]}; i++)); do
+    case "${args[$i]}" in
+        --version)
+            echo "Baka (parse-only) 0.1"
+            exit 0
+            ;;
+        -o)
+            i=$((i + 1))
+            if ((i < ${#args[@]})); then
+                output="${args[$i]}"
+            fi
+            ;;
+        -x)
+            i=$((i + 1))
+            ;;
+        -S | -c | -m* | -O* | -f* | -g* | -std=* | -W* | -D* | -U* | -I* | --*)
+            ;;
+        -*)
+            ;;
+        *)
+            if [[ -z "$input" ]]; then
+                input="${args[$i]}"
+            fi
+            ;;
+    esac
+done
+
+if [[ -z "$input" ]]; then
+    echo "baka-ce: no input file" >&2
+    exit 2
+fi
+
+if [[ ! -f "$input" ]]; then
+    echo "baka-ce: input file not found: $input" >&2
+    exit 2
+fi
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+set +e
+"$BAKA" --parse --verbose "$input" >"$tmp" 2>&1
+rc=$?
+set -e
+
+# Strip ANSI colour codes so panes aren't littered with escape sequences.
+sed -r 's/\x1B\[[0-9;]*m//g' "$tmp" || true
+
+if [[ -n "$output" ]]; then
+    cp "$tmp" "$output"
+fi
+
+exit "$rc"
