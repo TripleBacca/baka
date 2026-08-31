@@ -1,7 +1,7 @@
 Gctx::VerboseMode: 1
 Gctx::BuildType: DEBUG
 Gctx::UptoStage: PARSE
-Gctx::SourceFile: custom_tests/parse/38_invalid_cascade_strings.cpp
+Gctx::SourceFile: custom_tests/parse/36_invalid_mixed_strings.cpp
 Driver::OptimisticDefects: 6
 Driver::SourceCode: 
 int str_len(char s[10]) {
@@ -21,7 +21,7 @@ int is_digit(char c) {
 
 char to_upper(char c) {
     if (c >= 'a' && c <= 'z') {
-        return c - 32
+        return (c > '0') ? c - 32 c
     }
     return c;
 }
@@ -41,6 +41,9 @@ int count_words(char s[10]) {
     int in_word = 0;
     int i = 0;
     while (s[i] != 0) {
+        if (words > 100) {
+            break
+        }
         if (is_digit(s[i]) == 0 {
             in_word = 1;
         } else {
@@ -74,7 +77,7 @@ int main() {
     int words = count_words(greeting);
     return length + digits + hits + upper + words;
 }
-Lexer::LexerOutput: 365 Tokens
+Lexer::LexerOutput: 381 Tokens
 Lexeme                    Token                 
 ------------------------------------------------
 int                       K_INT                 
@@ -160,9 +163,16 @@ c                         IDENTIFIER
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
 return                    K_RETURN              
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+>                         OP_GT                 
+'0'                       LITERAL_CHARACTER     
+)                         RPAREN_ROUND          
+?                         OP_QUESTION           
 c                         IDENTIFIER            
 -                         OP_UNARY_MINUS        
 32 (int)                  LITERAL_INTEGER       
+c                         IDENTIFIER            
 }                         RPAREN_CURLY          
 return                    K_RETURN              
 c                         IDENTIFIER            
@@ -262,6 +272,15 @@ i                         IDENTIFIER
 0 (int)                   LITERAL_INTEGER       
 )                         RPAREN_ROUND          
 {                         LPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+words                     IDENTIFIER            
+>                         OP_GT                 
+100 (int)                 LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+break                     K_BREAK               
+}                         RPAREN_CURLY          
 if                        K_IF                  
 (                         LPAREN_ROUND          
 is_digit                  IDENTIFIER            
@@ -680,13 +699,29 @@ Program(
                     CompoundStatement(
                         Return(
                             CommaExpression(
-                                BinaryExpression(
-                                    BinaryOp: OP_SUB,
-                                    PrimaryExpression(
-                                        Identifier(c)
+                                TernaryOpNode(
+                                    CommaExpression(
+                                        BinaryExpression(
+                                            BinaryOp: OP_GT,
+                                            PrimaryExpression(
+                                                Identifier(c)
+                                            )
+                                            PrimaryExpression(
+                                                Constant(0)
+                                            )
+                                        )
+                                    )
+                                    BinaryExpression(
+                                        BinaryOp: OP_SUB,
+                                        PrimaryExpression(
+                                            Identifier(c)
+                                        )
+                                        PrimaryExpression(
+                                            Constant(32)
+                                        )
                                     )
                                     PrimaryExpression(
-                                        Constant(32)
+                                        Identifier(c)
                                     )
                                 )
                             )
@@ -966,6 +1001,25 @@ Program(
                     )
                 )
                 CompoundStatement(
+                    If Super Block(
+                        If(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_GT,
+                                    PrimaryExpression(
+                                        Identifier(words)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(100)
+                                    )
+                                )
+                            )
+                            CompoundStatement(
+                                Break(
+                                )
+                            )
+                        )
+                    )
                     If Super Block(
                         If(
                             CommaExpression(
@@ -1441,22 +1495,28 @@ Program(
     )
 )
 
-custom_tests/parse/38_invalid_cascade_strings.cpp:18:20: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
-	        return c - 32
-	                   [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_cascade_strings.cpp:26:28: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/36_invalid_mixed_strings.cpp:18:35: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
+	        return (c > '0') ? c - 32 c
+	                                  [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_mixed_strings.cpp:18:35: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
+	        return (c > '0') ? c - 32 c
+	                                  [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_mixed_strings.cpp:26:28: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (s[i] == target {
 	                           [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_cascade_strings.cpp:38:33: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
+custom_tests/parse/36_invalid_mixed_strings.cpp:39:13: [38;2;255;0;0merror: [0mexpected ';' after break statement (PARSE)
+	            break
+	            [38;2;255;0;0m^[0m
+custom_tests/parse/36_invalid_mixed_strings.cpp:41:33: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (is_digit(s[i]) == 0 {
 	                                [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_cascade_strings.cpp:43:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/36_invalid_mixed_strings.cpp:46:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        i = i + 1
 	                [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_cascade_strings.cpp:55:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+custom_tests/parse/36_invalid_mixed_strings.cpp:58:17: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        i = i + 1
 	                [38;2;255;0;0m^[0m
-custom_tests/parse/38_invalid_cascade_strings.cpp:65:37: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
+custom_tests/parse/36_invalid_mixed_strings.cpp:68:37: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    int digits = sum_digits(greeting)
 	                                    [38;2;255;0;0m^[0m
-Compilation failed due to 6 error(s)
+Compilation failed due to 8 error(s)

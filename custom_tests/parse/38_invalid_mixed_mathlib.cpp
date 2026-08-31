@@ -2,7 +2,7 @@ int abs(int x) {
     if (x < 0 {
         return -x;
     }
-    return x;
+    return (x > 0) ? x x;
 }
 
 int pow2(int base, int exp) {
@@ -29,6 +29,7 @@ int nth_fib(int n) {
     int a = 0;
     int b = 1;
     for (int i = 0; i < n; i = i + 1; fibbing) {
+        continue
         int t = a;
         a = b;
         b = a + t
@@ -48,9 +49,9 @@ int clamp(int x, int lo, int hi) {
 
 int sqrtish(int n) {
     int approx = 0;
-    while (approx * approx < n) {
-        approx = approx + 1;
-    }
+    do {
+        approx = approx + 1
+    } while (approx * approx < n; guess)
     return approx;
 }
 

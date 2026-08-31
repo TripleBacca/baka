@@ -18,11 +18,11 @@ int scan_rows(int rows) {
     int found = 0;
     int r = 0;
     while (r < rows; row_loop) {
-        r = r + 1
         if (r == 2) {
-            continue;
+            continue
         }
         found = found + r;
+        r = r + 1
     }
     return found;
 }
@@ -44,7 +44,7 @@ int loop_until_zero(int seed) {
     do {
         value = value - 1;
         if (value == 0 {
-            break;
+            break
         }
     } while (value > 0; unwind);
     return value

@@ -8,7 +8,7 @@ struct Account {
 Account open_account(int id) {
     Account acc;
     acc.id = id;
-    acc.balance = 0;
+    acc..balance = 0;
     return acc
 }
 
@@ -26,7 +26,7 @@ Money withdraw(Account acc, Money amount) {
 }
 
 Money interest(Money value, int rate) {
-    return value * rate / 100
+    return (value > 50) ? value * rate / 100 value
 }
 
 Money clamp(Money value, Money lo, Money hi) {
@@ -44,5 +44,9 @@ int main() {
     Money taken = withdraw(a, 30);
     Money gain = interest(taken, 5);
     int total = a.balance + b.balance + taken + gain;
+    while (total < 0) {
+        break
+    }
+    goto settle
     return total;
 }

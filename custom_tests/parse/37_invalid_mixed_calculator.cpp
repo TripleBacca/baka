@@ -41,13 +41,13 @@ int gcd(int a, int b) {
 int apply(int op, int x, int y) {
     int result = 0;
     switch (op) {
-    case 0:
+    case 0
         result = add(x, y)
-        break;
+        break
     case 1:
         result = sub(x, y);
         break;
-    default:
+    default
         result = 0;
     }
     return result;

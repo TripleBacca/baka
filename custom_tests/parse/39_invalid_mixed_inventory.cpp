@@ -30,7 +30,7 @@ int value(Item it) {
 int total_value(Inventory inv) {
     int total = 0;
     for (int i = 0; i < inv.count; i = i + 1) {
-        total = total + value(inv.items[i]);
+        total = (value(inv.items[i]) > 0) ? total + value(inv.items[i]) total;
     }
     return total
 }
