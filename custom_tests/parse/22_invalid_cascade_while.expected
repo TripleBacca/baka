@@ -141,5 +141,5 @@ custom_tests/parse/22_invalid_cascade_while.cpp:3:18: [38;2;255;0;0merror: [0m
 	                 [38;2;255;0;0m^[0m
 custom_tests/parse/22_invalid_cascade_while.cpp:6:9: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    x = 5
-	        [38;2;255;0;0m^[0m
+	         [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)

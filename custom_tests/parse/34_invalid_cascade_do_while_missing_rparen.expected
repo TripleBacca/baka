@@ -132,5 +132,5 @@ custom_tests/parse/34_invalid_cascade_do_while_missing_rparen.cpp:6:5: [38;2;25
 	    [38;2;255;0;0m^[0m
 custom_tests/parse/34_invalid_cascade_do_while_missing_rparen.cpp:5:18: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
 	    } while (x < 3
-	                 [38;2;255;0;0m^[0m
+	                  [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)

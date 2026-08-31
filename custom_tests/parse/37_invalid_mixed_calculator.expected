@@ -1316,13 +1316,13 @@ custom_tests/parse/37_invalid_mixed_calculator.cpp:10:15: [38;2;255;0;0merror: 
 	              [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return a .* b;
-	             [38;2;255;0;0m^[0m
+	                  [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:18:16: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    if (b == 0 {
 	               [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:36:13: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        b = r
-	            [38;2;255;0;0m^[0m
+	             [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:45:15: [38;2;255;0;0merror: [0mredefinition of struct (PARSE)
 	struct Divide : Rem {
 	              [38;2;255;0;0m^[0m
@@ -1331,13 +1331,13 @@ custom_tests/parse/37_invalid_mixed_calculator.cpp:45:21: [38;2;255;0;0merror: 
 	                    [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:52:10: [38;2;255;0;0merror: [0mexpected ':' after case value (PARSE)
 	    case 0
-	         [38;2;255;0;0m^[0m
+	          [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:53:27: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	        result = add(x, y);
 	                          [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:58:5: [38;2;255;0;0merror: [0mexpected ':' after 'default' (PARSE)
 	    default
-	    [38;2;255;0;0m^[0m
+	           [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:59:19: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	        result = 0;
 	                  [38;2;255;0;0m^[0m

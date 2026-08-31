@@ -70,5 +70,5 @@ Program(
 
 custom_tests/parse/12_invalid_missing_semicolon.cpp:2:13: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    int a = 1
-	            [38;2;255;0;0m^[0m
+	             [38;2;255;0;0m^[0m
 Compilation failed due to 1 error(s)

@@ -1182,16 +1182,16 @@ Program(
 
 custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:10:14: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	        goto parse
-	             [38;2;255;0;0m^[0m
+	                  [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:22:13: [38;2;255;0;0merror: [0mexpected ';' after continue statement (PARSE)
 	            continue
-	            [38;2;255;0;0m^[0m
+	                    [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:33:37: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
 	        total = (i > 2) ? total + i total;
 	                                    [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:35:18: [38;2;255;0;0merror: [0mexpected ';' after goto statement (PARSE)
 	            goto done
-	                 [38;2;255;0;0m^[0m
+	                     [38;2;255;0;0m^[0m
 custom_tests/parse/40_invalid_mixed_goto_loops_sub.cpp:46:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (value == 0 {
 	                       [38;2;255;0;0m^[0m

@@ -142,7 +142,7 @@ Program(
 
 custom_tests/parse/26_invalid_cascade_case_colon.cpp:4:14: [38;2;255;0;0merror: [0mexpected ':' after case value (PARSE)
 	        case 1
-	             [38;2;255;0;0m^[0m
+	              [38;2;255;0;0m^[0m
 custom_tests/parse/26_invalid_cascade_case_colon.cpp:5:22: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	            x = x + 1;
 	                     [38;2;255;0;0m^[0m

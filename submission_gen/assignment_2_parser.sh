@@ -7,9 +7,10 @@ cp -r src/* $SUBMISSION_ROOT_DIR/src
 mkdir -p $SUBMISSION_ROOT_DIR/build
 mkdir -p $SUBMISSION_ROOT_DIR/test/parse
 
-# what do we want?
-cp -r custom_tests/parse/* $SUBMISSION_ROOT_DIR/test/parse
-
+# shoot me
+# give me a gun
+cp -r custom_tests/parse/*_sub.expected $SUBMISSION_ROOT_DIR/test/parse
+cp -r custom_tests/parse/*_sub.cpp $SUBMISSION_ROOT_DIR/test/parse
 
 
 cp custom_test_hook $SUBMISSION_ROOT_DIR/

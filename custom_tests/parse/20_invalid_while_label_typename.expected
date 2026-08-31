@@ -148,5 +148,5 @@ custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merro
 	                        [38;2;255;0;0m^[0m
 custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    while (x < 5 Marker Marker) {
-	                        [38;2;255;0;0m^[0m
+	                                 [38;2;255;0;0m^[0m
 Compilation failed due to 3 error(s)
