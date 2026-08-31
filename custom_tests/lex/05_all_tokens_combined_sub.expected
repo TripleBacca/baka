@@ -1,0 +1,718 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: LEX
+Gctx::SourceFile: custom_tests/lex/05_all_tokens_combined_sub.cpp
+Driver::OptimisticDefects: 10
+Driver::SourceCode: 
+
+namespace ComprehensiveTest {
+
+        typedef unsigned long int ulong_t;
+
+        using IntegerType = int;
+
+        enum Status {
+        STATUS_OK,
+        STATUS_ERR
+    };
+
+        union VariantData {
+        int i;
+        double d;
+        char c;
+    };
+
+        struct Node {
+        int val;
+        Node* next;
+    };
+
+        class TokenDemonstrator {
+    private:
+                signed short short_val;
+        float float_val;
+        double double_val;
+        char char_val;
+        bool bool_val;
+
+    public:
+                static const int BUFFER_LIMIT = 256;
+
+                TokenDemonstrator() : short_val(0), float_val(0.0f), double_val(3.1415), char_val('A'), bool_val(true) {}
+
+                TokenDemonstrator* get_instance() {
+            return this;
+        }
+
+                void log_messages(int count, ...) {
+                        return;
+        }
+    };
+}
+
+int main() {
+            bool flag_t = true;
+    bool flag_f = false;
+
+        int decimal_num = 42;
+    double pi_val = 3.14;
+    char newline_char = '\n';
+    const char* message = "Baka Tokenizer Test String";
+
+        void* null_ptr = nullptr;
+
+        int* dynamic_array = new int[5];
+    delete[] dynamic_array;
+
+        int type_size = sizeof(ComprehensiveTest::TokenDemonstrator);
+
+        int a = 15;
+    int b = 4;
+    int c = 0;
+
+        int tilde_res = ~a;
+    int neg_res = -a;
+    int plus_res = +a;
+    ++a;
+    a++;
+    --b;
+    b--;
+    bool not_res = !flag_t;
+
+        c = (a * b) / ((a % b) + 1);
+    c = (a & b) | (a ^ b);
+    c = (a << 1) >> 1;
+
+        bool cond = ((a < b) || (a > b)) && ((a <= b) || (a >= b)) && (a == b) && (a != b);
+
+        c = 10;
+    c += 1;
+    c -= 1;
+    c *= 2;
+    c /= 2;
+    c %= 5;
+    c &= 0xFF;
+    c |= 0x01;
+    c ^= 0x02;
+    c <<= 1;
+    c >>= 1;
+
+        ComprehensiveTest::Node node_instance;
+    node_instance.val = 100;
+    node_instance.next = nullptr;
+
+    ComprehensiveTest::Node* node_ptr = &node_instance;
+    int accessed_via_arrow = node_ptr->val;
+
+    int ternary_val = (c > 0) ? c : 0;
+    int comma_expr = (a = 1, b = 2, a + b);
+
+            if (cond) {
+        c = 1;
+    } else {
+        c = 2;
+    }
+
+        while (c < 10) {
+        c += 1;
+        if (c == 5) {
+            continue;
+        }
+        if (c == 8) {
+            break;
+        }
+    }
+
+        do {
+        c -= 1;
+    } while (c > 5);
+
+        for (int i = 0; i < 3; i++) {
+        c += i;
+    }
+
+        switch (c) {
+        case 5:
+            c = 10;
+            break;
+        case 10:
+            c = 20;
+            break;
+    }
+
+        goto exit_point;
+
+exit_point:
+        ;
+    return 0;
+}
+
+Lexer::LexerOutput: 562 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+namespace                 K_NAMESPACE           
+ComprehensiveTest         IDENTIFIER            
+{                         LPAREN_CURLY          
+typedef                   K_TYPEDEF             
+unsigned                  K_UNSIGNED            
+long                      K_LONG                
+int                       K_INT                 
+ulong_t                   IDENTIFIER            
+;                         SEMICOLON             
+using                     K_USING               
+IntegerType               IDENTIFIER            
+=                         OP_ASSIGN             
+int                       K_INT                 
+;                         SEMICOLON             
+enum                      K_ENUM                
+Status                    IDENTIFIER            
+{                         LPAREN_CURLY          
+STATUS_OK                 IDENTIFIER            
+,                         OP_COMMA              
+STATUS_ERR                IDENTIFIER            
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+union                     K_UNION               
+VariantData               IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+i                         IDENTIFIER            
+;                         SEMICOLON             
+double                    K_DOUBLE              
+d                         IDENTIFIER            
+;                         SEMICOLON             
+char                      K_CHAR                
+c                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+struct                    K_STRUCT              
+Node                      IDENTIFIER            
+{                         LPAREN_CURLY          
+int                       K_INT                 
+val                       IDENTIFIER            
+;                         SEMICOLON             
+Node                      IDENTIFIER            
+*                         OP_MUL                
+next                      IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+class                     K_CLASS               
+TokenDemonstrator         IDENTIFIER            
+{                         LPAREN_CURLY          
+private                   IDENTIFIER            
+:                         OP_COLON              
+signed                    K_SIGNED              
+short                     K_SHORT               
+short_val                 IDENTIFIER            
+;                         SEMICOLON             
+float                     K_FLOAT               
+float_val                 IDENTIFIER            
+;                         SEMICOLON             
+double                    K_DOUBLE              
+double_val                IDENTIFIER            
+;                         SEMICOLON             
+char                      K_CHAR                
+char_val                  IDENTIFIER            
+;                         SEMICOLON             
+bool                      K_BOOL                
+bool_val                  IDENTIFIER            
+;                         SEMICOLON             
+public                    IDENTIFIER            
+:                         OP_COLON              
+static                    K_STATIC              
+const                     K_CONST               
+int                       K_INT                 
+BUFFER_LIMIT              IDENTIFIER            
+=                         OP_ASSIGN             
+256 (int)                 LITERAL_INTEGER       
+;                         SEMICOLON             
+TokenDemonstrator         IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+:                         OP_COLON              
+short_val                 IDENTIFIER            
+(                         LPAREN_ROUND          
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+,                         OP_COMMA              
+float_val                 IDENTIFIER            
+(                         LPAREN_ROUND          
+0 (float)                 LITERAL_FP            
+)                         RPAREN_ROUND          
+,                         OP_COMMA              
+double_val                IDENTIFIER            
+(                         LPAREN_ROUND          
+3.1415 (double)           LITERAL_FP            
+)                         RPAREN_ROUND          
+,                         OP_COMMA              
+char_val                  IDENTIFIER            
+(                         LPAREN_ROUND          
+'A'                       LITERAL_CHARACTER     
+)                         RPAREN_ROUND          
+,                         OP_COMMA              
+bool_val                  IDENTIFIER            
+(                         LPAREN_ROUND          
+true                      K_TRUE                
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+}                         RPAREN_CURLY          
+TokenDemonstrator         IDENTIFIER            
+*                         OP_MUL                
+get_instance              IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+this                      K_THIS                
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+void                      K_VOID                
+log_messages              IDENTIFIER            
+(                         LPAREN_ROUND          
+int                       K_INT                 
+count                     IDENTIFIER            
+,                         OP_COMMA              
+...                       OP_ELLIPSIS           
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+bool                      K_BOOL                
+flag_t                    IDENTIFIER            
+=                         OP_ASSIGN             
+true                      K_TRUE                
+;                         SEMICOLON             
+bool                      K_BOOL                
+flag_f                    IDENTIFIER            
+=                         OP_ASSIGN             
+false                     K_FALSE               
+;                         SEMICOLON             
+int                       K_INT                 
+decimal_num               IDENTIFIER            
+=                         OP_ASSIGN             
+42 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+double                    K_DOUBLE              
+pi_val                    IDENTIFIER            
+=                         OP_ASSIGN             
+3.14 (double)             LITERAL_FP            
+;                         SEMICOLON             
+char                      K_CHAR                
+newline_char              IDENTIFIER            
+=                         OP_ASSIGN             
+'
+'                       LITERAL_CHARACTER     
+;                         SEMICOLON             
+const                     K_CONST               
+char                      K_CHAR                
+*                         OP_MUL                
+message                   IDENTIFIER            
+=                         OP_ASSIGN             
+"Baka Tokenizer Test String"LITERAL_STRING        
+;                         SEMICOLON             
+void                      K_VOID                
+*                         OP_MUL                
+null_ptr                  IDENTIFIER            
+=                         OP_ASSIGN             
+nullptr                   K_NULLPTR             
+;                         SEMICOLON             
+int                       K_INT                 
+*                         OP_MUL                
+dynamic_array             IDENTIFIER            
+=                         OP_ASSIGN             
+new                       K_NEW                 
+int                       K_INT                 
+[                         LPAREN_SQUARE         
+5 (int)                   LITERAL_INTEGER       
+]                         RPAREN_SQUARE         
+;                         SEMICOLON             
+delete                    K_DELETE              
+[                         LPAREN_SQUARE         
+]                         RPAREN_SQUARE         
+dynamic_array             IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+type_size                 IDENTIFIER            
+=                         OP_ASSIGN             
+sizeof                    K_SIZEOF              
+(                         LPAREN_ROUND          
+ComprehensiveTest         IDENTIFIER            
+::                        OP_DOUBLE_COLON       
+TokenDemonstrator         IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+15 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+b                         IDENTIFIER            
+=                         OP_ASSIGN             
+4 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+tilde_res                 IDENTIFIER            
+=                         OP_ASSIGN             
+~                         OP_TILDE              
+a                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+neg_res                   IDENTIFIER            
+=                         OP_ASSIGN             
+-                         OP_UNARY_MINUS        
+a                         IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+plus_res                  IDENTIFIER            
+=                         OP_ASSIGN             
++                         OP_PLUS               
+a                         IDENTIFIER            
+;                         SEMICOLON             
+++                        OP_INC                
+a                         IDENTIFIER            
+;                         SEMICOLON             
+a                         IDENTIFIER            
+++                        OP_INC                
+;                         SEMICOLON             
+--                        OP_DEC                
+b                         IDENTIFIER            
+;                         SEMICOLON             
+b                         IDENTIFIER            
+--                        OP_DEC                
+;                         SEMICOLON             
+bool                      K_BOOL                
+not_res                   IDENTIFIER            
+=                         OP_ASSIGN             
+!                         OP_LOGICAL_NOT        
+flag_t                    IDENTIFIER            
+;                         SEMICOLON             
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+*                         OP_MUL                
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+/                         OP_DIV                
+(                         LPAREN_ROUND          
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+%                         OP_MOD                
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
++                         OP_PLUS               
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+&                         OP_BIT_AND            
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+|                         OP_BIT_OR             
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+^                         OP_BIT_XOR            
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+<<                        OP_LSHIFT             
+1 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+>>                        OP_RSHIFT             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+bool                      K_BOOL                
+cond                      IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+<                         OP_LT                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+||                        OP_LOGICAL_OR         
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+>                         OP_GT                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+)                         RPAREN_ROUND          
+&&                        OP_LOGICAL_AND        
+(                         LPAREN_ROUND          
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+<=                        OP_LE                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+||                        OP_LOGICAL_OR         
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+>=                        OP_GE                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+)                         RPAREN_ROUND          
+&&                        OP_LOGICAL_AND        
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+==                        OP_EQ                 
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+&&                        OP_LOGICAL_AND        
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+!=                        OP_NEQ                
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+10 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
++=                        OP_ADD_ASSIGN         
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+-=                        OP_SUB_ASSIGN         
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+*=                        OP_MUL_ASSIGN         
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+/=                        OP_DIV_ASSIGN         
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+%=                        OP_MOD_ASSIGN         
+5 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+&=                        OP_AND_ASSIGN         
+255 (int)                 LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+|=                        OP_OR_ASSIGN          
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+^=                        OP_XOR_ASSIGN         
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+<<=                       OP_LSHIFT_ASSIGN      
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+c                         IDENTIFIER            
+>>=                       OP_RSHIFT_ASSIGN      
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+ComprehensiveTest         IDENTIFIER            
+::                        OP_DOUBLE_COLON       
+Node                      IDENTIFIER            
+node_instance             IDENTIFIER            
+;                         SEMICOLON             
+node_instance             IDENTIFIER            
+.                         OP_DOT                
+val                       IDENTIFIER            
+=                         OP_ASSIGN             
+100 (int)                 LITERAL_INTEGER       
+;                         SEMICOLON             
+node_instance             IDENTIFIER            
+.                         OP_DOT                
+next                      IDENTIFIER            
+=                         OP_ASSIGN             
+nullptr                   K_NULLPTR             
+;                         SEMICOLON             
+ComprehensiveTest         IDENTIFIER            
+::                        OP_DOUBLE_COLON       
+Node                      IDENTIFIER            
+*                         OP_MUL                
+node_ptr                  IDENTIFIER            
+=                         OP_ASSIGN             
+&                         OP_BIT_AND            
+node_instance             IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+accessed_via_arrow        IDENTIFIER            
+=                         OP_ASSIGN             
+node_ptr                  IDENTIFIER            
+->                        OP_ARROW              
+val                       IDENTIFIER            
+;                         SEMICOLON             
+int                       K_INT                 
+ternary_val               IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+>                         OP_GT                 
+0 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+?                         OP_QUESTION           
+c                         IDENTIFIER            
+:                         OP_COLON              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+int                       K_INT                 
+comma_expr                IDENTIFIER            
+=                         OP_ASSIGN             
+(                         LPAREN_ROUND          
+a                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+b                         IDENTIFIER            
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+,                         OP_COMMA              
+a                         IDENTIFIER            
++                         OP_PLUS               
+b                         IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+if                        K_IF                  
+(                         LPAREN_ROUND          
+cond                      IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+else                      K_ELSE                
+{                         LPAREN_CURLY          
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+<                         OP_LT                 
+10 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+c                         IDENTIFIER            
++=                        OP_ADD_ASSIGN         
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+if                        K_IF                  
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+==                        OP_EQ                 
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+continue                  K_CONTINUE            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+if                        K_IF                  
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+==                        OP_EQ                 
+8 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+break                     K_BREAK               
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+}                         RPAREN_CURLY          
+do                        K_DO                  
+{                         LPAREN_CURLY          
+c                         IDENTIFIER            
+-=                        OP_SUB_ASSIGN         
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+>                         OP_GT                 
+5 (int)                   LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+for                       K_FOR                 
+(                         LPAREN_ROUND          
+int                       K_INT                 
+i                         IDENTIFIER            
+=                         OP_ASSIGN             
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+i                         IDENTIFIER            
+<                         OP_LT                 
+3 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+i                         IDENTIFIER            
+++                        OP_INC                
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+c                         IDENTIFIER            
++=                        OP_ADD_ASSIGN         
+i                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+switch                    K_SWITCH              
+(                         LPAREN_ROUND          
+c                         IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+case                      K_CASE                
+5 (int)                   LITERAL_INTEGER       
+:                         OP_COLON              
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+10 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+break                     K_BREAK               
+;                         SEMICOLON             
+case                      K_CASE                
+10 (int)                  LITERAL_INTEGER       
+:                         OP_COLON              
+c                         IDENTIFIER            
+=                         OP_ASSIGN             
+20 (int)                  LITERAL_INTEGER       
+;                         SEMICOLON             
+break                     K_BREAK               
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+goto                      K_GOTO                
+exit_point                IDENTIFIER            
+;                         SEMICOLON             
+exit_point                IDENTIFIER            
+:                         OP_COLON              
+;                         SEMICOLON             
+return                    K_RETURN              
+0 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
