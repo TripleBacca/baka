@@ -105,8 +105,8 @@ Program(
 
 custom_tests/parse/28_invalid_cascade_struct.cpp:2:13: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    int x = 5
-	            [38;2;255;0;0m^[0m
+	             [38;2;255;0;0m^[0m
 custom_tests/parse/28_invalid_cascade_struct.cpp:4:1: [38;2;255;0;0merror: [0mexpected ';' after struct/class body (PARSE)
 	}
-	[38;2;255;0;0m^[0m
+	 [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)

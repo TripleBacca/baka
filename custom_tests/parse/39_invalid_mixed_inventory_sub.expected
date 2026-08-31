@@ -1590,7 +1590,7 @@ custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:14:9: [38;2;255;0;0merror
 	        [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:15:12: [38;2;255;0;0merror: [0mexpected ';' after return statement (PARSE)
 	    return inv
-	           [38;2;255;0;0m^[0m
+	              [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:33:73: [38;2;255;0;0merror: [0mexpected ':' in ternary expression (PARSE)
 	        total = (value(inv.items[i]) > 0) ? total + value(inv.items[i]) total;
 	                                                                        [38;2;255;0;0m^[0m
@@ -1602,7 +1602,7 @@ custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:62:40: [38;2;255;0;0merro
 	                                       [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:63:39: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    inv.items[1] = make_item(2, 3, 200)
-	                                      [38;2;255;0;0m^[0m
+	                                       [38;2;255;0;0m^[0m
 custom_tests/parse/39_invalid_mixed_inventory_sub.cpp:68:24: [38;2;255;0;0merror: [0mexpected expression (PARSE)
 	    int weight = sizeof;
 	                       [38;2;255;0;0m^[0m

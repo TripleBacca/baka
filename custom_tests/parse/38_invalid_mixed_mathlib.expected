@@ -1254,7 +1254,7 @@ custom_tests/parse/38_invalid_mixed_mathlib.cpp:5:24: [38;2;255;0;0merror: [0m
 	                       [38;2;255;0;0m^[0m
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:12:21: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        exp = exp - 1
-	                    [38;2;255;0;0m^[0m
+	                     [38;2;255;0;0m^[0m
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:20:24: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	        if (n % d == 0 {
 	                       [38;2;255;0;0m^[0m
@@ -1263,10 +1263,10 @@ custom_tests/parse/38_invalid_mixed_mathlib.cpp:31:15: [38;2;255;0;0merror: [0
 	              [38;2;255;0;0m^[0m
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:41:27: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	        approx = approx + 1
-	                          [38;2;255;0;0m^[0m
+	                           [38;2;255;0;0m^[0m
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:42:40: [38;2;255;0;0merror: [0mexpected ';' after 'do ... while' (PARSE)
 	    } while (approx * approx < n; guess)
-	                                       [38;2;255;0;0m^[0m
+	                                        [38;2;255;0;0m^[0m
 custom_tests/parse/38_invalid_mixed_mathlib.cpp:50:13: [38;2;255;0;0merror: [0mredefinition of struct (PARSE)
 	struct Span {
 	            [38;2;255;0;0m^[0m

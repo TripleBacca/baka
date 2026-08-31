@@ -103,5 +103,5 @@ custom_tests/parse/13_invalid_unclosed_paren.cpp:2:29: [38;2;255;0;0merror: [0
 	                            [38;2;255;0;0m^[0m
 custom_tests/parse/13_invalid_unclosed_paren.cpp:2:29: [38;2;255;0;0merror: [0mexpected ',' or ';' in declaration (PARSE)
 	    int values[3] = {1, 2, 3;
-	                            [38;2;255;0;0m^[0m
+	                             [38;2;255;0;0m^[0m
 Compilation failed due to 2 error(s)
