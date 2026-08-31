@@ -1,9 +1,9 @@
 name: Generate Submission Files
 
 on:
-  pull_request:
-    branches:
-        - 'checkpoint/**'
+  push:
+    tags:
+        - 'submission/**'
 
 jobs:
   generate:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Generate Submissions
         run: |
