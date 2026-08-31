@@ -26,6 +26,7 @@ set(COMPILE_OPTIONS
     -Wall
     -Wextra
     -Wpedantic
+    -O2
 )
 
 # compiler flags

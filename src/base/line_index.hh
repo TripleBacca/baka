@@ -6,14 +6,12 @@
 #include <ostream>
 #include <string_view>
 
-namespace {
+namespace baka {
     struct LineInfo {
         size_t StartIdx;
         size_t EndIdx; // inclusive
     };
-}
 
-namespace baka {
     namespace base {
         inline static std::atomic<int> LineIndexIdCt = 0;
 

@@ -1,8 +1,7 @@
 # baka
 baka is a compiler for a C++ like language.
 
-## [**Try it on Compiler Explorer**](https://baka.onetincan.foo/#z:OYLghAFBqd5QCxAYwPYBMCmBRdBLAF1QCcAaPECAMzwBtMA7AQwFtMQByARg9KtQYEAysib0QXACx8BBAKoBnTAAUAHpwAMvAFYTStJg1AB9U8lJL6yAngGVG6AMKpaAVxYM9DgDJ4GmADl3ACNMYhAAVlIAB1QFQlsGZzcPPVj4mwFffyCWUPCoy0xrRKECJmICZPdPLgtMK0yGMoqCbMCQsJBpBXLK6tS63tb23PzugEoLVFdiZHYOAFINAEFllb8CAGpiQ3QICa3FgHYAIXWty63hm2Qtza3VI4BmABEtiMXn89WLq6fFhFsF93gDno4vo4tlxnl8fisro8jkCQUivsDnthocc4X9LgCUW80eDIR9catEcRMARZgxHuS1sdXusWatesRXNYtmUqawjmc8fdBNc8AAvTAvd5cDQMxHBVAuLYIJgKACSBEwLAUB35px21NpIvFAFpjXD%2BcyKVcHsBqQFMKoCDqTnqqTTiHTdgx9hNzSdLYzmd9WRthSwmH4IA8KsBzFtkMriAAqJPxvZ4dBMDUKQ4ukOInmYPnsossSW6/2yq7yxX8Vze8tUMRKBmCgDuCDomAgJdYADplWqNVqDubvArot4mKFaFxfQKrYjLg8AG5icu9lh920Ee2O0fBxdL/jEKPCvDlmXfe4vKEx5DmvCLABM51f8/hS6/9yoEDXtElVFelQPAIFEb0MyzTAFEBU4nwiV4Jg/QVv2PGYG1RAgOUwKtUK/YJeQAay2cdUEnacGi4XC8MrI9EVohErgYxE8F/OtvWQuirgAem4rYVjpQhNSFLYCAQCVN3uBQRLEiUKl2ABPI4ADYNHA/BM2zRZVMFBiGI4KZaE4CJeE8DgtFIVBOChBQZjmCUX2eHhSAITQDKmQjIg0fROEkUy3MszheAUEBvNc8yDNIOBYCQNAWGiLsyAoMDUHixKQGCJhCKYPg6A1YgQogYIAuCPwKgUzhnNK5hiAUgB5YJtGKcLnLithBDqhhaAqiLSCwYJXGARwxFoELuF4LBwyMcRevwKkShXaCAodYpXA1SreE2BoAtoPACPK5wsACrC8BYDbSEW4h5SUV5NUMYBdqMNypioAxgAUAA1PBMDbOrokYc7%2BEEEQxHYKQZEERQVHUXrdDqAwntMYxzF24IQsgKYyKaMbeFQS7iAzJaMfqRpEnsb0BlqUgfD8Do8i6Op0gSARKbSOJmYYUZOnCIYGma0o%2BiqFwaj0IoSgEFpKi5%2BmeYsQXWaGQXpfGOdplmeYJEM4z/N6qyOC2U4sqYLYIGiColGNARusOCBcEIEgjmfJyJl4cKtCQ0hPIibyjI4PzSDMiy9eC0KXOerWOGfHWg6CsOIo9y74jsSQgA%3D)
-
+## [**Try it on Compiler Explorer**](https://baka.onetincan.foo/z/vcTGT3)
 
 ### Usage
 
@@ -12,10 +11,22 @@ make build
 ```
 baka does not have a preprocessor and thus does not support preprocessor directives.
 
+#### Make Recipes
+- `make parse file=<source_code_file_path>` : Runs the compiler in verbose mode upto the parser stage.
+    For instance, to run the parser on `test.c` and stop after the parser stage, you can use:
+    ```bash
+    make parse file=test.c
+    ```
+
+- `make lex file=<source_code_file_path>` : Runs the compiler in verbose mode upto the lexer stage.
+- `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
+- `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
+- `make build` : Build the binary and put it in `/build/baka`
+- `make clean` : Clean up the build artifacts
+
 #### Command Line Flags:
 - `--lex` - run only the lexer and print/output tokens
 - `--parse` - run up through parsing and output the AST
-- `--codegen` - run the full pipeline and emit generated code
 - `--build_type` - set the build type (e.g. `debug` / `release`)
 - `--verbose` - print detailed logs during compilation
 
@@ -77,7 +88,7 @@ We are hoping we can support the following featureset:
 - Multi-level pointers
 - Multi-dimensional arrays
 
-**Extra Features**
+**Extra Non C++ Features**
 - Loop Labels:
     Allows programmers to break or continue out until a specific loop. This feature lets you annotate loops with labels and write cleaner and more readable nested loop control flow.
 
@@ -121,6 +132,17 @@ if(found){
     // An item in the stream is in the array `candidates`
 }
 ```
+
+### Assumptions
+There are certain features we are not supporting:
+- Unnamed Parameters in Function Signature
+- Preprocessor directives
+- `signed`
+- `const` pointer
+- Multiple inheritance
+- Access Modifiers: Everything is `public` by default.
+- `namespace` and scope resolution(`::`)
+- `enum class`
 
 ### Stages Status
 - [x] Lexer

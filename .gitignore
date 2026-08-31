@@ -6,3 +6,4 @@ cmake-build-debug
 source_code
 submissions/*
 compiler-explorer
+Justfile.private
