@@ -380,14 +380,19 @@ namespace baka {
                         else if (std::tolower(SourceCode[peek]) == 'u' && !dotSeen && !eSeen && !uSeen && !fSeen) {
                             uSeen = true;
                             peek++;
+                            if (peek > SourceCode.size() || std::tolower(SourceCode[peek]) != 'l'){
+                                break;
+                            }
                         }
                         else if (std::tolower(SourceCode[peek]) == 'l' && !dotSeen && !eSeen && !lSeen && !fSeen) {
                             lSeen = true;
                             peek++;
+                            break;
                         }
                         else if (std::tolower(SourceCode[peek]) == 'f' && (dotSeen || eSeen) && !lSeen && !fSeen) {
                             fSeen = true;
                             peek++;
+                            break;
                         }
                         else {
                             break;
