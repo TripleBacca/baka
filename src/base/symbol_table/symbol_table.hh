@@ -104,7 +104,7 @@ class ParserSymbolTable : public SymbolTable<SymbolTableEntry, Alloc> {
             this->AddEntry("short", SymbolTableEntry());  // has unsigned
             this->AddEntry("bool", SymbolTableEntry());
             // this->AddEntry("signed", SymbolTableEntry());
-            // this->AddEntry("unsigned", SymbolTableEntry()); //TODO NOT IMPLEMENTED SOME FUCKER GET ON THIS SHIT RNRNRN
+            // this->AddEntry("unsigned", SymbolTableEntry()); //TODO NOT IMPLEMENTED SOME GET ON THIS RNRNRN
         }
 
 };

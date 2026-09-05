@@ -21,7 +21,7 @@ namespace baka {
             int LineIndexId;
 
             std::string_view SourceCode;
-            std::deque<LineInfo> LineInfos; // need cuz dont wanna invalidate shit
+            std::deque<LineInfo> LineInfos; // need cuz dont wanna invalidate
 
             bool lineRunning;
             size_t lineStartIdx;
