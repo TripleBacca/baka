@@ -28,7 +28,7 @@ namespace baka {
             if (Match(types::TokenType::SEMICOLON)) {
                 // this is a declaration
                 auto *Node = ASTALLOC.Alloc<types::ClassDeclarationNode>(ClassIdentifier);
-                if (!LookupType(ClassIdentifier)) {
+                if (!TypeLookup.LookupCurrent(ClassIdentifier->GetName()).has_value()) {
                     AddType(ClassIdentifier);
                     GetParserSTE(ClassIdentifier)->SetIsStruct();
                 } else if(!GetParserSTE(ClassIdentifier)->IsStruct()) {
@@ -38,7 +38,7 @@ namespace baka {
             }
 
             // surely a definition
-            if (LookupType(ClassIdentifier)) {
+            if (TypeLookup.LookupCurrent(ClassIdentifier->GetName()).has_value()) {
                 // TODO throw error
                 if (GetParserSTE(ClassIdentifier)->IsStructDefined()) {
                     ReportError("redefinition of class");
@@ -59,11 +59,12 @@ namespace baka {
                 }
             }
 
-            if (!LookupType(ClassIdentifier)) {
+            if (!TypeLookup.LookupCurrent(ClassIdentifier->GetName()).has_value()) {
                 AddType(ClassIdentifier);
                 GetParserSTE(ClassIdentifier)->SetIsStruct();
             }
-            GetParserSTE(ClassIdentifier)->SetIsStructDefined();
+            if (GetParserSTE(ClassIdentifier)->IsStruct())
+                GetParserSTE(ClassIdentifier)->SetIsStructDefined();
             EnterScope();
 
             types::StructBodyNode *Body = nullptr;

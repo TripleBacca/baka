@@ -3,13 +3,9 @@
 #include "memory/custom_arenas.hh"
 #include <optional>
 #include <string_view>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/hash_policy.hpp>
+#include <unordered_map>
 #include <vector>
 #include <cassert>
-
-using namespace __gnu_pbds;
-
 
 namespace baka {
 namespace base {
@@ -22,15 +18,8 @@ struct SymbolTableUpdate {
 template<class SymbolTableEntry, class Alloc = base::UtilArena>
 class SymbolTable {
 
-    // TODO: can cache hash value
-    // gp_hash_table template params:
-    //   Key, Mapped, Hash_Fn, Eq_Fn,
-    //   Comb_Probe_Fn, Probe_Fn, Resize_Policy, Store_Hash, _Alloc
-    using Map = gp_hash_table<
-        std::string_view,
-        SymbolTableEntry,
-        std::hash<std::string_view>
-    >;
+    // Node-based storage keeps entry addresses stable across rehashes.
+    using Map = std::unordered_map<std::string_view, SymbolTableEntry>;
 
     std::vector<Map> Scopes;
 
@@ -42,7 +31,7 @@ public:
     }
 
     void ExitScope() {
-        Scopes.pop_back();
+        if (!Scopes.empty()) Scopes.pop_back();
     }
 
     std::optional<SymbolTableEntry> Lookup(std::string_view IdentifierName) {
@@ -57,8 +46,8 @@ public:
     }
 
     bool AddEntry(std::string_view Symbol, SymbolTableEntry Entry) {
+        if (Scopes.empty()) EnterNewScope();
         if (Scopes.back().find(Symbol) != Scopes.back().end()) {
-            assert(false);
             return false;
         }
         Scopes.back().insert({Symbol, std::move(Entry)});
@@ -66,6 +55,7 @@ public:
     }
 
     bool RegisterOrReplaceType(std::string_view Symbol, SymbolTableEntry Entry) {
+        if (Scopes.empty()) EnterNewScope();
         // true if symbol is new
         auto it = Scopes.back().find(Symbol);
         if (it != Scopes.back().end()) {
@@ -76,7 +66,18 @@ public:
         return true;
     }
 
-    //TODO GP hash does not guarantee pointer stability need to edit this to not return a pointer
+    std::optional<SymbolTableEntry> LookupCurrent(std::string_view IdentifierName) const {
+        if (Scopes.empty()) {
+            return std::nullopt;
+        }
+        auto it = Scopes.back().find(IdentifierName);
+        if (it == Scopes.back().end()) {
+            return std::nullopt;
+        }
+        return it->second;
+    }
+
+    // Stable until the containing scope is exited.
     SymbolTableEntry* GetEntry(std::string_view Symbol) {
         for (auto it = Scopes.rbegin(); it != Scopes.rend(); ++it) {
             auto found = it->find(Symbol);

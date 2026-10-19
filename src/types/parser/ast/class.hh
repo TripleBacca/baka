@@ -23,6 +23,19 @@ namespace baka {
 
             ~ClassDefinitionNode() override = default;
 
+            IdentifierNode* getName() const {
+                return ClassName;
+            }
+
+            IdentifierNode* getBaseName() const {
+                return ParentClassName;
+            }
+
+            StructBodyNode* getBody() const {
+                return Body;
+            }
+
+
             void Print(size_t Tabs) const override {
 
                 INDENT(Tabs);
@@ -48,6 +61,11 @@ namespace baka {
             }
 
             ~ClassDeclarationNode() override = default;
+
+            IdentifierNode* getName() const {
+                return ClassName;
+            }
+
 
             void Print(size_t Tabs) const override {
                 INDENT(Tabs);
