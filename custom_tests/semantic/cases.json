@@ -1,0 +1,777 @@
+[
+  {
+    "file": "undeclared_variable.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "use_before_declaration.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_local.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_parameter.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "out_of_scope.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "conflicting_typedef.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "function_redefinition.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "conflicting_prototypes.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "function_variable_conflict.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "object_with_body.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "nested_function.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "void_object.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "void_array.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "incomplete_object.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "recursive_member.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "function_returns_array.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "negative_array_bound.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "floating_array_bound.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "nonconstant_array_bound.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_lvalue.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "increment_constant.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "const_assignment.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "array_assignment.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "deref_nonpointer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "address_constant.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "float_bitwise.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "pointer_multiplication.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "noncallable.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "wrong_argument_count.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "wrong_argument_type.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "void_return_value.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "wrong_pointer_return.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "break_outside_loop.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "continue_outside_loop.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "undefined_loop_label.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "undefined_goto.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_goto_label.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "case_outside_switch.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_case.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_default.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "nonconstant_case.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "float_switch.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "missing_member.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "wrong_arrow.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_this.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_member.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_enumerator.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "oversized_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_static_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_constructor.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "duplicate_destructor.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "unsigned_float.cpp",
+    "exit": 1,
+    "diagnostic_stage": "PARSE"
+  },
+  {
+    "file": "unsigned_alias.cpp",
+    "exit": 1,
+    "diagnostic_stage": "PARSE"
+  },
+  {
+    "file": "wrong_enum_modifier.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "const_typedef_write.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "const_member_write.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "static_method_this.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "void_condition.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "sizeof_void.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "sizeof_function.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "default_argument_type.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "wrong_default_arity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "const_object_no_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "continue_in_switch.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "inactive_loop_label.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "goto_bypasses_initialization.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_scalar.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_shadow.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_recursion.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_self_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_function_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_default_argument.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_labeled_loop.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_forward_goto.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_array.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_typedef_repeat.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_inheritance.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_member.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_empty_for.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_incomplete_pointer_size.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "forward_struct_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "bare_return.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "empty_statement.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "unspecified_array_bound.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "explicit_enum_value.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "variadic.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "continue_outer_label.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_main_arguments.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_main_long.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_forward_function.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_forward_global.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_for_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_for_const_no_init.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_separate_defaults.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_default_leak.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_prototype_default.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_pointer_default_leak.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_repeated_default.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_zero_argument.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_const_bound.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_float.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_static_local_address.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_static_global_address.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_drop_const.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_add_const.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_void_pointer_arithmetic.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_postfix_void_pointer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_comma_one_argument.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_comma_two_arguments.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_converted_case_duplicate.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_loop_reuse.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_duplicate_active_loop.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_instance_this.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_static_explicit_receiver.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_static_implicit_member.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_short_circuit_constant.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_short_circuit_type.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_literal_size.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_const_bound.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_float_cast_bound.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_float_arithmetic.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_array_address.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_function_address.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_frozen_global_binding.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_derived_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_constructor_overload.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_member_default.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_member_default_leak.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_default_this.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_global_use_before_list_declaration.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_float_ice.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_prefix_void_pointer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_negative_float_static.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_scalar_braces.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_inferred_size_dependency.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_global_inferred_size_dependency.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_inferred_multidimensional.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_braced_char_array.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_empty_inferred_array.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_scalar_array_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_string_int_array_initializer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_main_single_int_braced_initializer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_main_single_float.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_main_single_int_variadic.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_main_pointer_multiply.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_main_void.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_main_void_return_value.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_bound_instance_method.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_bound_method_pointer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_bound_method_address.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_bound_method_argument.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_bound_method_value.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_implicit_method_static_context.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_static_method_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_function_pointer_field_arity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  }
+]

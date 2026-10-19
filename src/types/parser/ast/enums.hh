@@ -37,6 +37,8 @@ namespace types {
             Initializers.push_back(initializer);
         }
 
+        bool isAnonymous() const { return EnumName == nullptr; }
+
         void Print(size_t Tabs = 0) const {
             INDENT(Tabs);
             std::cout << "Enum(" << (EnumName ? EnumName->GetName() : "") << ")" << std::endl;

@@ -22,7 +22,7 @@ namespace baka {
             }
             std::size_t idx = 1;
             // TODO: maybe change these defaults later
-            Stage UptoStage = Stage::PARSE;
+            Stage UptoStage = Stage::SEMANTIC;
             baka::driver::BuildType BuildType = BuildType::DEBUG;
             std::string SourceFile;
             bool VerboseMode = false;
@@ -36,6 +36,12 @@ namespace baka {
                 }
                 else if (curr == "--parse") {
                     UptoStage = Stage::PARSE;
+                }
+                else if (curr == "--semantic") {
+                    UptoStage = Stage::SEMANTIC;
+                }
+                else if (curr == "--ir") {
+                    UptoStage = Stage::IR;
                 }
                 else if (curr == "--codegen") {
                     UptoStage = Stage::CODEGEN;

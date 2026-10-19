@@ -18,11 +18,15 @@ namespace baka {
             GotoLabelStatementNode(IdentifierNode* tag, StatementNode* stmt) : Tag(tag), Stmt(stmt) {
             }
 
+            IdentifierNode* getTag() const { return Tag; }
+            StatementNode* getStatement() const { return Stmt; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Goto Label(";
                 if (Tag) Tag->Print();
                 std::cout << ":\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Stmt) Stmt->Print(Tabs + 1);
 
@@ -39,6 +43,11 @@ namespace baka {
         public:
             CaseLabelStatementNode(ExpressionNode* tag, StatementNode* stmt) : Tag(tag), Stmt(stmt) {
             }
+
+            ExpressionNode* getTag() const { return Tag; }
+            StatementNode* getStatement() const { return Stmt; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Tag = rewrite(Tag); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -59,6 +68,8 @@ namespace baka {
         public:
             DefaultLabelStatementNode(StatementNode* stmt) : Stmt(stmt) {
             }
+
+            StatementNode* getStatement() const { return Stmt; }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);

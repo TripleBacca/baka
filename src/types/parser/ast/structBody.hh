@@ -71,6 +71,8 @@ namespace types {
             }
 
 
+            bool empty() const { return Members.empty(); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "StructBodyNode(\n";

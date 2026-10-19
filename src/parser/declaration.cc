@@ -53,6 +53,7 @@ namespace baka
 		// wherever declaration list is typedef also must be there
 		types::DeclarationList* Parser::ParseDeclarationList()
 		{
+			const size_t SourceStart = current;
 		    types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
 			bool IsStatic = false;
@@ -83,12 +84,18 @@ namespace baka
 
 			types::IdentifierNode* TypeName = ParseTypeIdentifier();
 
+			if (Modifier == types::TypeSpecifierModifier::STRUCT || Modifier == types::TypeSpecifierModifier::CLASS) {
+				if (auto* Entry = this->GetParserSTE(TypeName); Entry && !Entry->IsStruct()) {
+					ReportError("not a struct");
+				}
+			}
+
 			std::vector<types::SingleDeclarationNode*> Declarations;
 			auto* Node = ParseSingleDeclaration();
 			if(Node == nullptr) {
 				ReportError("expected single declaration");
-				Node = ASTALLOC.Alloc<types::SingleDeclarationNode>(
-				    ASTALLOC.Alloc<types::DeclarationIdentifierNode>(), nullptr);
+				Node = AllocNodeAt<types::SingleDeclarationNode>(SourceStart,
+				    AllocNodeAt<types::DeclarationIdentifierNode>(SourceStart), nullptr);
 				Node->setHasError();
 			}
 
@@ -109,7 +116,7 @@ namespace baka
 				}
 			}
 
-			auto* DeclarationListNode = ASTALLOC.Alloc<types::DeclarationList>(IsStatic, IsConst, Modifier, TypeName, std::move(Declarations));
+			auto* DeclarationListNode = AllocNodeAt<types::DeclarationList>(SourceStart, IsStatic, IsConst, Modifier, TypeName, std::move(Declarations));
 			return DeclarationListNode;
 		}
 
@@ -117,10 +124,11 @@ namespace baka
 		// int a = {1}, b;
 		types::SingleDeclarationNode* Parser::ParseSingleDeclaration()
 		{
+			const size_t SourceStart = current;
 			auto* DeclarationIdentifer = ParseDeclarationIdentifier();
 			if(DeclarationIdentifer == nullptr) {
 				ReportError("expected declaration identifier");
-				DeclarationIdentifer = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+				DeclarationIdentifer = AllocNodeAt<types::DeclarationIdentifierNode>(SourceStart);
 				DeclarationIdentifer->setHasError();
 			}
 
@@ -131,7 +139,7 @@ namespace baka
 				// Intializer is either : assignment_expr, { intializer, ... }
 			}
 
-			auto* Node = ASTALLOC.Alloc<types::SingleDeclarationNode>(DeclarationIdentifer, Initialization);
+			auto* Node = AllocNodeAt<types::SingleDeclarationNode>(SourceStart, DeclarationIdentifer, Initialization);
 			return Node;
 		}
 
@@ -141,7 +149,8 @@ namespace baka
 		// false by default
 		types::DeclarationIdentifierNode* Parser::ParseDeclarationIdentifier()
 		{
-			auto* Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+			const size_t SourceStart = current;
+			auto* Variable = AllocNodeAt<types::DeclarationIdentifierNode>(SourceStart);
 			while (Match(types::TokenType::OP_MUL))
 			{
 			    Variable->appendPointer();
@@ -174,7 +183,7 @@ namespace baka
 					if (!Check(types::TokenType::EOF_TOKEN)) {
 						Advance();
 					}
-					auto* Errored = ASTALLOC.Alloc<types::IdentifierNode>(ErrName);
+					auto* Errored = AllocNodeAt<types::IdentifierNode>(SourceStart, ErrName);
 					Errored->setHasError();
 					Variable->setInnerDeclaration(Errored);
 				}
@@ -236,7 +245,8 @@ namespace baka
 
 		types::DeclarationIdentifierNode* Parser::ParseAbstractDeclarator()
 		{
-			auto* Variable = ASTALLOC.Alloc<types::DeclarationIdentifierNode>();
+			const size_t SourceStart = current;
+			auto* Variable = AllocNodeAt<types::DeclarationIdentifierNode>(SourceStart);
 			while (Match(types::TokenType::OP_MUL))
 			{
 			    Variable->appendPointer();

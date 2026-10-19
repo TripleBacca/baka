@@ -4,7 +4,10 @@
 
 namespace baka {
     namespace parser {
+        // Labels own the statement they prefix. The parser produces the attached body;
+        // semantic checking decides whether the label placement is legal.
         types::GotoLabelStatementNode* Parser::GotoLabelStatement() {
+            const size_t SourceStart = current;
             types::IdentifierNode* Tag = this->ParseIdentifier();
 
             if (!this->Match(types::TokenType::OP_COLON)) {
@@ -14,19 +17,27 @@ namespace baka {
                 }
             }
 
-            // types::StatementNode* Stmt = this->Statement();
             types::StatementNode* Stmt = nullptr;
+            if (!Check(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN) &&
+                !Check(types::TokenType::K_CASE) && !Check(types::TokenType::K_DEFAULT)) {
+                Stmt = this->ParseStatement();
+            }
 
-            types::GotoLabelStatementNode* Node = ASTALLOC.Alloc<types::GotoLabelStatementNode>(Tag, Stmt);
+            auto* Node = AllocNodeAt<types::GotoLabelStatementNode>(SourceStart, Tag, Stmt);
             return Node;
         }
 
         types::CaseLabelStatementNode* Parser::CaseLabelStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_CASE)) {
                 // throw error
             }
 
             types::ExpressionNode* Tag = this->Expression();
+            if (Tag == nullptr) {
+                // the expression parser already diagnosed; resync to the ':'.
+                SkipTo({types::TokenType::OP_COLON, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
+            }
 
             if (!this->Match(types::TokenType::OP_COLON)) {
                 ReportError("expected ':' after case value", true);
@@ -35,14 +46,18 @@ namespace baka {
                 }
             }
 
-            // types::StatementNode* Stmt = this->Statement();
             types::StatementNode* Stmt = nullptr;
+            if (!Check(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN) &&
+                !Check(types::TokenType::K_CASE) && !Check(types::TokenType::K_DEFAULT)) {
+                Stmt = this->ParseStatement();
+            }
 
-            types::CaseLabelStatementNode* Node = ASTALLOC.Alloc<types::CaseLabelStatementNode>(Tag, Stmt);
+            auto* Node = AllocNodeAt<types::CaseLabelStatementNode>(SourceStart, Tag, Stmt);
             return Node;
         }
 
         types::DefaultLabelStatementNode* Parser::DefaultLabelStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_DEFAULT)) {
                 // throw error
             }
@@ -55,9 +70,12 @@ namespace baka {
             }
 
             types::StatementNode* Stmt = nullptr;
-            // types::StatementNode* Stmt = this->Statement();
+            if (!Check(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN) &&
+                !Check(types::TokenType::K_CASE) && !Check(types::TokenType::K_DEFAULT)) {
+                Stmt = this->ParseStatement();
+            }
 
-            types::DefaultLabelStatementNode* Node = ASTALLOC.Alloc<types::DefaultLabelStatementNode>(Stmt);
+            auto* Node = AllocNodeAt<types::DefaultLabelStatementNode>(SourceStart, Stmt);
             return Node;
         }
 
@@ -72,7 +90,6 @@ namespace baka {
                 return this->DefaultLabelStatement();
             }
             else {
-                // throw error
                 return nullptr;
             }
         }

@@ -8,7 +8,9 @@ namespace baka {
         enum class Stage {
             LEX = 0,
             PARSE = 1,
-            CODEGEN = 2,
+            SEMANTIC = 2,
+            IR = 3,
+            CODEGEN = 4,
         };
 
         constexpr std::string_view to_string_view(Stage stage) {
@@ -17,6 +19,10 @@ namespace baka {
                 return "LEX";
             case Stage::PARSE:
                 return "PARSE";
+            case Stage::SEMANTIC:
+                return "SEMANTIC";
+            case Stage::IR:
+                return "IR";
             case Stage::CODEGEN:
                 return "CODEGEN";
             }

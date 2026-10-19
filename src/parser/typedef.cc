@@ -12,6 +12,7 @@ namespace parser {
     // wherever declaration list is typedef also must be there
     // this eats semicolon btw
     types::TypedefNode* Parser::ParseTypedef() {
+        const size_t SourceStart = current;
         if(!Match(types::TokenType::K_TYPEDEF)) {
             // todo throw error
             assert(false);
@@ -26,7 +27,7 @@ namespace parser {
 
         types::IdentifierNode* BoundTypeName = ParseTypeIdentifier();
 
-        types::TypedefNode* Node = ASTALLOC.Alloc<types::TypedefNode>(BoundTypeName, Modifier, isConst);
+        types::TypedefNode* Node = AllocNodeAt<types::TypedefNode>(SourceStart, BoundTypeName, Modifier, isConst);
 
         // redefinition exemption applies to the typedef own variable name. not function params in the typdef
         // eg: typedef int (*foo)(int a, int b) exemption should not apply to a, b

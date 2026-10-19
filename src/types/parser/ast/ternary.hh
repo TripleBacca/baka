@@ -13,7 +13,13 @@ namespace types {
         public:
         TernaryOpNode(ExpressionNode* ConditionExpr, ExpressionNode* ThenExpr, ExpressionNode* ElseExpr) : ConditionExpr(ConditionExpr), ThenExpr(ThenExpr), ElseExpr(ElseExpr) {}
 
-        void Print(size_t Tabs) const override {
+        ExpressionNode* getCondition() const { return ConditionExpr; }
+        ExpressionNode* getThen() const { return ThenExpr; }
+        ExpressionNode* getElse() const { return ElseExpr; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { ConditionExpr = rewrite(ConditionExpr); ThenExpr = rewrite(ThenExpr); ElseExpr = rewrite(ElseExpr); }
+
+            void Print(size_t Tabs) const override {
             INDENT(Tabs);
             std::cout << "TernaryOpNode(" << '\n';
 

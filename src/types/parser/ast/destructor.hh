@@ -18,6 +18,8 @@ namespace baka {
 
             ~DestructorNode() = default;
 
+            StatementNode* getBody() const { return Body; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Destructor(\n";

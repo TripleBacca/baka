@@ -31,6 +31,18 @@ lex:
 parse:
 	./build/baka --parse --verbose $(file)
 
+ir:
+	./build/baka --ir $(file)
+
+semantic:
+	./build/baka --semantic --verbose $(file)
+
+test-ir: build
+	./custom_test_hook ir
+
+test-semantic: build
+	./custom_test_hook semantic
+
 parse-folder: build
 	@found=0; failed=0; \
 	for f in $$(find $(dir) -type f ! -name '*.out'); do \
@@ -48,4 +60,4 @@ clean:
 	rm -rf build/*
 
 
-.PHONY: test build lex clean help parse parse-folder
+.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir

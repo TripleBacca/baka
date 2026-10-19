@@ -101,8 +101,7 @@ Program(
                 )
                 Cond: nullptr
             )
-            ExpressionStatement(
-            )
+            EmptyStatement()
         )
     )
 )
@@ -110,7 +109,4 @@ Program(
 custom_tests/parse/18_invalid_do_while.cpp:6:5: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
 	    return 0;
 	    [38;2;255;0;0m^[0m
-custom_tests/parse/18_invalid_do_while.cpp:6:13: [38;2;255;0;0merror: [0mexpected expression (PARSE)
-	    return 0;
-	            [38;2;255;0;0m^[0m
-Compilation failed due to 2 error(s)
+Compilation failed due to 1 error(s)

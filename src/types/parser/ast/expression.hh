@@ -31,6 +31,10 @@ namespace types {
 
         PrimaryExpressionNode(std::variant<ConstantNode*, IdentifierNode*, ThisNode*> Expr) : Expr(Expr) {}
 
+        const std::variant<ConstantNode*, IdentifierNode*, ThisNode*>& getExpression() const {
+            return Expr;
+        }
+
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
             std::cout << "PrimaryExpression(" << std::endl;
@@ -57,7 +61,12 @@ namespace types {
                 : UnaryOp(UnaryOp), Expr(Expr) {}
 
 
-            void Print(size_t Tabs = 0) const override {
+            ASTUnaryOp getUnaryOp() const { return UnaryOp; }
+            ExpressionNode* getOperand() const { return Expr; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Factor(" << std::endl;
 
@@ -85,7 +94,13 @@ namespace types {
             BinaryExpressionNode(ASTBinaryOp BinaryOp, ExpressionNode* LHSExpr, ExpressionNode* RHSExpr)
                 : BinaryOp(BinaryOp), LHSExpr(LHSExpr), RHSExpr(RHSExpr) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ASTBinaryOp getBinaryOp() const { return BinaryOp; }
+            ExpressionNode* getLeft() const { return LHSExpr; }
+            ExpressionNode* getRight() const { return RHSExpr; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); RHSExpr = rewrite(RHSExpr); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "BinaryExpression(" << std::endl;
 
@@ -117,7 +132,11 @@ namespace types {
             CommaExpressionNode(std::vector<ExpressionNode*> ExpressionList)
                 : ExpressionList(std::move(ExpressionList)) {}
 
-            void Print(size_t Tabs = 0) const override {
+            const std::vector<ExpressionNode*>& getExpressions() const { return ExpressionList; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { for (auto*& item : ExpressionList) item = rewrite(item); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "CommaExpression(" << std::endl;
 
@@ -145,7 +164,12 @@ namespace types {
             IndexPostfixExpr(ExpressionNode* LHSExpr, ExpressionNode* Index)
                 : LHSExpr(LHSExpr), Index(Index) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ExpressionNode* getBase() const { return LHSExpr; }
+            ExpressionNode* getIndex() const { return Index; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); Index = rewrite(Index); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "IndexPostfixExpr(" << std::endl;
 
@@ -166,7 +190,12 @@ namespace types {
             UnaryPostfixExpr(ExpressionNode* LHSExpr, ASTUnaryOp Op)
                 : LHSExpr(LHSExpr), Op(Op) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ExpressionNode* getOperand() const { return LHSExpr; }
+            ASTUnaryOp getOp() const { return Op; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "UnaryPostfixExpr(" << '\n';
 
@@ -188,7 +217,12 @@ namespace types {
             MemberPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
                 : LHSExpr(LHSExpr), MemberName(MemberName) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ExpressionNode* getBase() const { return LHSExpr; }
+            IdentifierNode* getMember() const { return MemberName; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "MemberPostfixExpr(" << std::endl;
 
@@ -208,7 +242,12 @@ namespace types {
             ArrowPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
                 : LHSExpr(LHSExpr), MemberName(MemberName) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ExpressionNode* getBase() const { return LHSExpr; }
+            IdentifierNode* getMember() const { return MemberName; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "ArrowPostfixExpr(" << std::endl;
 
@@ -229,7 +268,12 @@ namespace types {
             FunctionCallPostfixExpr(ExpressionNode* FunctionIdentifier, ExpressionNode* ArgumentList)
                 : FunctionIdentifier(FunctionIdentifier), ArgumentList(ArgumentList) {}
 
-            void Print(size_t Tabs = 0) const override {
+            ExpressionNode* getCallee() const { return FunctionIdentifier; }
+            ExpressionNode* getArguments() const { return ArgumentList; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { FunctionIdentifier = rewrite(FunctionIdentifier); ArgumentList = rewrite(ArgumentList); }
+
+        void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "FunctionCallPostfixExpr(" << std::endl;
 

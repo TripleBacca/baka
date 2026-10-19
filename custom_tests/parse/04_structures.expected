@@ -753,10 +753,8 @@ Program(
                     InitializerNode(
                         Expressions: 1
                         SizeofNode(
-                            CommaExpression(
-                                PrimaryExpression(
-                                    Identifier(r)
-                                )
+                            PrimaryExpression(
+                                Identifier(r)
                             )
                         )
                     )

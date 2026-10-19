@@ -11,6 +11,8 @@
 #include "lexer/lexer.hh"
 #include "base/base.hh"
 #include "parser/parser.hh"
+#include "semantic/semantic_analyzer.hh"
+#include "ir/lowering.hh"
 #include "types/driver/defs.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
@@ -109,9 +111,11 @@ int baka::driver::run(int argc, char* argv[]) {
         if (isVerbose) {
             std::cout << "Lexer::LexerOutput: " << Lexed.Tokens.size() << " Tokens" << '\n';
         }
-        PrintTokenTableHeader(std::cout);
-        for (const auto& token : Lexed.Tokens) {
-            std::cout << token << '\n';
+        if (Gctx::TillStage() != Stage::IR || isVerbose) {
+            PrintTokenTableHeader(std::cout);
+            for (const auto& token : Lexed.Tokens) {
+                std::cout << token << '\n';
+            }
         }
         if (isVerbose) {
             std::cout << std::endl;
@@ -138,6 +142,8 @@ int baka::driver::run(int argc, char* argv[]) {
         }
     }
 
+    types::ASTNode* Root = nullptr;
+
     {
         // parsing
         if (Gctx::TillStage() < Stage::PARSE) {
@@ -146,7 +152,7 @@ int baka::driver::run(int argc, char* argv[]) {
 
 
         parser::Parser Parser(Lexed.Tokens, Lexed.Locations);
-        types::ASTNode* Root = Parser.Parse();
+        Root = Parser.Parse();
 
         if(isVerbose) {
             std::cout << "Parser::AST: " << '\n';
@@ -167,6 +173,82 @@ int baka::driver::run(int argc, char* argv[]) {
         else {
             if (isVerbose) {
                 std::cout << "Parser: Parsing stage completed" << '\n';
+            }
+        }
+
+        if (isVerbose) {
+            std::cout << std::endl;
+        }
+    }
+
+    {
+        // semantic checking
+        if (Gctx::TillStage() < Stage::SEMANTIC) {
+            return 0;
+        }
+
+        auto* Program = dynamic_cast<types::ProgramNode*>(Root);
+        if (!Program) {
+            Gctx::GenerateGlobalError("semantic stage requires a program AST", Stage::SEMANTIC);
+        } else {
+            semantic::SemanticAnalyzer Analyzer;
+            bool Analyzed = Analyzer.analyze(*Program);
+            if (Analyzed && (Gctx::TillStage() != Stage::IR || isVerbose)) {
+                std::cout << "Semantic::AST: " << '\n';
+                Program->Print();
+                std::cout << std::endl;
+            }
+            if (!Analyzed && Analyzer.diagnostics().empty()) {
+                Gctx::GenerateGlobalError("semantic analysis failed", Stage::SEMANTIC);
+            }
+
+            // Lower while both the annotated tree and its semantic arenas are
+            // alive. IR owns its copied types, identities and strings afterward.
+            if (Analyzed && Gctx::TillStage() == Stage::IR) {
+                ir::Lowerer Lowerer(Analyzer);
+                if (Lowerer.lower(*Program, false)) {
+                    ir::Print(Lowerer.module(), std::cout);
+                } else {
+                    for (const auto& Entry : Lowerer.diagnostics()) {
+                        size_t LineNo = Entry.source.line ? Entry.source.line : 1;
+                        size_t ColNo = Entry.source.column ? Entry.source.column : 1;
+                        base::LineCtx Context{LineNo - 1, Gctx::GetLineIndex().get()};
+                        Gctx::GenerateLineError(LineNo, ColNo, Context, Entry.message, Stage::IR);
+                    }
+                }
+            }
+
+            for (const auto& Entry : Analyzer.diagnostics()) {
+                auto* Source = reinterpret_cast<const types::ASTNode*>(Entry.source);
+                auto Span = Source ? Source->getSourceSpan() : types::ASTSourceSpan{};
+                size_t LineNo = Span.Valid ? Span.Line : 1;
+                size_t ColNo = Span.Valid ? Span.Col : 1;
+                base::LineCtx Context{LineNo - 1, Gctx::GetLineIndex().get()};
+                Gctx::GenerateLineError(LineNo, ColNo, Context, Entry.message, Stage::SEMANTIC);
+                auto* Previous = reinterpret_cast<const types::ASTNode*>(Entry.previous);
+                if (Previous) {
+                    auto PreviousSpan = Previous->getSourceSpan();
+                    if (PreviousSpan.Valid) {
+                        base::LineCtx PreviousContext{PreviousSpan.Line - 1, Gctx::GetLineIndex().get()};
+                        Gctx::GenerateLineWarning(PreviousSpan.Line, PreviousSpan.Col, PreviousContext,
+                                                  "previous declaration is here", Stage::SEMANTIC);
+                    }
+                }
+            }
+        }
+    }
+
+    {
+        // post semantic
+        size_t ErrorCount = PrintErrorsIfAny();
+
+        if (ErrorCount > 0) {
+            std::cout << "Compilation failed due to " << ErrorCount << " error(s)" << '\n';
+            return 1;
+        }
+        else {
+            if (isVerbose) {
+                std::cout << "Semantic: Checking stage completed" << '\n';
             }
         }
 

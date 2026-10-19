@@ -11,6 +11,13 @@
 namespace baka {
 namespace types {
 
+    class StructDefinitionNode;
+    class StructDeclarationNode;
+    class ClassDefinitionNode;
+    class ClassDeclarationNode;
+    class UnionNode;
+    class EnumNode;
+
     enum class StatementNodeType {
         CompoundStatement,
         JumpStatement,
@@ -27,23 +34,30 @@ namespace types {
 
     class CompoundStatementNode : public StatementNode
     {
-        std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*>> Statements;
     public:
-        CompoundStatementNode(std::vector<std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*>> Statements) : Statements(std::move(Statements)) {}
+        using StatementVariant = std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*,
+                                              StructDefinitionNode*, StructDeclarationNode*, ClassDefinitionNode*,
+                                              ClassDeclarationNode*, UnionNode*, EnumNode*>;
+        using StatementList = std::vector<StatementVariant>;
+
+    private:
+        StatementList Statements;
+
+    public:
+        CompoundStatementNode(StatementList Statements) : Statements(std::move(Statements)) {}
+
+        const StatementList& getStatements() const { return Statements; }
+
+        void addStatement(StatementVariant Statement) { Statements.push_back(Statement); }
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);
             std::cout << "CompoundStatement(" << std::endl;
 
             for (const auto& Statement : Statements) {
-                if (std::holds_alternative<DeclarationList*>(Statement))
-                    std::get<DeclarationList*>(Statement)->Print(Tabs + 1);
-                else if (std::holds_alternative<TypedefNode*>(Statement))
-                    std::get<TypedefNode*>(Statement)->Print(Tabs + 1);
-                else if (std::holds_alternative<FunctionNode*>(Statement))
-                    std::get<FunctionNode*>(Statement)->Print(Tabs + 1);
-                else
-                    std::get<StatementNode*>(Statement)->Print(Tabs + 1);
+                std::visit([&](auto* node) {
+                    if (node) static_cast<ASTNode*>(node)->Print(Tabs + 1);
+                }, Statement);
             }
 
             INDENT(Tabs);
@@ -51,10 +65,22 @@ namespace types {
         }
     };
 
+    class EmptyStatementNode : public StatementNode {
+    public:
+        void Print(size_t Tabs = 0) const override {
+            INDENT(Tabs);
+            std::cout << "EmptyStatement()" << std::endl;
+        }
+    };
+
     class ExpressionStatementNode : public StatementNode {
         ExpressionNode* Expression; // can be nullptr
         public:
             ExpressionStatementNode(ExpressionNode* Expression) : Expression(Expression) {}
+            ExpressionNode* getExpression() const { return Expression; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expression = rewrite(Expression); }
+
             void Print(size_t Tabs) const override {
                 INDENT(Tabs);
                 std::cout << "ExpressionStatement(" << std::endl;

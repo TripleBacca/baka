@@ -7,6 +7,7 @@
 namespace baka {
     namespace parser {
         types::ConstructorNode* Parser::ParseConstructor(types::IdentifierNode* ParentName) {
+            const size_t SourceStart = current;
             types::IdentifierNode* ConstructorIdentifier = this->ParseIdentifier();
             if (ConstructorIdentifier->GetName() != ParentName->GetName()) {
                 ReportError("constructor name does not match the type name");
@@ -26,7 +27,7 @@ namespace baka {
             }
 
             types::StatementNode* Body = this->CompoundStatement();
-            auto* Node = ASTALLOC.Alloc<types::ConstructorNode>(Args, Body);
+            auto* Node = AllocNodeAt<types::ConstructorNode>(SourceStart, Args, Body);
 
             return Node;
         }

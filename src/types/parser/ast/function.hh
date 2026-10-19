@@ -30,13 +30,16 @@ namespace types {
     public:
         FunctionNode(IdentifierNode* BindedReturnType, DeclarationIdentifierNode* funcType, StatementNode* body, bool IsStatic, bool IsConst, TypeSpecifierModifier modifier) :
             BoundReturnType(BindedReturnType), FuncType(funcType), Body(body), IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier) {
-            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(BoundReturnType->GetName())) {
-                // todo throw error
-                assert(false);
-            }
         }
 
         ~FunctionNode() override = default;
+
+        IdentifierNode* getReturnTypeName() const { return BoundReturnType; }
+        DeclarationIdentifierNode* getDeclarator() const { return FuncType; }
+        StatementNode* getBody() const { return Body; }
+        bool getIsStatic() const { return IsStatic; }
+        bool getIsConst() const { return IsConst; }
+        TypeSpecifierModifier getModifier() const { return Modifier; }
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);

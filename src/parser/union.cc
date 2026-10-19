@@ -14,6 +14,7 @@ namespace parser {
     }
 
     types::UnionNode* Parser::ParseUnion() {
+        const size_t SourceStart = current;
         if(!Match(types::TokenType::K_UNION)) {
             // todo throw error;
             assert(false);
@@ -28,7 +29,7 @@ namespace parser {
         }
 
         if (UnionName && Match(types::TokenType::SEMICOLON))
-            return ASTALLOC.Alloc<types::UnionNode>(nullptr, UnionName);
+            return AllocNodeAt<types::UnionNode>(SourceStart, nullptr, UnionName);
 
         EnterScope();
 
@@ -43,7 +44,7 @@ namespace parser {
             }
         }
 
-        types::UnionNode* Node = ASTALLOC.Alloc<types::UnionNode>(Body, UnionName);
+        types::UnionNode* Node = AllocNodeAt<types::UnionNode>(SourceStart, Body, UnionName);
 
         ExitScope();
 

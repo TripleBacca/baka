@@ -27,9 +27,19 @@ namespace baka {
                 Decl(decl), Cond(cond), Upd(upd), Label(label), Body(body) {
             }
 
+            using InitVariant = std::variant<types::ExpressionNode*, types::DeclarationList*, types::TypedefNode*>;
+            const InitVariant& getInitializer() const { return Decl; }
+            types::ExpressionNode* getCondition() const { return Cond; }
+            types::ExpressionNode* getUpdate() const { return Upd; }
+            types::IdentifierNode* getLabel() const { return Label; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { if (auto* expr = std::get_if<ExpressionNode*>(&Decl)) *expr = rewrite(*expr); Cond = rewrite(Cond); Upd = rewrite(Upd); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "For(" << "\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 std::visit([&](auto&& decl) {
                     if(decl)
@@ -82,9 +92,16 @@ namespace baka {
             WhileBlockStatementNode(ExpressionNode* cond, IdentifierNode* label, StatementNode* body) : Cond(cond), Label(label), Body(body) {
             }
 
+            ExpressionNode* getCondition() const { return Cond; }
+            IdentifierNode* getLabel() const { return Label; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Cond = rewrite(Cond); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "While(" << "\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Cond) {
                     Cond->Print(Tabs + 1);
@@ -114,9 +131,16 @@ namespace baka {
             DoWhileBlockStatementNode(ExpressionNode* cond, IdentifierNode* label, StatementNode* body) : Cond(cond), Label(label), Body(body) {
             }
 
+            ExpressionNode* getCondition() const { return Cond; }
+            IdentifierNode* getLabel() const { return Label; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Cond = rewrite(Cond); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Do While(" << "\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Body) Body->Print(Tabs + 1);
 

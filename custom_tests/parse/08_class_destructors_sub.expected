@@ -242,35 +242,23 @@ Program(
                     Initialization : nullptr
                 )
             )
-            Function(
-                IsStatic: 0, IsConst: 0
-                TypeSpecifierModifier: None
-                FuncType: 
-                DeclarationIdentifier(
-                    PointerCount: 0
-                        Identifier(fill)
-                    ArraySizes: 
-                    FunctionParameters: 
-                        Args(
-                            FunctionParameter(
-                                IsConst: 0
-                                TypeSpecifierModifier: None
-                                Identifier(int)
-                                SingleDeclarationNode(
-                                    DeclarationIdentifier(
-                                        PointerCount: 0
-                                            Identifier(amount)
-                                        ArraySizes: 
-                                    )
-                                    Initialization : nullptr
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(capacity)
+                                )
+                                PrimaryExpression(
+                                    Constant(16)
                                 )
                             )
                         )
-                )
-                ReturnType: 
-                Identifier(void)
-                FunctionBody:
-                CompoundStatement(
+                    )
                     ExpressionStatement(
                         CommaExpression(
                             BinaryExpression(
@@ -278,45 +266,8 @@ Program(
                                 PrimaryExpression(
                                     Identifier(used)
                                 )
-                                BinaryExpression(
-                                    BinaryOp: OP_ADD,
-                                    PrimaryExpression(
-                                        Identifier(used)
-                                    )
-                                    PrimaryExpression(
-                                        Identifier(amount)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-            Function(
-                IsStatic: 0, IsConst: 0
-                TypeSpecifierModifier: None
-                FuncType: 
-                DeclarationIdentifier(
-                    PointerCount: 0
-                        Identifier(free_space)
-                    ArraySizes: 
-                    FunctionParameters: 
-                        Args(
-                        )
-                )
-                ReturnType: 
-                Identifier(int)
-                FunctionBody:
-                CompoundStatement(
-                    Return(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_SUB,
                                 PrimaryExpression(
-                                    Identifier(capacity)
-                                )
-                                PrimaryExpression(
-                                    Identifier(used)
+                                    Constant(0)
                                 )
                             )
                         )
@@ -392,6 +343,87 @@ Program(
                                 )
                                 PrimaryExpression(
                                     Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(fill)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                            FunctionParameter(
+                                IsConst: 0
+                                TypeSpecifierModifier: None
+                                Identifier(int)
+                                SingleDeclarationNode(
+                                    DeclarationIdentifier(
+                                        PointerCount: 0
+                                            Identifier(amount)
+                                        ArraySizes: 
+                                    )
+                                    Initialization : nullptr
+                                )
+                            )
+                        )
+                )
+                ReturnType: 
+                Identifier(void)
+                FunctionBody:
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(used)
+                                )
+                                BinaryExpression(
+                                    BinaryOp: OP_ADD,
+                                    PrimaryExpression(
+                                        Identifier(used)
+                                    )
+                                    PrimaryExpression(
+                                        Identifier(amount)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Function(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                FuncType: 
+                DeclarationIdentifier(
+                    PointerCount: 0
+                        Identifier(free_space)
+                    ArraySizes: 
+                    FunctionParameters: 
+                        Args(
+                        )
+                )
+                ReturnType: 
+                Identifier(int)
+                FunctionBody:
+                CompoundStatement(
+                    Return(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_SUB,
+                                PrimaryExpression(
+                                    Identifier(capacity)
+                                )
+                                PrimaryExpression(
+                                    Identifier(used)
                                 )
                             )
                         )

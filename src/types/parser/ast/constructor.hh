@@ -19,6 +19,9 @@ namespace baka {
             }
 
 
+            FunctionParameterList* getArgs() const { return Args; }
+            StatementNode* getBody() const { return Body; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Constructor(\n";

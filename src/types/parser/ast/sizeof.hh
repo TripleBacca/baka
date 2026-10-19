@@ -24,7 +24,11 @@ namespace types {
 
         SizeofNode(std::variant<SizeofTypeVariant, ExpressionNode*> Payload) : Payload(Payload) {}
 
-        void Print(size_t Tabs = 0) const override
+        const std::variant<SizeofTypeVariant, ExpressionNode*>& getPayload() const { return Payload; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { if (auto* expr = std::get_if<ExpressionNode*>(&Payload)) *expr = rewrite(*expr); }
+
+            void Print(size_t Tabs = 0) const override
         {
             INDENT(Tabs);
             std::cout << "SizeofNode(\n";

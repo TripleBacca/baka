@@ -316,6 +316,7 @@ Program(
         )
     )
     Union(
+        Identifier(Variant)
         StructBodyNode(
             DeclarationList(
                 IsStatic: 0, IsConst: 0
@@ -361,6 +362,25 @@ Program(
                     Initialization : nullptr
                 )
             )
+            Constructor(
+                Args(
+                )
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(id)
+                                )
+                                PrimaryExpression(
+                                    Constant(0)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
             Function(
                 IsStatic: 0, IsConst: 0
                 TypeSpecifierModifier: None
@@ -381,25 +401,6 @@ Program(
                         CommaExpression(
                             PrimaryExpression(
                                 Identifier(id)
-                            )
-                        )
-                    )
-                )
-            )
-            Constructor(
-                Args(
-                )
-                CompoundStatement(
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(id)
-                                )
-                                PrimaryExpression(
-                                    Constant(0)
-                                )
                             )
                         )
                     )

@@ -1,5 +1,7 @@
 #pragma once
 #include <string_view>
+#include <cstdint>
+#include <iostream>
 #include <unordered_map>
 
 #define INDENT(Tabs) for (size_t i = 0; i < Tabs; i++) std::cout << "    "
@@ -7,6 +9,16 @@
 namespace baka {
 
 namespace types {
+
+    // Before semantics the ID is zero, preserving parser-only AST output.
+    // On a loop/switch/label it defines an identity; on a jump it names the
+    // resolved destination. The backend maps this ID to its own basic blocks.
+    inline void PrintControlTarget(uint32_t target, size_t tabs) {
+        if (!target) return;
+        INDENT(tabs);
+        std::cout << "Target: " << target << '\n';
+    }
+
 
     enum class TypeSpecifierModifier {
         NONE,

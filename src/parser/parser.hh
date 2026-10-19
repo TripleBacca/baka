@@ -25,6 +25,7 @@
 #include "types/parser/ast/iterationStatement.hh"
 #include "types/parser/ast/typenode.hh"
 #include "types/token/token.hh"
+#include "utils.hh"
 
 // functions in here:
 // check - check of current token is of some type
@@ -98,9 +99,24 @@ namespace parser {
         bool RegisterOrReplaceType(types::IdentifierNode* Identifier);
 
 
+        // Composite nodes are usually allocated AFTER their children/body were
+        // parsed. Callers must capture the introducing token before descending;
+        // using current-1 here would point diagnostics at ')' or a closing brace.
+        // Expression builders may instead pass their operator token explicitly.
+        template <class T, class... Args>
+        T* AllocNodeAt(size_t TokenIndex, Args&&... Arguments) {
+            T* Node = ASTALLOC.Alloc<T>(std::forward<Args>(Arguments)...);
+            if (!TokenSourceLocations.empty()) {
+                auto Index = std::min(TokenIndex, TokenSourceLocations.size() - 1);
+                Node->setSourceSpan(TokenSourceLocations[Index].LineNo, TokenSourceLocations[Index].Col);
+            }
+            return Node;
+        }
+
         // helpers
         bool Check(types::TokenType type) const noexcept;
         bool Check2(types::TokenType type) const noexcept;
+        bool CheckN(size_t Offset, types::TokenType type) const noexcept;
         const types::Token& Advance();
         bool Match(types::TokenType type);
         const types::Token& Peek() const noexcept;
@@ -129,6 +145,10 @@ namespace parser {
         types::IdentifierNode* ParseTypeIdentifier();
 
         types::StatementNode* ParseStatement();
+        bool AtDeclarationStart();
+        bool AtAggregateDefinition();
+        bool TryParseLocalAggregate(types::CompoundStatementNode* Node);
+        types::IdentifierNode* ParseLoopSuffixLabel();
         types::CompoundStatementNode* CompoundStatement();
 
         types::JumpStatementNode* JumpStatement();

@@ -41,6 +41,7 @@ namespace parser {
 
 
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
+        const size_t SourceStart = current;
         auto& ConstantOrIdentifierOrThis = Peek();
 
 
@@ -58,23 +59,23 @@ namespace parser {
             auto* ConstantNode =  ParseConstantNode();
             Advance();
 
-            return ASTALLOC.Alloc<types::PrimaryExpressionNode>(ConstantNode);
+            return AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, ConstantNode);
 
         } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::IDENTIFIER) {
             auto& Identifier = ConstantOrIdentifierOrThis;
             Advance();
 
             assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            auto* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+            auto* IdentifierNode = AllocNodeAt<types::IdentifierNode>(SourceStart, std::get<std::string_view>(Identifier.Value));
 
-            auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(IdentifierNode);
+            auto* PrimaryExpressionNode = AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, IdentifierNode);
 
             return PrimaryExpressionNode;
         } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::K_THIS) {
             Advance();
 
-            auto* ThisNode = ASTALLOC.Alloc<types::ThisNode>();
-            auto* PrimaryExpressionNode = ASTALLOC.Alloc<types::PrimaryExpressionNode>(ThisNode);
+            auto* ThisNode = AllocNodeAt<types::ThisNode>(SourceStart);
+            auto* PrimaryExpressionNode = AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, ThisNode);
             return PrimaryExpressionNode;
         } else {
             ReportError("expected expression");
@@ -86,6 +87,7 @@ namespace parser {
 
 
     types::ExpressionNode* Parser::ParseFactor() {
+        const size_t SourceStart = current;
 
         if (Check(types::TokenType::LPAREN_ROUND))
         {
@@ -102,7 +104,7 @@ namespace parser {
                     ReportError("expected ')'");
                 }
                 auto CastExpression = ParseFactor();
-                return ASTALLOC.Alloc<types::CastFactorNode>(TypeNameOpt.value(), Declarator, CastExpression);
+                return AllocNodeAt<types::CastFactorNode>(SourceStart, TypeNameOpt.value(), Declarator, CastExpression);
             }
 
             current = prev;
@@ -117,7 +119,7 @@ namespace parser {
                 Advance();
                 types::ExpressionNode* Expr = ParseFactor();
                 if (Expr == nullptr) return nullptr;
-                return ASTALLOC.Alloc<types::FactorNode>(UnaryOp, Expr);
+                return AllocNodeAt<types::FactorNode>(SourceStart, UnaryOp, Expr);
             }
         }
 
@@ -126,6 +128,7 @@ namespace parser {
 
     // for ++, -- , [], ->, .
     types::ExpressionNode* Parser::ParsePostfixExpression() {
+        const size_t SourceStart = current;
         types::ExpressionNode* Left = ParsePrimaryExpression(); // can be int, (expr), constants, identifier
         if (Left == nullptr) return nullptr;
         // primary expr because cannot be something like 'a-- --' or 'a--[]' - need be brakcetted
@@ -145,13 +148,14 @@ namespace parser {
         };
 
         while(isPostfixExprOp(Peek().TokenType_v)) {
+            const size_t OperatorStart = current;
             types::TokenType Op = Advance().TokenType_v;
 
             if(Op == types::TokenType::LPAREN_SQUARE) {
 
                 types::ExpressionNode* Index = ParseCommaExpression();
                 if (Index == nullptr) return nullptr;
-                Left = ASTALLOC.Alloc<types::IndexPostfixExpr>(Left, Index);
+                Left = AllocNodeAt<types::IndexPostfixExpr>(OperatorStart, Left, Index);
 
                 if(!Match(types::TokenType::RPAREN_SQUARE)) {
                     ReportError("expected ']'");
@@ -159,7 +163,7 @@ namespace parser {
             } else if(Op == types::TokenType::OP_INC || Op == types::TokenType::OP_DEC) {
 
 
-                Left = ASTALLOC.Alloc<types::UnaryPostfixExpr>(Left, types::TokenTypeToASTUnaryOp.at(Op));
+                Left = AllocNodeAt<types::UnaryPostfixExpr>(OperatorStart, Left, types::TokenTypeToASTUnaryOp.at(Op));
 
             } else if(Op == types::TokenType::OP_DOT) {
                 // (expr).Identifier
@@ -171,9 +175,9 @@ namespace parser {
 
                 auto& Identifier = Advance();
                 assert(std::holds_alternative<std::string_view>(Identifier.Value) && "identifier doesnt have string view");
-                auto* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+                auto* IdentifierNode = AllocNodeAt<types::IdentifierNode>(current - 1, std::get<std::string_view>(Identifier.Value));
 
-                Left = ASTALLOC.Alloc<types::MemberPostfixExpr>(Left, IdentifierNode);
+                Left = AllocNodeAt<types::MemberPostfixExpr>(OperatorStart, Left, IdentifierNode);
 
             } else if(Op == types::TokenType::OP_ARROW) {
                 // (expr)->Identifier
@@ -184,9 +188,9 @@ namespace parser {
                 }
                 auto& Identifier = Advance();
                 assert(std::holds_alternative<std::string_view>(Identifier.Value) && "identifier doesnt have string view");
-                types::IdentifierNode* IdentifierNode = ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(Identifier.Value));
+                types::IdentifierNode* IdentifierNode = AllocNodeAt<types::IdentifierNode>(current - 1, std::get<std::string_view>(Identifier.Value));
 
-                Left = ASTALLOC.Alloc<types::ArrowPostfixExpr>(Left, IdentifierNode);
+                Left = AllocNodeAt<types::ArrowPostfixExpr>(OperatorStart, Left, IdentifierNode);
             } else {
                 // Identifier(expr) expr will have commas
                 // (2+2)(1,2) will allow this
@@ -196,14 +200,14 @@ namespace parser {
                     ArgsList = ParseCommaExpression();
                     if (ArgsList == nullptr) return nullptr;
                 } else {
-                    ArgsList = ASTALLOC.Alloc<types::CommaExpressionNode>(std::vector<types::ExpressionNode*>{});
+                    ArgsList = AllocNodeAt<types::CommaExpressionNode>(SourceStart, std::vector<types::ExpressionNode*>{});
                 }
 
                 if(!Match(types::TokenType::RPAREN_ROUND)) {
                     ReportError("expected ')'");
                 }
 
-                Left = ASTALLOC.Alloc<types::FunctionCallPostfixExpr>(Left, ArgsList);
+                Left = AllocNodeAt<types::FunctionCallPostfixExpr>(OperatorStart, Left, ArgsList);
             }
         }
 
@@ -212,16 +216,28 @@ namespace parser {
 
     types::ExpressionNode* Parser::ParseAssignmentExpression(size_t MinPrecedence)
     {
+        const size_t SourceStart = current;
         auto* LeftFactor = ParseFactor();
         if (LeftFactor == nullptr) return nullptr;
 
         auto Op = Peek().TokenType_v;
         while (IsBinaryOperator(Op) && GetPrecedence(Op) >= MinPrecedence && Op != types::TokenType::OP_COMMA) {
+            const size_t OperatorStart = current;
             Advance();
             if (IsRightToLeft(Op))
             {
                 if (Op == types::TokenType::OP_QUESTION) {
+                    // The middle operand is a full expression; an unparenthesized comma belongs to it.
                     auto* ThenExpr = ParseAssignmentExpression();
+                    if (ThenExpr && Check(types::TokenType::OP_COMMA)) {
+                        std::vector<types::ExpressionNode*> Middle{ThenExpr};
+                        while (Match(types::TokenType::OP_COMMA)) {
+                            auto* Next = ParseAssignmentExpression();
+                            if (!Next) return nullptr;
+                            Middle.push_back(Next);
+                        }
+                        ThenExpr = AllocNodeAt<types::CommaExpressionNode>(SourceStart, std::move(Middle));
+                    }
                     if (ThenExpr == nullptr) return nullptr;
                     if (!Match(types::TokenType::OP_COLON)) {
                         ReportError("expected ':' in ternary expression");
@@ -230,18 +246,18 @@ namespace parser {
                     auto* ElseExpr = ParseAssignmentExpression();
                     if (ElseExpr == nullptr) return nullptr;
 
-                    LeftFactor = ASTALLOC.Alloc<types::TernaryOpNode>(LeftFactor, ThenExpr, ElseExpr);
+                    LeftFactor = AllocNodeAt<types::TernaryOpNode>(OperatorStart, LeftFactor, ThenExpr, ElseExpr);
                 } else {
                     auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op));
                     if (RightFactor == nullptr) return nullptr;
-                    LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+                    LeftFactor = AllocNodeAt<types::BinaryExpressionNode>(OperatorStart, types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
                 }
             }
             else
             {
                 auto* RightFactor = ParseAssignmentExpression(GetPrecedence(Op) + 1);
                 if (RightFactor == nullptr) return nullptr;
-                LeftFactor = ASTALLOC.Alloc<types::BinaryExpressionNode>(types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
+                LeftFactor = AllocNodeAt<types::BinaryExpressionNode>(OperatorStart, types::TokenTypeToASTBinaryOp.at(Op), LeftFactor, RightFactor);
             }
             Op = Peek().TokenType_v;
         }
@@ -251,6 +267,7 @@ namespace parser {
 
     types::ExpressionNode* Parser::ParseCommaExpression()
     {
+        const size_t SourceStart = current;
         std::vector<types::ExpressionNode*> Args;
         auto* LeftFactor = ParseAssignmentExpression();
         if (LeftFactor == nullptr) return nullptr;
@@ -261,7 +278,7 @@ namespace parser {
             if (RightFactor == nullptr) return nullptr;
             Args.push_back(RightFactor);
         }
-        return ASTALLOC.Alloc<types::CommaExpressionNode>(std::move(Args));
+        return AllocNodeAt<types::CommaExpressionNode>(SourceStart, std::move(Args));
     }
 
 }

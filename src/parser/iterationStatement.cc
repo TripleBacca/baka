@@ -8,7 +8,24 @@
 
 namespace baka {
     namespace parser {
+
+        // A loop suffix is ';' IDENTIFIER, immediately before the closing ')'.
+        // It is never a runtime expression: `while (x; label)` and `do { } while (x; label);`.
+        types::IdentifierNode* Parser::ParseLoopSuffixLabel() {
+            if (!Match(types::TokenType::SEMICOLON)) return nullptr;
+            if (!Check(types::TokenType::IDENTIFIER)) {
+                ReportError("expected loop label identifier after ';'");
+                return nullptr;
+            }
+            auto* Label = ParseIdentifier();
+            if (Label && LookupType(Label)) {
+                ReportError("identifier cannot be a type name");
+            }
+            return Label;
+        }
+
         types::ForBlockStatementNode* Parser::ForBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_FOR)) {
                 assert(false);
             }
@@ -21,74 +38,69 @@ namespace baka {
 
             EnterScope();
 
+            // init-clause ';' condition? ';' update? (';' label)? ')'
             std::variant<types::ExpressionNode*, types::DeclarationList*, types::TypedefNode*> Decl;
 
-            if(detail::IsSpecifier(Peek().TokenType_v) || isTypeName(Peek())) {
+            if (Check(types::TokenType::SEMICOLON)) {
+                Advance();
+            } else if (detail::IsSpecifier(Peek().TokenType_v) || isTypeName(Peek())) {
                 Decl = this->ParseDeclarationList();
             } else if (Check(types::TokenType::K_TYPEDEF)) {
                 Decl = this->ParseTypedef();
-            } else if (Match(types::TokenType::SEMICOLON)) {
-                // empty init clause
             } else {
                 auto* InitExpr = this->Expression();
-                Decl = InitExpr;
                 if (InitExpr == nullptr) {
-                    // "expected expression" already reported deep; resync to the ';'
                     Errored = true;
                     SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
-                } else if (!Match(types::TokenType::SEMICOLON)) {
+                } else {
+                    Decl = InitExpr;
+                }
+                if (!Match(types::TokenType::SEMICOLON)) {
                     ReportError("expected ';' in 'for' statement specifier");
                     Errored = true;
                     SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
+                    Match(types::TokenType::SEMICOLON);
                 }
-                Match(types::TokenType::SEMICOLON);
             }
 
             types::ExpressionNode* ComparisonExpr = nullptr;
-            if (!Match(types::TokenType::SEMICOLON)) {
+            if (!Check(types::TokenType::SEMICOLON)) {
                 ComparisonExpr = Expression();
                 if (ComparisonExpr == nullptr) {
-                    // "expected expression" already reported deep; resync to the ';'
-                    Errored = true;
-                    SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
-                } else if (!Match(types::TokenType::SEMICOLON)) {
-                    ReportError("expected ';' in 'for' statement specifier");
                     Errored = true;
                     SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
                 }
+            }
+            if (!Match(types::TokenType::SEMICOLON)) {
+                ReportError("expected ';' in 'for' statement specifier");
+                Errored = true;
+                SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
                 Match(types::TokenType::SEMICOLON);
             }
 
             types::ExpressionNode* Update = nullptr;
-            if (!Check(types::TokenType::RPAREN_ROUND)) {
-                if (!Check(types::TokenType::SEMICOLON)) {
-                    Update = Expression();
-                    if (Update == nullptr) {
-                        // "expected expression" already reported deep; resync to the ')'
-                        Errored = true;
-                        SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
-                    }
+            if (!Check(types::TokenType::RPAREN_ROUND) && !Check(types::TokenType::SEMICOLON)) {
+                Update = Expression();
+                if (Update == nullptr) {
+                    Errored = true;
+                    SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_ROUND, types::TokenType::RPAREN_CURLY});
                 }
             }
 
             types::IdentifierNode* Label = nullptr;
-            if (!Errored && Match(types::TokenType::SEMICOLON) && Check(types::TokenType::IDENTIFIER)) {
-                Label = this->ParseIdentifier();
-                if (LookupType(Label)) {
-                    ReportError("identifier cannot be a type name");
-                }
+            if (!Errored) {
+                Label = ParseLoopSuffixLabel();
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
                 if (!Errored) {
                     ReportError("expected ')'");
                 }
-                // leave current be; ParseStatement consumes whatever follows (e.g. the '{' body)
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
-            types::ForBlockStatementNode* Node = ASTALLOC.Alloc<types::ForBlockStatementNode>(Decl, ComparisonExpr, Update, Label, Body);
+            auto* Node = AllocNodeAt<types::ForBlockStatementNode>(SourceStart, Decl, ComparisonExpr, Update, Label, Body);
             if (Errored) {
                 Node->setHasError();
             }
@@ -99,9 +111,9 @@ namespace baka {
         }
 
         types::WhileBlockStatementNode* Parser::WhileBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_WHILE)) {
                 assert(false);
-                // throw error
             }
 
             bool Errored = false;
@@ -112,43 +124,33 @@ namespace baka {
 
             types::ExpressionNode* Cond = this->Expression();
             if (Cond == nullptr) {
-                // "expected expression" already reported deep; resync to the ')'
                 Errored = true;
                 SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON});
             }
-            Match(types::TokenType::SEMICOLON); // allow trailing semicolon
-
 
             types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
-                Label = this->ParseIdentifier();
-                if (LookupType(Label)) {
-                    ReportError("identifier cannot be a type name");
-                }
+            if (!Errored) {
+                Label = ParseLoopSuffixLabel();
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
-                if (Cond != nullptr && !Errored) {
+                if (!Errored) {
                     ReportError("expected ')'");
                 }
-                // leave current be; ParseStatement consumes whatever follows (e.g. the '{' body)
             }
 
             types::StatementNode* Body = this->ParseStatement();
-            types::WhileBlockStatementNode* Node = ASTALLOC.Alloc<types::WhileBlockStatementNode>(Cond, Label, Body);
-            if (Cond == nullptr || Errored) {
+            auto* Node = AllocNodeAt<types::WhileBlockStatementNode>(SourceStart, Cond, Label, Body);
+            if (Errored) {
                 Node->setHasError();
             }
             return Node;
         }
 
-        // fix up the nullptr returning thing, return a sentinel instead
-
-
         types::DoWhileBlockStatementNode* Parser::DoWhileBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_DO)) {
                 assert(false);
-                // throw error
             }
 
             types::StatementNode* Body = this->ParseStatement();
@@ -158,8 +160,7 @@ namespace baka {
                 ReportError("expected 'while' after 'do' body");
                 Errored = true;
                 if (SkipTo({types::TokenType::K_WHILE, types::TokenType::RPAREN_CURLY, types::TokenType::SEMICOLON}) != types::TokenType::K_WHILE) {
-                    // couldn't find a 'while' to resync to; bail out of the tail
-                    types::DoWhileBlockStatementNode* Bail = ASTALLOC.Alloc<types::DoWhileBlockStatementNode>(nullptr, nullptr, Body);
+                    auto* Bail = AllocNodeAt<types::DoWhileBlockStatementNode>(SourceStart, nullptr, nullptr, Body);
                     Bail->setHasError();
                     return Bail;
                 }
@@ -182,15 +183,14 @@ namespace baka {
                     SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::SEMICOLON});
                 }
             }
-            Match(types::TokenType::SEMICOLON); // allow trailing semicolon
 
             types::IdentifierNode* Label = nullptr;
-            if (Check(types::TokenType::IDENTIFIER)) {
-                Label = this->ParseIdentifier();
+            if (!Errored) {
+                Label = ParseLoopSuffixLabel();
             }
 
             if (!Match(types::TokenType::RPAREN_ROUND)) {
-                if (Cond != nullptr && !Errored) {
+                if (!Errored) {
                     ReportError("expected ')'");
                 }
                 Errored = true;
@@ -200,7 +200,7 @@ namespace baka {
                 Errored = true;
             }
 
-            types::DoWhileBlockStatementNode* Node = ASTALLOC.Alloc<types::DoWhileBlockStatementNode>(Cond, Label, Body);
+            auto* Node = AllocNodeAt<types::DoWhileBlockStatementNode>(SourceStart, Cond, Label, Body);
             if (Errored) {
                 Node->setHasError();
             }
@@ -218,7 +218,6 @@ namespace baka {
                 return DoWhileBlockStatement();
             }
             else {
-                // throw error
                 assert(false);
                 return nullptr;
             }
