@@ -27,7 +27,7 @@ namespace parser {
         if (Match(types::TokenType::SEMICOLON)) {
             // this is a declaration
             auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
-            if (!LookupType(StructIdentifier)) {
+            if (!TypeLookup.LookupCurrent(StructIdentifier->GetName()).has_value()) {
                 AddType(StructIdentifier);
                 GetParserSTE(StructIdentifier)->SetIsStruct();
 
@@ -41,7 +41,7 @@ namespace parser {
         }
 
         // surely a definition
-        if(LookupType(StructIdentifier)) {
+        if(TypeLookup.LookupCurrent(StructIdentifier->GetName()).has_value()) {
             // TODO throw error
             if(GetParserSTE(StructIdentifier)->IsStructDefined()) {
                 ReportError("redefinition of struct");
@@ -63,11 +63,12 @@ namespace parser {
             }
         }
 
-        if (!LookupType(StructIdentifier)) {
+        if (!TypeLookup.LookupCurrent(StructIdentifier->GetName()).has_value()) {
             AddType(StructIdentifier);
             GetParserSTE(StructIdentifier)->SetIsStruct();
         }
-        GetParserSTE(StructIdentifier)->SetIsStructDefined();
+        if (GetParserSTE(StructIdentifier)->IsStruct())
+            GetParserSTE(StructIdentifier)->SetIsStructDefined();
         EnterScope();
 
         types::StructBodyNode* Body = nullptr;

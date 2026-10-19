@@ -10,14 +10,24 @@ namespace types {
 
     class UnionNode : public ASTNode {
         UnionBodyNode* body;
+        IdentifierNode* Name;
     public:
-        UnionNode(UnionBodyNode* body) : body(body) {}
+        UnionNode(UnionBodyNode* body, IdentifierNode* name = nullptr) : body(body), Name(name) {}
+        IdentifierNode* getName() const {
+            return Name;
+        }
+
+        UnionBodyNode* getBody() const {
+            return body;
+        }
+
         ~UnionNode() = default;
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
             std::cout << "Union(" << std::endl;
-            body->Print(Tabs + 1);
+            if (Name) Name->Print(Tabs + 1);
+            if (body) body->Print(Tabs + 1);
             INDENT(Tabs);
             std::cout << ")\n";
         }

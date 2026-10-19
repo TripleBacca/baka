@@ -24,7 +24,7 @@ namespace parser {
             auto isCtor = [&]() -> bool {
                 if(Peek().TokenType_v == types::TokenType::IDENTIFIER && Check2(types::TokenType::LPAREN_ROUND)) {
                     const std::string_view& Name = std::get<std::string_view>(Peek().Value);
-                    if(Name == ParentName->GetName()) {
+                    if(ParentName && Name == ParentName->GetName()) {
                         return true;
                     }
                 }
@@ -37,7 +37,12 @@ namespace parser {
                 Node->SetConstructor(Ctor);
 
             } else if(Check(types::TokenType::OP_TILDE)) {
-                types::DestructorNode* Dtor = ParseDestructor(ParentName);
+                auto* destructorParent = ParentName;
+                if (!destructorParent) {
+                    ReportError("anonymous aggregates cannot declare destructors");
+                    destructorParent = ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?"));
+                }
+                types::DestructorNode* Dtor = ParseDestructor(destructorParent);
                 Node->SetDestructor(Dtor);
 
             } else if(Check(types::TokenType::K_TYPEDEF)) {

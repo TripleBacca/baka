@@ -22,13 +22,13 @@ namespace parser {
         types::IdentifierNode* UnionName = nullptr;
         if(Check(types::TokenType::IDENTIFIER)) {
             UnionName = ParseIdentifier();
-            if(LookupType(UnionName)) {
-                ReportError("redefinition of existing type");
-            }
-            AddType(UnionName);
+            if (!TypeLookup.LookupCurrent(UnionName->GetName()).has_value()) AddType(UnionName);
         } else if(!Check(types::TokenType::LPAREN_CURLY)) {
             ReportError("expected identifier or '{' after 'union' keyword");
         }
+
+        if (UnionName && Match(types::TokenType::SEMICOLON))
+            return ASTALLOC.Alloc<types::UnionNode>(nullptr, UnionName);
 
         EnterScope();
 
@@ -43,7 +43,7 @@ namespace parser {
             }
         }
 
-        types::UnionNode* Node = ASTALLOC.Alloc<types::UnionNode>(Body);
+        types::UnionNode* Node = ASTALLOC.Alloc<types::UnionNode>(Body, UnionName);
 
         ExitScope();
 

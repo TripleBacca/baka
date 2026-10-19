@@ -5,29 +5,44 @@
 #include "types/parser/ast/identifier.hh"
 #include "types/parser/ast/utils.hh"
 #include <vector>
+#include "expression.hh"
 namespace baka {
 namespace types {
 
     class EnumNode : public ASTNode {
         IdentifierNode* EnumName; // cann be nullptr - anonymous enums
+        std::vector<ExpressionNode*> Initializers;
         std::vector<IdentifierNode*> EnumValues; // TODO use lsit mayube?
     public:
 
         EnumNode(IdentifierNode* name)
             : EnumName(name) {}
 
-        IdentifierNode* getEnumName() const { return EnumName; }
-        const std::vector<IdentifierNode*>& getEnumValues() const { return EnumValues; }
+        IdentifierNode* getEnumName() const {
+            return EnumName;
+        }
 
-        void addEnumValue(IdentifierNode* value) {
+        const std::vector<IdentifierNode*>& getEnumValues() const {
+            return EnumValues;
+        }
+
+
+        const std::vector<ExpressionNode*>& getInitializers() const {
+            return Initializers;
+        }
+
+
+        void addEnumValue(IdentifierNode* value, ExpressionNode* initializer = nullptr) {
             EnumValues.push_back(value);
+            Initializers.push_back(initializer);
         }
 
         void Print(size_t Tabs = 0) const {
             INDENT(Tabs);
             std::cout << "Enum(" << (EnumName ? EnumName->GetName() : "") << ")" << std::endl;
-            for (const auto& value : EnumValues) {
-                value->Print(Tabs + 1);
+            for (size_t i = 0; i < EnumValues.size(); ++i) {
+                EnumValues[i]->Print(Tabs + 1);
+                if (Initializers[i]) Initializers[i]->Print(Tabs + 2);
             }
 
             INDENT(Tabs);

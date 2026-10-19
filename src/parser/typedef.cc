@@ -34,7 +34,9 @@ namespace parser {
         do {
             types::DeclarationIdentifierNode* Variable = ParseDeclarationIdentifier();
             // doesnt matter if typedef is already done on that variable name
-            RegisterOrReplaceType(Variable->getIdentifier());
+            if (auto* identifier = Variable->getIdentifier(); identifier &&
+                !TypeLookup.LookupCurrent(identifier->GetName()).has_value())
+                RegisterOrReplaceType(identifier);
             Node->AddVariable(Variable);
         } while(Match(types::TokenType::OP_COMMA));
 

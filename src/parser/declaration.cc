@@ -181,9 +181,6 @@ namespace baka
 				else
 				{
 					auto* Identifier = ParseIdentifier();
-					if(!InTypedef && LookupType(Identifier)) {
-						ReportError("identifier cannot be a type name");
-					}
 
 					Variable->setInnerDeclaration(Identifier);
 				}
@@ -213,7 +210,11 @@ namespace baka
 			// int (*foo[20])()[];
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
-				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
+				if (Match(types::TokenType::RPAREN_SQUARE)) {
+                    Variable->appendArraySize(nullptr);
+                    continue;
+                }
+                types::ExpressionNode* ArraySize = ParseAssignmentExpression();
 				if (ArraySize == nullptr) {
 				    // "expected expression" already reported deep; resync to the ']'
 					SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});
@@ -269,7 +270,11 @@ namespace baka
 
 			while (Match(types::TokenType::LPAREN_SQUARE))
 			{
-				types::ExpressionNode* ArraySize = ParseAssignmentExpression();
+				if (Match(types::TokenType::RPAREN_SQUARE)) {
+                    Variable->appendArraySize(nullptr);
+                    continue;
+                }
+                types::ExpressionNode* ArraySize = ParseAssignmentExpression();
 				if (ArraySize == nullptr) {
 				    // "expected expression" already reported deep; resync to the ']'
 					SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY});

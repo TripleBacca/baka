@@ -16,7 +16,7 @@ namespace types {
 
     public:
         TypedefNode(IdentifierNode* BoundReturnType, TypeSpecifierModifier Modifier, bool isConst) :
-        BoundReturnType(BoundReturnType), Variables(), Modifier(Modifier), isConst(isConst) {}
+        isConst(isConst), Modifier(Modifier), BoundReturnType(BoundReturnType), Variables() {}
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -35,6 +35,23 @@ namespace types {
             INDENT(Tabs);
             std::cout << ")\n";
         }
+
+        bool getIsConst() const {
+            return isConst;
+        }
+
+        TypeSpecifierModifier getModifier() const {
+            return Modifier;
+        }
+
+        IdentifierNode* getTypeName() const {
+            return BoundReturnType;
+        }
+
+        const std::vector<DeclarationIdentifierNode*>& getVariables() const {
+            return Variables;
+        }
+
 
         void AddVariable(DeclarationIdentifierNode* Variable) {
             Variables.push_back(Variable);

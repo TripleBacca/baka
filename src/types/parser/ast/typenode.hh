@@ -21,10 +21,21 @@ namespace baka {
 			TypeNode(bool isConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName) :
 				isConst(isConst), Modifier(modifier), TypeName(TypeName)
 			{
-				if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
-					// todo throw error
-					assert(false);
-				}
+			}
+
+			bool getIsConst() const
+			{
+				return isConst;
+			}
+
+			TypeSpecifierModifier getModifier() const
+			{
+				return Modifier;
+			}
+
+			IdentifierNode* getTypeName() const
+			{
+				return TypeName;
 			}
 
 			void Print(size_t Tabs = 0) const override

@@ -14,52 +14,71 @@ namespace types {
         std::vector<FunctionNode*> Functions; // member functions
         std::vector<TypedefNode*> Typedefs;
 
-        ConstructorNode* Constructor = nullptr; // TODO: do we generate defaults later?
-        DestructorNode* Destructor = nullptr;
+        std::vector<ConstructorNode*> Constructors;
+        std::vector<DestructorNode*> Destructors;
+        std::vector<ASTNode*> Members;
 
         public:
             StructBodyNode() = default;
 
             void AddDeclaration(DeclarationList* decl) {
                 Declarations.push_back(decl);
+                Members.push_back(decl);
             }
 
             void AddFunction(FunctionNode* func) {
                 Functions.push_back(func);
+                Members.push_back(func);
             }
 
             void AddTypedef(TypedefNode* typedefNode) {
                 Typedefs.push_back(typedefNode);
+                Members.push_back(typedefNode);
             }
 
             void SetConstructor(ConstructorNode* func) {
-                Constructor = func;
+                Constructors.push_back(func);
+                Members.push_back(func);
             }
 
             void SetDestructor(DestructorNode* func) {
-                Destructor = func;
+                Destructors.push_back(func);
+                Members.push_back(func);
             }
+
+            const std::vector<ASTNode*>& getMembers() const {
+                return Members;
+            }
+
+            const std::vector<DeclarationList*>& getDeclarations() const {
+                return Declarations;
+            }
+
+            const std::vector<FunctionNode*>& getFunctions() const {
+                return Functions;
+            }
+
+            const std::vector<TypedefNode*>& getTypedefs() const {
+                return Typedefs;
+            }
+
+            const std::vector<ConstructorNode*>& getConstructors() const {
+                return Constructors;
+            }
+
+            const std::vector<DestructorNode*>& getDestructors() const {
+                return Destructors;
+            }
+
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "StructBodyNode(\n";
-                for (const auto& decl : Declarations) {
-                    decl->Print(Tabs + 1);
-                }
-                for (const auto& func : Functions) {
-                    func->Print(Tabs + 1);
-                }
-                for (const auto& typedefNode : Typedefs) {
-                    typedefNode->Print(Tabs + 1);
-                }
-                if (Constructor) {
-                    Constructor->Print(Tabs + 1);
-                }
-                if (Destructor) {
-                    Destructor->Print(Tabs + 1);
+                for (auto* Member : Members) {
+                    Member->Print(Tabs + 1);
                 }
                 INDENT(Tabs);
-                std::cout << ")" << std::endl;;
+                std::cout << ")" << std::endl;
             }
     };
 

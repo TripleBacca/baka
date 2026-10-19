@@ -5,10 +5,6 @@
 #include "utils.hh"
 #include <cassert>
 
-enum {
-    BALLS,
-    EAT
-};
 
 namespace baka {
 namespace parser {
@@ -26,10 +22,10 @@ namespace parser {
             } else {
                 EnumName = ParseIdentifier();
                 // enums cannot have fwd decl btw
-                if(LookupType(EnumName->GetName())) {
+                if(TypeLookup.LookupCurrent(EnumName->GetName()).has_value()) {
                     ReportError("redefinition of existing type");
                 }
-                AddType(EnumName);
+                else AddType(EnumName);
             }
         }
 
@@ -49,7 +45,9 @@ namespace parser {
                 SkipTo({types::TokenType::OP_COMMA, types::TokenType::RPAREN_CURLY});
             } else {
                 types::IdentifierNode* EnumValue = ParseIdentifier();
-                Enum->addEnumValue(EnumValue);
+                types::ExpressionNode* value = nullptr;
+                if (Match(types::TokenType::OP_ASSIGN)) value = ParseAssignmentExpression();
+                Enum->addEnumValue(EnumValue, value);
             }
 
             if(!Match(types::TokenType::OP_COMMA)) {

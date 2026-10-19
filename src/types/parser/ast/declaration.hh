@@ -87,6 +87,22 @@ namespace types {
             std::cout << ")\n";
         }
 
+        const std::variant<DeclarationIdentifierNode*, IdentifierNode*>& getInnerDeclaration() const
+        {
+            return VariableName;
+        }
+
+        const std::vector<ExpressionNode*>& getArraySizes() const
+        {
+            return ArraySizes;
+        }
+
+        ASTNode* getFunctionParameters() const
+        {
+            return FunctionParameters;
+        }
+
+
         void appendPointer()
         {
             PointerCount++;
@@ -116,16 +132,21 @@ namespace types {
         // eg: int (*x)(int)  should return 'x'
         std::string_view getVariableName() const
         {
-            if (std::holds_alternative<IdentifierNode*>(VariableName))
-                return std::get<IdentifierNode*>(VariableName)->GetName();
-            return std::get<DeclarationIdentifierNode*>(VariableName)->getVariableName();
+            if (std::holds_alternative<IdentifierNode*>(VariableName)) {
+                auto* Identifier = std::get<IdentifierNode*>(VariableName);
+                return Identifier ? Identifier->GetName() : std::string_view{};
+            }
+            auto* InnerDeclaration = std::get<DeclarationIdentifierNode*>(VariableName);
+            return InnerDeclaration ? InnerDeclaration->getVariableName() : std::string_view{};
         }
 
         IdentifierNode* getIdentifier() const
         {
-            if (std::holds_alternative<IdentifierNode*>(VariableName))
+            if (std::holds_alternative<IdentifierNode*>(VariableName)) {
                 return std::get<IdentifierNode*>(VariableName);
-            return std::get<DeclarationIdentifierNode*>(VariableName)->getIdentifier();
+            }
+            auto* InnerDeclaration = std::get<DeclarationIdentifierNode*>(VariableName);
+            return InnerDeclaration ? InnerDeclaration->getIdentifier() : nullptr;
         }
 
         // Returns true if this node or any nested DeclarationIdentifierNode
@@ -164,6 +185,15 @@ namespace types {
             std::cout << ")\n";
         }
 
+        DeclarationIdentifierNode* getDeclarator() const {
+            return VariableName;
+        }
+
+        ExpressionNode* getInitializer() const {
+            return Initialization;
+        }
+
+
         bool hasInitalizer() const {
             return Initialization != nullptr;
         }
@@ -179,11 +209,29 @@ namespace types {
         public:
         DeclarationList(bool IsStatic, bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
         IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier), TypeName(TypeName), Declarations(std::move(Declarations)) {
-            if(modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
-                // todo throw error
-                assert(false);
-            }
+
         }
+
+        bool getIsStatic() const {
+            return IsStatic;
+        }
+
+        bool getIsConst() const {
+            return IsConst;
+        }
+
+        TypeSpecifierModifier getModifier() const {
+            return Modifier;
+        }
+
+        IdentifierNode* getTypeName() const {
+            return TypeName;
+        }
+
+        const std::vector<SingleDeclarationNode*>& getDeclarations() const {
+            return Declarations;
+        }
+
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);
@@ -218,10 +266,7 @@ namespace types {
         public:
         FunctionParameter(bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
             IsConst(IsConst), Modifier(modifier), SDeclarationNode(SingleDeclarationNode), TypeName(TypeName) {
-            if(TypeName && modifier == TypeSpecifierModifier::UNSIGNED && !detail::isUnsignedTypeName(TypeName->GetName())) {
-                // todo throw error
-                assert(false);
-            }
+
         }
 
         void Print(size_t Tabs = 0) const override {
@@ -245,6 +290,23 @@ namespace types {
         }
 
 
+        bool getIsConst() const {
+            return IsConst;
+        }
+
+        TypeSpecifierModifier getModifier() const {
+            return Modifier;
+        }
+
+        IdentifierNode* getTypeName() const {
+            return TypeName;
+        }
+
+        SingleDeclarationNode* getDeclaration() const {
+            return SDeclarationNode;
+        }
+
+
         bool hasInitalizer() const {
             if(SDeclarationNode)
                 return SDeclarationNode->hasInitalizer();
@@ -256,8 +318,21 @@ namespace types {
 
     class FunctionParameterList : public ASTNode {
         std::vector<FunctionParameter*> Parameters;
+        bool Variadic = false;
     public:
-        FunctionParameterList(std::vector<FunctionParameter*> parameters) : Parameters(std::move(parameters)) {}
+        FunctionParameterList(std::vector<FunctionParameter*> parameters, bool variadic = false)
+            : Parameters(std::move(parameters)), Variadic(variadic) {}
+        const std::vector<FunctionParameter*>& getParameters() const {
+            return Parameters;
+        }
+
+        bool isVariadic() const {
+            return Variadic;
+        }
+
+        void setVariadic(bool value = true) {
+            Variadic = value;
+        }
 
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
