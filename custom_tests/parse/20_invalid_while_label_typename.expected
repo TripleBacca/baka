@@ -126,8 +126,6 @@ Program(
                         )
                     )
                 )
-            ;
-                Identifier(Marker)
                 ExpressionStatement(
                     CommaExpression(
                         PrimaryExpression(
@@ -140,13 +138,10 @@ Program(
     )
 )
 
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0midentifier cannot be a type name (PARSE)
+custom_tests/parse/20_invalid_while_label_typename.cpp:7:18: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
 	    while (x < 5 Marker Marker) {
-	                        [38;2;255;0;0m^[0m
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0mexpected ')' (PARSE)
-	    while (x < 5 Marker Marker) {
-	                        [38;2;255;0;0m^[0m
-custom_tests/parse/20_invalid_while_label_typename.cpp:7:25: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
+	                 [38;2;255;0;0m^[0m
+custom_tests/parse/20_invalid_while_label_typename.cpp:7:18: [38;2;255;0;0merror: [0mexpected ';' after expression (PARSE)
 	    while (x < 5 Marker Marker) {
 	                                 [38;2;255;0;0m^[0m
-Compilation failed due to 3 error(s)
+Compilation failed due to 2 error(s)

@@ -993,16 +993,16 @@ Program(
     )
 )
 :
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(result)
-                                )
-                                PrimaryExpression(
-                                    Constant(1000)
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
+                                    PrimaryExpression(
+                                        Identifier(result)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(1000)
+                                    )
                                 )
                             )
                         )
@@ -1015,16 +1015,16 @@ Program(
     )
 )
 :
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(result)
-                                )
-                                PrimaryExpression(
-                                    Constant(2000)
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
+                                    PrimaryExpression(
+                                        Identifier(result)
+                                    )
+                                    PrimaryExpression(
+                                        Constant(2000)
+                                    )
                                 )
                             )
                         )
@@ -1035,21 +1035,21 @@ Program(
     )
 )
 :
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(result)
-                                )
+                        ExpressionStatement(
+                            CommaExpression(
                                 BinaryExpression(
-                                    BinaryOp: OP_ADD,
+                                    BinaryOp: OP_ASSIGN,
                                     PrimaryExpression(
                                         Identifier(result)
                                     )
-                                    PrimaryExpression(
-                                        Constant(5)
+                                    BinaryExpression(
+                                        BinaryOp: OP_ADD,
+                                        PrimaryExpression(
+                                            Identifier(result)
+                                        )
+                                        PrimaryExpression(
+                                            Constant(5)
+                                        )
                                     )
                                 )
                             )
@@ -1058,18 +1058,18 @@ Program(
                     Break(
                     )
                     Default Label(:
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(result)
-                                )
-                                Factor(
-                                    UnaryOp: OP_UNARY_MINUS,
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
                                     PrimaryExpression(
-                                        Constant(1)
+                                        Identifier(result)
+                                    )
+                                    Factor(
+                                        UnaryOp: OP_UNARY_MINUS,
+                                        PrimaryExpression(
+                                            Constant(1)
+                                        )
                                     )
                                 )
                             )
@@ -1168,11 +1168,11 @@ Program(
             )
             Goto Label(Identifier(zero)
 :
-            )
-            Return(
-                CommaExpression(
-                    PrimaryExpression(
-                        Identifier(y)
+                Return(
+                    CommaExpression(
+                        PrimaryExpression(
+                            Identifier(y)
+                        )
                     )
                 )
             )

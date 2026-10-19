@@ -11,6 +11,8 @@ make build
 ```
 baka does not have a preprocessor and thus does not support preprocessor directives.
 
+Running `./build/baka path/to/file.cpp` performs semantic analysis by default and prints the annotated AST on success. Use `--lex` or `--parse` to stop earlier.
+
 #### Make Recipes
 - `make parse file=<source_code_file_path>` : Runs the compiler in verbose mode upto the parser stage.
     For instance, to run the parser on `test.c` and stop after the parser stage, you can use:
@@ -19,6 +21,8 @@ baka does not have a preprocessor and thus does not support preprocessor directi
     ```
 
 - `make lex file=<source_code_file_path>` : Runs the compiler in verbose mode upto the lexer stage.
+- `make semantic file=<source_code_file_path>` : Runs through semantic analysis for the supported language subset.
+- `make test-semantic` : Runs structural tests for every semantic pass and semantic acceptance/rejection programs.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
 - `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
 - `make build` : Build the binary and put it in `/build/baka`
@@ -27,6 +31,7 @@ baka does not have a preprocessor and thus does not support preprocessor directi
 #### Command Line Flags:
 - `--lex` - run only the lexer and print/output tokens
 - `--parse` - run up through parsing and output the AST
+- `--semantic` - run declaration registration, resolution/renaming, type annotation, and read-only semantic checks
 - `--build_type` - set the build type (e.g. `debug` / `release`)
 - `--verbose` - print detailed logs during compilation
 
@@ -147,7 +152,7 @@ There are certain features we are not supporting:
 ### Stages Status
 - [x] Lexer
 - [x] Parser
-- [ ] Semantic Analysis
+- [x] Semantic Analysis for the supported subset ([passes and policies](src/semantic/README.md), [remaining TODOs](src/semantic/TODO.md))
 - [ ] Optimization Passes
 - [ ] Codegen
 

@@ -5,6 +5,7 @@
 namespace baka {
     namespace parser {
         types::IfSubBlockStatementNode* Parser::IfSubBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_IF)) {
                 // throw error
             }
@@ -32,7 +33,7 @@ namespace baka {
 
             types::StatementNode* Body = this->ParseStatement();
 
-            types::IfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::IfSubBlockStatementNode>(Expression, Body);
+            types::IfSubBlockStatementNode* Node = AllocNodeAt<types::IfSubBlockStatementNode>(SourceStart, Expression, Body);
             if (Expression == nullptr) {
                 Node->setHasError();
             }
@@ -40,6 +41,7 @@ namespace baka {
         }
 
         types::ElseIfSubBlockStatementNode* Parser::ElseIfSubBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_ELSE)) {
                 // throw error
             }
@@ -68,7 +70,7 @@ namespace baka {
 
             types::StatementNode* Body = this->ParseStatement();
 
-            types::ElseIfSubBlockStatementNode* Node = ASTALLOC.Alloc<types::ElseIfSubBlockStatementNode>(Expression, Body);
+            types::ElseIfSubBlockStatementNode* Node = AllocNodeAt<types::ElseIfSubBlockStatementNode>(SourceStart, Expression, Body);
             if (Expression == nullptr) {
                 Node->setHasError();
             }
@@ -76,17 +78,19 @@ namespace baka {
         }
 
         types::ElseSubBlockStatementNode* Parser::ElseSubBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_ELSE)) {
                 // throw error
             }
 
             types::StatementNode* Body = this->ParseStatement();
 
-            types::ElseSubBlockStatementNode* Node = ASTALLOC.Alloc<types::ElseSubBlockStatementNode>( Body);
+            types::ElseSubBlockStatementNode* Node = AllocNodeAt<types::ElseSubBlockStatementNode>(SourceStart,  Body);
             return Node;
         }
 
         types::IfSuperBlockStatementNode* Parser::IfSuperBlockStatement() {
+            const size_t SourceStart = current;
             if (!Check(types::TokenType::K_IF)) {
                 // throw error
             }
@@ -102,11 +106,12 @@ namespace baka {
                 ElseSubBlock = this->ElseSubBlockStatement();
             }
 
-            types::IfSuperBlockStatementNode* Node = ASTALLOC.Alloc<types::IfSuperBlockStatementNode>(IfSubBlock, ElseIfSubBlocks, ElseSubBlock);
+            types::IfSuperBlockStatementNode* Node = AllocNodeAt<types::IfSuperBlockStatementNode>(SourceStart, IfSubBlock, ElseIfSubBlocks, ElseSubBlock);
             return Node;
         }
 
         types::SwitchBlockStatementNode* Parser::SwitchBlockStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_SWITCH)) {
                 // throw error
             }
@@ -130,9 +135,10 @@ namespace baka {
                 }
             }
 
-            types::StatementNode* Body = this->CompoundStatement();
+            // A switch body is any statement; braces are the common case, not a grammar rule.
+            types::StatementNode* Body = this->ParseStatement();
 
-            types::SwitchBlockStatementNode* Node = ASTALLOC.Alloc<types::SwitchBlockStatementNode>(Expression, Body);
+            types::SwitchBlockStatementNode* Node = AllocNodeAt<types::SwitchBlockStatementNode>(SourceStart, Expression, Body);
             if (Expression == nullptr) {
                 Node->setHasError();
             }

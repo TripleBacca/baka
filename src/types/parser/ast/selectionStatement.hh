@@ -22,6 +22,11 @@ namespace baka {
             IfSubBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
+            ExpressionNode* getCondition() const { return Expr; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "If(" << "\n";
@@ -48,6 +53,11 @@ namespace baka {
             ElseIfSubBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
+            ExpressionNode* getCondition() const { return Expr; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Else If(" << "\n";
@@ -73,6 +83,8 @@ namespace baka {
             ElseSubBlockStatementNode(StatementNode* body) : Body(body) {
             }
 
+            StatementNode* getBody() const { return Body; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Else(" << "\n";
@@ -93,6 +105,10 @@ namespace baka {
             IfSuperBlockStatementNode(IfSubBlockStatementNode* ifSubBlock, std::vector<ElseIfSubBlockStatementNode*> elseIfSubBlocks,
                                       ElseSubBlockStatementNode* elseSubBlock) : IfSubBlock(ifSubBlock), ElseIfSubBlocks(std::move(elseIfSubBlocks)), ElseSubBlock(elseSubBlock) {
             }
+
+            IfSubBlockStatementNode* getIf() const { return IfSubBlock; }
+            const std::vector<ElseIfSubBlockStatementNode*>& getElseIfs() const { return ElseIfSubBlocks; }
+            ElseSubBlockStatementNode* getElse() const { return ElseSubBlock; }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -119,9 +135,15 @@ namespace baka {
             SwitchBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
+            ExpressionNode* getCondition() const { return Expr; }
+            StatementNode* getBody() const { return Body; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Switch(" << "\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Expr) {
                     Expr->Print(Tabs + 1);

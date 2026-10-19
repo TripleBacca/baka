@@ -6,16 +6,17 @@
 namespace baka {
     namespace parser {
         types::IdentifierNode* Parser::ParseIdentifier() {
+            const size_t SourceStart = current;
             if (!Check(types::TokenType::IDENTIFIER)) {
                 ReportError("expected identifier");
                 if (!Check(types::TokenType::EOF_TOKEN)) {
                     Advance();
                 }
-                auto* Errored = ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?"));
+                auto* Errored = AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("?"));
                 Errored->setHasError();
                 return Errored;
             }
-            return ASTALLOC.Alloc<types::IdentifierNode>(std::get<std::string_view>(this->Advance().Value));
+            return AllocNodeAt<types::IdentifierNode>(SourceStart, std::get<std::string_view>(this->Advance().Value));
         }
     }
 }

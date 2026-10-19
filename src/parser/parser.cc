@@ -24,9 +24,32 @@ namespace baka {
         }
 
         bool Parser::Check2(types::TokenType type) const noexcept {
-            if (current + 1 >= Tokens.size()) return (type == types::TokenType::EOF_TOKEN);
+            return CheckN(1, type);
+        }
 
-            return Tokens[current + 1].TokenType_v == type;
+        bool Parser::CheckN(size_t Offset, types::TokenType type) const noexcept {
+            if (current + Offset >= Tokens.size()) return (type == types::TokenType::EOF_TOKEN);
+
+            return Tokens[current + Offset].TokenType_v == type;
+        }
+
+        bool Parser::AtAggregateDefinition() {
+            auto Keyword = Peek().TokenType_v;
+            if (Keyword == types::TokenType::K_ENUM) {
+                // Enums have no forward declaration in this grammar.
+                return (Check2(types::TokenType::IDENTIFIER) && CheckN(2, types::TokenType::LPAREN_CURLY)) ||
+                       Check2(types::TokenType::LPAREN_CURLY);
+            }
+            if (Keyword != types::TokenType::K_STRUCT && Keyword != types::TokenType::K_CLASS &&
+                Keyword != types::TokenType::K_UNION) {
+                return false;
+            }
+            // `struct S {` and `struct S;` are aggregate forms; `struct S value;` is a declaration.
+            if (Check2(types::TokenType::IDENTIFIER)) {
+                return CheckN(2, types::TokenType::LPAREN_CURLY) || CheckN(2, types::TokenType::SEMICOLON) ||
+                       CheckN(2, types::TokenType::OP_COLON);
+            }
+            return Check2(types::TokenType::LPAREN_CURLY);
         }
 
         const types::Token& Parser::Advance() {
@@ -57,7 +80,8 @@ namespace baka {
         };
 
         types::ProgramNode* Parser::ParseProgram() {
-            auto* ProgramNode = ASTALLOC.Alloc<types::ProgramNode>();
+            const size_t SourceStart = current;
+            auto* ProgramNode = AllocNodeAt<types::ProgramNode>(SourceStart);
 
             while (!Check(types::TokenType::EOF_TOKEN)) {
                 // function decl
@@ -67,24 +91,24 @@ namespace baka {
                 // enum decl
                 // typdef
 
-                if (Check(types::TokenType::K_STRUCT)) {
+                if (Check(types::TokenType::K_STRUCT) && AtAggregateDefinition()) {
                     auto Struct = this->ParseStruct();
                     if (std::holds_alternative<types::StructDefinitionNode*>(Struct)) {
                         ProgramNode->addNode(std::get<types::StructDefinitionNode*>(Struct));
                     } else {
                         ProgramNode->addNode(std::get<types::StructDeclarationNode*>(Struct));
                     }
-                } else if (Check(types::TokenType::K_CLASS)) {
+                } else if (Check(types::TokenType::K_CLASS) && AtAggregateDefinition()) {
                     auto Class = this->ParseClass();
                     if (std::holds_alternative<types::ClassDefinitionNode*>(Class)) {
                         ProgramNode->addNode(std::get<types::ClassDefinitionNode*>(Class));
                     } else {
                         ProgramNode->addNode(std::get<types::ClassDeclarationNode*>(Class));
                     }
-                } else if (Check(types::TokenType::K_UNION)) {
+                } else if (Check(types::TokenType::K_UNION) && AtAggregateDefinition()) {
                     auto Union = this->ParseUnion();
                     ProgramNode->addNode(Union);
-                } else if (Check(types::TokenType::K_ENUM)) {
+                } else if (Check(types::TokenType::K_ENUM) && AtAggregateDefinition()) {
                     auto Enum = this->ParseEnumDecl();
                     ProgramNode->addNode(Enum);
                 } else if (Check(types::TokenType::K_TYPEDEF)) {
@@ -114,6 +138,7 @@ namespace baka {
         }
 
         types::ConstantNode* Parser::ParseConstantNode() {
+            const size_t SourceStart = current;
             const types::Token& Token = this->Peek();
 
             // int
@@ -126,7 +151,7 @@ namespace baka {
             // unsigned long long
 
             #define CONSTANT_NODE(T) else if(std::holds_alternative<T>(Token.Value)) do { \
-                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<T>>(std::get<T>(Token.Value)); \
+                auto* cn = AllocNodeAt<types::ConstantTNode<T>>(SourceStart, std::get<T>(Token.Value)); \
                 return cn; } while(0)
 
             if(false) {}
@@ -140,18 +165,18 @@ namespace baka {
             CONSTANT_NODE(unsigned int);
             CONSTANT_NODE(unsigned long long);
             else if (Check(types::TokenType::K_TRUE)) {
-                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<bool>>(true);
+                auto* cn = AllocNodeAt<types::ConstantTNode<bool>>(SourceStart, true);
                 return cn;
             } else if (Check(types::TokenType::K_FALSE)) {
-                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<bool>>(false);
+                auto* cn = AllocNodeAt<types::ConstantTNode<bool>>(SourceStart, false);
                 return cn;
             } else if (Check(types::TokenType::K_NULLPTR)) {
-                auto* cn = ASTALLOC.Alloc<types::ConstantTNode<std::nullptr_t>>();
+                auto* cn = AllocNodeAt<types::ConstantTNode<std::nullptr_t>>(SourceStart);
                 return cn;
             }
 
             ReportError("expected constant");
-            auto* cn = ASTALLOC.Alloc<types::ConstantTNode<int>>(0);
+            auto* cn = AllocNodeAt<types::ConstantTNode<int>>(SourceStart, 0);
             cn->setHasError();
             return cn;
         }

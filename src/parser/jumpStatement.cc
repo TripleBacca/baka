@@ -5,11 +5,15 @@
 namespace baka {
     namespace parser {
         types::ReturnStatementNode* Parser::ReturnStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_RETURN)) {
                 // throw error
             }
 
-            types::ExpressionNode* Expression = this->Expression();
+            types::ExpressionNode* Expression = nullptr;
+            if (!Check(types::TokenType::SEMICOLON)) {
+                Expression = this->Expression();
+            }
 
             if (!this->Match(types::TokenType::SEMICOLON)) {
                 ReportError("expected ';' after return statement", true);
@@ -18,11 +22,12 @@ namespace baka {
                 }
             }
 
-            types::ReturnStatementNode* Node = ASTALLOC.Alloc<types::ReturnStatementNode>(Expression);
+            types::ReturnStatementNode* Node = AllocNodeAt<types::ReturnStatementNode>(SourceStart, Expression);
             return Node;
         }
 
         types::GotoStatementNode* Parser::GotoStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_GOTO)) {
                 // throw error
             }
@@ -36,11 +41,12 @@ namespace baka {
                 }
             }
 
-            types::GotoStatementNode* Node = ASTALLOC.Alloc<types::GotoStatementNode>(Label);
+            types::GotoStatementNode* Node = AllocNodeAt<types::GotoStatementNode>(SourceStart, Label);
             return Node;
         }
 
         types::BreakStatementNode* Parser::BreakStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_BREAK)) {
                 // throw error
             }
@@ -58,11 +64,12 @@ namespace baka {
                 }
             }
 
-            types::BreakStatementNode* Node = ASTALLOC.Alloc<types::BreakStatementNode>(Label);
+            types::BreakStatementNode* Node = AllocNodeAt<types::BreakStatementNode>(SourceStart, Label);
             return Node;
         }
 
         types::ContinueStatementNode* Parser::ContinueStatement() {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_CONTINUE)) {
                 // throw error
             }
@@ -79,7 +86,7 @@ namespace baka {
                 }
             }
 
-            types::ContinueStatementNode* Node = ASTALLOC.Alloc<types::ContinueStatementNode>(Label);
+            types::ContinueStatementNode* Node = AllocNodeAt<types::ContinueStatementNode>(SourceStart, Label);
             return Node;
         }
 

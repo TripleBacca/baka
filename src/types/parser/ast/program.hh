@@ -25,6 +25,10 @@ namespace baka {
                 Body.push_back(node);
             }
 
+            const std::vector<ASTNode*>& getBody() const {
+                return Body;
+            }
+
             ~ProgramNode() = default;
 
             void Print(size_t Tabs = 0) const override {

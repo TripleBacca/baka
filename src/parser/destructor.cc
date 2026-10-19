@@ -7,6 +7,7 @@
 namespace baka {
     namespace parser {
         types::DestructorNode* Parser::ParseDestructor(types::IdentifierNode* ParentName) {
+            const size_t SourceStart = current;
             if (!this->Match(types::TokenType::OP_TILDE)) {
                 assert(false);
                 // throw error
@@ -41,13 +42,13 @@ namespace baka {
                 Body = this->CompoundStatement();
             } else {
                 ReportError("expected '{' for destructor body");
-                std::vector<std::variant<types::StatementNode*, types::DeclarationList*, types::TypedefNode*, types::FunctionNode*>> EmptyBody;
-                Body = ASTALLOC.Alloc<types::CompoundStatementNode>(std::move(EmptyBody));
+                types::CompoundStatementNode::StatementList EmptyBody;
+                Body = AllocNodeAt<types::CompoundStatementNode>(SourceStart, std::move(EmptyBody));
                 if (SkipTo({types::TokenType::SEMICOLON, types::TokenType::RPAREN_CURLY}) == types::TokenType::SEMICOLON) {
                     Advance();
                 }
             }
-            auto* Node = ASTALLOC.Alloc<types::DestructorNode>(Body);
+            auto* Node = AllocNodeAt<types::DestructorNode>(SourceStart, Body);
 
             return Node;
         }

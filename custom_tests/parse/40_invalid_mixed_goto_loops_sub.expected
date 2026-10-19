@@ -446,23 +446,23 @@ Program(
             )
             Goto Label(Identifier(parse)
 :
-            )
-            If Super Block(
-                If(
-                    CommaExpression(
-                        BinaryExpression(
-                            BinaryOp: OP_GE,
-                            PrimaryExpression(
-                                Identifier(attempt)
-                            )
-                            PrimaryExpression(
-                                Identifier(limit)
+                If Super Block(
+                    If(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_GE,
+                                PrimaryExpression(
+                                    Identifier(attempt)
+                                )
+                                PrimaryExpression(
+                                    Identifier(limit)
+                                )
                             )
                         )
-                    )
-                    CompoundStatement(
-                        Goto(
-                            Identifier(give_up)
+                        CompoundStatement(
+                            Goto(
+                                Identifier(give_up)
+                            )
                         )
                     )
                 )
@@ -521,11 +521,11 @@ Program(
             )
             Goto Label(Identifier(give_up)
 :
-            )
-            Return(
-                CommaExpression(
-                    PrimaryExpression(
-                        Identifier(value)
+                Return(
+                    CommaExpression(
+                        PrimaryExpression(
+                            Identifier(value)
+                        )
                     )
                 )
             )
@@ -834,11 +834,11 @@ Program(
             )
             Goto Label(Identifier(done)
 :
-            )
-            Return(
-                CommaExpression(
-                    PrimaryExpression(
-                        Identifier(total)
+                Return(
+                    CommaExpression(
+                        PrimaryExpression(
+                            Identifier(total)
+                        )
                     )
                 )
             )

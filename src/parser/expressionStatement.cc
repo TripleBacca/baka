@@ -8,6 +8,7 @@ namespace baka {
 namespace parser {
 
     types::ExpressionStatementNode* Parser::ParseExpressionStatement() {
+        const size_t SourceStart = current;
         types::ExpressionNode* Expression = this->Expression();
         if (!Match(types::TokenType::SEMICOLON)) {
             if (Expression != nullptr) {
@@ -19,7 +20,7 @@ namespace parser {
             }
         }
 
-        types::ExpressionStatementNode* Node = ASTALLOC.Alloc<types::ExpressionStatementNode>(Expression);
+        types::ExpressionStatementNode* Node = AllocNodeAt<types::ExpressionStatementNode>(SourceStart, Expression);
         if (Expression == nullptr) {
             Node->setHasError();
         }

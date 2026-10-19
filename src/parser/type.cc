@@ -8,6 +8,7 @@ namespace baka {
 namespace parser {
 
     types::IdentifierNode* Parser::ParseTypeIdentifier() {
+        const size_t SourceStart = current;
         // Central validation also covers B-owned parameter/function parsers. Keep
         // invalid modifiers out of legacy AST constructors that still assert.
         if (current > 0 && Tokens[current-1].TokenType_v == types::TokenType::K_UNSIGNED &&
@@ -15,7 +16,7 @@ namespace parser {
             !baka::detail::isUnsignedTypeName(std::get<std::string_view>(Peek().Value))) {
             ReportError("unsigned requires char, short, int, or long");
             if (!Check(types::TokenType::EOF_TOKEN)) Advance();
-            auto* invalid = ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("int"));
+            auto* invalid = AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("int"));
             invalid->setHasError();
             return invalid;
         }
@@ -32,7 +33,7 @@ namespace parser {
                 std::string_view Name = std::get<std::string_view>(Peek().Value);
                 if(LookupType(Name)) {
                     Advance();
-                    return ASTALLOC.Alloc<types::IdentifierNode>(Name);
+                    return AllocNodeAt<types::IdentifierNode>(SourceStart, Name);
                 }
             }
 
@@ -48,7 +49,7 @@ namespace parser {
             if (!Check(types::TokenType::EOF_TOKEN)) {
                 Advance();
             }
-            auto* Errored = ASTALLOC.Alloc<types::IdentifierNode>(ErrName);
+            auto* Errored = AllocNodeAt<types::IdentifierNode>(SourceStart, ErrName);
             Errored->setHasError();
             return Errored;
         }

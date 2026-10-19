@@ -13,7 +13,8 @@ namespace baka {
 namespace parser {
 
     types::StructBodyNode* Parser::ParseStructBody(types::IdentifierNode* ParentName) {
-        types::StructBodyNode* Node = ASTALLOC.Alloc<types::StructBodyNode>();
+        const size_t SourceStart = current;
+        types::StructBodyNode* Node = AllocNodeAt<types::StructBodyNode>(SourceStart);
 
         if(!Match(types::TokenType::LPAREN_CURLY)) {
             ReportError("expected '{'");
@@ -40,7 +41,7 @@ namespace parser {
                 auto* destructorParent = ParentName;
                 if (!destructorParent) {
                     ReportError("anonymous aggregates cannot declare destructors");
-                    destructorParent = ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?"));
+                    destructorParent = AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("?"));
                 }
                 types::DestructorNode* Dtor = ParseDestructor(destructorParent);
                 Node->SetDestructor(Dtor);

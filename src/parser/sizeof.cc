@@ -14,6 +14,7 @@ namespace baka {
 namespace parser {
 
 types::ExpressionNode* Parser::ParseSizeofExpression() {
+    const size_t SourceStart = current;
     if(!Match(types::TokenType::K_SIZEOF)) {
         assert(false);
         // todo throw error
@@ -26,7 +27,7 @@ types::ExpressionNode* Parser::ParseSizeofExpression() {
             // "expected expression" already reported deep
             return nullptr;
         }
-        return ASTALLOC.Alloc<types::SizeofNode>(Expr);
+        return AllocNodeAt<types::SizeofNode>(SourceStart, Expr);
     }
     // ate bracks
 
@@ -37,10 +38,21 @@ types::ExpressionNode* Parser::ParseSizeofExpression() {
         auto* AbstractDecl = ParseAbstractDeclarator();
         Result = types::SizeofNode::SizeofTypeVariant{Type.value(), AbstractDecl};
     } else {
-        types::ExpressionNode* Expr = Expression();
+        types::ExpressionNode* Expr = ParseAssignmentExpression();
         if(!Expr) {
             // "expected expression" already reported deep
             return nullptr;
+        }
+        if (Check(types::TokenType::OP_COMMA)) {
+            std::vector<types::ExpressionNode*> Expressions{Expr};
+            while (Match(types::TokenType::OP_COMMA)) {
+                auto* Next = ParseAssignmentExpression();
+                if (!Next) {
+                    return nullptr;
+                }
+                Expressions.push_back(Next);
+            }
+            Expr = AllocNodeAt<types::CommaExpressionNode>(SourceStart, std::move(Expressions));
         }
         Result = Expr;
     }
@@ -53,7 +65,7 @@ types::ExpressionNode* Parser::ParseSizeofExpression() {
         }
     }
 
-    return ASTALLOC.Alloc<types::SizeofNode>(Result);
+    return AllocNodeAt<types::SizeofNode>(SourceStart, Result);
 }
 
 }

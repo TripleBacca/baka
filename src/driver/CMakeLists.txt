@@ -13,6 +13,8 @@ add_library(driver
 target_link_libraries(driver PUBLIC
     base
     parser
+    semantic
+    ir
 )
 
 target_include_directories(driver PUBLIC

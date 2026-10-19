@@ -35,6 +35,7 @@ namespace baka {
                 ConstantTNode(T val) : Value(val) {
                 }
 
+                const T& getValue() const { return Value; }
                 void Print(size_t Tabs = 0) const override {
                     INDENT(Tabs);
                     std::cout << "Constant(" << Value << ")" << std::endl;
@@ -50,6 +51,8 @@ namespace baka {
                 ConstantTNode(const base::SLString& val) : Value(val) {
                 }
 
+                std::string_view getValue() const { return Value; }
+
                 void Print(size_t Tabs = 0) const override {
                     INDENT(Tabs);
                     std::cout << "Constant(" << Value << ")" << std::endl;
@@ -59,6 +62,8 @@ namespace baka {
         template<>
         class ConstantTNode<std::nullptr_t> : public ConstantNode {
             public:
+                std::nullptr_t getValue() const { return nullptr; }
+
                 void Print(size_t Tabs = 0) const override {
                     INDENT(Tabs);
                     std::cout << "Constant(nullptr)" << std::endl;

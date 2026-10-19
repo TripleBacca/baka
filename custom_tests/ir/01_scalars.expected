@@ -1,0 +1,81 @@
+IR::TAC:
+module {
+  declare @printf.9: fn(ptr<i8>, ...)->i32
+  declare @scanf.10: fn(ptr<i8>, ...)->i32
+  function @sum.13: fn(i8, u32)->i32 {
+    parameter a.16: i8
+    parameter b.17: u32
+    local v.18: i64
+    local c.19: i8
+  bb1: ; predecessors [] successors [bb2]
+    (jump, _, bb2, _)
+  bb2: ; predecessors [bb1] successors [bb3]
+    (load, %t1:i8, &a.16:ptr<i8>, _)
+    (cast, %t2:u32, %t1:i8, _)
+    (load, %t3:u32, &b.17:ptr<u32>, _)
+    (add, %t4:u32, %t2:u32, %t3:u32)
+    (cast, %t5:i64, %t4:u32, _)
+    (store, &v.18:ptr<i64>, %t5:i64, _)
+    (jump, _, bb3, _)
+  bb3: ; predecessors [bb2] successors [bb4]
+    (load, %t6:i64, &v.18:ptr<i64>, _)
+    (cast, %t7:i8, %t6:i64, _)
+    (store, &c.19:ptr<i8>, %t7:i8, _)
+    (jump, _, bb4, _)
+  bb4: ; predecessors [bb3] successors []
+    (load, %t8:i8, &c.19:ptr<i8>, _)
+    (cast, %t9:i32, %t8:i8, _)
+    (ret, _, %t9:i32, _)
+  }
+  function @main.15: fn(i32)->i32 {
+    parameter n.20: i32
+    local a.21: i32
+    local u.22: u32
+    local f.23: f64
+    local b.24: u1
+  bb1: ; predecessors [] successors [bb2]
+    (jump, _, bb2, _)
+  bb2: ; predecessors [bb1] successors [bb3]
+    (store, &a.21:ptr<i32>, 2:i32, _)
+    (jump, _, bb3, _)
+  bb3: ; predecessors [bb2] successors [bb4]
+    (cast, %t1:u32, 3:i32, _)
+    (store, &u.22:ptr<u32>, %t1:u32, _)
+    (jump, _, bb4, _)
+  bb4: ; predecessors [bb3] successors [bb5]
+    (store, &f.23:ptr<f64>, 1.5:f64, _)
+    (jump, _, bb5, _)
+  bb5: ; predecessors [bb4] successors [bb6]
+    (load, %t2:i32, &n.20:ptr<i32>, _)
+    (cast, %t3:u1, %t2:i32, _)
+    (store, &b.24:ptr<u1>, %t3:u1, _)
+    (jump, _, bb6, _)
+  bb6: ; predecessors [bb5] successors [bb7]
+    (load, %t4:f64, &f.23:ptr<f64>, _)
+    (cast, %t5:i32, %t4:f64, _)
+    (load, %t6:i32, &a.21:ptr<i32>, _)
+    (mul, %t7:i32, %t6:i32, 3:i32)
+    (add, %t8:i32, %t5:i32, %t7:i32)
+    (store, &a.21:ptr<i32>, %t8:i32, _)
+    (load, %t9:i32, &a.21:ptr<i32>, _)
+    (jump, _, bb7, _)
+  bb7: ; predecessors [bb6] successors [bb8, bb9]
+    (load, %t10:i32, &a.21:ptr<i32>, _)
+    (cast, %t11:i8, %t10:i32, _)
+    (load, %t12:u32, &u.22:ptr<u32>, _)
+    (arg, _, %t11:i8, 0:i64)
+    (arg, _, %t12:u32, 1:i64)
+    (call, %t13:i32, @sum.13:ptr<fn(i8, u32)->i32>, 2:i64)
+    (load, %t14:u1, &b.24:ptr<u1>, _)
+    (branch, bb9, %t14:u1, bb8)
+  bb8: ; predecessors [bb7] successors [bb10]
+    (copy, %t15:i32, 1:i32, _)
+    (jump, _, bb10, _)
+  bb9: ; predecessors [bb7] successors [bb10]
+    (copy, %t15:i32, 0:i32, _)
+    (jump, _, bb10, _)
+  bb10: ; predecessors [bb8, bb9] successors []
+    (add, %t16:i32, %t13:i32, %t15:i32)
+    (ret, _, %t16:i32, _)
+  }
+}

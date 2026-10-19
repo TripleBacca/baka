@@ -195,6 +195,7 @@ Program(
         Identifier(SUNDAY)
     )
     Union(
+        Identifier(Value)
         StructBodyNode(
             DeclarationList(
                 IsStatic: 0, IsConst: 0
@@ -238,6 +239,7 @@ Program(
         )
     )
     Union(
+        Identifier(Tagged)
         StructBodyNode(
             DeclarationList(
                 IsStatic: 0, IsConst: 0

@@ -1067,8 +1067,7 @@ Program(
     )
 )
 :
-                    )
-                    ExpressionStatement(
+                        EmptyStatement()
                     )
                     Break(
                     )
@@ -1078,24 +1077,24 @@ Program(
     )
 )
 :
-                    )
-                    ExpressionStatement(
-                        CommaExpression(
-                            BinaryExpression(
-                                BinaryOp: OP_ASSIGN,
-                                PrimaryExpression(
-                                    Identifier(result)
-                                )
-                                FunctionCallPostfixExpr(
+                        ExpressionStatement(
+                            CommaExpression(
+                                BinaryExpression(
+                                    BinaryOp: OP_ASSIGN,
                                     PrimaryExpression(
-                                        Identifier(sub)
+                                        Identifier(result)
                                     )
-                                    CommaExpression(
+                                    FunctionCallPostfixExpr(
                                         PrimaryExpression(
-                                            Identifier(x)
+                                            Identifier(sub)
                                         )
-                                        PrimaryExpression(
-                                            Identifier(y)
+                                        CommaExpression(
+                                            PrimaryExpression(
+                                                Identifier(x)
+                                            )
+                                            PrimaryExpression(
+                                                Identifier(y)
+                                            )
                                         )
                                     )
                                 )
@@ -1105,8 +1104,7 @@ Program(
                     Break(
                     )
                     Default Label(:
-                    )
-                    ExpressionStatement(
+                        EmptyStatement()
                     )
                 )
             )
@@ -1332,15 +1330,9 @@ custom_tests/parse/37_invalid_mixed_calculator.cpp:45:21: [38;2;255;0;0merror: 
 custom_tests/parse/37_invalid_mixed_calculator.cpp:52:10: [38;2;255;0;0merror: [0mexpected ':' after case value (PARSE)
 	    case 0
 	          [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_mixed_calculator.cpp:53:27: [38;2;255;0;0merror: [0mexpected expression (PARSE)
-	        result = add(x, y);
-	                          [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:58:5: [38;2;255;0;0merror: [0mexpected ':' after 'default' (PARSE)
 	    default
 	           [38;2;255;0;0m^[0m
-custom_tests/parse/37_invalid_mixed_calculator.cpp:59:19: [38;2;255;0;0merror: [0mexpected expression (PARSE)
-	        result = 0;
-	                  [38;2;255;0;0m^[0m
 custom_tests/parse/37_invalid_mixed_calculator.cpp:72:1: [38;2;255;0;0merror: [0mexpected 'while' after 'do' body (PARSE)
 	}	[38;2;255;0;0m^[0m
-Compilation failed due to 11 error(s)
+Compilation failed due to 9 error(s)

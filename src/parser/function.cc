@@ -17,6 +17,7 @@ namespace baka
 	namespace parser
 	{
 		types::FunctionParameter* Parser::ParseFunctionParameter() {
+			const size_t SourceStart = current;
 
 			TypedefFlagGuard ScopedInTypedef(*this, false);
 
@@ -34,7 +35,7 @@ namespace baka
 
 			if (!isTypeName(this->Peek())) {
 				ReportError("expected type name");
-				auto* ErroredParam = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, Modifier, nullptr, nullptr);
+				auto* ErroredParam = AllocNodeAt<types::FunctionParameter>(SourceStart, IsConst, Modifier, nullptr, nullptr);
 				ErroredParam->setHasError();
 				return ErroredParam;
 			}
@@ -45,20 +46,22 @@ namespace baka
 
 			// TODO: fix these disgusting constructors
 
-			auto* Parameter = ASTALLOC.Alloc<types::FunctionParameter>(IsConst, Modifier, TypeName, Node);
+			auto* Parameter = AllocNodeAt<types::FunctionParameter>(SourceStart, IsConst, Modifier, TypeName, Node);
 			return Parameter;
 		}
 
 		types::FunctionParameterList* Parser::ParseFunctionParameterList()
 		{
+			const size_t SourceStart = current;
 			// parses <functionparam>, <functionparam> , ...
 
 			std::vector<types::FunctionParameter*> Decls;
+			bool Variadic = false;
 
 			if (Check(types::TokenType::RPAREN_ROUND))
 			{
 				// empty parameter list
-				return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
+				return AllocNodeAt<types::FunctionParameterList>(SourceStart, Decls, Variadic);
 			}
 
 			bool DefaultRunning = false;
@@ -66,6 +69,7 @@ namespace baka
 			{
 				if (this->Match(types::TokenType::OP_ELLIPSIS))
 				{
+					Variadic = true;
 					break;
 				}
 
@@ -92,11 +96,12 @@ namespace baka
 			}
 			while (this->Match(types::TokenType::OP_COMMA));
 
-			return ASTALLOC.Alloc<types::FunctionParameterList>(Decls);
+			return AllocNodeAt<types::FunctionParameterList>(SourceStart, Decls, Variadic);
 		}
 
 		std::optional<types::FunctionNode*> Parser::TryParseFunction()
 		{
+			const size_t SourceStart = current;
 			size_t prev = current;
 			size_t ErrorsOnEntry = ReportedErrorCount;
 
@@ -109,10 +114,16 @@ namespace baka
 			{
 				if (Match(types::TokenType::K_STATIC))
 				{
+					if (IsStatic) {
+						ReportError("duplicate 'static' specifier");
+					}
 					IsStatic = true;
 				}
 				if (Match(types::TokenType::K_CONST))
 				{
+					if (IsConst) {
+						ReportError("duplicate 'const' specifier");
+					}
 					IsConst = true;
 				}
 			}
@@ -173,7 +184,7 @@ namespace baka
 			// function body
 			types::StatementNode* Body = this->CompoundStatement();
 
-			return ASTALLOC.Alloc<types::FunctionNode>(ReturnTypeBindedIdentifier, FunctionTypeDecl, Body, IsStatic,
+			return AllocNodeAt<types::FunctionNode>(SourceStart, ReturnTypeBindedIdentifier, FunctionTypeDecl, Body, IsStatic,
 			                                           IsConst, Modifier);
 		}
 	}

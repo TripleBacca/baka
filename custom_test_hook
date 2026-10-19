@@ -17,6 +17,8 @@ SUITES = {
     "lex": (custom_tests / "lex", ["--lex"]),
     "parse": (custom_tests / "parse", ["--parse"]),
     "codegen": (custom_tests / "codegen", ["--codegen"]),
+    "semantic": (custom_tests / "semantic", ["--semantic"]),
+    "ir": (custom_tests / "ir", ["--ir"]),
 }
 
 
@@ -88,6 +90,15 @@ def main():
 
     failures = 0
     for name in suites:
+        if name == "ir":
+            failures += subprocess.run([sys.executable, "-B", str(custom_tests / "ir" / "run.py"),
+                                        "--compiler", str(COMPILER)]).returncode
+            continue
+        if name == "semantic":
+            # Semantic regressions assert status, diagnostic stage and phase
+            # metadata. They must not bless a crash as an expected transcript.
+            failures += subprocess.run([sys.executable, str(custom_tests / "semantic" / "run.py")]).returncode
+            continue
         test_dir, stage_args = SUITES[name]
 
         tests = sorted(test_dir.glob("*.cpp"))

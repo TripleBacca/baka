@@ -169,7 +169,9 @@ namespace types {
         SingleDeclarationNode(DeclarationIdentifierNode* VariableName, ExpressionNode* Initialization) :
         VariableName(VariableName), Initialization(Initialization) {}
 
-        void Print(size_t Tabs = 0) const override {
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Initialization = rewrite(Initialization); }
+
+            void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
             std::cout << "SingleDeclarationNode(" << "\n";
 

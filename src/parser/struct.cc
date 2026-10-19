@@ -9,6 +9,7 @@ namespace baka {
 namespace parser {
 
     std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> Parser::ParseStruct() {
+        const size_t SourceStart = current;
         if (!this->Match(types::TokenType::K_STRUCT)) {
             // todo throw error
             assert(false && "Expected 'struct' keyword");
@@ -20,13 +21,13 @@ namespace parser {
             if (Sync == types::TokenType::SEMICOLON) {
                 Advance();
             }
-            return ASTALLOC.Alloc<types::StructDeclarationNode>(
-                ASTALLOC.Alloc<types::IdentifierNode>(std::string_view("?")));
+            return AllocNodeAt<types::StructDeclarationNode>(SourceStart,
+                AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("?")));
         }
         types::IdentifierNode* StructIdentifier = this->ParseIdentifier();
         if (Match(types::TokenType::SEMICOLON)) {
             // this is a declaration
-            auto* Node = ASTALLOC.Alloc<types::StructDeclarationNode>(StructIdentifier);
+            auto* Node = AllocNodeAt<types::StructDeclarationNode>(SourceStart, StructIdentifier);
             if (!TypeLookup.LookupCurrent(StructIdentifier->GetName()).has_value()) {
                 AddType(StructIdentifier);
                 GetParserSTE(StructIdentifier)->SetIsStruct();
@@ -74,7 +75,7 @@ namespace parser {
         types::StructBodyNode* Body = nullptr;
         if (!this->Check(types::TokenType::LPAREN_CURLY)) {
             ReportError("expected '{' after struct/class declaration");
-            Body = ASTALLOC.Alloc<types::StructBodyNode>();
+            Body = AllocNodeAt<types::StructBodyNode>(SourceStart);
         } else {
             Body = this->ParseStructBody(StructIdentifier);
         }
@@ -87,9 +88,9 @@ namespace parser {
 
         types::StructDefinitionNode* Node = nullptr;
         if (ParentStructIdentifier) {
-            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, ParentStructIdentifier, Body);
+            Node = AllocNodeAt<types::StructDefinitionNode>(SourceStart, StructIdentifier, ParentStructIdentifier, Body);
         } else {
-            Node = ASTALLOC.Alloc<types::StructDefinitionNode>(StructIdentifier, Body);
+            Node = AllocNodeAt<types::StructDefinitionNode>(SourceStart, StructIdentifier, Body);
         }
 
         ExitScope();

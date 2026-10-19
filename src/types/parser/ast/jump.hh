@@ -17,6 +17,10 @@ namespace baka {
             ReturnStatementNode(ExpressionNode* expr) : Expr(expr) {
             }
 
+            ExpressionNode* getExpression() const { return Expr; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Return(" << "\n";
@@ -35,9 +39,12 @@ namespace baka {
             GotoStatementNode(IdentifierNode* label) : Label(label) {
             }
 
+            IdentifierNode* getLabel() const { return Label; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Goto(" << "\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Label) Label->Print(Tabs + 1);
 
@@ -53,9 +60,12 @@ namespace baka {
             BreakStatementNode(IdentifierNode* label) : Label(label) {
             }
 
+            IdentifierNode* getLabel() const { return Label; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Break(\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Label) Label->Print(Tabs + 1);
 
@@ -71,9 +81,12 @@ namespace baka {
             ContinueStatementNode(IdentifierNode* label) : Label(label) {
             }
 
+            IdentifierNode* getLabel() const { return Label; }
+
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "Continue(\n";
+                PrintControlTarget(semanticInfo().Target, Tabs + 1);
 
                 if (Label) Label->Print(Tabs + 1);
 

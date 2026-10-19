@@ -8,7 +8,8 @@ namespace parser {
 
 
     types::InitializerNode* Parser::ParseInitializer() {
-        auto* IntializerNodeRet = ASTALLOC.Alloc<types::InitializerNode>();
+        const size_t SourceStart = current;
+        auto* IntializerNodeRet = AllocNodeAt<types::InitializerNode>(SourceStart);
 
         // struct X {
         //     int a;
@@ -17,6 +18,7 @@ namespace parser {
         // X b = {1,2,}; // trailing comma
 
         if(Match(types::TokenType::LPAREN_CURLY)) {
+            IntializerNodeRet->setBraced();
             if(Match(types::TokenType::RPAREN_CURLY)) {
                 return IntializerNodeRet; // default intializer;
             }

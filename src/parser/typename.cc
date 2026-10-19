@@ -7,6 +7,7 @@ namespace baka
 	{
 		std::optional<types::TypeNode*> Parser::TryParseTypeName()
 		{
+			const size_t SourceStart = current;
 			size_t prev = current;
 
 			if (Check(types::TokenType::K_STATIC))
@@ -27,7 +28,7 @@ namespace baka
 			}
 
 			types::IdentifierNode* TypeName = ParseTypeIdentifier();
-			auto* Node = ASTALLOC.Alloc<types::TypeNode>(IsConst, Modifier, TypeName);
+			auto* Node = AllocNodeAt<types::TypeNode>(SourceStart, IsConst, Modifier, TypeName);
 			return Node;
 		}
 

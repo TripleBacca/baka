@@ -23,9 +23,19 @@ namespace baka {
             }
         }
 
-
+        bool Parser::AtDeclarationStart() {
+            return detail::IsSpecifier(Peek().TokenType_v) || Check(types::TokenType::K_TYPEDEF) ||
+                   isTypeName(Peek());
+        }
 
         types::StatementNode* Parser::ParseStatement() {
+            const size_t SourceStart = current;
+            // A bare ';' is a valid empty statement, not a missing expression.
+            if (Check(types::TokenType::SEMICOLON)) {
+                Advance();
+                return AllocNodeAt<types::EmptyStatementNode>(SourceStart);
+            }
+
             switch(DetermineStatementType()) {
                 case types::StatementNodeType::SelectionStatement:
                     return this->SelectionStatement();

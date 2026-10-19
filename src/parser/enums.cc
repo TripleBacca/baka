@@ -10,6 +10,7 @@ namespace baka {
 namespace parser {
 
     types::EnumNode* Parser::ParseEnumDecl() {
+        const size_t SourceStart = current;
         if(!Match(types::TokenType::K_ENUM)) {
             // todo throw error
             assert(false);
@@ -29,7 +30,7 @@ namespace parser {
             }
         }
 
-        types::EnumNode* Enum = ASTALLOC.Alloc<types::EnumNode>(EnumName);
+        types::EnumNode* Enum = AllocNodeAt<types::EnumNode>(SourceStart, EnumName);
 
         if(!Match(types::TokenType::LPAREN_CURLY)) {
             ReportError("expected '{' after enum name");

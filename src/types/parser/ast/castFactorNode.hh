@@ -15,7 +15,13 @@ namespace baka
 			CastFactorNode(types::TypeNode* Type, types::DeclarationIdentifierNode* Declarator, ExpressionNode* Expr)
 				: Type(Type), Declarator(Declarator), CastExpr(Expr) {}
 
-			void Print(size_t Tabs = 0) const override {
+			types::TypeNode* getType() const { return Type; }
+			types::DeclarationIdentifierNode* getDeclarator() const { return Declarator; }
+			ExpressionNode* getExpression() const { return CastExpr; }
+
+            void rewriteExpressions(const ExpressionRewriter& rewrite) override { CastExpr = rewrite(CastExpr); }
+
+            void Print(size_t Tabs = 0) const override {
 				INDENT(Tabs);
 				std::cout << "CastFactor(" << std::endl;
 
