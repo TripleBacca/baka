@@ -14,6 +14,7 @@ namespace ir_test {
     struct Value {
         uint64_t bits = 0;
         long double floating = 0;
+        std::vector<unsigned char> record;
     };
 
     class Interpreter {
@@ -22,6 +23,7 @@ namespace ir_test {
         std::map<uint32_t, uint64_t> Globals;
         uint64_t NextAddress = 4096;
         size_t Steps = 0;
+        bool Initialized = false;
         static constexpr uint64_t FunctionTag = uint64_t{1} << 60;
 
         struct Frame {
@@ -76,6 +78,11 @@ namespace ir_test {
 
         void store(uint64_t address, Value value, TypeId type) {
             const auto& info = ModuleValue.type(type);
+            if (info.kind == TypeKind::Record) {
+                if (value.record.size() != info.size) throw std::runtime_error("test interpreter: invalid record store");
+                for (uint64_t i = 0; i < info.size; ++i) Memory[address + i] = value.record[i];
+                return;
+            }
             uint64_t bits = value.bits;
             if (info.kind == TypeKind::Floating) {
                 bits = info.bits == 32 ? std::bit_cast<uint32_t>(static_cast<float>(value.floating))
@@ -88,6 +95,11 @@ namespace ir_test {
 
         Value load(uint64_t address, TypeId type) {
             const auto& info = ModuleValue.type(type);
+            if (info.kind == TypeKind::Record) {
+                Value value;
+                for (uint64_t i = 0; i < info.size; ++i) value.record.push_back(Memory[address + i]);
+                return value;
+            }
             uint64_t bits = 0;
             for (uint64_t i = 0; i < info.size; ++i) {
                 bits |= uint64_t{Memory[address + i]} << (i * 8);
@@ -337,6 +349,10 @@ namespace ir_test {
         }
 
         int64_t run(int n) {
+            if (!Initialized) {
+                if (ModuleValue.initializer) invoke(ModuleValue.initializer, {});
+                Initialized = true;
+            }
             for (const auto& function : ModuleValue.functions) {
                 if (function.name == "main") {
                     auto value = invoke(function.id, {{static_cast<uint32_t>(n)}});

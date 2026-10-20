@@ -69,6 +69,15 @@ namespace baka::ir {
             const auto& type = Result.type(signature.element);
             if (type.kind == TypeKind::Floating) {
                 result = {OperandKind::Floating, signature.element, 0, 0, 0};
+            } else if (type.kind == TypeKind::Record) {
+                Object storage;
+                storage.id = NextObject++;
+                storage.name = ".fallthrough";
+                storage.type = signature.element;
+                auto id = storage.id;
+                function().objects.push_back(std::move(storage));
+                initialize(object(id), signature.element, nullptr, true);
+                result = load(object(id), signature.element);
             } else if (type.kind != TypeKind::Void) {
                 result = integer(signature.element, 0);
             }

@@ -184,6 +184,43 @@ namespace baka::ir {
         if (value.type == target) {
             return value;
         }
+        if (Result.type(value.type).kind == TypeKind::Record && Result.type(target).kind == TypeKind::Record) {
+            // Semantic aggregate initialization also permits derived-to-base
+            // slicing. Materialize the captured value, then load just its base
+            // subobject. This remains a typed value operation, independent of ABI.
+            semantic::TypeId source, destination;
+            for (auto [original, imported] : TypeMap) {
+                if (imported == value.type) {
+                    source = Analyzer.types().unConst({original});
+                }
+                if (imported == target) {
+                    destination = Analyzer.types().unConst({original});
+                }
+            }
+            uint64_t offset = 0;
+            while (source.value && source != destination) {
+                const auto& current = Analyzer.types().get(source);
+                auto layout = Analyzer.types().layout(source);
+                if (!current.base.value || !layout || !layout.layout.baseOffset) {
+                    fail(nullptr, "record conversion lacks a compatible base subobject");
+                }
+                offset += *layout.layout.baseOffset;
+                source = Analyzer.types().unConst(current.base);
+            }
+            if (!source.value || !destination.value) {
+                fail(nullptr, "record conversion lacks semantic type metadata");
+            }
+            Object storage;
+            storage.id = NextObject++;
+            storage.name = ".slice";
+            storage.type = value.type;
+            auto id = storage.id;
+            function().objects.push_back(std::move(storage));
+            emit(Opcode::Store, object(id), value);
+            auto base =
+                emitValue(Opcode::AddressOffset, Result.pointer(target), object(id), integer(integerType(), offset));
+            return load(base, target);
+        }
         return emitValue(Opcode::Cast, target, value);
     }
 
@@ -195,9 +232,8 @@ namespace baka::ir {
         if (kind == TypeKind::Function) {
             return address;
         }
-        if (kind == TypeKind::Record) {
-            fail(nullptr, "aggregate values and aggregate copies are not supported by IR yet");
-        }
+        // A record load captures an independent typed value, just as a scalar
+        // load does. Its eventual register/memory ABI representation is deferred.
         return emitValue(Opcode::Load, target, cast(address, Result.pointer(target)));
     }
 
@@ -252,16 +288,6 @@ namespace baka::ir {
                     parameters.insert(parameters.begin(), Result.pointer(importType({binding->second.owner})));
                     imported =
                         Result.function(importType(signature.element), std::move(parameters), signature.variadic);
-                }
-                if (Analyzer.types().isAggregate(signature.element)) {
-                    fail(static_cast<const types::ASTNode*>(symbol.source),
-                         "aggregate return types are not supported by IR yet");
-                }
-                for (auto parameter : signature.parameters) {
-                    if (Analyzer.types().isAggregate(parameter)) {
-                        fail(static_cast<const types::ASTNode*>(symbol.source),
-                             "aggregate parameter types are not supported by IR yet");
-                    }
                 }
                 Function target;
                 target.id = i;
@@ -352,6 +378,7 @@ namespace baka::ir {
             for (auto* item : program.getBody()) {
                 collect(item);
             }
+            lowerGlobalInitializers();
             for (auto& function : Result.functions) {
                 BuildCFG(function);
             }

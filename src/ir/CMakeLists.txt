@@ -5,6 +5,7 @@ add_library(ir
     expression_regions.cc
     statements.cc
     initializers.cc
+    runtime_initialization.cc
     cfg.cc
     verifier.cc
     optimization.cc

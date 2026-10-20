@@ -1,5 +1,35 @@
 [
   {
+    "file": "invalid_runtime_global_conversion.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_runtime_static_conversion.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_record_dereference.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_const_record_dereference_write.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_record_dereference_condition.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_void_dereference.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
     "file": "undeclared_variable.cpp",
     "exit": 1,
     "diagnostic_stage": "SEMANTIC"
@@ -240,9 +270,9 @@
     "diagnostic_stage": "SEMANTIC"
   },
   {
-    "file": "invalid_static_initializer.cpp",
-    "exit": 1,
-    "diagnostic_stage": "SEMANTIC"
+    "file": "valid_static_initializer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
   },
   {
     "file": "duplicate_constructor.cpp",
@@ -505,9 +535,9 @@
     "diagnostic_stage": null
   },
   {
-    "file": "invalid_static_local_address.cpp",
-    "exit": 1,
-    "diagnostic_stage": "SEMANTIC"
+    "file": "valid_static_local_address.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
   },
   {
     "file": "valid_static_global_address.cpp",
@@ -771,6 +801,36 @@
   },
   {
     "file": "invalid_function_pointer_field_arity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "valid_pointer_to_array.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_pointer_to_const_array.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_pointer_to_multidimensional_array.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_array_address_as_element_pointer.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_pointer_to_array_bound.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_pointer_to_const_array_write.cpp",
     "exit": 1,
     "diagnostic_stage": "SEMANTIC"
   }

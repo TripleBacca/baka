@@ -1,28 +1,39 @@
 IR::TAC:
 module {
-  global g.11: i32 = zero {+0 = 3:i32}
-  global a.12: [3 x i32] = zero {+0 = 1:i32} {+4 = 2:i32}
-  global p.13: ptr<i32> = zero {+0 = &a.12+4:ptr<i32>}
-  global text.14: [3 x i8] = zero {+0 = 111:i8} {+1 = 107:i8} {+2 = 0:i8}
-  global s.15: ptr<i8> = zero {+0 = &.string.23:ptr<i8>}
-  internal count.21: i32 = zero {+0 = 1:i32}
-  internal .string.23: [4 x i8] readonly = zero bytes[68657900]
+  global g.11: i32 = zero
+  global a.12: [3 x i32] = zero
+  global p.13: ptr<i32> = zero
+  global text.14: [3 x i8] = zero
+  global s.15: ptr<i8> = zero
+  internal count.21: i32 = zero
+  internal .static_guard.21.23: u1 = zero
+  internal .string.25: [4 x i8] readonly = zero bytes[68657900]
+  initializer @.module_init.24
   declare @printf.9: fn(ptr<i8>, ...)->i32
   declare @scanf.10: fn(ptr<i8>, ...)->i32
   function @twice.17: fn(i32)->i32 {
     parameter n.20: i32
-  bb1: ; predecessors [] successors [bb2]
-    (jump, _, bb2, _)
-  bb2: ; predecessors [bb1] successors [bb3]
+  bb1: ; predecessors [] successors [bb6, bb5]
+    (load, %t6:u1, &.static_guard.21.23:ptr<u1>, _)
+    (branch, bb5, %t6:u1, bb6)
+  bb2: ; predecessors [bb5] successors [bb6]
+    (store, &count.21:ptr<i32>, 1:i32, _)
+    (store, &.static_guard.21.23:ptr<u1>, 1:u1, _)
+    (jump, _, bb6, _)
+  bb3: ; predecessors [bb6] successors [bb4]
     (load, %t1:i32, &count.21:ptr<i32>, _)
     (load, %t2:i32, &n.20:ptr<i32>, _)
     (add, %t3:i32, %t1:i32, %t2:i32)
     (store, &count.21:ptr<i32>, %t3:i32, _)
     (load, %t4:i32, &count.21:ptr<i32>, _)
-    (jump, _, bb3, _)
-  bb3: ; predecessors [bb2] successors []
+    (jump, _, bb4, _)
+  bb4: ; predecessors [bb3] successors []
     (load, %t5:i32, &count.21:ptr<i32>, _)
     (ret, _, %t5:i32, _)
+  bb5: ; predecessors [bb1] successors [bb2]
+    (jump, _, bb2, _)
+  bb6: ; predecessors [bb1, bb2] successors [bb3]
+    (jump, _, bb3, _)
   }
   function @main.19: fn(i32)->i32 {
     parameter n.22: i32
@@ -56,5 +67,29 @@ module {
     (call, %t23:i32, @twice.17:ptr<fn(i32)->i32>, 1:i64)
     (add, %t24:i32, %t21:i32, %t23:i32)
     (ret, _, %t24:i32, _)
+  }
+  function @.module_init.24: fn()->void internal {
+  bb1: ; predecessors [] successors []
+    (store, &g.11:ptr<i32>, 3:i32, _)
+    (offset, %t1:ptr<i32>, &a.12:ptr<[3 x i32]>, 0:i64)
+    (store, %t1:ptr<i32>, 1:i32, _)
+    (offset, %t2:ptr<i32>, &a.12:ptr<[3 x i32]>, 4:i64)
+    (store, %t2:ptr<i32>, 2:i32, _)
+    (offset, %t3:ptr<i32>, &a.12:ptr<[3 x i32]>, 8:i64)
+    (store, %t3:ptr<i32>, 0:i32, _)
+    (cast, %t4:ptr<i32>, &a.12:ptr<[3 x i32]>, _)
+    (cast, %t5:i64, 1:i32, _)
+    (mul, %t6:i64, %t5:i64, 4:i64)
+    (offset, %t7:ptr<i32>, %t4:ptr<i32>, %t6:i64)
+    (store, &p.13:ptr<ptr<i32>>, %t7:ptr<i32>, _)
+    (offset, %t8:ptr<i8>, &text.14:ptr<[3 x i8]>, 0:i64)
+    (store, %t8:ptr<i8>, 111:i8, _)
+    (offset, %t9:ptr<i8>, &text.14:ptr<[3 x i8]>, 1:i64)
+    (store, %t9:ptr<i8>, 107:i8, _)
+    (offset, %t10:ptr<i8>, &text.14:ptr<[3 x i8]>, 2:i64)
+    (store, %t10:ptr<i8>, 0:i8, _)
+    (cast, %t11:ptr<i8>, &.string.25:ptr<[4 x i8]>, _)
+    (store, &s.15:ptr<ptr<i8>>, %t11:ptr<i8>, _)
+    (ret, _, _, _)
   }
 }

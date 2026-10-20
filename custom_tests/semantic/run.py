@@ -22,7 +22,7 @@ def main():
         if not ok:
             failures += 1
             print(result.stdout + result.stderr)
-    conversion_scenarios = ('numeric', 'contexts', 'calls', 'compound', 'pointers', 'metadata')
+    conversion_scenarios = ('numeric', 'contexts', 'calls', 'compound', 'pointers', 'metadata', 'array_address')
     for scenario in conversion_scenarios:
         result = subprocess.run([str(ROOT / 'build/semantic_conversion_tests'), scenario],
                                 capture_output=True, text=True, timeout=10)

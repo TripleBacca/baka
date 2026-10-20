@@ -67,6 +67,70 @@ namespace {
 
     void execution(const std::string& name) {
         auto module = fixture(name); // frontend tables/source go out of scope here
+        if (name == "29_runtime_global_order" || name == "30_runtime_initializers") {
+            require(module.initializer != 0, "runtime globals lack an entry initializer");
+            const auto* startup = module.functionById(module.initializer);
+            require(startup && startup->defined && startup->internal, "missing startup function body");
+            bool runtimeArithmetic = false;
+            for (const auto& item : ir::Linearize(*startup)) {
+                const auto& in = item.instruction;
+                if (in.opcode == ir::Opcode::Add && in.left.kind == ir::OperandKind::Integer &&
+                    in.left.integer == 3 && in.right.kind == ir::OperandKind::Integer && in.right.integer == 4) {
+                    runtimeArithmetic = true;
+                }
+            }
+            if (name == "30_runtime_initializers") require(runtimeArithmetic, "constant initializer was not emitted as runtime arithmetic");
+            for (const auto& object : module.globals) {
+                if (object.runtimeInitialized) require(object.initialValues.empty() && object.bytes.empty(),
+                                                       "source initializer was pre-filled into data");
+            }
+            auto malformed = module;
+            malformed.initializer = 0xffffffff;
+            require(!ir::Verify(malformed).empty(), "unknown startup function accepted");
+            malformed = module;
+            for (auto& function : malformed.functions) {
+                if (function.id == malformed.initializer) function.signature = module.functions.front().signature;
+            }
+            require(!ir::Verify(malformed).empty(), "non-void startup signature accepted");
+            if (name == "29_runtime_global_order") {
+                ir_test::Interpreter executor(module);
+                require(executor.run(0) == 7 && executor.run(0) == 7, "startup was rerun on a later entry call");
+            }
+        }
+        if (name == "26_aggregate_returns") {
+            bool sawAggregateCall = false, sawAggregateReturn = false;
+            for (const auto& function : module.functions) {
+                if (function.name == "relay") {
+                    require(module.type(module.type(function.signature).element).kind == ir::TypeKind::Record,
+                            "aggregate return was rewritten to an ABI pointer");
+                    require(function.parameters.size() == 1, "hidden return parameter leaked into early TAC");
+                    for (const auto& item : ir::Linearize(function)) {
+                        const auto& in = item.instruction;
+                        if (in.opcode == ir::Opcode::Call) {
+                            sawAggregateCall = module.type(in.result.type).kind == ir::TypeKind::Record;
+                            require(in.right.integer == 1, "aggregate call acquired a hidden argument");
+                        }
+                        if (in.opcode == ir::Opcode::Return) {
+                            sawAggregateReturn = module.type(in.left.type).kind == ir::TypeKind::Record;
+                        }
+                    }
+                }
+            }
+            require(sawAggregateCall && sawAggregateReturn, "missing aggregate-valued call/ret");
+            auto malformed = module;
+            for (auto& function : malformed.functions) {
+                if (function.name != "relay") continue;
+                for (auto& block : function.blocks) {
+                    for (auto& in : block.instructions) {
+                        if (in.opcode == ir::Opcode::Return) {
+                            auto scalar = module.type(function.signature).parameters.front();
+                            in.left = {ir::OperandKind::Integer, scalar, 0, 0};
+                        }
+                    }
+                }
+            }
+            require(!ir::Verify(malformed).empty(), "scalar return accepted for record signature");
+        }
         auto optimized = module;
         ir::Optimize(optimized);
         require(ir::Verify(optimized).empty(), "optimized IR failed verification");
@@ -141,6 +205,16 @@ namespace {
         if (name == "22_forward_types") {
             examples = {{0, 10}, {2, 10}};
         }
+        if (name == "23_array_address") examples = {{0,71},{2,73},{-2,69}};
+        if (name == "24_default_arguments") examples = {{0,214},{2,234},{-1,204}};
+        if (name == "25_aggregate_parameters") examples = {{0,116},{2,118},{-1,115}};
+        if (name == "26_aggregate_returns") examples = {{0,15},{2,21},{-1,12}};
+        if (name == "27_aggregate_copies") examples = {{0,8},{2,58},{-1,52}};
+        if (name == "28_aggregate_layouts") examples = {{0,105},{2,109},{-1,103}};
+        if (name == "29_runtime_global_order") examples = {{0,7},{2,7},{-1,7}};
+        if (name == "30_runtime_initializers") examples = {{0,1022},{2,1026},{-1,1020}};
+        if (name == "31_runtime_static_paths") examples = {{0,376},{2,376},{-1,376}};
+        if (name == "32_runtime_startup_cfg") examples = {{0,418},{2,418},{-1,418}};
         require(!examples.empty(), "unknown execution scenario");
         for (auto [input, expected] : examples) {
             auto original = ir_test::Interpreter(module).run(input);

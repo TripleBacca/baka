@@ -256,8 +256,13 @@ inherit declaration defaults merely because their signature is equal.
 - Explicit array bounds must be positive integral constants; VLAs are unsupported.
   Omitted bounds are supported where parameter adjustment or initialization supplies
   their meaning, and final object storage must be complete.
-- Globals and local statics require constant initializers. Taking an automatic
-  local's address does not make it a valid static-storage initializer.
+- Globals and local statics permit any initializer accepted by the ordinary
+  type/conversion checks. IR zero-fills static storage, executes all explicit
+  global initializers in declaration order before entry (including constants),
+  and guards local-static initialization for first use. This deliberately differs
+  from C++ constant-before-dynamic initialization ordering. A static pointer may
+  capture an automatic local's address; its later lifetime is the program's
+  responsibility, just as for other escaped pointers.
 - Const scalar objects require initialization; aggregate/constructor behavior must
   follow the accepted initialization rules rather than assuming every subobject
   independently requires an explicit source initializer.

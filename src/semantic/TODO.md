@@ -99,7 +99,7 @@ percentage-complete report.
 ## Language policy acceptance checks
 
 - [ ] Verify the documented no-VLA, positive-constant-bound and inferred/adjusted omitted-bound policy in every declaration context.
-- [ ] Verify the documented constant global/local-static initialization policy, including automatic-local addresses.
+- [x] Permit checked runtime global/local-static initializers, including automatic-local addresses; IR emits ordered startup code and first-use guards.
 - [ ] Verify const scalar initialization requirements and the accepted aggregate/constructor behavior.
 - [ ] Cast/implicit conversion rules and permitted aggregate conversions.
 - [ ] Verify forward function calls, source-order global object visibility and local declaration-point lookup.

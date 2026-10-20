@@ -1,8 +1,4 @@
 #include "lowering.hh"
-#include "constant_folding.hh"
-#include "types/parser/ast/castFactorNode.hh"
-#include "types/parser/ast/ternary.hh"
-#include "types/parser/ast/sizeof.hh"
 #include <functional>
 
 namespace baka::ir {
@@ -91,7 +87,9 @@ namespace baka::ir {
             }
             auto* expression = Transparent(expressions[position]);
             auto kind = Result.type(type).kind;
-            if (dynamic_cast<const types::InitializerNode*>(expression) ||
+            if ((kind == TypeKind::Record && expression &&
+                 Result.type(this->type(expression)).kind == TypeKind::Record) ||
+                dynamic_cast<const types::InitializerNode*>(expression) ||
                 (kind != TypeKind::Array && kind != TypeKind::Record) || String(expression)) {
                 ++position;
                 whole(type, offset, expression);
@@ -104,6 +102,12 @@ namespace baka::ir {
         whole = [&](TypeId type, uint64_t offset, const types::ExpressionNode* expression) {
             expression = Transparent(expression);
             const auto info = Result.type(type);
+            if (info.kind == TypeKind::Record && expression &&
+                Result.type(this->type(expression)).kind == TypeKind::Record &&
+                !dynamic_cast<const types::InitializerNode*>(expression)) {
+                result.push_back({offset, type, expression});
+                return;
+            }
             if (info.kind != TypeKind::Record && info.kind != TypeKind::Array) {
                 if (auto* list = dynamic_cast<const types::InitializerNode*>(expression)) {
                     if (list->expressions().size() > 1) {
@@ -179,289 +183,6 @@ namespace baka::ir {
         }
     }
 
-    Operand Lowerer::globalAddress(const types::ExpressionNode* expression, TypeId target) {
-        expression = Transparent(expression);
-        if (auto* primary = dynamic_cast<const types::PrimaryExpressionNode*>(expression)) {
-            const auto& payload = primary->getExpression();
-            if (auto* identifier = std::get_if<types::IdentifierNode*>(&payload)) {
-                auto symbol = (*identifier)->semanticInfo().Symbol;
-                if (Result.functionById(symbol)) {
-                    return {OperandKind::Function, target, symbol};
-                }
-                for (const auto& object : Result.globals) {
-                    if (object.id == symbol) {
-                        return {OperandKind::Object, target, symbol};
-                    }
-                }
-            }
-            if (auto* literal = std::get_if<types::ConstantNode*>(&payload)) {
-                auto result = constant(*literal, type(expression));
-                if (result.kind == OperandKind::Object) {
-                    result.type = target;
-                    return result;
-                }
-            }
-        }
-        if (auto* unary = dynamic_cast<const types::FactorNode*>(expression);
-            unary && unary->getUnaryOp() == types::ASTUnaryOp::OP_DEREF) {
-            return globalConstant(unary->getOperand(), target);
-        }
-        if (auto* index = dynamic_cast<const types::IndexPostfixExpr*>(expression)) {
-            auto result = globalConstant(index->getBase(), target);
-            auto offset = globalConstant(index->getIndex(), integerType());
-            if (offset.kind != OperandKind::Integer) {
-                fail(index, "static subscript address lacks a constant index");
-            }
-            result.integer += offset.integer * Result.type(type(expression)).size;
-            return result;
-        }
-        if (auto* member = dynamic_cast<const types::MemberPostfixExpr*>(expression)) {
-            auto result = globalAddress(member->getBase(), target);
-            const auto& info = expression->semanticInfo();
-            const auto& selected = Analyzer.types().get({info.MemberOwner}).members.at(info.MemberIndex - 1);
-            if (selected.isStatic) {
-                if (Result.functionById(selected.symbol.value)) {
-                    return {OperandKind::Function, target, selected.symbol.value};
-                }
-                return {OperandKind::Object, target, selected.symbol.value};
-            }
-            auto source = Analyzer.types().unConst({member->getBase()->semanticInfo().Type});
-            while (source.value != info.MemberOwner) {
-                auto layout = Analyzer.types().layout(source);
-                if (!layout || !layout.layout.baseOffset) {
-                    fail(member, "static member address has no inherited layout");
-                }
-                result.integer += *layout.layout.baseOffset;
-                source = Analyzer.types().unConst(Analyzer.types().get(source).base);
-            }
-            auto layout = Analyzer.types().layout({info.MemberOwner});
-            if (!layout || !layout.layout.offsets.at(info.MemberIndex - 1)) {
-                fail(member, "static member address lacks a layout offset");
-            }
-            result.integer += *layout.layout.offsets[info.MemberIndex - 1];
-            return result;
-        }
-        fail(expression, "static address initializer has no representable object or function relocation");
-    }
-
-    Operand Lowerer::constantCast(Operand value, TypeId target, const types::ASTNode* source) {
-        if (value.type == target) {
-            return value;
-        }
-        const auto destination = Result.type(target);
-        if (value.kind == OperandKind::Object || value.kind == OperandKind::Function) {
-            if (destination.kind == TypeKind::Integer && destination.bits == 1) {
-                return integer(target, 1);
-            }
-            if (destination.kind == TypeKind::Pointer || destination.kind == TypeKind::Integer) {
-                value.type = target;
-                return value;
-            }
-            fail(source, "static relocation cannot be converted to this type");
-        }
-        Instruction conversion{Opcode::Cast, {OperandKind::Temporary, target, 1}, value};
-        if (auto result = FoldConstant(Result, conversion)) {
-            return *result;
-        }
-        fail(source, "static scalar conversion is not representable in IR");
-    }
-
-    Operand Lowerer::globalConstant(const types::ExpressionNode* expression, TypeId target) {
-        expression = Transparent(expression);
-        if (!expression) {
-            return Result.type(target).kind == TypeKind::Floating ? Operand{OperandKind::Floating, target}
-                                                                  : integer(target, 0);
-        }
-        const auto own = type(expression);
-        if (own && own != target) {
-            return constantCast(globalConstant(expression, own), target, expression);
-        }
-        auto truth = [&](Operand value) {
-            if (value.kind == OperandKind::Object || value.kind == OperandKind::Function) {
-                return true;
-            }
-            return value.kind == OperandKind::Floating ? value.floating != 0 : value.integer != 0;
-        };
-        auto evaluate = [&](Opcode opcode, Operand left, Operand right = Operand{}) {
-            Instruction operation{opcode, {OperandKind::Temporary, target, 1}, left, right};
-            if (auto result = FoldConstant(Result, operation)) {
-                return *result;
-            }
-            fail(expression, "static arithmetic is not representable as an IR constant");
-        };
-        if (auto* implicit = dynamic_cast<const types::ImplicitCastNode*>(expression)) {
-            if (implicit->getConversionKind() == types::ImplicitConversionKind::ArrayToPointer ||
-                implicit->getConversionKind() == types::ImplicitConversionKind::FunctionToPointer) {
-                return globalAddress(implicit->getOperand(), target);
-            }
-            return constantCast(globalConstant(implicit->getOperand(), type(implicit->getOperand())), target,
-                                expression);
-        }
-        if (auto* explicitCast = dynamic_cast<const types::CastFactorNode*>(expression)) {
-            return constantCast(globalConstant(explicitCast->getExpression(), type(explicitCast->getExpression())),
-                                target, expression);
-        }
-        if (auto* primary = dynamic_cast<const types::PrimaryExpressionNode*>(expression)) {
-            const auto& payload = primary->getExpression();
-            if (auto* literal = std::get_if<types::ConstantNode*>(&payload)) {
-                return constant(*literal, target);
-            }
-            if (auto* identifier = std::get_if<types::IdentifierNode*>(&payload)) {
-                const auto symbolId = (*identifier)->semanticInfo().Symbol;
-                const auto& symbol = Analyzer.symbols().get({symbolId});
-                if (Result.functionById(symbolId)) {
-                    return callable(symbolId);
-                }
-                if (Result.type(target).kind == TypeKind::Array) {
-                    return globalAddress(expression, target);
-                }
-                if (symbol.kind == semantic::SymbolKind::Enumerator && symbol.constant) {
-                    return integer(target, *symbol.constant);
-                }
-                if (Analyzer.types().isConst(symbol.type)) {
-                    if (auto* declaration = dynamic_cast<const types::SingleDeclarationNode*>(
-                            static_cast<const types::ASTNode*>(symbol.source));
-                        declaration && declaration->getInitializer()) {
-                        return globalConstant(declaration->getInitializer(), target);
-                    }
-                    if (symbol.constant) {
-                        return integer(target, *symbol.constant);
-                    }
-                }
-            }
-        }
-        if (auto* list = dynamic_cast<const types::InitializerNode*>(expression)) {
-            if (list->expressions().empty()) {
-                return globalConstant(nullptr, target);
-            }
-            if (list->expressions().size() == 1) {
-                return globalConstant(list->expressions().front(), target);
-            }
-        }
-        if (auto* unary = dynamic_cast<const types::FactorNode*>(expression)) {
-            if (unary->getUnaryOp() == types::ASTUnaryOp::OP_ADDR_OF) {
-                return globalAddress(unary->getOperand(), target);
-            }
-            auto operand = globalConstant(unary->getOperand(), type(unary->getOperand()));
-            switch (unary->getUnaryOp()) {
-            case types::ASTUnaryOp::OP_UNARY_PLUS:
-                return constantCast(operand, target, expression);
-            case types::ASTUnaryOp::OP_UNARY_MINUS:
-                return evaluate(Opcode::Negate, operand);
-            case types::ASTUnaryOp::OP_TILDE:
-                return evaluate(Opcode::Complement, operand);
-            case types::ASTUnaryOp::OP_LOGICAL_NOT:
-                return integer(target, !truth(operand));
-            default:
-                break;
-            }
-        }
-        if (auto* ternary = dynamic_cast<const types::TernaryOpNode*>(expression)) {
-            auto condition = globalConstant(ternary->getCondition(), type(ternary->getCondition()));
-            return globalConstant(truth(condition) ? ternary->getThen() : ternary->getElse(), target);
-        }
-        if (auto* size = dynamic_cast<const types::SizeofNode*>(expression); size && size->semanticInfo().HasConstant) {
-            return integer(target, size->semanticInfo().Constant);
-        }
-        if (auto* binary = dynamic_cast<const types::BinaryExpressionNode*>(expression)) {
-            auto left = globalConstant(binary->getLeft(), type(binary->getLeft()));
-            auto opcode = binary->getBinaryOp();
-            if (opcode == types::OP_LOGICAL_AND && !truth(left)) {
-                return integer(target, 0);
-            }
-            if (opcode == types::OP_LOGICAL_OR && truth(left)) {
-                return integer(target, 1);
-            }
-            auto right = globalConstant(binary->getRight(), type(binary->getRight()));
-            if (opcode == types::OP_LOGICAL_AND || opcode == types::OP_LOGICAL_OR) {
-                return integer(target, truth(right));
-            }
-            if ((opcode == types::OP_ADD || opcode == types::OP_SUB) && Result.type(target).kind == TypeKind::Pointer) {
-                if (Result.type(left.type).kind != TypeKind::Pointer && opcode == types::OP_ADD) {
-                    std::swap(left, right);
-                }
-                auto pointerType = Result.type(left.type);
-                if (pointerType.kind == TypeKind::Pointer &&
-                    (left.kind == OperandKind::Object || left.kind == OperandKind::Function)) {
-                    right = constantCast(right, integerType(), expression);
-                    auto offset = right.integer * Result.type(pointerType.element).size;
-                    left.integer += opcode == types::OP_SUB ? uint64_t{0} - offset : offset;
-                    left.type = target;
-                    return left;
-                }
-            }
-            switch (opcode) {
-            case types::OP_ADD:
-                return evaluate(Opcode::Add, left, right);
-            case types::OP_SUB:
-                return evaluate(Opcode::Subtract, left, right);
-            case types::OP_MUL:
-                return evaluate(Opcode::Multiply, left, right);
-            case types::OP_DIV:
-                return evaluate(Opcode::Divide, left, right);
-            case types::OP_MOD:
-                return evaluate(Opcode::Remainder, left, right);
-            case types::OP_LSHIFT:
-                return evaluate(Opcode::ShiftLeft, left, right);
-            case types::OP_RSHIFT:
-                return evaluate(Opcode::ShiftRight, left, right);
-            case types::OP_BIT_AND:
-                return evaluate(Opcode::BitAnd, left, right);
-            case types::OP_BIT_OR:
-                return evaluate(Opcode::BitOr, left, right);
-            case types::OP_BIT_XOR:
-                return evaluate(Opcode::BitXor, left, right);
-            case types::OP_EQ:
-                return evaluate(Opcode::Equal, left, right);
-            case types::OP_NEQ:
-                return evaluate(Opcode::NotEqual, left, right);
-            case types::OP_LT:
-                return evaluate(Opcode::Less, left, right);
-            case types::OP_GT:
-                return evaluate(Opcode::Greater, left, right);
-            case types::OP_LE:
-                return evaluate(Opcode::LessEqual, left, right);
-            case types::OP_GE:
-                return evaluate(Opcode::GreaterEqual, left, right);
-            default:
-                break;
-            }
-        }
-        fail(expression, "static initializer is not representable as an IR scalar constant or relocation yet");
-    }
-
-    void Lowerer::initializeGlobal(Object& destination, TypeId target, const types::ExpressionNode* initializer,
-                                   uint64_t offset) {
-        // Do not retain references into Result.globals while lowering string
-        // literals: creating their backing objects may reallocate that vector.
-        auto id = destination.id;
-        std::vector<Object::InitialValue> values;
-        for (const auto& entry : initializerPlan(target, initializer)) {
-            auto info = Result.type(entry.type);
-            if (info.kind == TypeKind::Array) {
-                auto text = *String(entry.expression);
-                text.push_back('\0');
-                for (uint64_t i = 0; i < info.count && i < text.size(); ++i) {
-                    values.push_back(
-                        {offset + entry.offset + i, integer(info.element, static_cast<unsigned char>(text[i]))});
-                }
-            } else if (entry.expression) {
-                auto value = globalConstant(entry.expression, entry.type);
-                if (value.type != entry.type) {
-                    fail(entry.expression, "static initializer IR type does not match its object");
-                }
-                values.push_back({offset + entry.offset, value});
-            }
-        }
-        for (auto& global : Result.globals) {
-            if (global.id == id) {
-                global.initialValues = std::move(values);
-                return;
-            }
-        }
-        fail(initializer, "global initializer lost its destination object");
-    }
-
     void Lowerer::declarations(const types::DeclarationList* list, bool global) {
         for (auto* declaration : list->getDeclarations()) {
             auto symbol = declaration->semanticInfo().Symbol;
@@ -473,13 +194,19 @@ namespace baka::ir {
                 continue;
             }
             if (global || entry.isStatic) {
+                if (!declaration->getInitializer()) {
+                    continue;
+                }
                 for (auto& object : Result.globals) {
                     if (object.id == symbol) {
-                        if (declaration->getInitializer()) {
-                            initializeGlobal(object, object.type, declaration->getInitializer());
-                        }
+                        object.runtimeInitialized = true;
                         break;
                     }
+                }
+                if (global) {
+                    GlobalInitializers.push_back(declaration);
+                } else {
+                    initializeStatic(symbol, declaration->getInitializer());
                 }
             } else {
                 initialize(object(symbol), importType(entry.type), declaration->getInitializer());

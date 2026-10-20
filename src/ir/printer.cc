@@ -171,7 +171,7 @@ namespace baka::ir {
                                          : "global ")
                    << object.name << '.' << object.id << ": " << TypeName(module, object.type);
             if (object.readOnly) {
-                output << " readonly";
+                output << (object.runtimeInitialized ? " readonly-after-init" : " readonly");
             }
             if (!object.external) {
                 output << " = zero";
@@ -187,6 +187,10 @@ namespace baka::ir {
                 output << " {+" << initial.offset << " = " << Value(module, globalContext, initial.value) << '}';
             }
             output << '\n';
+        }
+        if (module.initializer) {
+            const auto* initializer = module.functionById(module.initializer);
+            output << "  initializer @" << initializer->name << '.' << initializer->id << '\n';
         }
         for (const auto& function : module.functions) {
             output << "  " << (function.defined ? "function " : "declare ") << '@' << function.name << '.'

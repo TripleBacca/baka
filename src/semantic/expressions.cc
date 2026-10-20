@@ -526,9 +526,8 @@ namespace baka {
                     return makeError();
                 }
                 auto kind = TypeSystem.get(TypeSystem.unConst(operand.type)).kind;
-                if (kind == TypeKind::Array) {
-                    return makeValue(TypeSystem.pointer(TypeSystem.get(operand.type).element));
-                }
+                // Address-of suppresses array-to-pointer decay: &a points to
+                // the entire array, preserving its bounds and element qualifiers.
                 if (kind == TypeKind::Function) {
                     return makeValue(TypeSystem.pointer(operand.type));
                 }
@@ -551,7 +550,15 @@ namespace baka {
                     return makeError();
                 }
                 auto element = TypeSystem.get(TypeSystem.unConst(operand.type)).element;
-                checkScalarCondition(makeValue(element), node); // completeness is checked on use
+                // Dereference designates the pointee; it is not a condition.
+                // Records and arrays are valid lvalues, and function pointers
+                // designate functions. Keep pointee qualifiers here; value
+                // conversion, completeness and condition checks belong to use
+                // sites. Void is the exception: it designates no object/function.
+                if (TypeSystem.isVoid(element)) {
+                    SymbolTable.diagnose("dereference", "cannot dereference a pointer to void", node);
+                    return makeError();
+                }
                 return makeValue(element, ValueCategory::LValue);
             }
             case types::ASTUnaryOp::OP_INC:
