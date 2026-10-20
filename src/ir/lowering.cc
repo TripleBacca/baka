@@ -237,28 +237,6 @@ namespace baka::ir {
         return emitValue(Opcode::Load, target, cast(address, Result.pointer(target)));
     }
 
-    bool Lowerer::containsLifetime(semantic::TypeId id) const {
-        const auto& type = Analyzer.types().get(Analyzer.types().unConst(id));
-        if (type.kind == semantic::TypeKind::Array) {
-            return containsLifetime(type.element);
-        }
-        if (!Analyzer.types().isAggregate(id)) {
-            return false;
-        }
-        if (type.base.value && containsLifetime(type.base)) {
-            return true;
-        }
-        for (const auto& member : type.members) {
-            if (member.isConstructor || member.isDestructor) {
-                return true;
-            }
-            if (!member.isStatic && !member.isType && containsLifetime(member.type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     void Lowerer::importSymbols() {
         for (uint32_t i = 1; i <= Analyzer.types().typeCount(); ++i) {
             importType({i});
@@ -306,10 +284,6 @@ namespace baka::ir {
                 if (scope != semantic::ScopeKind::Global && !symbol.isStatic) {
                     continue;
                 }
-                if (containsLifetime(symbol.type)) {
-                    fail(static_cast<const types::ASTNode*>(symbol.source),
-                         "objects requiring constructors/destructors or cleanup are not supported by IR yet");
-                }
                 Object target;
                 target.id = i;
                 target.name = symbol.name;
@@ -329,19 +303,9 @@ namespace baka::ir {
         if (!body) {
             return;
         }
-        if (!body->getConstructors().empty() || !body->getDestructors().empty()) {
-            fail(body, "constructor and destructor declarations are not supported by IR yet");
-        }
         for (auto* declaration : body->getDeclarations()) {
             if (declaration->getIsStatic()) {
                 declarations(declaration, true);
-            } else {
-                for (auto* item : declaration->getDeclarations()) {
-                    if (item->getInitializer()) {
-                        fail(item,
-                             "default member initialization requires constructor lowering, which is not supported yet");
-                    }
-                }
             }
         }
         for (auto* function : body->getFunctions()) {
@@ -375,9 +339,11 @@ namespace baka::ir {
         }
         try {
             importSymbols();
+            importLifetimes();
             for (auto* item : program.getBody()) {
                 collect(item);
             }
+            lowerLifetimes();
             lowerGlobalInitializers();
             for (auto& function : Result.functions) {
                 BuildCFG(function);

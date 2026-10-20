@@ -310,6 +310,15 @@ namespace baka::ir {
                         arguments.clear();
                         break;
                     }
+                    case Opcode::RegisterDestructor: {
+                        const auto pointer = module.type(in.left.type);
+                        const auto target = pointer.kind == TypeKind::Pointer ? module.type(pointer.element) : Type{};
+                        require(!in.result && target.kind == TypeKind::Function &&
+                                    module.type(target.element).kind == TypeKind::Void && !target.variadic &&
+                                    target.parameters.size() == 1 && target.parameters.front() == in.right.type,
+                                "invalid destructor registration");
+                        break;
+                    }
                     case Opcode::Jump:
                         require(!in.result && in.left.kind == OperandKind::Block && !in.right, "invalid jump");
                         break;

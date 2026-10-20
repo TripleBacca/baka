@@ -55,6 +55,9 @@ namespace baka::ir {
     }
 
     Operand Lowerer::self() {
+        if (SelfOverride) {
+            return SelfOverride;
+        }
         if (!Self) {
             fail(nullptr, "bound member expression has no active receiver");
         }
@@ -104,6 +107,10 @@ namespace baka::ir {
             // Member access on a returned record needs addressable storage. This
             // materialization is local IR storage, never a hidden call argument.
             auto captured = value(expression);
+            if (auto found = ValueLocations.find(captured.id);
+                captured.kind == OperandKind::Temporary && found != ValueLocations.end()) {
+                return found->second;
+            }
             Object storage;
             storage.id = NextObject++;
             storage.name = ".materialized";
@@ -173,7 +180,7 @@ namespace baka::ir {
                         fail(expression, "an instance method cannot escape as an ordinary function pointer");
                     }
                     auto receiver = self();
-                    return memberAddress(expression, receiver, Analyzer.symbols().get({Self}).type);
+                    return memberAddress(expression, receiver, CurrentOwner);
                 }
                 const auto& selected = Analyzer.symbols().get({symbol});
                 if (selected.kind == semantic::SymbolKind::Function ||
@@ -362,7 +369,7 @@ namespace baka::ir {
             source = Analyzer.types().get(Analyzer.types().unConst(source)).element;
         } else {
             result = self();
-            source = Analyzer.types().get(Analyzer.symbols().get({Self}).type).element;
+            source = CurrentOwner;
         }
         source = Analyzer.types().unConst(source);
         uint64_t offset = 0;
@@ -385,7 +392,33 @@ namespace baka::ir {
     Operand Lowerer::call(const types::FunctionCallPostfixExpr* node) {
         const auto& metadata = node->semanticInfo();
         if (metadata.Construction) {
-            fail(node, "constructor calls are not supported by IR yet");
+            auto target = type(node);
+            auto location = destination(node);
+            const bool direct = bool(location);
+            if (!location) {
+                location = storage(target, ".constructed");
+            }
+            std::vector<const types::ExpressionNode*> arguments;
+            if (auto* comma = dynamic_cast<const types::CommaExpressionNode*>(node->getArguments())) {
+                arguments.assign(comma->getExpressions().begin(), comma->getExpressions().end());
+            } else if (node->getArguments()) {
+                arguments.push_back(node->getArguments());
+            }
+            auto selected = metadata.MemberIndex
+                                ? SpecialFunctions.at(
+                                      {Analyzer.types().unConst({metadata.MemberOwner}).value, metadata.MemberIndex})
+                                : 0;
+            // Value-initialization through an implicit default constructor zeros
+            // scalar subobjects before applying default member initializers.
+            if (!selected) {
+                zeroObject(location, target);
+            }
+            if (selected || needsConstruction(target)) {
+                construct(location, target, selected, arguments);
+            }
+            auto captured = load(location, target);
+            ValueLocations[captured.id] = location;
+            return direct ? captured : ownTemporary(captured, location);
         }
         if (!metadata.CallSignature) {
             fail(node, "call lacks semantic signature metadata");
@@ -429,8 +462,12 @@ namespace baka::ir {
         }
         // Capture values before the Argument sequence: nested calls cannot steal
         // an outer call's arguments, and later side effects cannot reload them.
-        for (auto* expression : expressions) {
-            arguments.push_back(value(expression));
+        for (size_t index = 0; index < expressions.size(); ++index) {
+            auto argument = value(expressions[index]);
+            if (index < semanticSignature.parameters.size()) {
+                transfer(argument);
+            }
+            arguments.push_back(argument);
         }
         for (size_t i = 0; i < arguments.size(); ++i) {
             emit(Opcode::Argument, {}, arguments[i], integer(integerType(), i));
@@ -438,6 +475,13 @@ namespace baka::ir {
         auto resultType = importType(semanticSignature.element);
         auto result = Result.type(resultType).kind == TypeKind::Void ? Operand{} : temporary(resultType);
         emit(Opcode::Call, result, callee, integer(integerType(), arguments.size()));
+        if (result && needsDestruction(result.type)) {
+            if (auto location = destination(node)) {
+                emit(Opcode::Store, location, result);
+            } else {
+                result = ownTemporary(result);
+            }
+        }
         return result;
     }
 
@@ -450,13 +494,18 @@ namespace baka::ir {
             if (found == ExpressionRegions.end()) {
                 fail(expression, "expression was not collected by the expression lowering pass");
             }
-            auto& region = found->second;
+            auto& cursor = RegionCursor[expression];
+            if (cursor >= found->second.size()) {
+                fail(expression, "expression region has no remaining evaluation");
+            }
+            auto& region = found->second[cursor++];
             if (region.connected) {
                 fail(expression, "expression region was connected more than once");
             }
             link(region.entry);
             select(region.exit);
             region.connected = true;
+            PendingTemps.insert(PendingTemps.end(), region.cleanups.begin(), region.cleanups.end());
             return region.value;
         }
         auto span = expression->getSourceSpan();
@@ -595,28 +644,75 @@ namespace baka::ir {
             return increment(postfix->getOperand(), postfix->getOp() == types::ASTUnaryOp::OP_DEC, true);
         }
         if (auto* ternary = dynamic_cast<const types::TernaryOpNode*>(expression)) {
+            Operand direct;
+            if (Result.type(resultType).kind == TypeKind::Record) {
+                if (auto location = destination(ternary)) {
+                    direct = location;
+                    DirectDestinations[valueRoot(ternary->getThen())] = location;
+                    DirectDestinations[valueRoot(ternary->getElse())] = location;
+                }
+            }
             auto condition = value(ternary->getCondition());
             auto yes = newBlock(), no = newBlock(), join = newBlock();
             auto result = Result.type(resultType).kind == TypeKind::Void ? Operand{} : temporary(resultType);
+            auto ownedAddress =
+                needsDestruction(resultType) && !direct ? temporary(Result.pointer(resultType)) : Operand{};
             branch(condition, yes, no);
             select(yes);
             auto left = value(ternary->getThen());
+            if (ownedAddress) {
+                if (ValueOwners[left.id].empty()) {
+                    left = ownTemporary(left);
+                }
+                emit(Opcode::Copy, ownedAddress, ValueLocations.at(left.id));
+            }
             if (result) {
                 emit(Opcode::Copy, result, left);
             }
             jump(join);
             select(no);
             auto right = value(ternary->getElse());
+            if (ownedAddress) {
+                if (ValueOwners[right.id].empty()) {
+                    right = ownTemporary(right);
+                }
+                emit(Opcode::Copy, ownedAddress, ValueLocations.at(right.id));
+            }
             if (result) {
                 emit(Opcode::Copy, result, right);
             }
             jump(join);
             select(join);
+            if (result) {
+                if (ownedAddress) {
+                    ValueLocations[result.id] = ownedAddress;
+                } else if (direct) {
+                    ValueLocations[result.id] = direct;
+                }
+                auto& owners = ValueOwners[result.id];
+                if (left.kind == OperandKind::Temporary) {
+                    owners = ValueOwners[left.id];
+                }
+                if (right.kind == OperandKind::Temporary) {
+                    const auto other = ValueOwners[right.id];
+                    owners.insert(owners.end(), other.begin(), other.end());
+                }
+            }
             return result;
         }
         if (auto* explicitCast = dynamic_cast<const types::CastFactorNode*>(expression)) {
             auto operand = value(explicitCast->getExpression());
-            return cast(operand, resultType);
+            auto result = cast(operand, resultType);
+            if (Result.type(resultType).kind == TypeKind::Record) {
+                if (auto location = destination(explicitCast)) {
+                    emit(Opcode::Store, location, result);
+                    transfer(result);
+                    ValueLocations[result.id] = location;
+                } else if (needsDestruction(resultType) && ValueOwners[result.id].empty()) {
+                    result = ownTemporary(result);
+                }
+            }
+            return result;
         }
         if (auto* size = dynamic_cast<const types::SizeofNode*>(expression)) {
             if (!size->semanticInfo().HasConstant) {

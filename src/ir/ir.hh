@@ -71,6 +71,7 @@ namespace baka::ir {
         LogicalNot,
         Argument,
         Call,
+        RegisterDestructor,
         Jump,
         Branch,
         Return
@@ -86,6 +87,9 @@ namespace baka::ir {
     // Complete records are first-class values: Load captures a snapshot, Copy
     // copies a value, and Store writes the entire record. Argument/Call/Return
     // retain record types; no target ABI or hidden return pointer is imposed.
+    // RegisterDestructor has no result, left=void(T*) callable, right=T*
+    // receiver. The runtime pushes this callback after successful initialization
+    // and invokes callbacks in reverse registration order after entry returns.
     struct Instruction {
         Opcode opcode = Opcode::Copy;
         Operand result, left, right;

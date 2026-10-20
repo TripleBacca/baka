@@ -1,16 +1,28 @@
 #include "lowering.hh"
 
 namespace baka::ir {
-    void Lowerer::lowerExpressionRegion(const types::ExpressionNode* expression) {
-        if (!expression || ExpressionRegions.count(expression)) {
+    void Lowerer::lowerExpressionRegion(const types::ExpressionNode* expression, Destination receiver) {
+        if (!expression) {
             return;
         }
         auto entry = newBlock();
         select(entry);
+        const auto previousSelf = SelfOverride;
+        const auto previousOwner = CurrentOwner;
+        if (receiver.object) {
+            SelfOverride = emitValue(Opcode::AddressOffset, Result.pointer(receiver.type), object(receiver.object),
+                                     integer(integerType(), receiver.offset));
+            CurrentOwner = semanticType(receiver.type);
+        }
         BuildingExpression = true;
+        BuildingTemps.clear();
         auto operand = value(expression);
         BuildingExpression = false;
-        ExpressionRegions.emplace(expression, ExpressionRegion{entry, CurrentBlock, operand, false});
+        ExpressionRegions[expression].push_back(
+            ExpressionRegion{entry, CurrentBlock, operand, false, std::move(BuildingTemps)});
+        BuildingTemps.clear();
+        SelfOverride = previousSelf;
+        CurrentOwner = previousOwner;
     }
 
     // Collect once per function, in source order. Nested expression recursion
@@ -31,8 +43,15 @@ namespace baka::ir {
                     continue;
                 }
                 for (const auto& entry : initializerPlan(importType(symbol.type), item->getInitializer())) {
+                    if (entry.expression && Result.type(entry.type).kind == TypeKind::Record) {
+                        Destinations[valueRoot(entry.expression)] = {item->semanticInfo().Symbol, entry.offset,
+                                                                     entry.type};
+                    }
                     if (Result.type(entry.type).kind != TypeKind::Array) {
-                        lowerExpressionRegion(entry.expression);
+                        lowerExpressionRegion(entry.expression, entry.owner
+                                                                    ? Destination{item->semanticInfo().Symbol,
+                                                                                  entry.receiverOffset, entry.owner}
+                                                                    : Destination{});
                     }
                 }
             }

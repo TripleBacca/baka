@@ -18,9 +18,21 @@ namespace baka::ir {
         FunctionIndex = Result.functions.size() - 1;
         NextBlock = 1;
         Self = 0;
+        SelfOverride = {};
+        CurrentOwner = {};
+        InDestructor = false;
+        BuildingTemps.clear();
+        PendingTemps.clear();
+        ValueOwners.clear();
+        ValueLocations.clear();
+        Destinations.clear();
+        DirectDestinations.clear();
+        LocalCleanups.clear();
+        ActiveCleanups.clear();
         Source = {};
         SavedTargets.clear();
         ExpressionRegions.clear();
+        RegionCursor.clear();
         select(newBlock());
         // Initializers are full expression trees, including nested calls and
         // short-circuit CFG. Use the same expression emitter as automatic locals.
@@ -30,7 +42,17 @@ namespace baka::ir {
             Source = {span.Line, span.Col};
             const auto symbol = declaration->semanticInfo().Symbol;
             auto destination = object(symbol);
+            if (declaration->getInitializer()) {
+                for (const auto& entry :
+                     initializerPlan(Result.type(destination.type).element, declaration->getInitializer())) {
+                    if (entry.expression && Result.type(entry.type).kind == TypeKind::Record) {
+                        Destinations[valueRoot(entry.expression)] = {symbol, entry.offset, entry.type};
+                    }
+                }
+            }
             initialize(destination, Result.type(destination.type).element, declaration->getInitializer());
+            registerDestructor(destination, Result.type(destination.type).element);
+            finishTemps();
         }
         BuildingExpression = false;
         emit(Opcode::Return);
@@ -54,6 +76,8 @@ namespace baka::ir {
         select(initializeBlock);
         auto destination = object(symbol);
         initialize(destination, Result.type(destination.type).element, initializer);
+        registerDestructor(destination, Result.type(destination.type).element);
+        finishTemps();
         // Publish completion only after all initialization side effects/stores.
         // Exceptions and thread-safe/reentrant static initialization are outside
         // the current language/runtime; the guard is an ordinary typed object.

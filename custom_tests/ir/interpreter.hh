@@ -24,6 +24,7 @@ namespace ir_test {
         uint64_t NextAddress = 4096;
         size_t Steps = 0;
         bool Initialized = false;
+        std::vector<std::pair<uint32_t,Value>> ExitActions;
         static constexpr uint64_t FunctionTag = uint64_t{1} << 60;
 
         struct Frame {
@@ -305,6 +306,9 @@ namespace ir_test {
                         result = invoke(static_cast<uint32_t>(a.bits & ~FunctionTag), frame.arguments);
                         frame.arguments.clear();
                         break;
+                    case Opcode::RegisterDestructor:
+                        ExitActions.push_back({static_cast<uint32_t>(a.bits & ~FunctionTag), b});
+                        continue;
                     case Opcode::Jump:
                         current = in.left.id;
                         transferred = true;
@@ -356,10 +360,21 @@ namespace ir_test {
             for (const auto& function : ModuleValue.functions) {
                 if (function.name == "main") {
                     auto value = invoke(function.id, {{static_cast<uint32_t>(n)}});
+                    while (!ExitActions.empty()) {
+                        auto action = ExitActions.back();
+                        ExitActions.pop_back();
+                        invoke(action.first, {action.second});
+                    }
                     return signedValue(value, ModuleValue.type(function.signature).element);
                 }
             }
             throw std::runtime_error("test interpreter: missing main");
+        }
+
+        int64_t globalInteger(const std::string& name) {
+            for (const auto& object : ModuleValue.globals) if (object.name == name)
+                return signedValue(load(Globals.at(object.id), object.type), object.type);
+            throw std::runtime_error("test interpreter: missing observed global");
         }
     };
 }

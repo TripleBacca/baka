@@ -67,6 +67,10 @@ int main(int argc, char** argv) {
         else if (scenario == "metadata") source =
             "class S{int x;S(int a){}int get(int a){return x+a;}};"
             "S make(){return S(1);}int main(){S s=S(1);int y=s.x;S t=make();return s.get(y);}";
+        else if (scenario == "lifetimes") source =
+            "class Base{int x=2;};class Member{int y=3;};"
+            "class A:Base{Member member;A(int n=4){x=n;}~A(){}};"
+            "int main(){A a=A();return a.x;}";
         else throw std::runtime_error("unknown conversion scenario");
         driver::Gctx::AttachLineIndex(std::make_shared<base::LineIndex>(source));
         auto tokens = lexer::Tokenize(source);
@@ -192,6 +196,39 @@ int main(int argc, char** argv) {
             info = call->semanticInfo();
             require(info.CallSignature && info.MemberOwner && info.MemberIndex && info.Symbol,
                     "selected instance method signature/owner was not attached");
+        }
+        if (scenario == "lifetimes") {
+            auto* construction = as<FunctionCallPostfixExpr>(dynamic_cast<InitializerNode*>(declaration(block, 0)->getInitializer())->expressions().front());
+            require(construction != nullptr, "construction expression missing");
+            const auto info = construction->semanticInfo();
+            require(info.Construction && info.CallSignature && info.MemberIndex && info.MemberOwner,
+                    "lifetime lowering lacks a selected constructor signature");
+            const auto& record = analyzer.types().get({info.MemberOwner});
+            const auto& selected = record.members.at(info.MemberIndex - 1);
+            auto* constructor = dynamic_cast<const ConstructorNode*>(static_cast<const ASTNode*>(selected.source));
+            require(constructor && constructor->getBody() && constructor->semanticInfo().Scope && selected.minimumArity == 0,
+                    "constructor body/default arity/scope was not retained");
+            const auto& signature = analyzer.types().get(selected.type);
+            require(signature.parameters.size() == 1 && analyzer.types().isVoid(signature.element),
+                    "constructor signature is not a void callable");
+            auto* parameter = constructor->getArgs()->getParameters().front()->getDeclaration();
+            require(parameter && constructor->getArgs()->getParameters().front()->semanticInfo().Symbol && parameter->getInitializer(), "constructor default parameter missing");
+            bool receiver = false, destructor = false;
+            for (uint32_t id = 1; id <= analyzer.symbols().symbolCount(); ++id) {
+                const auto& symbol = analyzer.symbols().get({id});
+                if (symbol.name == "this" && symbol.scope.value == constructor->semanticInfo().Scope) {
+                    receiver = symbol.kind == SymbolKind::Parameter &&
+                        analyzer.types().get(symbol.type).kind == TypeKind::Pointer &&
+                        analyzer.types().unConst(analyzer.types().get(symbol.type).element).value == info.MemberOwner;
+                }
+            }
+            for (const auto& member : record.members) if (member.isDestructor) {
+                auto* node = dynamic_cast<const DestructorNode*>(static_cast<const ASTNode*>(member.source));
+                destructor = node && node->getBody() && node->semanticInfo().Scope;
+            }
+            auto layout = analyzer.types().layout({info.MemberOwner});
+            require(receiver && destructor && layout && layout.layout.baseOffset && record.base.value,
+                    "receiver, destructor body or base layout is missing");
         }
         for (const auto& item : block->getStatements()) std::visit([&](auto* itemNode) {
             ASTNode* owner = itemNode;

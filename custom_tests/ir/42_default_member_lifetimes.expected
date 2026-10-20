@@ -1,0 +1,211 @@
+IR::TAC:
+module {
+  type record#15(Element) size 4 align 4
+  type record#17(Group) size 8 align 4
+  type record#18(Values) size 8 align 4
+  type record#19(Zeros) size 8 align 4
+  global destroyed.11: i32 = zero
+  declare @printf.9: fn(ptr<i8>, ...)->i32
+  declare @scanf.10: fn(ptr<i8>, ...)->i32
+  function @main.24: fn(i32)->i32 {
+    parameter n.27: i32
+    local group.28: record#17(Group)
+    local v.29: record#18(Values)
+    local w.30: record#18(Values)
+    local zero.31: record#19(Zeros)
+  bb1: ; predecessors [] successors [bb2]
+    (copy, %t4:u1, 0:u1, _)
+    (copy, %t3:u1, 0:u1, _)
+    (copy, %t2:u1, 0:u1, _)
+    (copy, %t1:u1, 0:u1, _)
+    (arg, _, &group.28:ptr<record#17(Group)>, 0:i64)
+    (call, _, @Group.default_ctor.35:ptr<fn(ptr<record#17(Group)>)->void>, 1:i64)
+    (copy, %t1:u1, 1:u1, _)
+    (jump, _, bb2, _)
+  bb2: ; predecessors [bb1] successors [bb16, bb17]
+    (offset, %t5:ptr<i32>, &group.28:ptr<record#17(Group)>, 4:i64)
+    (load, %t6:i32, %t5:ptr<i32>, _)
+    (ne, %t7:u1, %t6:i32, 8:i32)
+    (branch, bb17, %t7:u1, bb16)
+  bb3: ; predecessors [bb16] successors [bb18, bb19]
+    (neg, %t8:i32, 1:i32, _)
+    (branch, bb19, %t1:u1, bb18)
+  bb4: ; predecessors [bb21] successors [bb5]
+    (offset, %t9:ptr<record#18(Values)>, &v.29:ptr<record#18(Values)>, 0:i64)
+    (offset, %t43:ptr<i32>, &v.29:ptr<record#18(Values)>, 0:i64)
+    (store, %t43:ptr<i32>, 2:i32, _)
+    (jump, _, bb5, _)
+  bb5: ; predecessors [bb4] successors [bb6]
+    (offset, %t10:ptr<record#18(Values)>, &v.29:ptr<record#18(Values)>, 0:i64)
+    (offset, %t11:ptr<i32>, %t10:ptr<record#18(Values)>, 0:i64)
+    (load, %t12:i32, %t11:ptr<i32>, _)
+    (add, %t13:i32, %t12:i32, 1:i32)
+    (offset, %t44:ptr<i32>, &v.29:ptr<record#18(Values)>, 4:i64)
+    (store, %t44:ptr<i32>, %t13:i32, _)
+    (copy, %t2:u1, 1:u1, _)
+    (jump, _, bb6, _)
+  bb6: ; predecessors [bb5] successors [bb7]
+    (offset, %t45:ptr<i32>, &w.30:ptr<record#18(Values)>, 0:i64)
+    (store, %t45:ptr<i32>, 5:i32, _)
+    (jump, _, bb7, _)
+  bb7: ; predecessors [bb6] successors [bb8]
+    (offset, %t14:ptr<record#18(Values)>, &w.30:ptr<record#18(Values)>, 0:i64)
+    (offset, %t15:ptr<i32>, %t14:ptr<record#18(Values)>, 0:i64)
+    (load, %t16:i32, %t15:ptr<i32>, _)
+    (add, %t17:i32, %t16:i32, 1:i32)
+    (offset, %t46:ptr<i32>, &w.30:ptr<record#18(Values)>, 4:i64)
+    (store, %t46:ptr<i32>, %t17:i32, _)
+    (copy, %t3:u1, 1:u1, _)
+    (jump, _, bb8, _)
+  bb8: ; predecessors [bb7] successors [bb9]
+    (offset, %t18:ptr<i32>, &zero.31:ptr<record#19(Zeros)>, 0:i64)
+    (store, %t18:ptr<i32>, 0:i32, _)
+    (offset, %t19:ptr<i32>, &zero.31:ptr<record#19(Zeros)>, 4:i64)
+    (store, %t19:ptr<i32>, 0:i32, _)
+    (arg, _, &zero.31:ptr<record#19(Zeros)>, 0:i64)
+    (call, _, @Zeros.default_ctor.37:ptr<fn(ptr<record#19(Zeros)>)->void>, 1:i64)
+    (load, %t20:record#19(Zeros), &zero.31:ptr<record#19(Zeros)>, _)
+    (store, &zero.31:ptr<record#19(Zeros)>, %t20:record#19(Zeros), _)
+    (copy, %t4:u1, 1:u1, _)
+    (jump, _, bb9, _)
+  bb9: ; predecessors [bb8] successors [bb11, bb10]
+    (offset, %t21:ptr<i32>, &zero.31:ptr<record#19(Zeros)>, 0:i64)
+    (load, %t22:i32, %t21:ptr<i32>, _)
+    (ne, %t23:u1, %t22:i32, 0:i32)
+    (branch, bb10, %t23:u1, bb11)
+  bb10: ; predecessors [bb9] successors [bb12]
+    (offset, %t25:ptr<i32>, &zero.31:ptr<record#19(Zeros)>, 4:i64)
+    (load, %t26:i32, %t25:ptr<i32>, _)
+    (ne, %t27:u1, %t26:i32, 9:i32)
+    (copy, %t24:u1, %t27:u1, _)
+    (jump, _, bb12, _)
+  bb11: ; predecessors [bb9] successors [bb12]
+    (copy, %t24:u1, 1:u1, _)
+    (jump, _, bb12, _)
+  bb12: ; predecessors [bb10, bb11] successors [bb23, bb24]
+    (branch, bb24, %t24:u1, bb23)
+  bb13: ; predecessors [bb23] successors []
+    (neg, %t28:i32, 2:i32, _)
+    (copy, %t4:u1, 0:u1, _)
+    (copy, %t3:u1, 0:u1, _)
+    (copy, %t2:u1, 0:u1, _)
+    (ret, _, %t28:i32, _)
+  bb14: ; predecessors [bb22] successors []
+    (load, %t29:i32, &destroyed.11:ptr<i32>, _)
+    (mul, %t30:i32, %t29:i32, 100:i32)
+    (offset, %t31:ptr<i32>, &v.29:ptr<record#18(Values)>, 0:i64)
+    (load, %t32:i32, %t31:ptr<i32>, _)
+    (add, %t33:i32, %t30:i32, %t32:i32)
+    (offset, %t34:ptr<i32>, &v.29:ptr<record#18(Values)>, 4:i64)
+    (load, %t35:i32, %t34:ptr<i32>, _)
+    (add, %t36:i32, %t33:i32, %t35:i32)
+    (offset, %t37:ptr<i32>, &w.30:ptr<record#18(Values)>, 0:i64)
+    (load, %t38:i32, %t37:ptr<i32>, _)
+    (add, %t39:i32, %t36:i32, %t38:i32)
+    (offset, %t40:ptr<i32>, &w.30:ptr<record#18(Values)>, 4:i64)
+    (load, %t41:i32, %t40:ptr<i32>, _)
+    (add, %t42:i32, %t39:i32, %t41:i32)
+    (copy, %t4:u1, 0:u1, _)
+    (copy, %t3:u1, 0:u1, _)
+    (copy, %t2:u1, 0:u1, _)
+    (ret, _, %t42:i32, _)
+  bb15: ; predecessors [bb17] successors [bb20, bb21]
+    (branch, bb21, %t1:u1, bb20)
+  bb16: ; predecessors [bb2] successors [bb3]
+    (jump, _, bb3, _)
+  bb17: ; predecessors [bb2] successors [bb15]
+    (jump, _, bb15, _)
+  bb18: ; predecessors [bb3] successors [bb19]
+    (copy, %t1:u1, 0:u1, _)
+    (arg, _, &group.28:ptr<record#17(Group)>, 0:i64)
+    (call, _, @Group.dtor.34:ptr<fn(ptr<record#17(Group)>)->void>, 1:i64)
+    (jump, _, bb19, _)
+  bb19: ; predecessors [bb3, bb18] successors []
+    (ret, _, %t8:i32, _)
+  bb20: ; predecessors [bb15] successors [bb21]
+    (copy, %t1:u1, 0:u1, _)
+    (arg, _, &group.28:ptr<record#17(Group)>, 0:i64)
+    (call, _, @Group.dtor.34:ptr<fn(ptr<record#17(Group)>)->void>, 1:i64)
+    (jump, _, bb21, _)
+  bb21: ; predecessors [bb15, bb20] successors [bb4]
+    (jump, _, bb4, _)
+  bb22: ; predecessors [bb24] successors [bb14]
+    (jump, _, bb14, _)
+  bb23: ; predecessors [bb12] successors [bb13]
+    (jump, _, bb13, _)
+  bb24: ; predecessors [bb12] successors [bb22]
+    (jump, _, bb22, _)
+  }
+  function @Element.dtor.32: fn(ptr<record#15(Element)>)->void internal {
+    parameter this.25: ptr<record#15(Element)>
+  bb1: ; predecessors [] successors [bb2]
+    (jump, _, bb2, _)
+  bb2: ; predecessors [bb1] successors []
+    (load, %t1:i32, &destroyed.11:ptr<i32>, _)
+    (mul, %t2:i32, %t1:i32, 10:i32)
+    (load, %t3:ptr<record#15(Element)>, &this.25:ptr<ptr<record#15(Element)>>, _)
+    (offset, %t4:ptr<i32>, %t3:ptr<record#15(Element)>, 0:i64)
+    (load, %t5:i32, %t4:ptr<i32>, _)
+    (add, %t6:i32, %t2:i32, %t5:i32)
+    (store, &destroyed.11:ptr<i32>, %t6:i32, _)
+    (load, %t7:i32, &destroyed.11:ptr<i32>, _)
+    (load, %t8:ptr<record#15(Element)>, &this.25:ptr<ptr<record#15(Element)>>, _)
+    (ret, _, _, _)
+  }
+  function @Element.default_ctor.33: fn(ptr<record#15(Element)>)->void internal {
+    parameter this.38: ptr<record#15(Element)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#15(Element)>, &this.38:ptr<ptr<record#15(Element)>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<record#15(Element)>, 0:i64)
+    (store, %t2:ptr<i32>, 7:i32, _)
+    (ret, _, _, _)
+  }
+  function @Group.dtor.34: fn(ptr<record#17(Group)>)->void internal {
+    parameter this.26: ptr<record#17(Group)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#17(Group)>, &this.26:ptr<ptr<record#17(Group)>>, _)
+    (offset, %t2:ptr<record#15(Element)>, %t1:ptr<record#17(Group)>, 0:i64)
+    (arg, _, %t2:ptr<record#15(Element)>, 0:i64)
+    (call, _, @Element.dtor.32:ptr<fn(ptr<record#15(Element)>)->void>, 1:i64)
+    (ret, _, _, _)
+  }
+  function @Group.default_ctor.35: fn(ptr<record#17(Group)>)->void internal {
+    parameter this.39: ptr<record#17(Group)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#17(Group)>, &this.39:ptr<ptr<record#17(Group)>>, _)
+    (offset, %t2:ptr<record#15(Element)>, %t1:ptr<record#17(Group)>, 0:i64)
+    (arg, _, %t2:ptr<record#15(Element)>, 0:i64)
+    (call, _, @Element.default_ctor.33:ptr<fn(ptr<record#15(Element)>)->void>, 1:i64)
+    (offset, %t3:ptr<i32>, %t1:ptr<record#17(Group)>, 4:i64)
+    (load, %t4:ptr<record#17(Group)>, &this.39:ptr<ptr<record#17(Group)>>, _)
+    (offset, %t5:ptr<record#15(Element)>, %t4:ptr<record#17(Group)>, 0:i64)
+    (offset, %t6:ptr<i32>, %t5:ptr<record#15(Element)>, 0:i64)
+    (load, %t7:i32, %t6:ptr<i32>, _)
+    (add, %t8:i32, %t7:i32, 1:i32)
+    (store, %t3:ptr<i32>, %t8:i32, _)
+    (ret, _, _, _)
+  }
+  function @Values.default_ctor.36: fn(ptr<record#18(Values)>)->void internal {
+    parameter this.40: ptr<record#18(Values)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#18(Values)>, &this.40:ptr<ptr<record#18(Values)>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<record#18(Values)>, 0:i64)
+    (store, %t2:ptr<i32>, 2:i32, _)
+    (offset, %t3:ptr<i32>, %t1:ptr<record#18(Values)>, 4:i64)
+    (load, %t4:ptr<record#18(Values)>, &this.40:ptr<ptr<record#18(Values)>>, _)
+    (offset, %t5:ptr<i32>, %t4:ptr<record#18(Values)>, 0:i64)
+    (load, %t6:i32, %t5:ptr<i32>, _)
+    (add, %t7:i32, %t6:i32, 1:i32)
+    (store, %t3:ptr<i32>, %t7:i32, _)
+    (ret, _, _, _)
+  }
+  function @Zeros.default_ctor.37: fn(ptr<record#19(Zeros)>)->void internal {
+    parameter this.41: ptr<record#19(Zeros)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#19(Zeros)>, &this.41:ptr<ptr<record#19(Zeros)>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<record#19(Zeros)>, 0:i64)
+    (offset, %t3:ptr<i32>, %t1:ptr<record#19(Zeros)>, 4:i64)
+    (store, %t3:ptr<i32>, 9:i32, _)
+    (ret, _, _, _)
+  }
+}

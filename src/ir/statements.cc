@@ -4,26 +4,49 @@
 
 namespace baka::ir {
     void Lowerer::lowerFunction(const types::FunctionNode* declaration) {
+        if (!declaration->getBody()) {
+            return;
+        }
         auto symbol = declaration->semanticInfo().Symbol;
+        auto binding = Members.find(symbol);
+        lowerCallable(declaration, declaration->getBody(), symbol,
+                      binding != Members.end() && !binding->second.isStatic ? semantic::TypeId{binding->second.owner}
+                                                                            : semantic::TypeId{});
+    }
+
+    void Lowerer::lowerCallable(const types::ASTNode* declaration, const types::StatementNode* body, uint32_t symbol,
+                                semantic::TypeId owner, bool constructor, bool destructor) {
         auto it = std::find_if(Result.functions.begin(), Result.functions.end(),
                                [&](const Function& item) { return item.id == symbol; });
         if (it == Result.functions.end()) {
             fail(declaration, "function definition has no IR declaration");
-        }
-        if (!declaration->getBody()) {
-            return;
         }
         FunctionIndex = static_cast<size_t>(it - Result.functions.begin());
         function().defined = true;
         CurrentBlock = 0;
         NextBlock = 1;
         Self = 0;
+        SelfOverride = {};
+        CurrentOwner = owner;
+        InDestructor = destructor;
+        LocalCleanups.clear();
+        ActiveCleanups.clear();
+        LabelCleanups.clear();
+        CaseCleanups.clear();
+        BreakDepths.clear();
+        ContinueDepths.clear();
+        BuildingTemps.clear();
+        PendingTemps.clear();
+        ValueOwners.clear();
+        ValueLocations.clear();
+        Destinations.clear();
+        DirectDestinations.clear();
         Breaks.clear();
         Continues.clear();
         Labels.clear();
         Cases.clear();
         SavedTargets.clear();
-        auto functionScope = declaration->semanticInfo().Scope;
+        auto functionScope = declaration ? declaration->semanticInfo().Scope : 0;
         for (uint32_t i = 1; i <= Analyzer.symbols().symbolCount(); ++i) {
             const auto& symbol = Analyzer.symbols().get({i});
             if (symbol.kind != semantic::SymbolKind::Object && symbol.kind != semantic::SymbolKind::Parameter) {
@@ -39,10 +62,6 @@ namespace baka::ir {
             if (!scope.value) {
                 continue;
             }
-            if (containsLifetime(symbol.type)) {
-                fail(static_cast<const types::ASTNode*>(symbol.source),
-                     "local object requires unsupported constructor/destructor cleanup");
-            }
             Object object;
             object.id = i;
             object.name = symbol.name;
@@ -55,14 +74,39 @@ namespace baka::ir {
                 }
             }
         }
+        if (owner.value && !Self) {
+            auto receiver = storage(Result.type(function().signature).parameters.front(), "this");
+            Self = receiver.id;
+            function().parameters.push_back(Self);
+        }
         select(newBlock());
+        for (const auto& local : function().objects) {
+            if (!needsDestruction(local.type) && !needsConstruction(local.type)) {
+                continue;
+            }
+            auto flag = activeFlag();
+            LocalCleanups[local.id] = {object(local.id), local.type, flag};
+            if (std::find(function().parameters.begin(), function().parameters.end(), local.id) !=
+                function().parameters.end()) {
+                emit(Opcode::Copy, flag, integer(flag.type, 1));
+                ActiveCleanups.push_back(local.id);
+            }
+        }
+        if (constructor) {
+            BuildingExpression = true;
+            initializeMembers(self(), Result.type(Result.type(function().signature).parameters.front()).element);
+            finishTemps();
+            BuildingExpression = false;
+        }
         const auto entry = CurrentBlock;
+        planCleanupTargets(body, ActiveCleanups);
         ExpressionRegions.clear();
+        RegionCursor.clear();
         // Pass 1 emits independent expression regions. Pass 2 connects those
         // regions in source order and adds statements/control-flow edges.
-        collectExpressionRegions(declaration->getBody());
+        collectExpressionRegions(body);
         select(entry);
-        statement(declaration->getBody());
+        statement(body);
         auto signature = Result.type(function().signature);
         if (block().instructions.empty() || !IsTerminator(block().instructions.back().opcode)) {
             Operand result;
@@ -80,6 +124,10 @@ namespace baka::ir {
                 result = load(object(id), signature.element);
             } else if (type.kind != TypeKind::Void) {
                 result = integer(signature.element, 0);
+            }
+            cleanupTo(0);
+            if (InDestructor) {
+                destroyMembers(self(), Result.type(Result.type(function().signature).parameters.front()).element);
             }
             emit(Opcode::Return, {}, result);
         }
@@ -152,15 +200,27 @@ namespace baka::ir {
             Source = {span.Line, span.Col};
         }
         if (auto* compound = dynamic_cast<const types::CompoundStatementNode*>(statement)) {
+            const auto depth = ActiveCleanups.size();
             for (const auto& item : compound->getStatements()) {
                 std::visit([&](auto* child) { node(child); }, item);
             }
+            if (block().instructions.empty() || !IsTerminator(block().instructions.back().opcode)) {
+                cleanupTo(depth);
+            }
+            ActiveCleanups.resize(depth);
         } else if (dynamic_cast<const types::EmptyStatementNode*>(statement)) {
             return;
         } else if (auto* expression = dynamic_cast<const types::ExpressionStatementNode*>(statement)) {
             value(expression->getExpression());
+            finishTemps();
         } else if (auto* result = dynamic_cast<const types::ReturnStatementNode*>(statement)) {
             auto operand = value(result->getExpression());
+            transfer(operand);
+            finishTemps();
+            cleanupTo(0);
+            if (InDestructor) {
+                destroyMembers(self(), Result.type(Result.type(function().signature).parameters.front()).element);
+            }
             emit(Opcode::Return, {}, operand);
         } else if (auto* conditional = dynamic_cast<const types::IfSuperBlockStatementNode*>(statement)) {
             std::vector<std::pair<const types::ExpressionNode*, const types::StatementNode*>> arms;
@@ -171,6 +231,7 @@ namespace baka::ir {
             auto join = newBlock();
             for (const auto& [condition, body] : arms) {
                 auto conditionValue = value(condition);
+                finishTemps();
                 auto yes = newBlock(), no = newBlock();
                 branch(conditionValue, yes, no);
                 select(yes);
@@ -184,10 +245,12 @@ namespace baka::ir {
             link(join);
             select(join);
         } else if (auto* loop = dynamic_cast<const types::ForBlockStatementNode*>(statement)) {
+            const auto before = ActiveCleanups.size();
             std::visit(
                 [&](auto* initializer) {
                     if constexpr (std::is_same_v<std::remove_pointer_t<decltype(initializer)>, types::ExpressionNode>) {
                         value(initializer);
+                        finishTemps();
                     } else {
                         node(initializer);
                     }
@@ -196,10 +259,14 @@ namespace baka::ir {
             auto condition = newBlock(), body = newBlock(), update = newBlock(), exit = newBlock();
             Breaks[loop->semanticInfo().Target] = exit;
             Continues[loop->semanticInfo().Target] = update;
+            BreakDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
+            ContinueDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
             link(condition);
             select(condition);
             if (loop->getCondition()) {
-                branch(value(loop->getCondition()), body, exit);
+                auto test = value(loop->getCondition());
+                finishTemps();
+                branch(test, body, exit);
             } else {
                 jump(body);
             }
@@ -208,15 +275,22 @@ namespace baka::ir {
             link(update);
             select(update);
             value(loop->getUpdate());
+            finishTemps();
             link(condition);
             select(exit);
+            cleanupTo(before);
+            ActiveCleanups.resize(before);
         } else if (auto* loop = dynamic_cast<const types::WhileBlockStatementNode*>(statement)) {
             auto condition = newBlock(), body = newBlock(), exit = newBlock();
             Breaks[loop->semanticInfo().Target] = exit;
             Continues[loop->semanticInfo().Target] = condition;
+            BreakDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
+            ContinueDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
             link(condition);
             select(condition);
-            branch(value(loop->getCondition()), body, exit);
+            auto test = value(loop->getCondition());
+            finishTemps();
+            branch(test, body, exit);
             select(body);
             this->statement(loop->getBody());
             link(condition);
@@ -225,20 +299,39 @@ namespace baka::ir {
             auto body = newBlock(), condition = newBlock(), exit = newBlock();
             Breaks[loop->semanticInfo().Target] = exit;
             Continues[loop->semanticInfo().Target] = condition;
+            BreakDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
+            ContinueDepths[loop->semanticInfo().Target] = ActiveCleanups.size();
             link(body);
             select(body);
             this->statement(loop->getBody());
             link(condition);
             select(condition);
-            branch(value(loop->getCondition()), body, exit);
+            auto test = value(loop->getCondition());
+            finishTemps();
+            branch(test, body, exit);
             select(exit);
         } else if (auto* selection = dynamic_cast<const types::SwitchBlockStatementNode*>(statement)) {
             auto condition = value(selection->getCondition());
+            finishTemps();
             auto exit = newBlock();
             Breaks[selection->semanticInfo().Target] = exit;
+            BreakDepths[selection->semanticInfo().Target] = ActiveCleanups.size();
             std::vector<const types::CaseLabelStatementNode*> cases;
             const types::DefaultLabelStatementNode* fallback = nullptr;
             collectCases(selection->getBody(), cases, fallback);
+            auto checkEntry = [&](const types::ASTNode* label) {
+                for (auto id : CaseCleanups.at(label)) {
+                    if (std::find(ActiveCleanups.begin(), ActiveCleanups.end(), id) == ActiveCleanups.end()) {
+                        fail(label, "switch dispatch enters an uninitialized object lifetime");
+                    }
+                }
+            };
+            for (auto* label : cases) {
+                checkEntry(label);
+            }
+            if (fallback) {
+                checkEntry(fallback);
+            }
             for (auto* label : cases) {
                 const auto& metadata = label->getTag()->semanticInfo();
                 if (!metadata.HasConstant) {
@@ -288,16 +381,29 @@ namespace baka::ir {
             if (!Labels.count(target)) {
                 Labels[target] = newBlock();
             }
+            const auto& retained = LabelCleanups.at(target);
+            for (auto id : retained) {
+                if (std::find(ActiveCleanups.begin(), ActiveCleanups.end(), id) == ActiveCleanups.end()) {
+                    fail(jump, "goto enters an uninitialized object lifetime");
+                }
+            }
+            for (auto it = ActiveCleanups.rbegin(); it != ActiveCleanups.rend(); ++it) {
+                if (std::find(retained.begin(), retained.end(), *it) == retained.end()) {
+                    cleanup(LocalCleanups.at(*it));
+                }
+            }
             this->jump(Labels.at(target));
         } else if (auto* jump = dynamic_cast<const types::BreakStatementNode*>(statement)) {
             if (!Breaks.count(jump->semanticInfo().Target)) {
                 fail(jump, "break lacks an active resolved IR target");
             }
+            cleanupTo(BreakDepths.at(jump->semanticInfo().Target));
             this->jump(Breaks.at(jump->semanticInfo().Target));
         } else if (auto* jump = dynamic_cast<const types::ContinueStatementNode*>(statement)) {
             if (!Continues.count(jump->semanticInfo().Target)) {
                 fail(jump, "continue lacks an active resolved IR target");
             }
+            cleanupTo(ContinueDepths.at(jump->semanticInfo().Target));
             this->jump(Continues.at(jump->semanticInfo().Target));
         } else {
             fail(statement, "unsupported statement node in IR lowering");

@@ -67,6 +67,13 @@ namespace {
 
     void execution(const std::string& name) {
         auto module = fixture(name); // frontend tables/source go out of scope here
+        if (name == "35_static_lifetimes") {
+            auto malformed = module;
+            bool found = false;
+            for (auto& function : malformed.functions) for (auto& block : function.blocks) for (auto& in : block.instructions)
+                if (in.opcode == ir::Opcode::RegisterDestructor) { in.right = in.left; found = true; }
+            require(found && !ir::Verify(malformed).empty(), "mismatched destructor registration accepted");
+        }
         if (name == "29_runtime_global_order" || name == "30_runtime_initializers") {
             require(module.initializer != 0, "runtime globals lack an entry initializer");
             const auto* startup = module.functionById(module.initializer);
@@ -215,10 +222,37 @@ namespace {
         if (name == "30_runtime_initializers") examples = {{0,1022},{2,1026},{-1,1020}};
         if (name == "31_runtime_static_paths") examples = {{0,376},{2,376},{-1,376}};
         if (name == "32_runtime_startup_cfg") examples = {{0,418},{2,418},{-1,418}};
+        if (name == "33_constructors") examples = {{0,122255},{2,122255}};
+        if (name == "34_subobject_lifetimes") examples = {{0,123456},{2,123456}};
+        if (name == "35_static_lifetimes") examples = {{0,132},{2,132}};
+        if (name == "36_cleanup_jumps") examples = {{0,112},{2,112}};
+        if (name == "37_temporary_lifetimes") examples = {{0,1},{2,1}};
+        if (name == "38_array_lifetimes") examples = {{0,12213443},{2,12213443}};
+        if (name == "39_goto_lifetimes") examples = {{0,31},{2,31}};
+        if (name == "40_for_initializer_lifetimes") examples = {{0,3},{2,3}};
+        if (name == "41_aggregate_ownership") examples = {{0,453},{2,453}};
+        if (name == "42_default_member_lifetimes") examples = {{0,716},{2,716}};
+        if (name == "43_construction_destinations") examples = {{0,477},{2,576}};
+        if (name == "44_registration_before_temporaries") examples = {{0,0},{2,0}};
         require(!examples.empty(), "unknown execution scenario");
         for (auto [input, expected] : examples) {
-            auto original = ir_test::Interpreter(module).run(input);
-            auto transformed = ir_test::Interpreter(optimized).run(input);
+            ir_test::Interpreter rawExecutor(module), optimizedExecutor(optimized);
+            auto original = rawExecutor.run(input);
+            auto transformed = optimizedExecutor.run(input);
+            if (name == "35_static_lifetimes") {
+                require(rawExecutor.globalInteger("trace") == 132231 && optimizedExecutor.globalInteger("trace") == 132231,
+                        "static destructors did not run in reverse construction order");
+            }
+            if (name == "41_aggregate_ownership") {
+                require(rawExecutor.globalInteger("destroyed") == 6 && optimizedExecutor.globalInteger("destroyed") == 6,
+                        "aggregate ownership was destroyed twice or leaked");
+                require(rawExecutor.globalInteger("ids") == 20 && optimizedExecutor.globalInteger("ids") == 20,
+                        "temporary method receiver did not retain its object storage");
+            }
+            if (name == "44_registration_before_temporaries") {
+                require(rawExecutor.globalInteger("trace") == 21 && optimizedExecutor.globalInteger("trace") == 21,
+                        "temporary cleanup reordered static destructor registration");
+            }
             if (original != expected || transformed != expected) {
                 std::cerr << name << " input " << input << ": expected " << expected << ", raw " << original
                           << ", optimized " << transformed << '\n';

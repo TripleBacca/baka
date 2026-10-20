@@ -6,6 +6,7 @@ add_library(ir
     statements.cc
     initializers.cc
     runtime_initialization.cc
+    lifetimes.cc
     cfg.cc
     verifier.cc
     optimization.cc
