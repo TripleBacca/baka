@@ -28,6 +28,7 @@ namespace baka::ir {
         std::map<uint32_t, BlockId> Breaks, Continues, Labels;
         std::map<const types::ASTNode*, BlockId> Cases;
         std::vector<Operand> SavedTargets;
+        std::vector<const types::SingleDeclarationNode*> GlobalInitializers;
         SourceSpan Source;
         bool Started = false, BuildingExpression = false;
 
@@ -80,8 +81,8 @@ namespace baka::ir {
         void declarations(const types::DeclarationList* declarations, bool global = false);
         void initialize(Operand destination, TypeId target, const types::ExpressionNode* initializer,
                         bool zero = false);
-        void initializeGlobal(Object& destination, TypeId target, const types::ExpressionNode* initializer,
-                              uint64_t offset = 0);
+        void lowerGlobalInitializers();
+        void initializeStatic(uint32_t symbol, const types::ExpressionNode* initializer);
 
         struct InitializerEntry {
             uint64_t offset;
@@ -91,9 +92,6 @@ namespace baka::ir {
 
         std::vector<std::pair<TypeId, uint64_t>> subobjects(TypeId type);
         std::vector<InitializerEntry> initializerPlan(TypeId type, const types::ExpressionNode* initializer);
-        Operand globalAddress(const types::ExpressionNode* expression, TypeId target);
-        Operand constantCast(Operand value, TypeId target, const types::ASTNode* source);
-        Operand globalConstant(const types::ExpressionNode* expression, TypeId target);
         void collectCases(const types::StatementNode* statement,
                           std::vector<const types::CaseLabelStatementNode*>& cases,
                           const types::DefaultLabelStatementNode*& fallback);

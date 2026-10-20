@@ -38,7 +38,8 @@ optimization flags or third-party dependencies are introduced.
 | `expression_regions.cc` | First pass: collect runtime roots and emit expression regions |
 | `expressions.cc` | Expression/address emission, calls, conversions, saved compound targets |
 | `statements.cc` | Second pass: connect regions and lower statements/control flow |
-| `initializers.cc` | Scalar/aggregate initializer planning, module data and relocations |
+| `initializers.cc` | Scalar/aggregate initializer planning and stores |
+| `runtime_initialization.cc` | Ordered global startup function and guarded local statics |
 | `cfg.cc` | Third pass: predecessor/successor construction; flat linearization |
 | `verifier.cc` | Fourth pass: read-only structural/type/temporary verification |
 | `printer.cc` | Deterministic textual typed quadruples |
@@ -89,7 +90,8 @@ label at each change of owning block ID.
 ## Owned representation
 
 - `Module`: its own type table, global/static objects, function declarations and
-  definitions. Type index zero is invalid. Record identities remain nominal.
+  definitions, and an optional `initializer` function ID. Type index zero is
+  invalid. Record identities remain nominal.
 - `Function`: ID, owned name, function-type ID, linkage flag, parameter object
   IDs, local objects, temporary-type table and basic blocks.
 - `Block`: function-local ID, instruction vector, predecessors and successors.
@@ -115,8 +117,10 @@ Owned completeness flags distinguish incomplete types from complete empty record
 Sizes/offsets come from the existing fixed
 LP64 layout; pointers are 8 bytes. The module retains size/alignment on types.
 Const qualification is erased after semantic checking; qualification-only casts
-therefore need no runtime instruction. Readonly static objects/string literals
-retain a storage hint. No semantic type interning or symbol mutation occurs.
+therefore need no runtime instruction. Readonly string literals retain a storage
+hint. Runtime-initialized const source objects print `readonly-after-init`:
+backends must permit their initialization writes. No semantic type interning or
+symbol mutation occurs.
 
 Variables have mutable memory storage. Loads produce temporaries; assignment
 uses explicit stores. Temporaries are non-SSA: merge results are assigned on
@@ -238,28 +242,80 @@ them. Building an IR region never executes a source expression.
 - Goto labels are function-wide and allocated on demand, supporting forward and
   backward goto. Lexical code after a terminator starts disconnected blocks;
   later labels can make it reachable. DCE removes truly unreachable blocks.
-- Falling off a function emits plain `ret` for void or typed zero for a scalar
-  or pointer result. Frontend `main` rules are unchanged.
+- Falling off a function emits plain `ret` for void or typed zero for a scalar,
+  pointer or record result. Record zero is assembled in local storage and loaded
+  as a typed value. Frontend `main` rules are unchanged.
+
+### Aggregate values and calls
+
+Complete records (structs, classes and unions) are first-class typed TAC values.
+Function signatures, `arg`, `call` results and `ret` preserve their record types.
+There are no hidden result parameters. ABI lowering later decides whether a value
+travels in registers or memory, and whether a hidden result pointer is required.
+
+`load` of a record captures a value snapshot; `copy` copies that snapshot and
+`store` writes it into independent destination storage. These operations cover
+the entire record, including nested arrays and records, at the semantic LP64
+size. They impose no eight-byte/scalar size limit. This is essential for
+left-to-right calls: loading an earlier aggregate argument captures its contents
+before later argument expressions can mutate the original object. Callee
+parameter objects receive independent copies. Record-valued returns remain
+valid after the callee's frame has ended.
+
+Member access or a bound method call on a record prvalue materializes its value
+in a synthetic `.materialized` local object. This does not change the call
+signature. Same-type explicit casts retain the record value. Derived-to-base
+initialization materializes a captured derived value in `.slice` storage and
+loads its base subobject using the semantic layout offset. Conditional record
+values use typed mutable temporaries and the existing branch/join pattern.
+
+These value operations currently apply to records without lifetime machinery;
+constructor/destructor and cleanup implementation remains separate work. The
+test-only interpreter represents record values as independent byte vectors, so
+the tests verify value independence rather than accidentally sharing addresses.
+The authorized frontend dereference correction permits `return *p` for a record
+pointer. Dereference preserves the qualified pointee lvalue; scalar-condition
+checking runs only in actual condition contexts. Non-pointers and void pointees
+remain errors, and const member writes remain errors.
 
 ### Storage and initialization
 
-Globals and local statics are module objects initialized once. Default module
-storage is zero; sparse scalar initializers overlay it. Object/function
-relocations retain symbol identity and byte addends, including array-element
-addresses. String literals own null-terminated bytes and readonly internal
-backing objects. Character-array initialization copies bytes and zero-fills the
-remaining elements. Local statics do not get per-call initialization stores.
+Globals and local statics have zero-filled module storage. Every explicit global
+initializer emits runtime TAC in declaration order, including `int x = 3 + 4`
+(`add` then `store`) and `int x = calc()` (`call` then `store`). An owned internal
+`.module_init` function contains this code. The printed module's
+`initializer @.module_init.ID` directive requires the eventual runtime/backend to
+invoke that function once after allocating/zero-filling static storage and before
+entry. The test-only interpreter implements that contract. The compiler currently
+prints TAC; it does not execute startup code itself.
+
+This is the user-selected language policy, deliberately different from C++'s
+constant-before-dynamic initialization. For `int get(); int a = get(); int b = 7;
+int get() { return b; }`, startup assigns `a = 0` before assigning `b = 7`.
+
+Local statics emit a branch on a private zero-filled guard at their declaration.
+Only the first-use path evaluates the initializer and stores its result; the
+guard is marked complete afterward. Skipped branches do not initialize their
+statics, loop visits and later calls do not repeat initialization. Globals may
+call functions containing local statics during startup. Guards are ordinary
+single-threaded TAC storage: threads, exceptions and recursive initialization of
+the same static are unsupported. No constructor cleanup is inferred here while
+constructor/destructor lowering remains pending.
+
+Source objects with explicit initializers have `runtimeInitialized = true` and
+no pre-filled initializer data. The IR model still supports sparse constant data
+for future/generated uses. String literals own readonly backing bytes; storing
+their addresses or copying character arrays is emitted as runtime TAC.
 
 Local scalar/array/record brace initializers are planned in semantic subobject
 order. Nested braces, brace elision and omitted scalar elements are handled;
 omitted elements receive typed zero. Union initialization uses its first
 instance member. Uninitialized automatic objects retain the frontend's
 uninitialized-storage behavior; lowering does not insert unsolicited checks.
-Record copying is excluded. Unsupported static expressions receive a diagnostic
-instead of executable startup initialization. Static scalar arithmetic/conversions
-use the same owned IR constant arithmetic as optimization, rather than trusting
-frontend cached constant values (which may lose unsigned literal information).
-This evaluation is required to represent data and runs even for unoptimized TAC.
+Record copying is supported for automatic and static objects without lifetime
+machinery. Runtime scalar arithmetic/conversions use the ordinary expression
+emitter, including wrapping semantics and explicit casts; constant initializer
+expressions are not folded unless the caller explicitly requests optimization.
 
 ### Verifier and optimization safety
 
@@ -283,22 +339,27 @@ interblock temporary liveness. It removes unused pure temporary definitions;
 it preserves stores, calls, terminators and potentially faulting loads/divisions.
 It makes no aliasing assumptions and never reorders instructions.
 
-## Milestone exclusions and known limitations
+## Current limitations
 
 - Constructor/destructor declarations, construction expressions, object cleanup
   and default member initialization are explicitly diagnosed. This includes
   unused constructor/destructor declarations; no empty stub is silently emitted.
-- Aggregate function parameters/returns and aggregate copies/casts are diagnosed.
-  Pointers to records, record storage, field access and brace initialization of
-  records without lifetime machinery are supported.
-- Default arguments may remain on declarations, but a call omitting required
-  explicit operands is diagnosed. A call supplying every argument is supported.
+- Aggregate parameters/returns, assignment, copy initialization and same-type
+  casts are supported for records without lifetime machinery. Constructors,
+  destructors and cleanup remain pending; the historical milestone exclusions
+  are superseded by the requested feature expansion.
+- Omitted function and method arguments are expanded from the selected semantic
+  symbol's checked default expressions. They retain declaration-site name binding
+  and are evaluated at each call, after explicit arguments, from left to right.
+  This also supports defaults supplied by an earlier function declaration.
 - No cleanup edges, exception model, ABI/register allocation, assembly emission,
   native execution, linker or machine calling convention is implemented.
   Receiver-first calls are an IR contract for a later backend to implement.
-- No frontend behavior is repaired. In particular the known `&array` bug remains:
-  semantics assigns pointer-to-element where C would have pointer-to-array.
-  Lowering follows that annotated type and its resulting arithmetic stride.
+- Address-of arrays preserves the entire array type: `&a` is pointer-to-array,
+  while ordinary value uses of `a` still decay to pointer-to-element. Dereferencing
+  a pointer-to-array preserves its array lvalue for sizeof and address-of; indexing
+  performs value-context decay as needed. Pointer arithmetic scales by the full
+  array size. This frontend bug was fixed in a follow-up to the initial milestone.
 - Local aggregate declarations, new/delete, references, namespaces and other
   syntax rejected by the current frontend cannot be enabled by `--ir`.
 - The existing GCC build is the tested compiler configuration. Existing AST
@@ -339,12 +400,14 @@ clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc
 
 - `cmake -S src -B build -DBUILD_TESTING=ON` and
   `cmake --build build --parallel 2`: passed.
-- `./custom_test_hook`: **327 passed, 0 failed**, including 55 IR checks
-  (22 positive goldens, 7 negative diagnostics, 26 structural scenarios).
-- `ctest --test-dir build --output-on-failure`: **44/44 passed**.
+- `./custom_test_hook`: **356 passed, 0 failed**, including 71 IR checks
+  (32 positive goldens, 3 negative diagnostics, 36 structural scenarios).
+- `ctest --test-dir build --output-on-failure`: **55/55 passed**.
 - `python3 -B semantic_audit/teammate_a/run.py --compiler ./build/baka`:
   **17/17 passed**; the runner's pre-existing aggregate-shadow exclusion remains.
 - `clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc`: passed.
-- Only the intended integration files were changed among pre-existing sources.
-  Lexer/parser/semantic files, old snapshots, and `context_A/B/C.md` retain their
-  pre-work hashes. No uncommitted work was discarded and no commit was created.
+- The initial IR implementation left frontend sources unchanged. The authorized
+  array-address follow-up fixes semantic address-of and array dereference typing,
+  with six source regressions, a semantic metadata test and an IR golden/execution
+  test covering const arrays, multidimensional arrays, sizeof and full-array strides.
+  Lexer/parser files and `context_A/B/C.md` remain unchanged by this follow-up.

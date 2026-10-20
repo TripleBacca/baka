@@ -4,63 +4,6 @@
 
 namespace baka::semantic {
     namespace {
-        // This helper reads bound IDs and annotations only. In particular, &local
-        // is not a constant address for a static initializer simply because its
-        // syntax contains '&'.
-        bool StaticAddress(const types::ExpressionNode* expression, const Symbols& symbols) {
-            if (!expression) return false;
-            if (auto* cast = dynamic_cast<const types::ImplicitCastNode*>(expression))
-                return StaticAddress(cast->getOperand(), symbols);
-            if (auto* primary = dynamic_cast<const types::PrimaryExpressionNode*>(expression)) {
-                const auto& payload = primary->getExpression();
-                if (auto* name = std::get_if<types::IdentifierNode*>(&payload); name && *name) {
-                    if ((*name)->getBindings().size() != 1) return false;
-                    const auto& symbol = symbols.get({(*name)->getBindings().front()});
-                    return symbol.isStatic || symbols.scope(symbol.scope).kind == ScopeKind::Global ||
-                           symbol.kind == SymbolKind::Function || symbol.kind == SymbolKind::BuiltinFunction;
-                }
-                if (auto* literal = std::get_if<types::ConstantNode*>(&payload); literal && *literal)
-                    return dynamic_cast<const types::ConstantTNode<base::SLString>*>(*literal);
-            }
-            if (auto* member = dynamic_cast<const types::MemberPostfixExpr*>(expression)) return StaticAddress(member->getBase(), symbols);
-            if (auto* index = dynamic_cast<const types::IndexPostfixExpr*>(expression))
-                return index->getIndex()->semanticInfo().ConstantExpression && StaticAddress(index->getBase(), symbols);
-            return false;
-        }
-        bool ConstantInitializer(const types::ExpressionNode* expression, const Symbols& symbols, const Types& types) {
-            if (!expression) return true;
-            if (auto* cast = dynamic_cast<const types::ImplicitCastNode*>(expression))
-                return ConstantInitializer(cast->getOperand(), symbols, types);
-            if (auto* list = dynamic_cast<const types::InitializerNode*>(expression)) {
-                for (auto* child : list->expressions()) if (!ConstantInitializer(child, symbols, types)) return false;
-                return true;
-            }
-            const auto& metadata = expression->semanticInfo();
-            if (metadata.ConstantExpression || metadata.NullPointerConstant) return true;
-            if (auto* unary = dynamic_cast<const types::FactorNode*>(expression);
-                unary && unary->getUnaryOp() == types::ASTUnaryOp::OP_ADDR_OF)
-                return StaticAddress(unary->getOperand(), symbols);
-            auto kind = types.get(types.unConst({metadata.Type})).kind;
-            if ((kind == TypeKind::Array || kind == TypeKind::Function) && StaticAddress(expression, symbols)) return true;
-            if (auto* operation = dynamic_cast<const types::BinaryExpressionNode*>(expression)) {
-                auto op = operation->getBinaryOp();
-                if ((op == types::OP_ADD || op == types::OP_SUB) &&
-                    types.get(types.unConst({metadata.Type})).kind == TypeKind::Pointer) {
-                    return (ConstantInitializer(operation->getLeft(), symbols, types) &&
-                            operation->getRight()->semanticInfo().ConstantExpression) ||
-                           (op == types::OP_ADD && operation->getLeft()->semanticInfo().ConstantExpression &&
-                            ConstantInitializer(operation->getRight(), symbols, types));
-                }
-            }
-            // Array/function designators and string literals can denote static
-            // addresses; scalar global variable reads are not constant values.
-            if (auto* primary = dynamic_cast<const types::PrimaryExpressionNode*>(expression)) {
-                auto payload = primary->getExpression();
-                if (auto* literal = std::get_if<types::ConstantNode*>(&payload); literal && *literal)
-                    return dynamic_cast<const types::ConstantTNode<base::SLString>*>(*literal);
-            }
-            return false;
-        }
         int64_t CaseValue(int64_t value, TypeId type, const Types& types) {
             auto info = types.arithmetic(type);
             if (!info || info->bits < 32) info = types.arithmetic(types.builtin(Builtin::Int));
@@ -97,8 +40,10 @@ namespace baka::semantic {
                     if (!work.expression && TypeSystem.isConst(type))
                         report("initializer", "const object requires an initializer", work.source);
                     if (!TypeSystem.layout(type)) report("complete", "object requires a complete storage type", work.source);
-                    if (work.staticStorage && work.expression && !ConstantInitializer(work.expression, SymbolTable, TypeSystem))
-                        report("initializer", "static storage initializer must be a constant expression", work.source);
+                    // Storage duration does not require a constant initializer.
+                    // The checked expression runs before entry for globals, or
+                    // once on first use for local statics. Conversion checks were
+                    // already performed during annotation, just as for locals.
                 }
                 break;
             case ExpressionUse::Default:

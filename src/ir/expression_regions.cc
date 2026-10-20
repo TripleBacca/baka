@@ -25,9 +25,6 @@ namespace baka::ir {
                 std::visit([&](auto* item) { collectExpressionRegions(item); }, child);
             }
         } else if (auto* declaration = dynamic_cast<const types::DeclarationList*>(node)) {
-            if (declaration->getIsStatic()) {
-                return;
-            }
             for (auto* item : declaration->getDeclarations()) {
                 const auto& symbol = Analyzer.symbols().get({item->semanticInfo().Symbol});
                 if (symbol.kind == semantic::SymbolKind::Function || !item->getInitializer()) {

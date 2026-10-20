@@ -100,6 +100,20 @@ namespace baka::ir {
             fail(expression, "missing lvalue in IR lowering");
         }
         const auto& info = expression->semanticInfo();
+        if (!info.LValue && Result.type(type(expression)).kind == TypeKind::Record) {
+            // Member access on a returned record needs addressable storage. This
+            // materialization is local IR storage, never a hidden call argument.
+            auto captured = value(expression);
+            Object storage;
+            storage.id = NextObject++;
+            storage.name = ".materialized";
+            storage.type = captured.type;
+            auto id = storage.id;
+            function().objects.push_back(std::move(storage));
+            auto location = object(id);
+            emit(Opcode::Store, location, captured);
+            return location;
+        }
         // Assignment and prefix mutation are lvalues in baka. Their outer
         // LValueToRValue conversion must evaluate the write once, then load the
         // saved location, rather than trying to recover an address from a value.
@@ -383,16 +397,21 @@ namespace baka::ir {
             expressions.push_back(node->getArguments());
         }
         const auto& semanticSignature = Analyzer.types().get({metadata.CallSignature});
-        if (Analyzer.types().isAggregate(semanticSignature.element)) {
-            fail(node, "aggregate call returns are not supported by IR yet");
-        }
-        for (auto parameter : semanticSignature.parameters) {
-            if (Analyzer.types().isAggregate(parameter)) {
-                fail(node, "aggregate call arguments are not supported by IR yet");
+        // Defaults retain declaration-point bindings on their checked AST.
+        // Evaluate them at this call site after explicit arguments, without
+        // cloning or mutating either tree or semantic symbol tables.
+        while (expressions.size() < semanticSignature.parameters.size()) {
+            const types::ExpressionNode* argument = nullptr;
+            if (metadata.Symbol) {
+                const auto& defaults = Analyzer.symbols().get({metadata.Symbol}).defaultArguments;
+                if (expressions.size() < defaults.size()) {
+                    argument = static_cast<const types::ExpressionNode*>(defaults[expressions.size()]);
+                }
             }
-        }
-        if (expressions.size() < semanticSignature.parameters.size()) {
-            fail(node, "default-argument expansion is not supported by IR yet; supply every argument explicitly");
+            if (!argument) {
+                fail(node, "selected call has no checked default argument for an omitted parameter");
+            }
+            expressions.push_back(argument);
         }
         Operand callee;
         std::vector<Operand> arguments;
@@ -597,9 +616,6 @@ namespace baka::ir {
         }
         if (auto* explicitCast = dynamic_cast<const types::CastFactorNode*>(expression)) {
             auto operand = value(explicitCast->getExpression());
-            if (Result.type(resultType).kind == TypeKind::Record) {
-                fail(expression, "aggregate casts are not supported by IR yet");
-            }
             return cast(operand, resultType);
         }
         if (auto* size = dynamic_cast<const types::SizeofNode*>(expression)) {

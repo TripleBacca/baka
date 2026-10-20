@@ -83,6 +83,9 @@ namespace baka::ir {
     // A typed quadruple: (opcode, result, left, right). Branch uses result
     // for its false label; Jump uses left. Call arguments are preceding Argument
     // quadruples, emitted only after all argument expressions have been lowered.
+    // Complete records are first-class values: Load captures a snapshot, Copy
+    // copies a value, and Store writes the entire record. Argument/Call/Return
+    // retain record types; no target ABI or hidden return pointer is imposed.
     struct Instruction {
         Opcode opcode = Opcode::Copy;
         Operand result, left, right;
@@ -101,6 +104,10 @@ namespace baka::ir {
         std::string name;
         TypeId type = 0;
         bool global = false, internal = false, external = false, readOnly = false;
+        // Source-level const objects can require runtime initialization writes.
+        // Backends must keep these writable during initialization, rather than
+        // immediately placing them in a physically read-only data section.
+        bool runtimeInitialized = false;
 
         // Sparse initializer: omitted bytes are zero. Each entry is a scalar
         // store at a byte offset, and may contain a symbolic relocation.
@@ -128,6 +135,9 @@ namespace baka::ir {
         std::vector<Type> types{Type{}};
         std::vector<Object> globals;
         std::vector<Function> functions;
+        // Zero-fill storage, then invoke this void/no-argument function once
+        // before program entry. Its instructions preserve declaration order.
+        uint32_t initializer = 0;
         TypeId pointer(TypeId pointee);
         TypeId function(TypeId result, std::vector<TypeId> parameters, bool variadic);
         const Type& type(TypeId id) const;

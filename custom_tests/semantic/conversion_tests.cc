@@ -62,6 +62,8 @@ int main(int argc, char** argv) {
             "int global=1;int *gp=&global;int main(){int a[2]={1,2};int *p=a;"
             "const int *q=p;void *v=p;int *n=0;const int c=1;const int *cp=&c;"
             "int b=p==0;int d=p!=q;int e=p?1:2.5;const int *r=p?q:p;return e;}";
+        else if (scenario == "array_address") source =
+            "int main(){int a[3]={1,2,3};int (*p)[3]=&a;return sizeof(*p);}";
         else if (scenario == "metadata") source =
             "class S{int x;S(int a){}int get(int a){return x+a;}};"
             "S make(){return S(1);}int main(){S s=S(1);int y=s.x;S t=make();return s.get(y);}";
@@ -157,6 +159,19 @@ int main(int argc, char** argv) {
                     "conditional branches did not receive their common type");
             require(casts(declaration(block, 10)->getInitializer(), K::QualificationConversion).size() == 1,
                     "pointer conditional dropped a branch qualifier");
+        }
+        if (scenario == "array_address") {
+            auto* initializer = declaration(block, 1)->getInitializer();
+            auto* address = as<FactorNode>(dynamic_cast<InitializerNode*>(initializer)->expressions().front());
+            require(address && address->getUnaryOp() == ASTUnaryOp::OP_ADDR_OF, "array address node missing");
+            const auto& pointer = analyzer.types().get({address->semanticInfo().Type});
+            require(pointer.kind == TypeKind::Pointer, "array address is not a pointer");
+            const auto& array = analyzer.types().get(pointer.element);
+            require(array.kind == TypeKind::Array && array.bound.count == 3, "array address lost its bound/type");
+            require(casts(initializer, K::ArrayToPointer).empty(), "address operand incorrectly decayed");
+            auto* size = as<SizeofNode>(originalReturn->getExpression());
+            require(size && size->semanticInfo().HasConstant && size->semanticInfo().Constant == 12,
+                    "sizeof pointer-to-array dereference lost the complete array type");
         }
         if (scenario == "metadata") {
             auto* construction = as<FunctionCallPostfixExpr>(dynamic_cast<InitializerNode*>(declaration(block, 0)->getInitializer())->expressions().front());

@@ -49,6 +49,23 @@ namespace baka::ir {
             const auto& type = module.type(id);
             return scalar(id) || ((type.kind == TypeKind::Record || type.kind == TypeKind::Array) && type.complete);
         };
+        auto valueType = [&](TypeId id) {
+            return scalar(id) ||
+                   (validType(id) && module.type(id).kind == TypeKind::Record && module.type(id).complete);
+        };
+        if (module.initializer) {
+            const auto* startup = module.functionById(module.initializer);
+            if (!startup || !startup->defined || !startup->internal || !validType(startup->signature) ||
+                module.type(startup->signature).kind != TypeKind::Function) {
+                error("invalid module initializer function");
+            } else {
+                const auto& signature = module.type(startup->signature);
+                if (module.type(signature.element).kind != TypeKind::Void || !signature.parameters.empty() ||
+                    signature.variadic) {
+                    error("module initializer must have signature fn()->void");
+                }
+            }
+        }
         std::set<uint32_t> functionIds, objectIds;
         for (const auto& global : module.globals) {
             if (!global.id || !objectIds.insert(global.id).second || !storageType(global.type)) {
@@ -56,6 +73,10 @@ namespace baka::ir {
             }
             if (global.external && (!global.initialValues.empty() || !global.bytes.empty())) {
                 error("external object has an initializer");
+            }
+            if (global.runtimeInitialized &&
+                (global.external || !global.initialValues.empty() || !global.bytes.empty())) {
+                error("runtime-initialized object must have zero-filled initial storage");
             }
             if (validType(global.type)) {
                 auto size = module.type(global.type).size;
@@ -104,12 +125,12 @@ namespace baka::ir {
             }
             const auto& signature = module.type(function.signature);
             if (signature.element && module.type(signature.element).kind != TypeKind::Void &&
-                !scalar(signature.element)) {
-                error("aggregate function return is unsupported");
+                !valueType(signature.element)) {
+                error("invalid function return value type");
             }
             for (auto parameter : signature.parameters) {
-                if (!scalar(parameter)) {
-                    error("aggregate function parameter is unsupported");
+                if (!valueType(parameter)) {
+                    error("invalid function parameter value type");
                 }
             }
             if (!function.defined) {
@@ -147,8 +168,8 @@ namespace baka::ir {
             std::set<uint32_t> universe;
             for (uint32_t i = 1; i < function.temporaries.size(); ++i) {
                 universe.insert(i);
-                if (!scalar(function.temporaries[i])) {
-                    error("temporary is not a scalar");
+                if (!valueType(function.temporaries[i])) {
+                    error("temporary has invalid value type");
                 }
             }
             for (size_t bi = 0; bi < function.blocks.size(); ++bi) {
@@ -241,15 +262,15 @@ namespace baka::ir {
                     };
                     switch (in.opcode) {
                     case Opcode::Copy:
-                        require(temp() && scalar(in.left.type) && in.result.type == in.left.type && !in.right,
+                        require(temp() && valueType(in.left.type) && in.result.type == in.left.type && !in.right,
                                 "invalid copy");
                         break;
                     case Opcode::Load:
-                        require(temp() && scalar(in.result.type) && pointerTo(in.left, in.result.type) && !in.right,
+                        require(temp() && valueType(in.result.type) && pointerTo(in.left, in.result.type) && !in.right,
                                 "invalid load");
                         break;
                     case Opcode::Store:
-                        require(scalar(in.left.type) && pointerTo(in.result, in.left.type) && !in.right,
+                        require(valueType(in.left.type) && pointerTo(in.result, in.left.type) && !in.right,
                                 "invalid store");
                         break;
                     case Opcode::Cast:
@@ -263,7 +284,7 @@ namespace baka::ir {
                                 "invalid byte-offset operation");
                         break;
                     case Opcode::Argument:
-                        require(!in.result && scalar(in.left.type) && in.right.kind == OperandKind::Integer &&
+                        require(!in.result && valueType(in.left.type) && in.right.kind == OperandKind::Integer &&
                                     in.right.integer == arguments.size(),
                                 "invalid argument sequence/index");
                         arguments.push_back(in.left);
@@ -301,7 +322,7 @@ namespace baka::ir {
                         require(!in.result && !in.right &&
                                     (module.type(signature.element).kind == TypeKind::Void
                                          ? !in.left
-                                         : in.left.type == signature.element && scalar(in.left.type)),
+                                         : in.left.type == signature.element && valueType(in.left.type)),
                                 "return type mismatch");
                         break;
                     case Opcode::Negate:
