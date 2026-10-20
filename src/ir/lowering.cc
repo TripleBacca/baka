@@ -25,6 +25,11 @@ namespace baka::ir {
             target.complete = true;
             target.size = layout.layout.size;
             target.alignment = layout.layout.alignment;
+            if (source.kind == semantic::TypeKind::Struct || source.kind == semantic::TypeKind::Class ||
+                source.kind == semantic::TypeKind::Union) {
+                target.memberOffsets = layout.layout.offsets;
+                target.baseOffset = layout.layout.baseOffset;
+            }
         }
         using K = semantic::TypeKind;
         switch (source.kind) {
@@ -200,11 +205,11 @@ namespace baka::ir {
             uint64_t offset = 0;
             while (source.value && source != destination) {
                 const auto& current = Analyzer.types().get(source);
-                auto layout = Analyzer.types().layout(source);
-                if (!current.base.value || !layout || !layout.layout.baseOffset) {
+                auto baseOffset = Result.type(importType(source)).baseOffset;
+                if (!current.base.value || !baseOffset) {
                     fail(nullptr, "record conversion lacks a compatible base subobject");
                 }
-                offset += *layout.layout.baseOffset;
+                offset += *baseOffset;
                 source = Analyzer.types().unConst(current.base);
             }
             if (!source.value || !destination.value) {

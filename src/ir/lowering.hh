@@ -129,6 +129,8 @@ namespace baka::ir {
         Operand increment(const types::ExpressionNode* target, bool decrement, bool postfix,
                           bool returnAddress = false);
         Operand call(const types::FunctionCallPostfixExpr* node);
+        Operand constructionValue(const types::ExpressionNode* node,
+                                  const std::vector<const types::ExpressionNode*>& arguments);
         void node(const types::ASTNode* node);
         void statement(const types::StatementNode* statement);
         void declarations(const types::DeclarationList* declarations, bool global = false);

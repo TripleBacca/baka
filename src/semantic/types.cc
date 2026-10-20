@@ -66,6 +66,9 @@ namespace baka {
         LayoutResult Types::ComputeLayout(TypeId id, std::vector<TypeId>& active) const {
             id = unConst(id);
             const auto& TypeInfo = get(id);
+            if (TypeInfo.objectLayout) {
+                return {QueryState::Ready, *TypeInfo.objectLayout, {}};
+            }
             if (TypeInfo.kind == TypeKind::TypeError) {
                 return {QueryState::Error, {}, "invalid type"};
             }
@@ -415,6 +418,10 @@ namespace baka {
             auto result = layout(id);
             if (!result) {
                 TypeArena.at(id.value).completion = Completion::Defining;
+            } else {
+                // Eager publication keeps read-only semantic checks and IR
+                // lowering truly read-only; queries never populate caches.
+                TypeArena.at(id.value).objectLayout = result.layout;
             }
             return result;
         }

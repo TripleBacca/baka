@@ -21,10 +21,11 @@ partially annotated tree. The lowering API can accept const references.
 | Function result/parameter types and variadics | Function `Type`: element, parameters, variadic; declaration/parameter bindings are attached |
 | Numeric signedness/width and layout | `Types::arithmetic`, `Types::layout`; fixed LP64 contract |
 | Arithmetic operand and destination conversions | `ImplicitCastNode` chains, explicit source casts, annotated operator results |
+| Converting constructor argument | `ImplicitCastNode(ConstructorConversion)`, converted operand and selected constructor `Construction`/`CallSignature`/`MemberOwner`/`MemberIndex` |
 | Indirect calls and overload choice | Call `CallSignature`; ordinary selected function `Symbol`; callee value load/decay preserved |
 | Explicit field/method access | `MemberOwner`, one-based `MemberIndex`, selected symbol when available; retain receiver AST |
 | Explicit construction expressions | `Construction`, selected constructor `CallSignature` and owner/member index; implicit construction has no selected constructor index |
-| Field offset | `types.layout({MemberOwner}).layout.offsets[MemberIndex-1]`; inherited access also needs the receiver-to-owner base path |
+| Field offset | `types.get(types.unConst({MemberOwner})).objectLayout->offsets[MemberIndex-1]`; stored on successful definition completion, not recomputed per access. IR owns a copy in `Type::memberOffsets`/`baseOffset`. Inherited access follows stored base offsets. |
 | Array indexing/sizeof | Element/pointee type, known bounds, layout and constant sizeof result; contextual decay is explicit |
 | Loop/switch/goto identities | `Target` on targets and resolved jumps; preserve break versus continue to choose exit/header/update block |
 | Conditional/short-circuit expressions | Distinct AST operators; boolean conversions on their conditions/operands |

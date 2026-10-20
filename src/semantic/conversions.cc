@@ -121,6 +121,30 @@ namespace baka::semantic {
         source = {expression->semanticInfo().Type};
         target = TypeSystem.unConst(target);
         if (!target.value || source == target) return expression;
+        if (TypeSystem.isAggregate(target)) {
+            ExprResult argument;
+            argument.type = source;
+            const auto& metadata = expression->semanticInfo();
+            argument.constantExpression = metadata.ConstantExpression;
+            argument.nullPointerConstant = metadata.NullPointerConstant;
+            if (metadata.HasConstant) argument.constant = {ConstantState::Value, metadata.Constant};
+            auto selection = convertingConstructor(target, argument);
+            if (!selection.candidate || selection.ambiguous) {
+                SymbolTable.diagnose("conversion", "aggregate argument has no unique converting constructor", expression);
+                return expression;
+            }
+            const auto selected = *selection.candidate;
+            auto parameter = TypeSystem.get(selected.type).parameters.front();
+            expression = convertValue(expression, parameter);
+            auto* converted = wrapConversion(expression, target, K::ConstructorConversion);
+            auto& info = converted->semanticInfo();
+            info.Construction = true;
+            info.CallSignature = selected.type.value;
+            info.MemberOwner = selected.owner.value;
+            info.MemberIndex = selected.memberIndex;
+            info.ConstantExpression = info.HasConstant = info.HasFloatingConstant = info.NullPointerConstant = false;
+            return converted;
+        }
         K conversion = K::NumericConversion;
         if (target == TypeSystem.builtin(Builtin::Bool)) conversion = K::BooleanConversion;
         else if (isPointer(target) && !isPointer(source)) conversion = K::NullToPointer;

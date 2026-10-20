@@ -63,7 +63,10 @@ if(BUILD_TESTING)
     add_executable(semantic_member_call_tests ../custom_tests/semantic/member_call_tests.cc)
     target_link_libraries(semantic_member_call_tests PRIVATE semantic lexer driver)
     add_test(NAME semantic_member_calls COMMAND semantic_member_call_tests)
-    foreach(scenario numeric contexts calls compound pointers metadata array_address lifetimes)
+    add_executable(semantic_layout_tests ../custom_tests/semantic/layout_tests.cc)
+    target_link_libraries(semantic_layout_tests PRIVATE semantic)
+    add_test(NAME semantic_stored_layout COMMAND semantic_layout_tests)
+    foreach(scenario numeric contexts calls compound pointers metadata array_address lifetimes overloads)
         add_test(NAME semantic_conversions_${scenario} COMMAND semantic_conversion_tests ${scenario})
     endforeach()
     foreach(phase registration resolution annotation checks)
@@ -86,7 +89,8 @@ if(BUILD_TESTING)
                      29_runtime_global_order 30_runtime_initializers 31_runtime_static_paths 32_runtime_startup_cfg
                      33_constructors 34_subobject_lifetimes 35_static_lifetimes
                      36_cleanup_jumps 37_temporary_lifetimes 38_array_lifetimes 39_goto_lifetimes 40_for_initializer_lifetimes
-                     41_aggregate_ownership 42_default_member_lifetimes 43_construction_destinations 44_registration_before_temporaries verifier cfg contracts optimization)
+                     41_aggregate_ownership 42_default_member_lifetimes 43_construction_destinations 44_registration_before_temporaries
+                     45_overload_conversions verifier cfg contracts optimization)
         add_test(NAME ir_${scenario} COMMAND ir_pass_tests ${scenario})
     endforeach()
 endif()

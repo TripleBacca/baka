@@ -11,6 +11,11 @@ HERE = Path(__file__).resolve().parent
 
 def main():
     failures = 0
+    layout = subprocess.run([str(ROOT / 'build/semantic_layout_tests')], capture_output=True, text=True, timeout=10)
+    print(('PASS ' if layout.returncode == 0 else 'FAIL ') + 'stored_layout')
+    if layout.returncode:
+        failures += 1
+        print(layout.stdout + layout.stderr)
     scenarios = [phase + suffix for phase in ('registration', 'resolution', 'annotation', 'checks')
                  for suffix in ('', '_error')]
     scenarios.extend(('resolution_this', 'resolution_loop_targets', 'annotation_scoped_type'))
@@ -22,7 +27,7 @@ def main():
         if not ok:
             failures += 1
             print(result.stdout + result.stderr)
-    conversion_scenarios = ('numeric', 'contexts', 'calls', 'compound', 'pointers', 'metadata', 'array_address', 'lifetimes')
+    conversion_scenarios = ('numeric', 'contexts', 'calls', 'compound', 'pointers', 'metadata', 'array_address', 'lifetimes', 'overloads')
     for scenario in conversion_scenarios:
         result = subprocess.run([str(ROOT / 'build/semantic_conversion_tests'), scenario],
                                 capture_output=True, text=True, timeout=10)

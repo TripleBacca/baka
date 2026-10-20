@@ -62,11 +62,37 @@ namespace {
         require(typeCount == analyzer.types().typeCount() && symbolCount == analyzer.symbols().symbolCount(),
                 "IR mutated semantic arenas");
         require(ir::Verify(lowerer.module()).empty(), "unoptimized IR failed verification");
+        for (const auto& type : lowerer.module().types) {
+            if (type.kind != ir::TypeKind::Record || !type.complete) continue;
+            bool retained = false;
+            for (uint32_t id = 1; id <= analyzer.types().typeCount(); ++id) {
+                const auto& source = analyzer.types().get({id});
+                if (source.name == type.name && source.objectLayout &&
+                    source.objectLayout->size == type.size && source.objectLayout->offsets == type.memberOffsets &&
+                    source.objectLayout->baseOffset == type.baseOffset) retained = true;
+            }
+            require(retained, "IR did not retain the stored semantic record layout");
+        }
         return lowerer.takeModule();
     }
 
     void execution(const std::string& name) {
         auto module = fixture(name); // frontend tables/source go out of scope here
+        if (name == "08_inheritance") {
+            bool base = false, derived = false;
+            for (const auto& type : module.types) if (type.kind == ir::TypeKind::Record) {
+                if (type.name == "B") base = type.memberOffsets.size() == 3 && type.memberOffsets[0] == 0 &&
+                    !type.memberOffsets[1] && !type.memberOffsets[2];
+                if (type.name == "D") derived = type.baseOffset == 0 && type.memberOffsets.size() == 1 && type.memberOffsets[0] == 4;
+            }
+            require(base && derived, "owned field/base offsets disappeared after frontend destruction");
+            auto bad = module;
+            for (auto& type : bad.types) if (type.kind == ir::TypeKind::Record && !type.memberOffsets.empty()) {
+                type.memberOffsets[0] = type.size;
+                break;
+            }
+            require(!ir::Verify(bad).empty(), "out-of-range stored member offset accepted");
+        }
         if (name == "35_static_lifetimes") {
             auto malformed = module;
             bool found = false;
@@ -234,6 +260,7 @@ namespace {
         if (name == "42_default_member_lifetimes") examples = {{0,716},{2,716}};
         if (name == "43_construction_destinations") examples = {{0,477},{2,576}};
         if (name == "44_registration_before_temporaries") examples = {{0,0},{2,0}};
+        if (name == "45_overload_conversions") examples = {{0,580},{2,594},{-1,573}};
         require(!examples.empty(), "unknown execution scenario");
         for (auto [input, expected] : examples) {
             ir_test::Interpreter rawExecutor(module), optimizedExecutor(optimized);

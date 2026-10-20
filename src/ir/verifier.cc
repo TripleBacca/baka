@@ -21,6 +21,22 @@ namespace baka::ir {
         };
         for (TypeId id = 1; id < module.types.size(); ++id) {
             const auto& type = module.type(id);
+            if (type.kind != TypeKind::Record && (!type.memberOffsets.empty() || type.baseOffset)) {
+                error("record offsets attached to a non-record type");
+            }
+            if (type.kind == TypeKind::Record) {
+                if (!type.complete && (!type.memberOffsets.empty() || type.baseOffset)) {
+                    error("incomplete record has stored offsets");
+                }
+                for (auto offset : type.memberOffsets) {
+                    if (offset && *offset >= type.size) {
+                        error("stored member offset exceeds record size");
+                    }
+                }
+                if (type.baseOffset && *type.baseOffset >= type.size) {
+                    error("stored base offset exceeds record size");
+                }
+            }
             if ((type.kind == TypeKind::Pointer || type.kind == TypeKind::Array || type.kind == TypeKind::Function) &&
                 !validType(type.element)) {
                 error("invalid derived IR type");

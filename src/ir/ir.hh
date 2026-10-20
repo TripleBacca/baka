@@ -23,6 +23,11 @@ namespace baka::ir {
         uint64_t count = 0, size = 0, alignment = 1;
         std::vector<TypeId> parameters;
         bool variadic = false;
+        // Owned record layout copied from semantics at type import. Entries
+        // follow semantic member indices; non-instance declarations have no
+        // offset. No frontend arena is needed to retain layout after lowering.
+        std::vector<std::optional<uint64_t>> memberOffsets;
+        std::optional<uint64_t> baseOffset;
         bool operator==(const Type&) const = default;
     };
 
