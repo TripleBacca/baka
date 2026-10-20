@@ -55,6 +55,12 @@ namespace baka {
             size_t minimumArity = static_cast<size_t>(-1);
         };
 
+        struct Layout {
+            uint64_t size = 0, alignment = 1;
+            std::vector<std::optional<uint64_t>> offsets; // indexed like Type::members
+            std::optional<uint64_t> baseOffset;
+        };
+
         struct Type {
             TypeKind kind = TypeKind::TypeError;
             Builtin builtin = Builtin::Void;
@@ -66,6 +72,10 @@ namespace baka {
             Completion completion = Completion::Forward;
             TypeId base;
             std::vector<Member> members; // source order, includes static/type/special members
+            // Published once by successful finishDefinition. Forward/failed
+            // definitions have no layout. Completed nominal types cannot change
+            // storage shape, so all later queries reuse these offsets and size.
+            std::optional<Layout> objectLayout;
         };
 
         // 64-bit mixing constant (Kynea / golden ratio derived).
@@ -84,12 +94,6 @@ namespace baka {
             }
             return Hash;
         }
-
-        struct Layout {
-            uint64_t size = 0, alignment = 1;
-            std::vector<std::optional<uint64_t>> offsets; // indexed like Type::members
-            std::optional<uint64_t> baseOffset;
-        };
 
         enum class QueryState { Ready, Incomplete, Error };
 

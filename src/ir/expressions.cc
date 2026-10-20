@@ -82,18 +82,18 @@ namespace baka::ir {
         uint64_t offset = 0;
         while (source.value != metadata.MemberOwner) {
             const auto& current = Analyzer.types().get(source);
-            auto layout = Analyzer.types().layout(source);
-            if (!current.base.value || !layout || !layout.layout.baseOffset) {
+            auto baseOffset = Result.type(importType(source)).baseOffset;
+            if (!current.base.value || !baseOffset) {
                 fail(node, "cannot compute inherited member receiver adjustment");
             }
-            offset += *layout.layout.baseOffset;
+            offset += *baseOffset;
             source = Analyzer.types().unConst(current.base);
         }
-        auto layout = Analyzer.types().layout({metadata.MemberOwner});
-        if (!layout || !layout.layout.offsets.at(metadata.MemberIndex - 1)) {
+        auto memberOffset = Result.type(importType({metadata.MemberOwner})).memberOffsets.at(metadata.MemberIndex - 1);
+        if (!memberOffset) {
             fail(node, "selected member has no object offset");
         }
-        offset += *layout.layout.offsets[metadata.MemberIndex - 1];
+        offset += *memberOffset;
         return emitValue(Opcode::AddressOffset, Result.pointer(importType(member.type)), receiver,
                          integer(integerType(), offset));
     }
@@ -374,12 +374,12 @@ namespace baka::ir {
         source = Analyzer.types().unConst(source);
         uint64_t offset = 0;
         while (source.value != owner) {
-            auto layout = Analyzer.types().layout(source);
+            auto baseOffset = Result.type(importType(source)).baseOffset;
             const auto& current = Analyzer.types().get(source);
-            if (!current.base.value || !layout || !layout.layout.baseOffset) {
+            if (!current.base.value || !baseOffset) {
                 fail(callee, "cannot adjust bound method receiver");
             }
-            offset += *layout.layout.baseOffset;
+            offset += *baseOffset;
             source = Analyzer.types().unConst(current.base);
         }
         auto target = Result.pointer(importType({owner}));
@@ -389,36 +389,42 @@ namespace baka::ir {
         return cast(result, target);
     }
 
+    Operand Lowerer::constructionValue(const types::ExpressionNode* node,
+                                       const std::vector<const types::ExpressionNode*>& arguments) {
+        const auto& metadata = node->semanticInfo();
+        auto target = type(node);
+        auto location = destination(node);
+        const bool direct = bool(location);
+        if (!location) {
+            location = storage(target, ".constructed");
+        }
+        auto selected =
+            metadata.MemberIndex
+                ? SpecialFunctions.at({Analyzer.types().unConst({metadata.MemberOwner}).value, metadata.MemberIndex})
+                : 0;
+        // Value-initialization through an implicit default constructor zeros
+        // scalar subobjects before applying default member initializers.
+        if (!selected) {
+            zeroObject(location, target);
+        }
+        if (selected || needsConstruction(target)) {
+            construct(location, target, selected, arguments);
+        }
+        auto captured = load(location, target);
+        ValueLocations[captured.id] = location;
+        return direct ? captured : ownTemporary(captured, location);
+    }
+
     Operand Lowerer::call(const types::FunctionCallPostfixExpr* node) {
         const auto& metadata = node->semanticInfo();
         if (metadata.Construction) {
-            auto target = type(node);
-            auto location = destination(node);
-            const bool direct = bool(location);
-            if (!location) {
-                location = storage(target, ".constructed");
-            }
             std::vector<const types::ExpressionNode*> arguments;
             if (auto* comma = dynamic_cast<const types::CommaExpressionNode*>(node->getArguments())) {
                 arguments.assign(comma->getExpressions().begin(), comma->getExpressions().end());
             } else if (node->getArguments()) {
                 arguments.push_back(node->getArguments());
             }
-            auto selected = metadata.MemberIndex
-                                ? SpecialFunctions.at(
-                                      {Analyzer.types().unConst({metadata.MemberOwner}).value, metadata.MemberIndex})
-                                : 0;
-            // Value-initialization through an implicit default constructor zeros
-            // scalar subobjects before applying default member initializers.
-            if (!selected) {
-                zeroObject(location, target);
-            }
-            if (selected || needsConstruction(target)) {
-                construct(location, target, selected, arguments);
-            }
-            auto captured = load(location, target);
-            ValueLocations[captured.id] = location;
-            return direct ? captured : ownTemporary(captured, location);
+            return constructionValue(node, arguments);
         }
         if (!metadata.CallSignature) {
             fail(node, "call lacks semantic signature metadata");
@@ -516,6 +522,8 @@ namespace baka::ir {
         if (auto* castNode = dynamic_cast<const types::ImplicitCastNode*>(expression)) {
             using C = types::ImplicitConversionKind;
             switch (castNode->getConversionKind()) {
+            case C::ConstructorConversion:
+                return constructionValue(castNode, {castNode->getOperand()});
             case C::LValueToRValue:
                 return load(address(castNode->getOperand()), resultType);
             case C::ArrayToPointer:

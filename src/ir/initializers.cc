@@ -55,14 +55,13 @@ namespace baka::ir {
             if (!semanticType.value) {
                 fail(nullptr, "record initializer lacks a semantic layout");
             }
-            auto layout = Analyzer.types().layout(semanticType);
-            if (!layout) {
+            if (!Result.type(id).complete) {
                 fail(nullptr, "record initializer has no complete layout");
             }
             const auto& original = Analyzer.types().get(semanticType);
             for (const auto& child : Analyzer.types().subobjects(semanticType)) {
-                auto offset =
-                    child.memberIndex ? layout.layout.offsets.at(*child.memberIndex) : layout.layout.baseOffset;
+                auto offset = child.memberIndex ? Result.type(id).memberOffsets.at(*child.memberIndex)
+                                                : Result.type(id).baseOffset;
                 if (!offset) {
                     fail(nullptr, "aggregate initializer member lacks layout offset");
                 }

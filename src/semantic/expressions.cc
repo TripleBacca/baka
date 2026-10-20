@@ -967,58 +967,6 @@ namespace baka {
             return result;
         }
 
-        int ExpressionChecker::conversionRank(TypeId from, TypeId to, const ExprResult& value) const {
-            if (!from.value || !to.value) {
-                return -1;
-            }
-            if (isNullPointerConstant(value) && isPointer(to)) return 2;
-            auto target = TypeSystem.unConst(to);
-            auto source = TypeSystem.unConst(from);
-            if (source == target) {
-                return 0;
-            }
-            if (isArithmetic(source) && isArithmetic(target)) {
-                return promote(source) == promote(target) ? 1 : 2;
-            }
-            if (TypeSystem.get(source).kind == TypeKind::Enum && isInteger(target)) {
-                return 1;
-            }
-            if (isPointer(source) && isPointer(target) && isAssignable(from, to, value)) {
-                return 2;
-            }
-            return -1;
-        }
-
-        bool ExpressionChecker::checkArguments(const TypeId& functionType, const std::vector<ExprResult>& arguments,
-                                               const void* source, size_t required) {
-            const auto& info = TypeSystem.get(functionType);
-            if (info.kind != TypeKind::Function) {
-                return false;
-            }
-            if (arguments.size() < required ||
-                (!info.variadic && arguments.size() > info.parameters.size())) {
-                SymbolTable.diagnose("arity", "call argument count does not match the function signature", source);
-                return false;
-            }
-            for (size_t Index = 0; Index < arguments.size(); ++Index) {
-                if (arguments[Index].error) {
-                    return false;
-                }
-                if (Index >= info.parameters.size()) {
-                    if (!isScalar(arguments[Index].type)) {
-                        SymbolTable.diagnose("argument", "variadic argument must have scalar type", source);
-                        return false;
-                    }
-                    continue;
-                }
-                if (conversionRank(arguments[Index].type, info.parameters[Index], arguments[Index]) < 0) {
-                    SymbolTable.diagnose("argument", "argument is not convertible to the parameter type", source);
-                    return false;
-                }
-            }
-            return true;
-        }
-
         std::vector<SymbolId> ExpressionChecker::resolveCallee(const types::ExpressionNode* callee,
                                                                const void* source) {
             std::vector<SymbolId> result;
@@ -1166,29 +1114,24 @@ namespace baka {
                                 return makeError();
                             }
                         } else {
-                            bool matched = false;
+                            std::vector<FunctionCandidate> candidates;
                             for (auto index : special.constructors) {
-                                const auto& constructor = TypeSystem.get(type).members[index];
-                                // Filter candidates before diagnostics; a rejected overload
-                                // must not poison an otherwise valid construction.
-                                const auto& signature = TypeSystem.get(constructor.type);
-                                bool viable = arguments.size() >= constructor.minimumArity &&
-                                    (signature.variadic || arguments.size() <= signature.parameters.size());
-                                for (size_t i = 0; viable && i < arguments.size() && i < signature.parameters.size(); ++i)
-                                    viable = conversionRank(arguments[i].type, signature.parameters[i], arguments[i]) >= 0;
-                                if (viable && checkArguments(constructor.type, arguments, node, constructor.minimumArity)) {
-                                    matched = true;
-                                    if (Annotating) {
-                                        auto& metadata = const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo();
-                                        metadata.CallSignature = constructor.type.value;
-                                        metadata.MemberIndex = static_cast<uint32_t>(index + 1);
-                                    }
-                                    break;
-                                }
+                                const auto& constructor = TypeSystem.get(TypeSystem.unConst(type)).members[index];
+                                candidates.push_back({constructor.type, {}, constructor.minimumArity, TypeSystem.unConst(type), static_cast<uint32_t>(index + 1)});
                             }
-                            if (!matched) {
-                                SymbolTable.diagnose("constructor", "no matching constructor", node);
+                            auto selection = selectOverload(candidates, arguments);
+                            if (selection.ambiguous) {
+                                SymbolTable.diagnose("overload", "ambiguous overload resolution", node);
                                 return makeError();
+                            }
+                            if (!selection.candidate) {
+                                SymbolTable.diagnose("constructor", "no viable overload for this constructor call", node);
+                                return makeError();
+                            }
+                            if (Annotating) {
+                                auto& metadata = const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo();
+                                metadata.CallSignature = selection.candidate->type.value;
+                                metadata.MemberIndex = selection.candidate->memberIndex;
                             }
                         }
                         return makeValue(type);
@@ -1206,62 +1149,20 @@ namespace baka {
                 SymbolTable.diagnose("call", "called expression is not a function", node);
                 return makeError();
             }
-            TypeId best;
-            SymbolId bestSymbol;
-            TypeId bestOwner{};
-            uint32_t bestMemberIndex = 0;
-            size_t bestRequired = 0;
-            int bestRank = std::numeric_limits<int>::max();
-            bool ambiguous = false;
-            for (auto candidate : candidates) {
-                const auto& info = TypeSystem.get(candidate.type);
-                if (info.kind != TypeKind::Function) {
-                    continue;
-                }
-                size_t required = candidate.required == static_cast<size_t>(-1) ? info.parameters.size() : candidate.required;
-                if (arguments.size() < required ||
-                    (!info.variadic && arguments.size() > info.parameters.size())) {
-                    continue;
-                }
-                int rank = 0;
-                bool viable = true;
-                for (size_t Index = 0; Index < arguments.size(); ++Index) {
-                    if (Index >= info.parameters.size()) {
-                        rank += 1;
-                        continue;
-                    }
-                    int current = conversionRank(arguments[Index].type, info.parameters[Index], arguments[Index]);
-                    if (current < 0) {
-                        viable = false;
-                        break;
-                    }
-                    rank += current;
-                }
-                if (!viable) {
-                    continue;
-                }
-                if (rank < bestRank) {
-                    bestRank = rank;
-                    best = candidate.type;
-                    bestSymbol = candidate.symbol;
-                    bestOwner = candidate.owner; bestMemberIndex = candidate.memberIndex;
-                    bestRequired = required;
-                    ambiguous = false;
-                } else if (rank == bestRank) {
-                    ambiguous = true;
-                }
-            }
-            if (!best.value) {
-                SymbolTable.diagnose("argument", "no viable overload for this call", node);
-                return makeError();
-            }
-            if (ambiguous) {
+            const auto selection = selectOverload(candidates, arguments);
+            if (selection.ambiguous) {
                 SymbolTable.diagnose("overload", "ambiguous overload resolution", node);
                 return makeError();
             }
-            if (!checkArguments(best, arguments, node, bestRequired)) {
+            if (!selection.candidate) {
+                SymbolTable.diagnose("argument", "no viable overload for this call", node);
                 return makeError();
             }
+            const auto& selected = *selection.candidate;
+            const auto best = selected.type;
+            const auto bestSymbol = selected.symbol;
+            const auto bestOwner = selected.owner;
+            const auto bestMemberIndex = selected.memberIndex;
             if (!bestSymbol.value && check(node->getCallee(), false).error) return makeError();
             if (Annotating) {
                 auto& callMetadata = const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo();

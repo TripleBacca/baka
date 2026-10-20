@@ -56,6 +56,11 @@ namespace baka {
             std::vector<SymbolId> lookupIdentifier(const types::IdentifierNode* identifier) const;
             size_t requiredArguments(SymbolId symbol, TypeId type) const;
             struct FunctionCandidate { TypeId type; SymbolId symbol; size_t required; TypeId owner{}; uint32_t memberIndex = 0; };
+            enum class ConversionMatch { None, Unique, Ambiguous };
+            struct OverloadSelection {
+                std::optional<FunctionCandidate> candidate;
+                bool ambiguous = false;
+            };
             std::unordered_map<uint32_t, int64_t> ConstantObjects;
 
             TypeId CurrentClass;
@@ -98,9 +103,12 @@ namespace baka {
 
             std::vector<SymbolId> resolveCallee(const types::ExpressionNode* callee, const void* source);
             std::vector<FunctionCandidate> functionCandidates(const types::ExpressionNode* callee, const void* source);
-            int conversionRank(TypeId from, TypeId to, const ExprResult& value) const;
-            bool checkArguments(const TypeId& functionType, const std::vector<ExprResult>& arguments,
-                                const void* source, size_t required);
+            bool exactArgument(TypeId from, TypeId to) const;
+            bool compatibleArity(const FunctionCandidate& candidate, size_t count) const;
+            ConversionMatch implicitArgument(const ExprResult& argument, TypeId target, bool constructors) const;
+            OverloadSelection selectOverload(const std::vector<FunctionCandidate>& candidates,
+                const std::vector<ExprResult>& arguments, bool constructors = true) const;
+            OverloadSelection convertingConstructor(TypeId target, const ExprResult& argument) const;
             std::vector<ExprResult> argumentList(const types::ExpressionNode* list);
 
             bool initializeScalar(TypeId target, const types::InitializerNode& initializer, const void* source);

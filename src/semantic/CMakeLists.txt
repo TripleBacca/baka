@@ -8,6 +8,7 @@ add_library(semantic
     aggregates.cc
     expressions.cc
     conversions.cc
+    overloads.cc
     semantic_analyzer.cc
     registration.cc
     resolution.cc

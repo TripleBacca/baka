@@ -7,7 +7,7 @@ namespace baka::types {
     enum class ImplicitConversionKind {
         LValueToRValue, ArrayToPointer, FunctionToPointer,
         IntegralPromotion, NumericConversion, BooleanConversion,
-        NullToPointer, PointerConversion, QualificationConversion
+        NullToPointer, PointerConversion, QualificationConversion, ConstructorConversion
     };
 
     inline const char* ImplicitConversionName(ImplicitConversionKind kind) {
@@ -21,6 +21,7 @@ namespace baka::types {
         case ImplicitConversionKind::NullToPointer: return "NullToPointer";
         case ImplicitConversionKind::PointerConversion: return "PointerConversion";
         case ImplicitConversionKind::QualificationConversion: return "QualificationConversion";
+        case ImplicitConversionKind::ConstructorConversion: return "ConstructorConversion";
         }
         return "Unknown";
     }

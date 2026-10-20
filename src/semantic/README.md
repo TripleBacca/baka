@@ -22,6 +22,7 @@ end-to-end regression programs remain part of the acceptance criteria.
 | `ast_declarations.hh`, `ast_declarations.cc` | Interpret parser specifiers/declarators using the current scoped symbol table |
 | `aggregates.hh`, `aggregates.cc` | Register aggregate definitions, signatures, inheritance and layout |
 | `expressions.hh`, `expressions.cc` | Expression types, constants, conversion validation, calls and initializer rules |
+| `overloads.cc` | Count filtering, exact-first overload selection and converting-constructor viability |
 | `conversions.cc` | Materialize checked implicit conversions and compound computations on AST edges |
 | `semantic_analyzer.hh`, `semantic_analyzer.cc` | Public phase API, saved contexts, service construction and orchestration |
 | `registration.cc` | Top-level registration, callable/member signatures, declaration/body collection |
@@ -253,6 +254,14 @@ inherit declaration defaults merely because their signature is equal.
 ## Current language policies and limits
 
 - Target layout is fixed LP64; target selection is not implemented.
+- Successful `Types::finishDefinition` stores size, alignment, member offsets and
+  base offset in `Type::objectLayout`. Its offset vector follows `Type::members`;
+  static/type/function/special members have no instance offset. Completed records
+  cannot change storage shape. `layout()` reuses this metadata, including through
+  const aliases, and never mutates the type during read-only checks. Failed or
+  forward definitions have no stored layout, so dependency completion can be
+  retried without retaining stale incomplete results. IR copies these offsets
+  into its owned types rather than asking semantics to walk members repeatedly.
 - Explicit array bounds must be positive integral constants; VLAs are unsupported.
   Omitted bounds are supported where parameter adjustment or initialization supplies
   their meaning, and final object storage must be complete.
@@ -303,7 +312,7 @@ carry conversions. Original work results remain available for final diagnostics.
 Every conversion exposes its operand, source/destination `TypeId`, conversion kind,
 source span and annotated rvalue result. Kinds distinguish lvalue loads,
 array/function decay, integral promotion, numeric conversion, boolean testing,
-null-to-pointer, pointer conversion and pointer qualification. Explicit source
+null-to-pointer, pointer conversion, pointer qualification and constructor conversion. Explicit source
 casts remain `CastFactorNode`. No redundant same-type numeric cast is emitted.
 
 For example `double d = s + 1;` with `short s` receives a load and promotion on
@@ -337,6 +346,44 @@ The new nodes use the parser's shared `ASTNodeArena` allocation convention; they
 are not owned by the checker, and their type IDs require its type arena to remain
 alive. See [IR_READINESS.md](IR_READINESS.md) for the lowering boundary and gaps.
 
+
+## Overload resolution
+
+`overloads.cc` shares one selection algorithm between ordinary calls and explicit
+constructor calls. Filter by required argument count (including defaults) and
+variadic capacity, then collapse repeated declarations by callable identity.
+Canonical type IDs provide the existing equivalence rules; aliases and by-value
+top-level const do not distinguish arguments, while pointee qualification does.
+
+First collect candidates matching every supplied argument exactly. Select the
+unique match, diagnose multiple matches, or continue if none match. Defaults are
+not supplied arguments and never improve a match. Ellipsis operands have no
+parameter type, so a call supplying them enters conversion matching. With no
+ellipsis operands, `f(int)` and `f(int,...)` can both match exactly and are
+ambiguous under this policy.
+
+Conversion matching accepts the existing standard implicit conversions (including
+arithmetic, qualification addition, null pointers and compatible/derived pointers)
+and a viable converting constructor for an aggregate parameter. Select only a
+sole viable candidate. There is no conversion-category preference, promotion
+preference, per-argument ranking or rank sum. Multiple viable candidates, or an
+ambiguous required constructor conversion, diagnose ambiguity.
+
+A converting constructor has a typed first parameter and accepts one supplied
+argument; trailing defaults are permitted. Its own argument can use standard
+conversions, but cannot invoke another converting constructor. An exact function
+match is selected before probing constructor conversions in other candidates.
+This call-argument policy does not add constructor conversions to assignment or
+return checking.
+
+`ConstructorConversion` is an explicit implicit-cast AST node. It retains the
+selected constructor signature, owner and member index with `Construction=true`.
+Its operand already carries the checked conversion to the constructor's first
+parameter. The call's supplied argument count and nesting remain unchanged;
+constructor/function defaults remain on their declarations for IR expansion.
+`conversion_tests.cc` checks these annotations and repeated-declaration identity;
+IR fixture `45_overload_conversions` executes direct, indirect and member calls
+with constructor defaults and destruction.
 
 ## Printed control-flow identities
 

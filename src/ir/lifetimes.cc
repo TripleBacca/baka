@@ -250,9 +250,9 @@ namespace baka::ir {
         }
         const auto source = semanticType(id);
         const auto& record = Analyzer.types().get(source);
-        const auto layout = Analyzer.types().layout(source);
         for (const auto& child : Analyzer.types().subobjects(source)) {
-            auto offset = child.memberIndex ? layout.layout.offsets.at(*child.memberIndex) : layout.layout.baseOffset;
+            auto offset =
+                child.memberIndex ? Result.type(id).memberOffsets.at(*child.memberIndex) : Result.type(id).baseOffset;
             auto type = importType(child.type);
             auto address =
                 emitValue(Opcode::AddressOffset, Result.pointer(type), destination, integer(integerType(), *offset));
@@ -361,6 +361,9 @@ namespace baka::ir {
                        comma && comma->getExpressions().size() == 1) {
                 expression = comma->getExpressions().front();
             } else if (auto* cast = dynamic_cast<const types::ImplicitCastNode*>(expression)) {
+                if (cast->getConversionKind() == types::ImplicitConversionKind::ConstructorConversion) {
+                    return expression;
+                }
                 expression = cast->getOperand();
             } else {
                 return expression;

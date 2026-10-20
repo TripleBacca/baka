@@ -116,7 +116,14 @@ functions and records. Text examples are `i32`, `u64`, `u1` (bool), `f32`, `f64`
 print semantic size and alignment; incomplete forward records print `opaque`.
 Owned completeness flags distinguish incomplete types from complete empty records.
 Sizes/offsets come from the existing fixed
-LP64 layout; pointers are 8 bytes. The module retains size/alignment on types.
+LP64 layout; pointers are 8 bytes. Semantic `Type::objectLayout` is computed once
+when a definition successfully completes, with no lazy writes during later passes.
+The IR type owns size/alignment, `memberOffsets` (indexed like semantic members,
+with no offset for static/type/function/special declarations), and `baseOffset`.
+Field addressing, inheritance adjustments, aggregate initialization and lifetime
+lowering read these stored offsets; they do not recompute aggregate layouts.
+The compatibility `Types::layout()` query also reuses completed record metadata.
+Forward and failed definitions retain no layout until completion succeeds.
 Const qualification is erased after semantic checking; qualification-only casts
 therefore need no runtime instruction. Readonly string literals retain a storage
 hint. Runtime-initialized const source objects print `readonly-after-init`:
@@ -326,6 +333,14 @@ with a first `this` pointer and a void result. Constructor parameters follow
 Defaults come from the selected constructor's checked parameter AST, and ordinary
 argument evaluation/conversion rules apply. No semantic table or AST is changed.
 
+Implicit aggregate argument conversions arrive as
+`ImplicitCastNode(ConstructorConversion)` with the selected constructor metadata.
+They share explicit construction lowering, including trailing default arguments,
+aggregate snapshots and temporary cleanup/parameter ownership transfer. Overload
+selection is exact-first, then sole viable conversion with no ranking; IR never
+reselects an overload. Fixture `45_overload_conversions` checks execution through
+direct, indirect, instance, static and function-pointer-field calls.
+
 Synthesized default constructors initialize bases first, then instance members
 in declaration order. Explicit constructors get the same prologue before their
 user body. Default member initializers execute with the destination object's
@@ -468,9 +483,9 @@ clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc
 
 - `cmake -S src -B build -DBUILD_TESTING=ON` and
   `cmake --build build --parallel 2`: passed.
-- `./custom_test_hook`: **400 passed, 0 failed**, including 96 IR checks
-  (44 positive goldens, 4 negative diagnostics, 48 structural scenarios).
-- `ctest --test-dir build --output-on-failure`: **68/68 passed**.
+- `./custom_test_hook`: **427 passed, 0 failed**, including 98 IR checks
+  (45 positive goldens, 4 negative diagnostics, 49 structural scenarios).
+- `ctest --test-dir build --output-on-failure`: **71/71 passed**.
 - `python3 -B semantic_audit/teammate_a/run.py --compiler ./build/baka`:
   **17/17 passed**; the runner's pre-existing aggregate-shadow exclusion remains.
 - `clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc`: passed.

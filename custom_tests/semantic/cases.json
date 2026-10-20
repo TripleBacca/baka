@@ -935,5 +935,218 @@
     "directory": "../ir",
     "exit": 0,
     "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_exact_preference.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_alias_const_exact.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_overload_promotion_preference.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 37,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_rank_sum.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_qualification_arithmetic.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 35,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_null_arithmetic.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_no_viable.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "no viable overload"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_drop_const.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 41,
+        "message": "no viable overload"
+      }
+    ]
+  },
+  {
+    "file": "valid_overload_pointer_conversions.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_repeated_defaults.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_default_exact.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_overload_default_exact_ambiguity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_default_empty_ambiguity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_variadic_exact_ambiguity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "valid_overload_constructor_argument.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_constructor_exact.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "valid_overload_exact_ignores_constructor_ambiguity.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_overload_two_aggregate_conversions.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_aggregate_arithmetic.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_ambiguous_constructor_conversion.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 37,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "invalid_overload_constructor_chain.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 2,
+        "column": 23,
+        "message": "no viable overload"
+      }
+    ]
+  },
+  {
+    "file": "invalid_constructor_numeric_ambiguity.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC",
+    "diagnostics": [
+      {
+        "line": 1,
+        "column": 50,
+        "message": "ambiguous overload resolution"
+      }
+    ]
+  },
+  {
+    "file": "valid_overload_constructor_pointer.cpp",
+    "exit": 0,
+    "diagnostic_stage": null
   }
 ]

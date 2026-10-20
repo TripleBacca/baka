@@ -71,6 +71,12 @@ int main(int argc, char** argv) {
             "class Base{int x=2;};class Member{int y=3;};"
             "class A:Base{Member member;A(int n=4){x=n;}~A(){}};"
             "int main(){A a=A();return a.x;}";
+        else if (scenario == "overloads") source =
+            "class A{int value;A(int n,int extra=2){value=n+extra;}};"
+            "int converted(A value){return value.value;}"
+            "int exact(int n){return n;}int exact(double n){return 100;}"
+            "int repeated(int n=4);int repeated(int n);int repeated(int n){return n;}"
+            "int main(){short value=1;converted(value);int r=repeated();return exact(1);}";
         else throw std::runtime_error("unknown conversion scenario");
         driver::Gctx::AttachLineIndex(std::make_shared<base::LineIndex>(source));
         auto tokens = lexer::Tokenize(source);
@@ -229,6 +235,32 @@ int main(int argc, char** argv) {
             auto layout = analyzer.types().layout({info.MemberOwner});
             require(receiver && destructor && layout && layout.layout.baseOffset && record.base.value,
                     "receiver, destructor body or base layout is missing");
+        }
+        if (scenario == "overloads") {
+            auto* call = as<FunctionCallPostfixExpr>(statement(block, 1));
+            require(call && call->semanticInfo().Symbol && call->semanticInfo().CallSignature,
+                    "converted call lost its selected function");
+            auto* arguments = dynamic_cast<CommaExpressionNode*>(call->getArguments());
+            require(arguments && arguments->getExpressions().size() == 1, "call argument nesting changed");
+            auto* conversion = dynamic_cast<ImplicitCastNode*>(arguments->getExpressions().front());
+            require(conversion && conversion->getConversionKind() == K::ConstructorConversion,
+                    "aggregate conversion was not represented as an implicit AST node");
+            const auto info = conversion->semanticInfo();
+            require(info.Construction && info.MemberOwner && info.MemberIndex && info.CallSignature,
+                    "implicit construction lost its selected constructor");
+            const auto& constructor = analyzer.types().get({info.MemberOwner}).members.at(info.MemberIndex - 1);
+            require(constructor.isConstructor && constructor.type.value == info.CallSignature && constructor.minimumArity == 1,
+                    "wrong converting constructor/default arity selected");
+            require(casts(conversion->getOperand(), K::IntegralPromotion).size() == 1,
+                    "constructor parameter conversion was omitted");
+            auto* selected = as<FunctionCallPostfixExpr>(originalReturn->getExpression());
+            require(selected && analyzer.types().get({selected->semanticInfo().CallSignature}).parameters.front().value == intType,
+                    "exact overload did not take precedence over arithmetic conversion");
+            auto* repeated = as<FunctionCallPostfixExpr>(dynamic_cast<InitializerNode*>(declaration(block, 2)->getInitializer())->expressions().front());
+            const auto& symbol = analyzer.symbols().get({repeated->semanticInfo().Symbol});
+            require(symbol.declarations.size() == 3 && symbol.defaultArguments.size() == 1 && symbol.defaultArguments[0],
+                    "compatible redeclarations/default argument were not retained as one candidate");
+            require(casts(call->getCallee(), K::FunctionToPointer).size() == 1, "direct callee decay was lost");
         }
         for (const auto& item : block->getStatements()) std::visit([&](auto* itemNode) {
             ASTNode* owner = itemNode;
