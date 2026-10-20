@@ -833,5 +833,107 @@
     "file": "invalid_pointer_to_const_array_write.cpp",
     "exit": 1,
     "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_constructor_argument.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_constructor_excess_arguments.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_constructor_return_value.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_destructor_return_value.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "invalid_default_member_conversion.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "33_constructors.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "34_subobject_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "35_static_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "36_cleanup_jumps.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "37_temporary_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "38_array_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "39_goto_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "40_for_initializer_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "41_aggregate_ownership.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "42_default_member_lifetimes.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "43_construction_destinations.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
+  },
+  {
+    "file": "invalid_nontrivial_union.cpp",
+    "exit": 1,
+    "diagnostic_stage": "SEMANTIC"
+  },
+  {
+    "file": "44_registration_before_temporaries.cpp",
+    "directory": "../ir",
+    "exit": 0,
+    "diagnostic_stage": null
   }
 ]

@@ -102,6 +102,10 @@ namespace baka::ir {
         whole = [&](TypeId type, uint64_t offset, const types::ExpressionNode* expression) {
             expression = Transparent(expression);
             const auto info = Result.type(type);
+            if (!expression && info.kind == TypeKind::Record && needsConstruction(type)) {
+                result.push_back({offset, type, nullptr});
+                return;
+            }
             if (info.kind == TypeKind::Record && expression &&
                 Result.type(this->type(expression)).kind == TypeKind::Record &&
                 !dynamic_cast<const types::InitializerNode*>(expression)) {
@@ -119,6 +123,21 @@ namespace baka::ir {
                 return;
             }
             auto* list = dynamic_cast<const types::InitializerNode*>(expression);
+            if (info.kind == TypeKind::Record && list) {
+                const auto& record = Analyzer.types().get(semanticType(type));
+                bool constructors = false;
+                for (const auto& member : record.members) {
+                    constructors |= member.isConstructor;
+                }
+                if (constructors) {
+                    if (!list->expressions().empty()) {
+                        fail(list,
+                             "braced class construction lacks selected-constructor metadata; use Type(arguments)");
+                    }
+                    result.push_back({offset, type, nullptr});
+                    return;
+                }
+            }
             auto stringExpression = expression;
             if (list && list->expressions().size() == 1) {
                 stringExpression = list->expressions().front();
@@ -134,12 +153,37 @@ namespace baka::ir {
             }
             auto children = subobjects(type);
             size_t position = 0;
+            size_t childIndex = 0;
             for (auto [child, childOffset] : children) {
-                if (list) {
+                const types::ExpressionNode* fallback = nullptr;
+                if (info.kind == TypeKind::Record) {
+                    auto source = semanticType(type);
+                    const auto sourceChildren = Analyzer.types().subobjects(source);
+                    if (childIndex < sourceChildren.size() && sourceChildren[childIndex].memberIndex) {
+                        const auto& member =
+                            Analyzer.types().get(source).members.at(*sourceChildren[childIndex].memberIndex);
+                        auto* declaration = dynamic_cast<const types::SingleDeclarationNode*>(
+                            static_cast<const types::ASTNode*>(member.source));
+                        if (declaration) {
+                            fallback = declaration->getInitializer();
+                        }
+                    }
+                }
+                if (list && position < list->expressions().size()) {
                     consume(child, offset + childOffset, list->expressions(), position);
                 } else {
-                    whole(child, offset + childOffset, nullptr);
+                    auto start = result.size();
+                    whole(child, offset + childOffset, fallback);
+                    if (fallback) {
+                        for (size_t index = start; index < result.size(); ++index) {
+                            if (!result[index].owner) {
+                                result[index].owner = type;
+                                result[index].receiverOffset = offset;
+                            }
+                        }
+                    }
                 }
+                ++childIndex;
             }
             if (list && position != list->expressions().size()) {
                 fail(list, "aggregate initializer could not be lowered completely");
@@ -151,6 +195,9 @@ namespace baka::ir {
 
     void Lowerer::initialize(Operand destination, TypeId target, const types::ExpressionNode* initializer, bool zero) {
         if (!initializer && !zero) {
+            if (needsConstruction(target)) {
+                construct(destination, target);
+            }
             return;
         }
         for (const auto& entry : initializerPlan(target, initializer)) {
@@ -167,8 +214,34 @@ namespace baka::ir {
                 continue;
             }
             Operand initial;
+            if (info.kind == TypeKind::Record && !entry.expression) {
+                auto location = emitValue(Opcode::AddressOffset, Result.pointer(entry.type), destination,
+                                          integer(integerType(), entry.offset));
+                construct(location, entry.type);
+                continue;
+            }
             if (entry.expression) {
+                auto previousSelf = SelfOverride;
+                auto previousOwner = CurrentOwner;
+                if (BuildingExpression && entry.owner) {
+                    SelfOverride = emitValue(Opcode::AddressOffset, Result.pointer(entry.owner), destination,
+                                             integer(integerType(), entry.receiverOffset));
+                    CurrentOwner = semanticType(entry.owner);
+                }
+                if (BuildingExpression && info.kind == TypeKind::Record) {
+                    auto location = destination;
+                    if (entry.offset || Result.type(location.type).element != entry.type) {
+                        location = emitValue(Opcode::AddressOffset, Result.pointer(entry.type), destination,
+                                             integer(integerType(), entry.offset));
+                    }
+                    DirectDestinations[valueRoot(entry.expression)] = location;
+                }
                 initial = cast(value(entry.expression), entry.type);
+                if (BuildingExpression && info.kind == TypeKind::Record) {
+                    DirectDestinations.erase(valueRoot(entry.expression));
+                }
+                SelfOverride = previousSelf;
+                CurrentOwner = previousOwner;
             } else if (info.kind == TypeKind::Floating) {
                 initial = {OperandKind::Floating, entry.type, 0, 0, 0};
             } else {
@@ -185,6 +258,10 @@ namespace baka::ir {
 
     void Lowerer::declarations(const types::DeclarationList* list, bool global) {
         for (auto* declaration : list->getDeclarations()) {
+            const auto span = declaration->getSourceSpan();
+            if (span.Valid) {
+                Source = {span.Line, span.Col};
+            }
             auto symbol = declaration->semanticInfo().Symbol;
             if (!symbol) {
                 fail(declaration, "declaration lacks a resolved symbol");
@@ -194,7 +271,8 @@ namespace baka::ir {
                 continue;
             }
             if (global || entry.isStatic) {
-                if (!declaration->getInitializer()) {
+                if (!declaration->getInitializer() && !needsConstruction(importType(entry.type)) &&
+                    !needsDestruction(importType(entry.type))) {
                     continue;
                 }
                 for (auto& object : Result.globals) {
@@ -210,6 +288,11 @@ namespace baka::ir {
                 }
             } else {
                 initialize(object(symbol), importType(entry.type), declaration->getInitializer());
+                if (auto found = LocalCleanups.find(symbol); found != LocalCleanups.end()) {
+                    emit(Opcode::Copy, found->second.active, integer(found->second.active.type, 1));
+                    ActiveCleanups.push_back(symbol);
+                }
+                finishTemps();
             }
         }
     }

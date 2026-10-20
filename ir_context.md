@@ -40,6 +40,7 @@ optimization flags or third-party dependencies are introduced.
 | `statements.cc` | Second pass: connect regions and lower statements/control flow |
 | `initializers.cc` | Scalar/aggregate initializer planning and stores |
 | `runtime_initialization.cc` | Ordered global startup function and guarded local statics |
+| `lifetimes.cc` | Constructor/destructor work items, member initialization, cleanup and ownership |
 | `cfg.cc` | Third pass: predecessor/successor construction; flat linearization |
 | `verifier.cc` | Fourth pass: read-only structural/type/temporary verification |
 | `printer.cc` | Deterministic textual typed quadruples |
@@ -119,7 +120,8 @@ LP64 layout; pointers are 8 bytes. The module retains size/alignment on types.
 Const qualification is erased after semantic checking; qualification-only casts
 therefore need no runtime instruction. Readonly string literals retain a storage
 hint. Runtime-initialized const source objects print `readonly-after-init`:
-backends must permit their initialization writes. No semantic type interning or
+this describes source-level constness, not permission to freeze their physical
+storage. Backends must permit initialization and destructor-body writes. No semantic type interning or
 symbol mutation occurs.
 
 Variables have mutable memory storage. Loads produce temporaries; assignment
@@ -269,8 +271,7 @@ initialization materializes a captured derived value in `.slice` storage and
 loads its base subobject using the semantic layout offset. Conditional record
 values use typed mutable temporaries and the existing branch/join pattern.
 
-These value operations currently apply to records without lifetime machinery;
-constructor/destructor and cleanup implementation remains separate work. The
+These value operations also apply to records with lifetime machinery. The
 test-only interpreter represents record values as independent byte vectors, so
 the tests verify value independence rather than accidentally sharing addresses.
 The authorized frontend dereference correction permits `return *p` for a record
@@ -299,8 +300,8 @@ guard is marked complete afterward. Skipped branches do not initialize their
 statics, loop visits and later calls do not repeat initialization. Globals may
 call functions containing local statics during startup. Guards are ordinary
 single-threaded TAC storage: threads, exceptions and recursive initialization of
-the same static are unsupported. No constructor cleanup is inferred here while
-constructor/destructor lowering remains pending.
+the same static are unsupported. Completed constructions register destructor
+callbacks, as described below.
 
 Source objects with explicit initializers have `runtimeInitialized = true` and
 no pre-filled initializer data. The IR model still supports sparse constant data
@@ -312,16 +313,82 @@ order. Nested braces, brace elision and omitted scalar elements are handled;
 omitted elements receive typed zero. Union initialization uses its first
 instance member. Uninitialized automatic objects retain the frontend's
 uninitialized-storage behavior; lowering does not insert unsolicited checks.
-Record copying is supported for automatic and static objects without lifetime
-machinery. Runtime scalar arithmetic/conversions use the ordinary expression
+Record copying is supported for automatic and static objects. Runtime scalar arithmetic/conversions use the ordinary expression
 emitter, including wrapping semantics and explicit casts; constant initializer
 expressions are not folded unless the caller explicitly requests optimization.
+
+### Constructors, destructors and lifetime edges
+
+Lifetime registration imports the semantic record members before emitting any
+body. Every explicit constructor/destructor gets an owned synthetic IR function
+with a first `this` pointer and a void result. Constructor parameters follow
+`this`; semantic `MemberOwner`/`MemberIndex` select explicit construction calls.
+Defaults come from the selected constructor's checked parameter AST, and ordinary
+argument evaluation/conversion rules apply. No semantic table or AST is changed.
+
+Synthesized default constructors initialize bases first, then instance members
+in declaration order. Explicit constructors get the same prologue before their
+user body. Default member initializers execute with the destination object's
+receiver, including references to already initialized fields. Arrays construct
+elements in increasing index order. Missing scalar default initializers leave
+automatic storage uninitialized. Explicit value initialization `A()` through an
+implicit default constructor first zeroes scalar subobjects, then applies default
+member initializers. Aggregate braces use explicit supplied fields,
+then default member initializers or zero for omitted fields. Each use of a
+shared default-member AST gets a separate expression region and receiver context.
+
+Destructors execute the user body, then destroy instance members in reverse order
+and finally the base. Explicit `return;` follows the same epilogue. Records with
+destructible subobjects get synthesized destructors even without an explicit
+destructor. Array destructor wrappers visit elements in reverse index order.
+
+Automatic objects/parameters with nontrivial construction or destruction have a lexical cleanup entry and
+a mutable boolean temporary initialized to false at function entry. Completion
+of initialization marks it true. Cleanup branches on the flag, clears it, and
+calls the destructor. This separates scope membership from whether construction
+actually ran on the current path. Normal block exits destroy objects in reverse
+order. Returns capture their value before destroying locals/parameters. Loop and
+switch jumps destroy exactly the scopes they leave. A for-loop's shared exit
+destroys its initializer object; continue preserves that object. Resolved semantic
+target IDs handle named jumps. Goto target planning records live lexical objects
+at each label, including backward targets; jumping into an uninitialized
+nontrivial lifetime is diagnosed even if the type has no destructor. Switch
+dispatch gets the equivalent check.
+
+Construction prvalues have storage and full-expression cleanup flags. Initializer
+destination hints construct directly into variables, members and selected ternary
+arms, avoiding a second destructor for a copied temporary. Otherwise a temporary
+is destroyed after the enclosing store/expression/condition finishes. Conditional
+arms have separate flags, so only constructed objects are destroyed. Comma
+expressions preserve all temporary lifetimes until full-expression end. Method
+calls on prvalues reuse their object storage, so destructor bodies see mutations
+made by the method. Same-record casts and mixed lvalue/prvalue conditionals create
+the required temporary copies. Passing a prvalue by value or returning it transfers
+cleanup ownership; ordinary lvalue copies still create independent object values.
+Early TAC retains aggregate-valued `call`/`ret`; machine ABI lowering remains later.
+
+Static-duration objects register cleanup after initialization completes:
+
+```text
+(register_dtor, _, @A.dtor.ID:ptr<fn(ptr<record#N(A)>)->void>, &object.ID:ptr<record#N(A)>)
+```
+
+The runtime must push each `(callable, receiver)` and invoke callbacks in reverse
+registration order after entry returns. This handles a local static first
+constructed during another global's initialization correctly; fixed declaration
+order finalizer lists would not. Registration follows object construction but
+precedes full-expression temporary destruction: a temporary's destructor may
+itself cause another static object to be constructed. A local-static guard
+prevents repeat registration.
+The test executor drains this stack and exposes post-shutdown globals for checking
+destructor effects. The verifier checks callback signature and receiver types.
+Registration is effectful and survives all optimization passes.
 
 ### Verifier and optimization safety
 
 Verification checks owned types/widths, object/function/temporary identities,
 operand/instruction types, scalar memory operations, call argument indices and
-counts/signatures, returns, valid branch destinations, terminators and CFG
+counts/signatures, returns, destructor-registration signatures, valid branch destinations, terminators and CFG
 symmetry. A forward must-definition analysis intersects predecessor definition
 sets, so a mutable temporary used at a join must be defined on every reachable
 incoming path. Object-memory initialization is not a verifier requirement.
@@ -341,18 +408,19 @@ It makes no aliasing assumptions and never reorders instructions.
 
 ## Current limitations
 
-- Constructor/destructor declarations, construction expressions, object cleanup
-  and default member initialization are explicitly diagnosed. This includes
-  unused constructor/destructor declarations; no empty stub is silently emitted.
-- Aggregate parameters/returns, assignment, copy initialization and same-type
-  casts are supported for records without lifetime machinery. Constructors,
-  destructors and cleanup remain pending; the historical milestone exclusions
-  are superseded by the requested feature expansion.
+- Nonempty brace initialization of a class with explicit constructors lacks
+  selected-constructor metadata in the checked AST. IR diagnoses it; use
+  `A value = A(arguments)` instead. Empty braces can select a default constructor.
+- Nontrivial union members are rejected by the frontend; IR also guards against
+  missing active-member metadata. Cleanup does not guess the active union field.
+- The parser cannot start a standalone expression statement with `A(arguments)`
+  when `A` is recognized as a type. `0, A(arguments);` exercises a discarded
+  construction through the existing expression grammar. No parser behavior was changed.
 - Omitted function and method arguments are expanded from the selected semantic
   symbol's checked default expressions. They retain declaration-site name binding
   and are evaluated at each call, after explicit arguments, from left to right.
   This also supports defaults supplied by an earlier function declaration.
-- No cleanup edges, exception model, ABI/register allocation, assembly emission,
+- No exception model, ABI/register allocation, assembly emission,
   native execution, linker or machine calling convention is implemented.
   Receiver-first calls are an IR contract for a later backend to implement.
 - Address-of arrays preserves the entire array type: `&a` is pointer-to-array,
@@ -360,7 +428,7 @@ It makes no aliasing assumptions and never reorders instructions.
   a pointer-to-array preserves its array lvalue for sizeof and address-of; indexing
   performs value-context decay as needed. Pointer arithmetic scales by the full
   array size. This frontend bug was fixed in a follow-up to the initial milestone.
-- Local aggregate declarations, new/delete, references, namespaces and other
+- Local aggregate type definitions, new/delete, references, namespaces and other
   syntax rejected by the current frontend cannot be enabled by `--ir`.
 - The existing GCC build is the tested compiler configuration. Existing AST
   header portability issues with Clang were not repaired in this IR work.
@@ -400,9 +468,9 @@ clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc
 
 - `cmake -S src -B build -DBUILD_TESTING=ON` and
   `cmake --build build --parallel 2`: passed.
-- `./custom_test_hook`: **356 passed, 0 failed**, including 71 IR checks
-  (32 positive goldens, 3 negative diagnostics, 36 structural scenarios).
-- `ctest --test-dir build --output-on-failure`: **55/55 passed**.
+- `./custom_test_hook`: **400 passed, 0 failed**, including 96 IR checks
+  (44 positive goldens, 4 negative diagnostics, 48 structural scenarios).
+- `ctest --test-dir build --output-on-failure`: **68/68 passed**.
 - `python3 -B semantic_audit/teammate_a/run.py --compiler ./build/baka`:
   **17/17 passed**; the runner's pre-existing aggregate-shadow exclusion remains.
 - `clang-format --dry-run --Werror src/ir/*.hh src/ir/*.cc`: passed.

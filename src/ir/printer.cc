@@ -138,6 +138,8 @@ namespace baka::ir {
                 return "arg";
             case Opcode::Call:
                 return "call";
+            case Opcode::RegisterDestructor:
+                return "register_dtor";
             case Opcode::Jump:
                 return "jump";
             case Opcode::Branch:
