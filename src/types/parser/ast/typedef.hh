@@ -15,6 +15,7 @@ namespace types {
         std::vector<DeclarationIdentifierNode*> Variables;
 
     public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTypeName()); for (auto* child : getVariables()) visit(child); }
         TypedefNode(IdentifierNode* BoundReturnType, TypeSpecifierModifier Modifier, bool isConst) :
         isConst(isConst), Modifier(Modifier), BoundReturnType(BoundReturnType), Variables() {}
 

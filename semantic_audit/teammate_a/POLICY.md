@@ -1,0 +1,49 @@
+# Teammate A: type and declaration contract
+
+These are explicit implementation choices for the existing C++-like language. They do not claim ISO C/C++ conformance. B/C should consume these choices or coordinate a change here before changing behavior.
+
+## Target and identity (A01/A02)
+
+The target is LP64: 8-bit bytes; signed plain char; char/bool storage 1 byte, short 2, int/float/enum 4, long/double/pointers 8. Alignment equals the primitive storage size. Bool has one value bit. Integer ranks are bool 0, char 1, short 2, int 3, long 4; unsigned counterparts share rank. Float/double use arithmetic ranks 5/6. The floating representation contract is IEEE binary32/binary64; B owns literal rounding and target arithmetic. `sizeof` returns unsigned long. `Types::arithmetic`, `layout`, and `sizeType` expose this information without consulting the host ABI.
+
+Types use canonical IDs for builtin/derived types and nominal IDs for struct/class/union/enum declarations. Aliases retain the underlying ID, including completion state. Const is a qualification, not a new aggregate identity. Const-qualified array aliases qualify their elements. Error is ID zero; services never substitute int for an unavailable semantic result. IDs and arena object references remain stable for the service lifetime.
+
+## Names and declarations (A03–A08)
+
+Types, aliases, objects, enumerators, and functions share an ordinary lexical namespace. Struct/class spellings are interchangeable for the same nominal declaration; enum and union are distinct. Lookup stops at the first scope containing a name. An inner scope may hide an outer name, including a type name. Goto/loop label namespaces belong to C and are separate from this API.
+
+Declarations are processed in source order. Resolve the base specifier once, evaluate/construct each declarator (including its bounds), insert its symbol, then check its initializer before visiting the next declarator. `ASTDeclarations::declarationList` implements this ordering. Function predeclaration must never insert later local objects. Function parameters and the outer function body share one Function scope; nested blocks create new scopes. Parameter signature adjustment and parameter-object type are separate: scalar `const int x` keeps const on the object, but its signature parameter is int.
+
+An object declaration allocates storage unless the caller explicitly asks for a type-only/prototype check. Ordinary file-scope objects are definitions with external linkage; file-scope static objects/functions have internal linkage; automatic and local static objects have no linkage. Local static storage is recorded separately. Compatible function prototypes and typedef redeclarations are allowed, without requiring a local external definition. Repeated local declarations, conflicting kinds/types/linkage, return-type-only overloads, and repeated definitions are errors. Supported source storage syntax is `static`; no extern/tentative-definition extension is inferred. `Declaration` allows C to record explicit definition/linkage state.
+
+`unsigned` applies only to direct char/short/int/long spellings, not aliases, bool, floats, or aggregates. Repeated/invalid storage/type qualifiers are parser diagnostics. Parser recovery may create an error-marked AST placeholder; C must stop after parser errors and skip error-marked nodes.
+
+## Derived types, signatures, and arrays (A09–A12/A20/A21)
+
+Declarator construction applies pointer prefixes, reversed array suffixes, function suffixes, then the parenthesized inner declarator. Functions cannot return arrays/functions, and arrays cannot contain void/functions. Array element completeness is checked even below pointers; an incomplete aggregate pointer itself is legal. Prototypes may mention incomplete by-value aggregate parameters/results; definitions require complete storage types. Function bodies attached to object declarators are invalid.
+
+Function overloading uses adjusted parameter types and the variadic flag. Return types do not distinguish overloads. Array/function parameters adjust to pointers; top-level parameter const does not affect signatures, while pointee const and inner array bounds remain significant. Empty parameter lists mean exactly zero parameters. B owns default arguments, call ranking, and variadic promotions. Instance methods may additionally overload on receiver constness; static/instance methods with otherwise identical signatures conflict.
+
+Only positive, integral constant array bounds are supported. Runtime bounds and variably modified types are not represented in the type model. Bounds are either Constant or Unspecified; a nonconstant bound is rejected before an array type is constructed. B must distinguish nonconstant/floating/out-of-range bounds from valid integral constants before returning `IntegerResult::Value`; `ConstantState::Nonconstant` records a nonconstant expression without creating a runtime-bound type.
+
+An omitted bound is retained as Unspecified. It is legal in array typedefs, parameter syntax before adjustment, and initializers where B infers/completes the bound. B calls `Symbols::completeObject` after insertion and before final storage validation. Uncompleted storage objects are errors. Flexible array members, zero-length arrays, bit-fields, and designated initialization are disabled. Parser acceptance of `[]` does not enable flexible array members: `Declarations::member` rejects their incomplete storage type. C must stop on semantic diagnostics.
+
+Existing exclusions continue: no reference declarators, unnamed parameters, signed keyword, const-pointer spelling, multiple inheritance, access modifiers, namespaces/scope resolution, or enum class. Long-long specifier sequences and the special `(void)` parameter spelling are not added here; use long and `()` in this subset. New/delete remain B's explicitly unsupported syntax unless B deliberately expands the policy.
+
+## Aggregates, lifetime, and layout (A13–A19/A23)
+
+Aggregate states are Forward, Defining, Complete. Failed definitions stay Defining and cannot masquerade as complete types. Anonymous aggregates get distinct nominal IDs. Recursive by-value containment and incomplete by-value members are invalid; self pointers are valid. All source members and special member declarations survive in order. Field/alias/method name collisions and duplicate signatures are rejected. Derived declarations hide base overload sets.
+
+Single public, nonvirtual inheritance requires a complete struct/class base. Cycles, union bases, and multiple bases are invalid. Base layout starts at offset zero; no vtables, virtual dispatch, empty-base optimization, bit-field packing, or tail-padding reuse. Fields are placed in source order with alignment padding; union instance fields overlap at zero; size is rounded to maximum alignment. Empty aggregates occupy one byte. Static members, methods, aliases, constructors, and destructors occupy no instance storage. Addition/multiplication/rounding overflow produces errors. Layout never evaluates an expression. Layout queries return Ready, Incomplete, or Error.
+
+Constructors overload on parameter signatures; destructors have no parameters and cannot be variadic. Constructors/destructors are never static or const methods; a constructor cannot take its own type by value. Without user constructors, default construction is implicit. This reference-free subset uses generated aggregate copy operations, recorded by `implicitCopyConstructor`, rather than C++ reference-form copy constructor syntax. These flags describe generated declarations; B must check their usability/deletion against base/member construction and initialization requirements before accepting a construction or copy. Implicit destruction exists when no destructor is declared; nontrivial construction/destruction propagates from bases and array/aggregate members. Nontrivial union instance members are rejected. Active-union-member management is unsupported.
+
+Construction traverses base first and then fields in declaration order; destruction reverses that sequence. `Types::subobjects` exposes this order. `Symbols::objectsLeaving` exposes automatic objects/parameters in reverse declaration order for ancestor-scope exits; it excludes static/global objects. C combines this with B's initialization records to determine cleanup and illegal lifetime entry. Union subobject lists describe alternatives, not an instruction to initialize/destroy every alternative; B/C must choose the active member.
+
+Member lookup supports dot/arrow, inherited lookup/hiding, const receiver propagation to instance fields, and static member access. `this` requires an instance context and points to the const-qualified receiver in a const method. Overload results are candidate indices; B selects a callable candidate and enforces const receiver call viability. Type names/special members cannot be used as ordinary field values.
+
+## Enums and library symbols (A17/A22)
+
+Enums are nominal, unscoped, signed 32-bit types. Enumerators enter the surrounding ordinary scope after their initializer is evaluated. Values default to zero then increment the previous value; duplicate *values* are allowed, duplicate names are not. Explicit initializers use B's required integral-constant evaluator in the live declaration-time environment. Unavailable evaluation, overflow, and a failed preceding implicit enumerator never produce fabricated valid values.
+
+`Symbols::installTypes` installs supported builtin type spellings. `installLibrary` explicitly installs only `int printf(const char*, ...)` and `int scanf(const char*, ...)`, with builtin symbol identities and protected signatures. B uses those identities for optional format checking. File APIs/FILE are not guessed: additional library declarations require an agreed signature and opaque type policy. Install these once in the global scope before program traversal.

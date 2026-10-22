@@ -51,46 +51,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     semantic
 )
 
-# Each semantic pass has a structural positive/negative test. The same target
-# uses the real lexer/parser and semantic library, so phase contracts are tested
-# independently of the command-line output format.
+# The stage runners use the same source fixtures as custom_test_hook.
 include(CTest)
 if(BUILD_TESTING)
-    add_executable(semantic_pass_tests ../custom_tests/semantic/pass_tests.cc)
-    target_link_libraries(semantic_pass_tests PRIVATE semantic lexer driver)
-    add_executable(semantic_conversion_tests ../custom_tests/semantic/conversion_tests.cc)
-    target_link_libraries(semantic_conversion_tests PRIVATE semantic lexer driver)
-    add_executable(semantic_member_call_tests ../custom_tests/semantic/member_call_tests.cc)
-    target_link_libraries(semantic_member_call_tests PRIVATE semantic lexer driver)
-    add_test(NAME semantic_member_calls COMMAND semantic_member_call_tests)
-    add_executable(semantic_layout_tests ../custom_tests/semantic/layout_tests.cc)
-    target_link_libraries(semantic_layout_tests PRIVATE semantic)
-    add_test(NAME semantic_stored_layout COMMAND semantic_layout_tests)
-    foreach(scenario numeric contexts calls compound pointers metadata array_address lifetimes overloads)
-        add_test(NAME semantic_conversions_${scenario} COMMAND semantic_conversion_tests ${scenario})
-    endforeach()
-    foreach(phase registration resolution annotation checks)
-        add_test(NAME semantic_${phase} COMMAND semantic_pass_tests ${phase})
-        add_test(NAME semantic_${phase}_error COMMAND semantic_pass_tests ${phase}_error)
-    endforeach()
-    add_test(NAME semantic_resolution_loop_targets COMMAND semantic_pass_tests resolution_loop_targets)
-    add_test(NAME semantic_resolution_this COMMAND semantic_pass_tests resolution_this)
-    add_test(NAME semantic_annotation_scoped_type COMMAND semantic_pass_tests annotation_scoped_type)
-endif()
-
-if(BUILD_TESTING)
-    add_executable(ir_pass_tests ../custom_tests/ir/pass_tests.cc)
-    target_link_libraries(ir_pass_tests PRIVATE ir lexer driver)
-    target_compile_definitions(ir_pass_tests PRIVATE IR_TEST_ROOT="${CMAKE_SOURCE_DIR}/../custom_tests/ir")
-    foreach(scenario 01_scalars 02_control 03_calls 04_arrays 05_sequence 06_switch
-                     07_globals 08_inheritance 09_returns 10_lvalues 11_wrap 12_arguments
-                     13_operators 14_labeled 15_once 16_constants 17_relocations 18_static_conversions 19_variadic 20_casts 21_mutation_conversions 22_forward_types 23_array_address 24_default_arguments
-                     25_aggregate_parameters 26_aggregate_returns 27_aggregate_copies 28_aggregate_layouts
-                     29_runtime_global_order 30_runtime_initializers 31_runtime_static_paths 32_runtime_startup_cfg
-                     33_constructors 34_subobject_lifetimes 35_static_lifetimes
-                     36_cleanup_jumps 37_temporary_lifetimes 38_array_lifetimes 39_goto_lifetimes 40_for_initializer_lifetimes
-                     41_aggregate_ownership 42_default_member_lifetimes 43_construction_destinations 44_registration_before_temporaries
-                     45_overload_conversions verifier cfg contracts optimization)
-        add_test(NAME ir_${scenario} COMMAND ir_pass_tests ${scenario})
-    endforeach()
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    add_executable(ir_execution_tests ../custom_tests/ir/execute.cc)
+    target_link_libraries(ir_execution_tests PRIVATE ir lexer driver)
+    add_test(NAME semantic COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/../custom_tests/semantic/run.py --compiler $<TARGET_FILE:baka>)
+    add_test(NAME ir COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_SOURCE_DIR}/../custom_tests/ir/run.py --compiler $<TARGET_FILE:baka>)
 endif()

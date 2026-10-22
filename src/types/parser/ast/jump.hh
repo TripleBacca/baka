@@ -14,12 +14,14 @@ namespace baka {
             ExpressionNode* Expr;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getExpression()); }
             ReturnStatementNode(ExpressionNode* expr) : Expr(expr) {
             }
 
             ExpressionNode* getExpression() const { return Expr; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expr); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -36,6 +38,7 @@ namespace baka {
             IdentifierNode* Label;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getLabel()); }
             GotoStatementNode(IdentifierNode* label) : Label(label) {
             }
 
@@ -57,6 +60,7 @@ namespace baka {
             IdentifierNode* Label;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getLabel()); }
             BreakStatementNode(IdentifierNode* label) : Label(label) {
             }
 
@@ -78,6 +82,7 @@ namespace baka {
             IdentifierNode* Label;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getLabel()); }
             ContinueStatementNode(IdentifierNode* label) : Label(label) {
             }
 

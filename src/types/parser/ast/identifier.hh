@@ -15,6 +15,7 @@ class IdentifierNode : public ASTNode {
     std::string ResolvedName;
     std::vector<uint32_t> Bindings;
 public:
+        void visitChildren(const NodeVisitor& visit) const override {  }
     IdentifierNode(std::string_view Name) : IdentifierName(Name) {}
 
     void Print(size_t Tabs = 0) const override {

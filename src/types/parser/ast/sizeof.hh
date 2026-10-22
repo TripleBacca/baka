@@ -12,6 +12,7 @@ namespace types {
 
     class SizeofNode : public ExpressionNode {
     public:
+        void visitChildren(const NodeVisitor& visit) const override { if (auto* type = std::get_if<SizeofTypeVariant>(&Payload)) { visit(type->Type); visit(type->AbstractDecl); } else visit(std::get<ExpressionNode*>(Payload)); }
 
         struct SizeofTypeVariant {
             TypeNode* Type;
@@ -27,6 +28,7 @@ namespace types {
         const std::variant<SizeofTypeVariant, ExpressionNode*>& getPayload() const { return Payload; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { if (auto* expr = std::get_if<ExpressionNode*>(&Payload)) *expr = rewrite(*expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { if (auto* expr = std::get_if<ExpressionNode*>(&Payload)) visit(*expr); }
 
             void Print(size_t Tabs = 0) const override
         {

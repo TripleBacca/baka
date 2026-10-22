@@ -28,6 +28,7 @@ namespace types {
         TypeSpecifierModifier Modifier = TypeSpecifierModifier::NONE;
 
     public:
+        void visitChildren(const NodeVisitor& visit) const override;
         FunctionNode(IdentifierNode* BindedReturnType, DeclarationIdentifierNode* funcType, StatementNode* body, bool IsStatic, bool IsConst, TypeSpecifierModifier modifier) :
             BoundReturnType(BindedReturnType), FuncType(funcType), Body(body), IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier) {
         }

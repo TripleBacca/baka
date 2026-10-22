@@ -1,0 +1,650 @@
+[
+  {
+    "name": "for_empty_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_empty_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_empty_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_empty_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_empty_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_empty_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_empty_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_empty_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_expression_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_expression_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_expression_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_expression_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_expression_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_expression_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_expression_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_expression_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_declaration_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_declaration_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_declaration_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_declaration_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_declaration_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_declaration_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "for_declaration_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true
+  },
+  {
+    "name": "for_declaration_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false
+  },
+  {
+    "name": "while_missing_separator",
+    "group": "loop_extension",
+    "note": "Missing separator before a while label must be rejected.",
+    "c_reference": false
+  },
+  {
+    "name": "do_missing_separator",
+    "group": "loop_extension",
+    "note": "Missing separator before a do-while label must be rejected.",
+    "c_reference": false
+  },
+  {
+    "name": "while_empty_label",
+    "group": "loop_extension",
+    "note": "A consumed label separator must require an identifier.",
+    "c_reference": false
+  },
+  {
+    "name": "do_empty_label",
+    "group": "loop_extension",
+    "note": "A consumed label separator must require an identifier.",
+    "c_reference": false
+  },
+  {
+    "name": "for_empty_label",
+    "group": "loop_extension",
+    "note": "A fourth-clause separator must require an identifier.",
+    "c_reference": false
+  },
+  {
+    "name": "while_multiple_labels",
+    "group": "loop_extension",
+    "note": "Only one optional label suffix should be accepted.",
+    "c_reference": false
+  },
+  {
+    "name": "while_numeric_label",
+    "group": "loop_extension",
+    "note": "Label suffix requires an identifier.",
+    "c_reference": false
+  },
+  {
+    "name": "do_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false
+  },
+  {
+    "name": "while_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false
+  },
+  {
+    "name": "for_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false
+  },
+  {
+    "name": "do_label_after_body",
+    "group": "loop_extension",
+    "note": "The trailing do label must be available while checking its earlier body.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_variable_same_name",
+    "group": "loop_extension",
+    "note": "Decide whether value identifiers and loop labels have independent namespaces.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_goto_same_name",
+    "group": "loop_extension",
+    "note": "Ordinary goto labels and loop labels need explicit namespace rules.",
+    "c_reference": false
+  },
+  {
+    "name": "goto_loop_label_only",
+    "group": "loop_extension",
+    "note": "A loop suffix must not implicitly define a goto destination.",
+    "c_reference": false
+  },
+  {
+    "name": "break_goto_label_only",
+    "group": "loop_extension",
+    "note": "An ordinary label must not implicitly define a named loop target.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_forward_sibling",
+    "group": "loop_extension",
+    "note": "Named jumps cannot target future sibling loops.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_exited_sibling",
+    "group": "loop_extension",
+    "note": "Named jumps cannot target completed sibling loops.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_other_function",
+    "group": "loop_extension",
+    "note": "Do not leak loop targets across functions.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_nested_function",
+    "group": "loop_extension",
+    "note": "Reset target stacks on function entry even if nested functions parse.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_reuse_siblings",
+    "group": "loop_extension",
+    "note": "Sibling label reuse should follow the chosen lexical label policy.",
+    "c_reference": false
+  },
+  {
+    "name": "loop_label_duplicate_nested",
+    "group": "loop_extension",
+    "note": "Duplicate active label rejection versus innermost shadowing needs a rule.",
+    "c_reference": false
+  },
+  {
+    "name": "continue_outer_for_from_switch",
+    "group": "loop_extension",
+    "note": "Named continue must select the outer for update, not switch exit.",
+    "c_reference": false
+  },
+  {
+    "name": "continue_outer_do",
+    "group": "loop_extension",
+    "note": "Named continue must select the outer do test.",
+    "c_reference": false
+  },
+  {
+    "name": "break_outer_while_from_switch",
+    "group": "loop_extension",
+    "note": "Named break must leave the outer loop.",
+    "c_reference": false
+  },
+  {
+    "name": "unbraced_goto_label_loop_body",
+    "group": "loop_extension",
+    "note": "The labeled statement must own its following statement.",
+    "c_reference": false
+  },
+  {
+    "name": "unbraced_case_loop_body",
+    "group": "loop_extension",
+    "note": "A case-labeled substatement must remain within its loop.",
+    "c_reference": false
+  },
+  {
+    "name": "do_label_after_labeled_body",
+    "group": "loop_extension",
+    "note": "Trailing loop suffix plus labeled body must parse as one do statement.",
+    "c_reference": false
+  },
+  {
+    "name": "dangling_else_after_label",
+    "group": "loop_extension",
+    "note": "Label ownership must not detach an if body from its else.",
+    "c_reference": false
+  },
+  {
+    "name": "while_const_condition_no_semicolon",
+    "group": "loop_extension",
+    "note": "A label cannot be inferred from adjacent identifiers without its delimiter.",
+    "c_reference": false
+  },
+  {
+    "name": "const_field_whole_assignment",
+    "group": "c_review",
+    "note": "Recursively const fields make aggregate assignment nonmodifiable.",
+    "c_reference": true
+  },
+  {
+    "name": "nested_const_field_assignment",
+    "group": "c_review",
+    "note": "Check const subobjects recursively, not only the outer declaration.",
+    "c_reference": true
+  },
+  {
+    "name": "for_static_object",
+    "group": "c_review",
+    "note": "C for declarations restrict storage classes; differs from C++.",
+    "c_reference": true
+  },
+  {
+    "name": "for_typedef_declaration",
+    "group": "c_review",
+    "note": "C for declaration clause cannot declare a typedef.",
+    "c_reference": true
+  },
+  {
+    "name": "for_function_declaration",
+    "group": "c_review",
+    "note": "C for declaration clause cannot declare a function.",
+    "c_reference": true
+  },
+  {
+    "name": "function_initializer",
+    "group": "c_review",
+    "note": "A function declaration cannot have an initializer.",
+    "c_reference": true
+  },
+  {
+    "name": "prototype_incomplete_parameter",
+    "group": "c_review",
+    "note": "Allow incomplete by-value types in prototypes when the chosen rules permit them.",
+    "c_reference": true
+  },
+  {
+    "name": "definition_incomplete_parameter",
+    "group": "c_review",
+    "note": "An incomplete parameter type cannot be used in the definition.",
+    "c_reference": true
+  },
+  {
+    "name": "prototype_incomplete_return",
+    "group": "c_review",
+    "note": "A prototype can precede completion of its return type.",
+    "c_reference": true
+  },
+  {
+    "name": "pointer_array_incomplete_element",
+    "group": "c_review",
+    "note": "A pointer does not rescue an array with incomplete element type.",
+    "c_reference": true
+  },
+  {
+    "name": "parameter_top_const_compatibility",
+    "group": "c_review",
+    "note": "Ignore top-level parameter const for signature compatibility, retain it in the body.",
+    "c_reference": true
+  },
+  {
+    "name": "parameter_pointee_const_conflict",
+    "group": "c_review",
+    "note": "Pointee const remains part of the function parameter type.",
+    "c_reference": true
+  },
+  {
+    "name": "parameter_array_pointer_compatibility",
+    "group": "c_review",
+    "note": "Array parameters adjust to pointers before signature comparison.",
+    "c_reference": true
+  },
+  {
+    "name": "parameter_inner_bound_conflict",
+    "group": "c_review",
+    "note": "Array-parameter adjustment preserves inner dimensions.",
+    "c_reference": true
+  },
+  {
+    "name": "zero_null_expression",
+    "group": "c_review",
+    "note": "C null pointer constant recognition uses eligible zero integral constant expressions.",
+    "c_reference": true
+  },
+  {
+    "name": "zero_variable_not_null_constant",
+    "group": "c_review",
+    "note": "An ordinary zero-valued variable is not a C null pointer constant.",
+    "c_reference": true
+  },
+  {
+    "name": "const_local_not_c_ice",
+    "group": "c_review",
+    "note": "Const object and integer constant expression differ in C11 and C++.",
+    "c_reference": true
+  },
+  {
+    "name": "case_comma_not_ice",
+    "group": "c_review",
+    "note": "C integer constant-expression rules constrain operators, not only foldability.",
+    "c_reference": true
+  },
+  {
+    "name": "case_unevaluated_call",
+    "group": "c_review",
+    "note": "Check C11 integer-constant-expression operand restrictions as well as unevaluated-operator exceptions; do not use runtime foldability alone.",
+    "c_reference": true
+  },
+  {
+    "name": "vla_initializer",
+    "group": "c_review",
+    "note": "C11 forbids initializing a VLA; policy differs by version/feature support.",
+    "c_reference": true
+  },
+  {
+    "name": "vla_static_storage",
+    "group": "c_review",
+    "note": "C VLA objects cannot have static storage duration.",
+    "c_reference": true
+  },
+  {
+    "name": "vm_pointer_file_scope",
+    "group": "c_review",
+    "note": "A variably modified pointer type has scope restrictions even though the pointer size is fixed.",
+    "c_reference": true
+  },
+  {
+    "name": "vla_struct_member",
+    "group": "c_review",
+    "note": "Variably modified aggregate members need deliberate rejection or extension rules.",
+    "c_reference": true
+  },
+  {
+    "name": "void_return_void_expression",
+    "group": "c_review",
+    "note": "C11 disallows an expression in void return; C++ has a void-expression exception.",
+    "c_reference": true
+  },
+  {
+    "name": "label_before_declaration",
+    "group": "c_review",
+    "note": "A version choice: declaration after a label changes in C23.",
+    "c_reference": true
+  },
+  {
+    "name": "label_at_block_end",
+    "group": "c_review",
+    "note": "A version choice: a label at block end changes in C23.",
+    "c_reference": true
+  },
+  {
+    "name": "empty_aggregate_initializer",
+    "group": "c_review",
+    "note": "Empty brace initialization is version/language dependent.",
+    "c_reference": true
+  },
+  {
+    "name": "goto_into_vla_scope",
+    "group": "c_review",
+    "note": "C has specific restrictions on entering variably modified scopes.",
+    "c_reference": true
+  },
+  {
+    "name": "switch_enters_vla_scope",
+    "group": "c_review",
+    "note": "Switch case entry has variably modified scope restrictions.",
+    "c_reference": true
+  },
+  {
+    "name": "typedef_vla_redefinition",
+    "group": "c_review",
+    "note": "Compatible repeated typedef exemption excludes variably modified types in C11.",
+    "c_reference": true
+  },
+  {
+    "name": "assign_aggregate_with_array_member",
+    "group": "c_review",
+    "note": "Whole arrays are unassignable but a struct containing an array can be assignable.",
+    "c_reference": true
+  },
+  {
+    "name": "short_circuit_typecheck",
+    "group": "c_review",
+    "note": "Unevaluated operands still need name/type checking.",
+    "c_reference": true
+  },
+  {
+    "name": "sizeof_typechecks_identifier",
+    "group": "c_review",
+    "note": "Unevaluated sizeof still needs identifier resolution.",
+    "c_reference": true
+  },
+  {
+    "name": "pointer_relational_null",
+    "group": "c_review",
+    "note": "Relational pointer constraints differ from pointer equality with null.",
+    "c_reference": true
+  },
+  {
+    "name": "pointer_equality_null",
+    "group": "c_review",
+    "note": "Valid null equality provides a nearby control.",
+    "c_reference": true
+  },
+  {
+    "name": "function_pointer_relational",
+    "group": "c_review",
+    "note": "C relational pointer constraints do not admit function pointers.",
+    "c_reference": true
+  },
+  {
+    "name": "conditional_void_pointer_qualification",
+    "group": "c_review",
+    "note": "Conditional pointer result must combine pointee qualifiers.",
+    "c_reference": true
+  },
+  {
+    "name": "aggregate_condition",
+    "group": "c_review",
+    "note": "No implicit scalar condition for plain aggregates without conversion support.",
+    "c_reference": true
+  },
+  {
+    "name": "array_size_self_scope",
+    "group": "c_review",
+    "note": "A declared identifier enters scope after its declarator, not before its array bound.",
+    "c_reference": true
+  },
+  {
+    "name": "label_value_same_name",
+    "group": "c_review",
+    "note": "C ordinary identifiers and goto labels use separate namespaces.",
+    "c_reference": true
+  },
+  {
+    "name": "unbraced_switch",
+    "group": "c_review",
+    "note": "C permits a switch body that is a statement rather than a brace block.",
+    "c_reference": true
+  },
+  {
+    "name": "ternary_middle_comma",
+    "group": "c_review",
+    "note": "The middle conditional operand is an expression and may contain an unparenthesized comma.",
+    "c_reference": true
+  },
+  {
+    "name": "main_float_return",
+    "group": "c_review",
+    "note": "Hosted main signature validation is distinct from requiring a main in every unit.",
+    "c_reference": true
+  },
+  {
+    "name": "main_bad_parameter",
+    "group": "c_review",
+    "note": "Hosted main parameter restrictions require an explicit execution-model policy.",
+    "c_reference": true
+  },
+  {
+    "name": "sizeof_vla_bound_side_effect",
+    "group": "c_review",
+    "note": "VLA sizeof can evaluate bounds; blanket unevaluated-sizeof handling would be incorrect.",
+    "c_reference": true
+  },
+  {
+    "name": "sizeof_vla_frozen_extent",
+    "group": "c_review",
+    "note": "A VLA instance retains the extent established at declaration.",
+    "c_reference": true
+  },
+  {
+    "name": "static_pointer_to_vla",
+    "group": "c_review",
+    "note": "A block-scope static pointer to VLA differs from a static VLA object.",
+    "c_reference": true
+  },
+  {
+    "name": "aggregate_function_member",
+    "group": "c_review",
+    "note": "C forbids function-typed members; baka may intentionally treat this as a method declaration.",
+    "c_reference": true
+  },
+  {
+    "name": "flexible_array_member",
+    "group": "c_review",
+    "note": "Flexible arrays require parser support plus placement and containment restrictions if enabled.",
+    "c_reference": true
+  },
+  {
+    "name": "bitfield_member",
+    "group": "c_review",
+    "note": "Bit-fields are not currently represented in member declarations; scope decision required.",
+    "c_reference": true
+  },
+  {
+    "name": "designated_initializer",
+    "group": "c_review",
+    "note": "Designated initialization is separate grammar and needs a deliberate support decision.",
+    "c_reference": true
+  },
+  {
+    "name": "duplicate_enum_values_valid",
+    "group": "c_review",
+    "note": "Duplicate enum numeric values can be legal even though duplicate names are not.",
+    "c_reference": true
+  },
+  {
+    "name": "function_empty_list_argument",
+    "group": "c_review",
+    "note": "C11 empty prototype syntax differs from C23 and C++ zero-parameter syntax.",
+    "c_reference": true
+  },
+  {
+    "name": "for_body_shadow_initializer",
+    "group": "c_review",
+    "note": "C and C++ differ on redeclaring the for variable in the outermost body block.",
+    "c_reference": true
+  },
+  {
+    "name": "for_body_typedef_leak",
+    "group": "c_review",
+    "note": "Ensure any supported for-declared type ends scope after the loop.",
+    "c_reference": true
+  }
+]

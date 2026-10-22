@@ -1,0 +1,109 @@
+IR::TAC:
+module {
+  type record#15(Item) size 4 align 4
+  type record#17(Owner) size 8 align 4
+  global next.11: i32 = zero
+  global trace.12: i32 = zero
+  initializer @.module_init.32
+  declare @printf.9: fn(ptr<i8>, ...)->i32
+  declare @scanf.10: fn(ptr<i8>, ...)->i32
+  function @main.18: fn(i32)->i32 {
+    parameter n.21: i32
+    local owner.22: record#17(Owner)
+    local values.23: [2 x record#15(Item)]
+  bb1: ; predecessors [] successors [bb2, bb3]
+    (copy, %t2:u1, 0:u1, _)
+    (copy, %t1:u1, 0:u1, _)
+    (call, _, @Owner.default_ctor.26:ptr<fn(ptr<record#17(Owner)>)->void>, _, [&owner.22:ptr<record#17(Owner)>])
+    (copy, %t1:u1, 1:u1, _)
+    (branch, bb3, %t1:u1, bb2)
+  bb2: ; predecessors [bb1] successors [bb3]
+    (copy, %t1:u1, 0:u1, _)
+    (call, _, @Owner.default_dtor.27:ptr<fn(ptr<record#17(Owner)>)->void>, _, [&owner.22:ptr<record#17(Owner)>])
+    (jump, _, bb3, _)
+  bb3: ; predecessors [bb1, bb2] successors [bb4, bb5]
+    (offset, %t3:ptr<record#15(Item)>, &values.23:ptr<[2 x record#15(Item)]>, 0:i64)
+    (call, _, @Item.ctor.2.24:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t3:ptr<record#15(Item)>])
+    (offset, %t4:ptr<record#15(Item)>, &values.23:ptr<[2 x record#15(Item)]>, 4:i64)
+    (call, _, @Item.ctor.2.24:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t4:ptr<record#15(Item)>])
+    (copy, %t2:u1, 1:u1, _)
+    (branch, bb5, %t2:u1, bb4)
+  bb4: ; predecessors [bb3] successors [bb5]
+    (copy, %t2:u1, 0:u1, _)
+    (call, _, @.array_dtor.18.28:ptr<fn(ptr<[2 x record#15(Item)]>)->void>, _, [&values.23:ptr<[2 x record#15(Item)]>])
+    (jump, _, bb5, _)
+  bb5: ; predecessors [bb3, bb4] successors []
+    (load, %t5:i32, &trace.12:ptr<i32>, _)
+    (ret, _, %t5:i32, _)
+  }
+  function @Item.ctor.2.24: fn(ptr<record#15(Item)>)->void internal {
+    parameter this.19: ptr<record#15(Item)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#15(Item)>, &this.19:ptr<ptr<record#15(Item)>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<record#15(Item)>, 0:i64)
+    (load, %t3:ptr<record#15(Item)>, &this.19:ptr<ptr<record#15(Item)>>, _)
+    (offset, %t4:ptr<i32>, %t3:ptr<record#15(Item)>, 0:i64)
+    (load, %t5:i32, &next.11:ptr<i32>, _)
+    (add, %t6:i32, %t5:i32, 1:i32)
+    (store, &next.11:ptr<i32>, %t6:i32, _)
+    (store, %t4:ptr<i32>, %t5:i32, _)
+    (load, %t7:i32, %t4:ptr<i32>, _)
+    (load, %t8:i32, &trace.12:ptr<i32>, _)
+    (mul, %t9:i32, %t8:i32, 10:i32)
+    (load, %t10:ptr<record#15(Item)>, &this.19:ptr<ptr<record#15(Item)>>, _)
+    (offset, %t11:ptr<i32>, %t10:ptr<record#15(Item)>, 0:i64)
+    (load, %t12:i32, %t11:ptr<i32>, _)
+    (add, %t13:i32, %t9:i32, %t12:i32)
+    (store, &trace.12:ptr<i32>, %t13:i32, _)
+    (load, %t14:i32, &trace.12:ptr<i32>, _)
+    (ret, _, _, _)
+  }
+  function @Item.dtor.25: fn(ptr<record#15(Item)>)->void internal {
+    parameter this.20: ptr<record#15(Item)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:i32, &trace.12:ptr<i32>, _)
+    (mul, %t2:i32, %t1:i32, 10:i32)
+    (load, %t3:ptr<record#15(Item)>, &this.20:ptr<ptr<record#15(Item)>>, _)
+    (offset, %t4:ptr<i32>, %t3:ptr<record#15(Item)>, 0:i64)
+    (load, %t5:i32, %t4:ptr<i32>, _)
+    (add, %t6:i32, %t2:i32, %t5:i32)
+    (store, &trace.12:ptr<i32>, %t6:i32, _)
+    (load, %t7:i32, &trace.12:ptr<i32>, _)
+    (load, %t8:ptr<record#15(Item)>, &this.20:ptr<ptr<record#15(Item)>>, _)
+    (ret, _, _, _)
+  }
+  function @Owner.default_ctor.26: fn(ptr<record#17(Owner)>)->void internal {
+    parameter this.29: ptr<record#17(Owner)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#17(Owner)>, &this.29:ptr<ptr<record#17(Owner)>>, _)
+    (offset, %t2:ptr<[2 x record#15(Item)]>, %t1:ptr<record#17(Owner)>, 0:i64)
+    (offset, %t3:ptr<record#15(Item)>, %t2:ptr<[2 x record#15(Item)]>, 0:i64)
+    (call, _, @Item.ctor.2.24:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t3:ptr<record#15(Item)>])
+    (offset, %t4:ptr<record#15(Item)>, %t2:ptr<[2 x record#15(Item)]>, 4:i64)
+    (call, _, @Item.ctor.2.24:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t4:ptr<record#15(Item)>])
+    (ret, _, _, _)
+  }
+  function @Owner.default_dtor.27: fn(ptr<record#17(Owner)>)->void internal {
+    parameter this.30: ptr<record#17(Owner)>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<record#17(Owner)>, &this.30:ptr<ptr<record#17(Owner)>>, _)
+    (offset, %t2:ptr<[2 x record#15(Item)]>, %t1:ptr<record#17(Owner)>, 0:i64)
+    (call, _, @.array_dtor.18.28:ptr<fn(ptr<[2 x record#15(Item)]>)->void>, _, [%t2:ptr<[2 x record#15(Item)]>])
+    (ret, _, _, _)
+  }
+  function @.array_dtor.18.28: fn(ptr<[2 x record#15(Item)]>)->void internal {
+    parameter this.31: ptr<[2 x record#15(Item)]>
+  bb1: ; predecessors [] successors []
+    (load, %t1:ptr<[2 x record#15(Item)]>, &this.31:ptr<ptr<[2 x record#15(Item)]>>, _)
+    (offset, %t2:ptr<record#15(Item)>, %t1:ptr<[2 x record#15(Item)]>, 4:i64)
+    (call, _, @Item.dtor.25:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t2:ptr<record#15(Item)>])
+    (offset, %t3:ptr<record#15(Item)>, %t1:ptr<[2 x record#15(Item)]>, 0:i64)
+    (call, _, @Item.dtor.25:ptr<fn(ptr<record#15(Item)>)->void>, _, [%t3:ptr<record#15(Item)>])
+    (ret, _, _, _)
+  }
+  function @.module_init.32: fn()->void internal {
+  bb1: ; predecessors [] successors []
+    (store, &next.11:ptr<i32>, 1:i32, _)
+    (ret, _, _, _)
+  }
+}

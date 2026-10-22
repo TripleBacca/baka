@@ -1,0 +1,71 @@
+IR::TAC:
+module {
+  declare @printf.9: fn(ptr<i8>, ...)->i32
+  declare @scanf.10: fn(ptr<i8>, ...)->i32
+  function @main.15: fn(i32)->i32 {
+    parameter n.16: i32
+    local u.17: u32
+    local a.18: i32
+    local x.19: f64
+    local y.20: f32
+    local b.21: u1
+    local q.22: i32
+    local r.23: i32
+  bb1: ; predecessors [] successors []
+    (store, &u.17:ptr<u32>, 4294967295:u32, _)
+    (neg, %t1:i32, 7:i32, _)
+    (store, &a.18:ptr<i32>, %t1:i32, _)
+    (store, &x.19:ptr<f64>, 2.5:f64, _)
+    (load, %t2:f64, &x.19:ptr<f64>, _)
+    (cast, %t3:f32, %t2:f64, _)
+    (store, &y.20:ptr<f32>, %t3:f32, _)
+    (cast, %t4:ptr<i32>, 0:i32, _)
+    (cast, %t5:u1, %t4:ptr<i32>, _)
+    (store, &b.21:ptr<u1>, %t5:u1, _)
+    (load, %t6:i32, &a.18:ptr<i32>, _)
+    (div, %t7:i32, %t6:i32, 2:i32)
+    (store, &q.22:ptr<i32>, %t7:i32, _)
+    (load, %t8:i32, &a.18:ptr<i32>, _)
+    (rem, %t9:i32, %t8:i32, 2:i32)
+    (store, &r.23:ptr<i32>, %t9:i32, _)
+    (load, %t10:u32, &u.17:ptr<u32>, _)
+    (shr, %t11:u32, %t10:u32, 30:i32)
+    (cast, %t12:i32, %t11:u32, _)
+    (load, %t13:i32, &q.22:ptr<i32>, _)
+    (add, %t14:i32, %t12:i32, %t13:i32)
+    (load, %t15:i32, &r.23:ptr<i32>, _)
+    (add, %t16:i32, %t14:i32, %t15:i32)
+    (load, %t17:i32, &n.16:ptr<i32>, _)
+    (complement, %t18:i32, %t17:i32, _)
+    (and, %t19:i32, %t18:i32, 7:i32)
+    (add, %t20:i32, %t16:i32, %t19:i32)
+    (load, %t21:i32, &n.16:ptr<i32>, _)
+    (shl, %t22:i32, %t21:i32, 1:i32)
+    (xor, %t23:i32, %t22:i32, 3:i32)
+    (add, %t24:i32, %t20:i32, %t23:i32)
+    (load, %t25:i32, &n.16:ptr<i32>, _)
+    (gt, %t26:u1, %t25:i32, 0:i32)
+    (cast, %t27:i32, %t26:u1, _)
+    (add, %t28:i32, %t24:i32, %t27:i32)
+    (load, %t29:i32, &n.16:ptr<i32>, _)
+    (le, %t30:u1, %t29:i32, 0:i32)
+    (cast, %t31:i32, %t30:u1, _)
+    (add, %t32:i32, %t28:i32, %t31:i32)
+    (load, %t33:i32, &n.16:ptr<i32>, _)
+    (ne, %t34:u1, %t33:i32, 0:i32)
+    (cast, %t35:i32, %t34:u1, _)
+    (add, %t36:i32, %t32:i32, %t35:i32)
+    (load, %t37:i32, &n.16:ptr<i32>, _)
+    (ge, %t38:u1, %t37:i32, 1:i32)
+    (cast, %t39:i32, %t38:u1, _)
+    (add, %t40:i32, %t36:i32, %t39:i32)
+    (load, %t41:f32, &y.20:ptr<f32>, _)
+    (cast, %t42:i32, %t41:f32, _)
+    (add, %t43:i32, %t40:i32, %t42:i32)
+    (add, %t44:i32, %t43:i32, 3:i32)
+    (load, %t45:u1, &b.21:ptr<u1>, _)
+    (cast, %t46:i32, %t45:u1, _)
+    (add, %t47:i32, %t44:i32, %t46:i32)
+    (ret, _, %t47:i32, _)
+  }
+}

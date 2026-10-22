@@ -12,6 +12,7 @@ namespace types {
         UnionBodyNode* body;
         IdentifierNode* Name;
     public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getName()); visit(getBody()); }
         UnionNode(UnionBodyNode* body, IdentifierNode* name = nullptr) : body(body), Name(name) {}
         IdentifierNode* getName() const {
             return Name;

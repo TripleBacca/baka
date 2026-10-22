@@ -1,5 +1,0 @@
-int f() {
-    continue
-        ;
-    return 0;
-}

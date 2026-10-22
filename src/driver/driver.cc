@@ -205,8 +205,8 @@ int baka::driver::run(int argc, char* argv[]) {
             // Lower while both the annotated tree and its semantic arenas are
             // alive. IR owns its copied types, identities and strings afterward.
             if (Analyzed && Gctx::TillStage() == Stage::IR) {
-                ir::Lowerer Lowerer(Analyzer);
-                if (Lowerer.lower(*Program, false)) {
+                ir::Lowerer Lowerer(*Analyzer.checkedProgram());
+                if (Lowerer.lower(false)) {
                     ir::Print(Lowerer.module(), std::cout);
                 } else {
                     for (const auto& Entry : Lowerer.diagnostics()) {

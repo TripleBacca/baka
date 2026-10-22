@@ -15,6 +15,7 @@ namespace baka {
             StatementNode* Stmt;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTag()); visit(getStatement()); }
             GotoLabelStatementNode(IdentifierNode* tag, StatementNode* stmt) : Tag(tag), Stmt(stmt) {
             }
 
@@ -41,6 +42,7 @@ namespace baka {
             StatementNode* Stmt;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTag()); visit(getStatement()); }
             CaseLabelStatementNode(ExpressionNode* tag, StatementNode* stmt) : Tag(tag), Stmt(stmt) {
             }
 
@@ -48,6 +50,7 @@ namespace baka {
             StatementNode* getStatement() const { return Stmt; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Tag = rewrite(Tag); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Tag); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -66,6 +69,7 @@ namespace baka {
             StatementNode* Stmt;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getStatement()); }
             DefaultLabelStatementNode(StatementNode* stmt) : Stmt(stmt) {
             }
 

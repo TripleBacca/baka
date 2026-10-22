@@ -6,6 +6,7 @@ set(EXEC_SOURCES
     file_size.cc
     validate_file.cc
     ascii.cc
+    numeric.cc
     line_index.cc
 )
 

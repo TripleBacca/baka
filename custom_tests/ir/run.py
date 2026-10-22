@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""TAC golden tests assert status as well as text; diagnostics cannot bless crashes."""
+"""Check each TAC fixture's output and optimized/unoptimized execution together."""
 import argparse
+import difflib
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -9,56 +11,53 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 
 
+def run(command):
+    return subprocess.run([str(arg) for arg in command], capture_output=True, text=True, timeout=15)
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--compiler", type=Path, default=ROOT / "build" / "baka")
-    parser.add_argument("cases", nargs="*", help="optional fixture stems")
+    parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")
+    parser.add_argument("cases", nargs="*", help="optional fixture stems or verifier")
     args = parser.parse_args()
-    failures = 0
-    tests = sorted(p for p in HERE.glob("*.cpp") if p.name != "pass_tests.cc")
-    known = {source.stem for source in tests} | {"verifier", "cfg", "contracts", "optimization"}
+    cases = json.loads((HERE / "cases.json").read_text())
+    known = {Path(name).stem for name in cases} | {"verifier"}
     if set(args.cases) - known:
-        parser.error("unknown IR scenarios: " + ", ".join(sorted(set(args.cases) - known)))
-    for source in tests:
+        parser.error("unknown IR cases: " + ", ".join(sorted(set(args.cases) - known)))
+    executor = args.compiler.resolve().parent / "ir_execution_tests"
+    failures = 0
+    if not args.cases or "verifier" in args.cases:
+        result = run([executor, "verifier"])
+        print(("PASS " if result.returncode == 0 else "FAIL ") + "verifier")
+        if result.returncode:
+            print(result.stdout + result.stderr)
+            failures += 1
+    for name, case in cases.items():
+        source = HERE / name
         if args.cases and source.stem not in args.cases:
             continue
-        result = subprocess.run([str(args.compiler.resolve()), "--ir", str(source)],
-                                capture_output=True, text=True, timeout=15)
-        expected_path = source.with_suffix(".expected")
-        if not expected_path.exists():
-            print(f"FAIL {source.name}: missing golden file")
-            failures += 1
-            continue
-        expected = expected_path.read_text()
-        if source.stem.startswith("invalid_"):
-            passed = result.returncode == 1 and not result.stderr and "(IR)" in result.stdout and "IR::TAC:" not in result.stdout
-            passed = passed and all(line in result.stdout for line in expected.splitlines() if line)
-        else:
-            passed = result.returncode == 0 and result.stdout == expected and not result.stderr
-        if not passed:
-            import difflib
-            print(f"FAIL {source.name}: status={result.returncode}")
-            print("\n".join(difflib.unified_diff(expected.splitlines(), result.stdout.splitlines(),
-                                               fromfile="expected", tofile="actual")))
-            print(result.stderr)
-            failures += 1
-        else:
-            print(f"PASS {source.name}")
-    structural = args.compiler.resolve().parent / "ir_pass_tests"
-    scenarios = [source.stem for source in tests if not source.stem.startswith("invalid_")]
-    scenarios += ["verifier", "cfg", "contracts", "optimization"]
-    for scenario in scenarios:
-        if args.cases and scenario not in args.cases:
-            continue
         try:
-            result = subprocess.run([str(structural), scenario], capture_output=True, text=True, timeout=15)
-            if result.returncode:
-                print(f"FAIL structural/{scenario}: {result.stdout}{result.stderr}")
-                failures += 1
+            result = run([args.compiler, "--ir", source])
+            expected = source.with_suffix(".expected").read_text()
+            passed = result.returncode == 0 and not result.stderr and result.stdout == expected
+            if not passed:
+                print("\n".join(difflib.unified_diff(expected.splitlines(), result.stdout.splitlines(),
+                                                   fromfile="expected", tofile="actual")))
+                print(result.stderr)
             else:
-                print(f"PASS structural/{scenario}")
+                for input_value, expected_value in case["runs"]:
+                    command = [executor, source, input_value, expected_value]
+                    if "global" in case:
+                        command.extend(case["global"])
+                    result = run(command)
+                    if result.returncode:
+                        passed = False
+                        print(result.stdout + result.stderr)
+                        break
+            print(("PASS " if passed else "FAIL ") + name)
+            failures += not passed
         except (OSError, subprocess.TimeoutExpired) as error:
-            print(f"FAIL structural/{scenario}: {error}")
+            print(f"FAIL {name}: {error}")
             failures += 1
     return bool(failures)
 

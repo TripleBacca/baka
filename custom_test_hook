@@ -95,8 +95,7 @@ def main():
                                         "--compiler", str(COMPILER)]).returncode
             continue
         if name == "semantic":
-            # Semantic regressions assert status, diagnostic stage and phase
-            # metadata. They must not bless a crash as an expected transcript.
+            # Check acceptance and diagnostic messages for the semantic fixtures.
             failures += subprocess.run([sys.executable, str(custom_tests / "semantic" / "run.py")]).returncode
             continue
         test_dir, stage_args = SUITES[name]

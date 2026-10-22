@@ -1,4 +1,5 @@
 #include "symbols.hh"
+#include "types/parser/ast/expression.hh"
 
 #include <stdexcept>
 
@@ -18,8 +19,8 @@ namespace baka {
                 return false;
             }
             return LeftType.kind == TypeKind::Array && AreCompatible(LeftType.element, RightType.element) &&
-                   (LeftType.bound.kind == BoundKind::Unspecified ||
-                    RightType.bound.kind == BoundKind::Unspecified || LeftType.bound == RightType.bound);
+                   (LeftType.bound.kind == BoundKind::Unspecified || RightType.bound.kind == BoundKind::Unspecified ||
+                    LeftType.bound == RightType.bound);
         }
 
         Symbols::Symbols(Types& TypeSystem) : TypeSystem(TypeSystem) {
@@ -42,7 +43,8 @@ namespace baka {
             return Diagnostics;
         }
 
-        void Symbols::diagnose(std::string code, std::string message, const void* source, const void* previous) {
+        void Symbols::diagnose(std::string code, std::string message, const types::ASTNode* source,
+                               const types::ASTNode* previous) {
             Diagnostics.push_back({std::move(code), std::move(message), source, previous});
         }
 
@@ -73,16 +75,20 @@ namespace baka {
                     for (auto id : it->second) {
                         // Top-level function signatures are collected before bodies;
                         // objects still obey their source declaration point.
-                        if (scope(ScopeToVisit).kind != ScopeKind::Global || id.value <= GlobalVisibility ||
-                            IsFunctionKind(get(id).kind)) visible.push_back(id);
+                        if (scope(ScopeToVisit).kind != ScopeKind::Global ||
+                            get(id).introduced.value <= GlobalVisibility || IsFunctionKind(get(id).kind)) {
+                            visible.push_back(id);
+                        }
                     }
-                    if (!visible.empty()) return visible;
+                    if (!visible.empty()) {
+                        return visible;
+                    }
                 }
             }
             return {};
         }
 
-        SymbolId Symbols::bind(const std::string& name, const void* source) {
+        SymbolId Symbols::bind(const std::string& name, const types::ASTNode* source) {
             auto found = lookup(name);
             if (found.empty()) {
                 diagnose("undeclared", "undeclared name '" + name + "'", source);
@@ -100,29 +106,52 @@ namespace baka {
             return id;
         }
 
-        bool Symbols::defaults(SymbolId id, const std::vector<const void*>& arguments) {
-            if (!id.value) return false;
+        bool Symbols::defaults(SymbolId id, const std::vector<const types::ExpressionNode*>& arguments) {
+            if (!id.value) {
+                return false;
+            }
             auto& entry = SymbolEntries.at(id.value);
-            if (entry.defaultArguments.empty()) entry.defaultArguments.resize(arguments.size());
+            if (entry.defaultArguments.empty()) {
+                entry.defaultArguments.resize(arguments.size());
+                entry.defaultArgumentPoints.resize(arguments.size());
+            }
             bool valid = true;
             for (size_t i = 0; i < arguments.size(); ++i) {
-                if (!arguments[i]) continue;
+                if (!arguments[i]) {
+                    continue;
+                }
                 if (entry.defaultArguments[i]) {
                     diagnose("default-argument", "default argument is already specified", arguments[i],
                              entry.defaultArguments[i]);
                     valid = false;
-                } else entry.defaultArguments[i] = arguments[i];
+                } else {
+                    entry.defaultArguments[i] = arguments[i];
+                    entry.defaultArgumentPoints[i] = CurrentPoint;
+                }
             }
             return valid;
         }
 
+        bool Symbols::defaultVisible(SymbolId id, size_t parameter, uint64_t localPoint) const {
+            const auto& symbol = get(id);
+            const auto kind = scope(symbol.scope).kind;
+            const auto limit = kind == ScopeKind::Global      ? GlobalVisibility
+                               : kind == ScopeKind::Aggregate ? std::numeric_limits<uint64_t>::max()
+                                                              : localPoint;
+            return parameter < symbol.defaultArguments.size() && symbol.defaultArguments[parameter] &&
+                   symbol.defaultArgumentPoints[parameter].value <= limit;
+        }
+
         SymbolId Symbols::declare(Declaration NewDeclaration) {
+            const DeclarationPoint point{++CurrentPoint.value};
+            if (NewDeclaration.source) {
+                DeclarationPoints[NewDeclaration.source] = point;
+            }
             if (!NewDeclaration.type.value) {
                 diagnose("type", "invalid declaration type", NewDeclaration.source);
                 return {};
             }
-            if (IsFunctionKind(NewDeclaration.kind) &&
-                TypeSystem.get(NewDeclaration.type).kind != TypeKind::Function) {
+            if (IsFunctionKind(NewDeclaration.kind) && TypeSystem.get(NewDeclaration.type).kind != TypeKind::Function) {
                 diagnose("signature", "function symbol requires a function type", NewDeclaration.source);
                 return {};
             }
@@ -136,8 +165,7 @@ namespace baka {
                         ExistingType.variadic != CandidateType.variadic) {
                         if (old.kind == SymbolKind::BuiltinFunction ||
                             NewDeclaration.kind == SymbolKind::BuiltinFunction) {
-                            diagnose("builtin",
-                                     "incompatible redeclaration of builtin '" + NewDeclaration.name + "'",
+                            diagnose("builtin", "incompatible redeclaration of builtin '" + NewDeclaration.name + "'",
                                      NewDeclaration.source, old.source);
                             return {};
                         }
@@ -154,8 +182,7 @@ namespace baka {
                 repeatable = repeatable || (NewDeclaration.kind == SymbolKind::Object &&
                                             scope(CurrentScope).kind == ScopeKind::Global);
                 if (!legal || !repeatable || (old.defined && NewDeclaration.definition)) {
-                    diagnose("redeclaration",
-                             "conflicting or repeated declaration of '" + NewDeclaration.name + "'",
+                    diagnose("redeclaration", "conflicting or repeated declaration of '" + NewDeclaration.name + "'",
                              NewDeclaration.source, old.source);
                     return {};
                 }
@@ -164,7 +191,7 @@ namespace baka {
                     TypeSystem.get(old.type).bound.kind == BoundKind::Unspecified) {
                     old.type = NewDeclaration.type;
                 }
-                old.declarations.push_back(NewDeclaration.source);
+                old.declarations.push_back({point, NewDeclaration.source});
                 return id;
             }
             SymbolEntries.push_back({NewDeclaration.name,
@@ -176,7 +203,10 @@ namespace baka {
                                      NewDeclaration.isStatic,
                                      NewDeclaration.source,
                                      {},
-                                     {NewDeclaration.source}});
+                                     {{point, NewDeclaration.source}},
+                                     {},
+                                     point,
+                                     {}});
             SymbolId id{static_cast<uint32_t>(SymbolEntries.size() - 1)};
             ScopeArena.at(CurrentScope.value).names[NewDeclaration.name].push_back(id);
             return id;
@@ -200,8 +230,8 @@ namespace baka {
 
         bool Symbols::setConstant(SymbolId id, int64_t value) {
             if (!id.value || (get(id).kind != SymbolKind::Enumerator &&
-                !(get(id).kind == SymbolKind::Object && TypeSystem.isConst(get(id).type) &&
-                  TypeSystem.isIntegral(get(id).type)))) {
+                              !(get(id).kind == SymbolKind::Object && TypeSystem.isConst(get(id).type) &&
+                                TypeSystem.isIntegral(get(id).type)))) {
                 return false;
             }
             SymbolEntries.at(id.value).constant = value;
@@ -229,7 +259,7 @@ namespace baka {
             return result;
         }
 
-        TypeId Symbols::lookupType(const std::string& name, const void* source) {
+        TypeId Symbols::lookupType(const std::string& name, const types::ASTNode* source) {
             auto found = lookup(name);
             if (found.size() == 1 &&
                 (get(found[0]).kind == SymbolKind::Alias || get(found[0]).kind == SymbolKind::Type)) {
@@ -240,10 +270,10 @@ namespace baka {
         }
 
         void Symbols::installTypes() {
-            const std::pair<const char*, Builtin> names[] = {
-                {"void", Builtin::Void},   {"bool", Builtin::Bool},    {"char", Builtin::Char},
-                {"short", Builtin::Short}, {"int", Builtin::Int},      {"long", Builtin::Long},
-                {"float", Builtin::Float}, {"double", Builtin::Double}};
+            const std::pair<const char*, Builtin> names[] = {{"void", Builtin::Void},   {"bool", Builtin::Bool},
+                                                             {"char", Builtin::Char},   {"short", Builtin::Short},
+                                                             {"int", Builtin::Int},     {"long", Builtin::Long},
+                                                             {"float", Builtin::Float}, {"double", Builtin::Double}};
             for (auto [name, type] : names) {
                 declare({name, SymbolKind::Type, TypeSystem.builtin(type)});
             }
@@ -253,10 +283,10 @@ namespace baka {
             auto integer = TypeSystem.builtin(Builtin::Int);
             auto character = TypeSystem.builtin(Builtin::Char);
             auto string = TypeSystem.pointer(TypeSystem.constant(character));
-            declare({"printf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false,
-                     false, Linkage::External});
-            declare({"scanf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false,
-                     false, Linkage::External});
+            declare({"printf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false, false,
+                     Linkage::External});
+            declare({"scanf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false, false,
+                     Linkage::External});
             // No guessed FILE layout or undeclared file API signatures.
         }
     }

@@ -1,0 +1,1240 @@
+[
+  {
+    "program": "aggregate_condition.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "aggregate_function_member.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "array_size_self_scope.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "assign_aggregate_with_array_member.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "bitfield_member.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/bitfield_member.cpp:1:23: error: expected ',' or ';' in declaration (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "break_goto_label_only.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "break_outer_while_from_switch.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "case_comma_not_ice.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "case_unevaluated_call.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "conditional_void_pointer_qualification.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "const_field_whole_assignment.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "const_local_not_c_ice.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "continue_outer_do.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "continue_outer_for_from_switch.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "dangling_else_after_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/dangling_else_after_label.cpp:1:28: error: expected expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "definition_incomplete_parameter.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "designated_initializer.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/designated_initializer.cpp:1:23: error: expected expression (PARSE)",
+        "semantic_audit/extended/programs/designated_initializer.cpp:1:23: error: expected '}' (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "do_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "do_label_after_body.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "do_label_after_labeled_body.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:29: error: expected 'while' after 'do' body (PARSE)",
+        "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:32: error: expected expression (PARSE)",
+        "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:46: error: expected expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "do_missing_separator.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "do_typedef_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "duplicate_enum_values_valid.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:9: error: expected '}' or ',' in enumeration (PARSE)",
+        "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:14: error: expected ';' after enum definition (PARSE)",
+        "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:15: error: expected identifier or '(' (PARSE)",
+        "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:15: error: expected identifier or '(' (PARSE)",
+        "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:16: error: expected identifier (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "empty_aggregate_initializer.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "flexible_array_member.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/flexible_array_member.cpp:1:27: error: expected expression (PARSE)",
+        "semantic_audit/extended/programs/flexible_array_member.cpp:1:29: error: expected identifier or '(' (PARSE)",
+        "semantic_audit/extended/programs/flexible_array_member.cpp:1:30: error: expected identifier (PARSE)",
+        "semantic_audit/extended/programs/flexible_array_member.cpp:1:30: error: expected ';' after struct/class body (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "for_body_shadow_initializer.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_body_typedef_leak.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/for_body_typedef_leak.cpp:1:42: error: expected ';' after expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "for_declaration_empty_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_empty_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_empty_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_empty_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_present_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_present_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_present_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_declaration_present_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_empty_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_empty_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_empty_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_empty_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_present_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_present_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_present_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_empty_present_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_empty_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/for_expression_empty_empty.cpp:1:29: error: expected expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "for_expression_empty_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_empty_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/for_expression_empty_present.cpp:1:32: error: expected ';' in 'for' statement specifier (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "for_expression_empty_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_present_empty.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_present_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_present_present.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_expression_present_present_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_function_declaration.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_static_object.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_typedef_declaration.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "for_typedef_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/for_typedef_label.cpp:1:35: error: identifier cannot be a type name (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "function_empty_list_argument.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "function_initializer.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "function_pointer_relational.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "goto_into_vla_scope.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "goto_loop_label_only.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "label_at_block_end.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "label_before_declaration.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "label_value_same_name.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_goto_same_name.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_duplicate_nested.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_exited_sibling.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_forward_sibling.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_nested_function.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_other_function.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_label_reuse_siblings.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "loop_variable_same_name.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "main_bad_parameter.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "main_float_return.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "nested_const_field_assignment.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "parameter_array_pointer_compatibility.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "parameter_inner_bound_conflict.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "parameter_pointee_const_conflict.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "parameter_top_const_compatibility.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "pointer_array_incomplete_element.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "pointer_equality_null.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "pointer_relational_null.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "prototype_incomplete_parameter.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "prototype_incomplete_return.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "short_circuit_typecheck.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "sizeof_typechecks_identifier.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "sizeof_vla_bound_side_effect.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "sizeof_vla_frozen_extent.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "static_pointer_to_vla.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "switch_enters_vla_scope.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "ternary_middle_comma.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:30: error: expected ':' in ternary expression (PARSE)",
+        "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:30: error: expected expression (PARSE)",
+        "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:29: error: expected ';' after return statement (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "typedef_vla_redefinition.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "unbraced_case_loop_body.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "unbraced_goto_label_loop_body.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "unbraced_switch.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/unbraced_switch.cpp:1:21: error: expected '{' (PARSE)",
+        "semantic_audit/extended/programs/unbraced_switch.cpp:2:1: error: expected '}' (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "vla_initializer.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "vla_static_storage.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "vla_struct_member.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/vla_struct_member.cpp:1:27: error: unknown type name 'S' (PARSE)",
+        "semantic_audit/extended/programs/vla_struct_member.cpp:1:40: error: expected identifier or '(' (PARSE)",
+        "semantic_audit/extended/programs/vla_struct_member.cpp:1:47: error: expected identifier (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "vm_pointer_file_scope.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "void_return_void_expression.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "while_const_condition_no_semicolon.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "while_empty_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "while_missing_separator.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "while_multiple_labels.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/while_multiple_labels.cpp:1:22: error: expected ')' (PARSE)",
+        "semantic_audit/extended/programs/while_multiple_labels.cpp:1:22: error: expected expression (PARSE)",
+        "semantic_audit/extended/programs/while_multiple_labels.cpp:1:24: error: expected ';' after expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "while_numeric_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/while_numeric_label.cpp:1:21: error: expected ')' (PARSE)",
+        "semantic_audit/extended/programs/while_numeric_label.cpp:1:21: error: expected ';' after expression (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "while_typedef_label.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 1,
+      "diagnostics": [
+        "semantic_audit/extended/programs/while_typedef_label.cpp:1:36: error: identifier cannot be a type name (PARSE)"
+      ]
+    }
+  },
+  {
+    "program": "zero_null_expression.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "program": "zero_variable_not_null_constant.cpp",
+    "lex": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "parse": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  }
+]

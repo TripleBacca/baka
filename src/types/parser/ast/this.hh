@@ -8,6 +8,7 @@ namespace types {
 
     class ThisNode : public ASTNode {
     public:
+        void visitChildren(const NodeVisitor& visit) const override {  }
         ThisNode() = default;
         ~ThisNode() = default;
 

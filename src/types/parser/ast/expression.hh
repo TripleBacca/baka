@@ -16,6 +16,9 @@ namespace types {
 
     class ExpressionNode : public ASTNode {
     public:
+        void visitChildren(const NodeVisitor& visit) const override { visitExpressions([&](const auto* child) { visit(child); }); }
+        virtual void visitExpressions(const ExpressionVisitor&) const override = 0;
+    public:
         virtual ~ExpressionNode() = default;
     };
 
@@ -25,6 +28,10 @@ namespace types {
     };
 
     class PrimaryExpressionNode : public ExpressionNode {
+    public:
+        void visitChildren(const NodeVisitor& visit) const override { std::visit([&](auto* child) { visit(child); }, Expr); }
+        void visitExpressions(const ExpressionVisitor&) const override {}
+    private:
         std::variant<ConstantNode*, IdentifierNode*, ThisNode*> Expr;
 
         public:
@@ -65,6 +72,7 @@ namespace types {
             ExpressionNode* getOperand() const { return Expr; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expr); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -99,6 +107,7 @@ namespace types {
             ExpressionNode* getRight() const { return RHSExpr; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); RHSExpr = rewrite(RHSExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(LHSExpr); visit(RHSExpr); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -135,6 +144,7 @@ namespace types {
             const std::vector<ExpressionNode*>& getExpressions() const { return ExpressionList; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { for (auto*& item : ExpressionList) item = rewrite(item); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { for (auto* item : ExpressionList) visit(item); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -168,6 +178,7 @@ namespace types {
             ExpressionNode* getIndex() const { return Index; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); Index = rewrite(Index); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(LHSExpr); visit(Index); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -194,6 +205,7 @@ namespace types {
             ASTUnaryOp getOp() const { return Op; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(LHSExpr); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -214,6 +226,7 @@ namespace types {
         ExpressionNode* LHSExpr;
         IdentifierNode* MemberName;
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visitExpressions([&](const auto* child) { visit(child); }); visit(getMember()); }
             MemberPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
                 : LHSExpr(LHSExpr), MemberName(MemberName) {}
 
@@ -221,6 +234,7 @@ namespace types {
             IdentifierNode* getMember() const { return MemberName; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(LHSExpr); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -239,6 +253,7 @@ namespace types {
         ExpressionNode* LHSExpr;
         IdentifierNode* MemberName;
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visitExpressions([&](const auto* child) { visit(child); }); visit(getMember()); }
             ArrowPostfixExpr(ExpressionNode* LHSExpr, IdentifierNode* MemberName)
                 : LHSExpr(LHSExpr), MemberName(MemberName) {}
 
@@ -246,6 +261,7 @@ namespace types {
             IdentifierNode* getMember() const { return MemberName; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { LHSExpr = rewrite(LHSExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(LHSExpr); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -272,6 +288,7 @@ namespace types {
             ExpressionNode* getArguments() const { return ArgumentList; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { FunctionIdentifier = rewrite(FunctionIdentifier); ArgumentList = rewrite(ArgumentList); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(FunctionIdentifier); visit(ArgumentList); }
 
         void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);

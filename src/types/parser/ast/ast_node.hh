@@ -8,6 +8,9 @@ namespace baka {
 namespace types {
 
 class ExpressionNode;
+class ASTNode;
+using NodeVisitor = std::function<void(const ASTNode*)>;
+using ExpressionVisitor = std::function<void(const ExpressionNode*)>;
 using ExpressionRewriter = std::function<ExpressionNode*(ExpressionNode*)>;
 
 struct ASTSourceSpan {
@@ -31,6 +34,7 @@ struct ASTSemanticInfo {
     // layout(MemberOwner).offsets[MemberIndex-1] supplies a field's byte offset.
     uint32_t CallSignature = 0, MemberOwner = 0, MemberIndex = 0;
     bool Construction = false;
+    uint64_t DeclarationPoint = 0;
     bool operator==(const ASTSemanticInfo&) const = default;
 };
 
@@ -43,10 +47,15 @@ public:
     virtual ~ASTNode() = default;
 
     virtual void Print(size_t Tabs = 0) const = 0;
+    virtual void visitChildren(const NodeVisitor&) const = 0;
 
     // Rewrites direct expression slots only. Semantic annotation supplies the
     // recursion and context; declaration/statement discovery is not repeated.
     virtual void rewriteExpressions(const ExpressionRewriter&) {}
+    virtual void visitExpressions(const ExpressionVisitor&) const {}
+    void visitMutableExpressions(const std::function<void(ExpressionNode*)>& visit) {
+        rewriteExpressions([&](auto* child) { visit(child); return child; });
+    }
 
     virtual void setHasError() {
         hasError_ = true;

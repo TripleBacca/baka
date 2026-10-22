@@ -15,10 +15,21 @@ namespace baka {
         enum class SymbolKind { Object, Function, Alias, Type, Enumerator, Parameter, BuiltinFunction };
         enum class Linkage { None, Internal, External };
 
+        struct DeclarationPoint {
+            uint64_t value = 0;
+            bool operator==(const DeclarationPoint&) const = default;
+        };
+
+        struct DeclarationRecord {
+            DeclarationPoint point;
+            const types::ASTNode* source = nullptr;
+            bool operator==(const DeclarationRecord&) const = default;
+        };
+
         struct Diagnostic {
             std::string code, message;
-            const void* source = nullptr;
-            const void* previous = nullptr;
+            const types::ASTNode* source = nullptr;
+            const types::ASTNode* previous = nullptr;
         };
 
         struct Symbol {
@@ -29,17 +40,20 @@ namespace baka {
             Linkage linkage = Linkage::None;
             bool defined = false;
             bool isStatic = false;
-            const void* source = nullptr;
+            const types::ASTNode* source = nullptr;
             std::optional<int64_t> constant;
-            // Stored for B/C. Declaration order is symbol ID order.
-            std::vector<const void*> declarations;
-            std::vector<const void*> defaultArguments{};
+            std::vector<DeclarationRecord> declarations;
+            std::vector<const types::ExpressionNode*> defaultArguments{};
+            DeclarationPoint introduced;
+            std::vector<DeclarationPoint> defaultArgumentPoints;
+            bool operator==(const Symbol&) const = default;
         };
 
         struct Scope {
             ScopeId parent;
             ScopeKind kind = ScopeKind::Block;
             std::unordered_map<std::string, std::vector<SymbolId>> names;
+            bool operator==(const Scope&) const = default;
         };
 
         struct Declaration {
@@ -49,7 +63,7 @@ namespace baka {
             bool definition = false;
             bool isStatic = false;
             Linkage linkage = Linkage::None;
-            const void* source = nullptr;
+            const types::ASTNode* source = nullptr;
         };
 
         class Symbols {
@@ -58,7 +72,9 @@ namespace baka {
             std::deque<Scope> ScopeArena{Scope{}};
             ScopeId CurrentScope;
             std::vector<Diagnostic> Diagnostics;
-            uint32_t GlobalVisibility = std::numeric_limits<uint32_t>::max();
+            uint64_t GlobalVisibility = std::numeric_limits<uint64_t>::max();
+            DeclarationPoint CurrentPoint;
+            std::unordered_map<const types::ASTNode*, DeclarationPoint> DeclarationPoints;
 
             static bool IsFunctionKind(SymbolKind Kind);
             bool AreCompatible(TypeId ExistingType, TypeId CandidateType) const;
@@ -71,20 +87,44 @@ namespace baka {
             const Symbol& get(SymbolId id) const;
             const std::vector<Diagnostic>& diagnostics() const;
 
-            void diagnose(std::string code, std::string message, const void* source = nullptr,
-                          const void* previous = nullptr);
+            void diagnose(std::string code, std::string message, const types::ASTNode* source = nullptr,
+                          const types::ASTNode* previous = nullptr);
 
             ScopeId enter(ScopeKind kind);
             bool leave();
-            void selectScope(ScopeId id) { CurrentScope = id; }
-            uint32_t symbolCount() const { return static_cast<uint32_t>(SymbolEntries.size() - 1); }
-            void setGlobalVisibility(uint32_t limit) { GlobalVisibility = limit; }
-            bool defaults(SymbolId id, const std::vector<const void*>& arguments);
+
+            void selectScope(ScopeId id) {
+                CurrentScope = id;
+            }
+
+            uint32_t symbolCount() const {
+                return static_cast<uint32_t>(SymbolEntries.size() - 1);
+            }
+
+            uint32_t scopeCount() const {
+                return static_cast<uint32_t>(ScopeArena.size() - 1);
+            }
+
+            void setGlobalVisibility(uint64_t limit) {
+                GlobalVisibility = limit;
+            }
+
+            uint64_t declarationPoint() const {
+                return CurrentPoint.value;
+            }
+
+            uint64_t declarationPoint(const types::ASTNode* source) const {
+                auto found = DeclarationPoints.find(source);
+                return found == DeclarationPoints.end() ? CurrentPoint.value : found->second.value;
+            }
+
+            bool defaultVisible(SymbolId id, size_t parameter, uint64_t localPoint) const;
+            bool defaults(SymbolId id, const std::vector<const types::ExpressionNode*>& arguments);
 
             std::vector<SymbolId> lookupCurrent(const std::string& name) const;
             std::vector<SymbolId> lookup(const std::string& name) const;
 
-            SymbolId bind(const std::string& name, const void* source = nullptr);
+            SymbolId bind(const std::string& name, const types::ASTNode* source = nullptr);
             SymbolId declare(Declaration NewDeclaration);
             bool completeObject(SymbolId id, TypeId completed);
             bool setConstant(SymbolId id, int64_t value);
@@ -92,7 +132,7 @@ namespace baka {
             // C supplies an ancestor scope as the destination. Results are in cleanup order.
             std::vector<SymbolId> objectsLeaving(ScopeId from, ScopeId destination) const;
 
-            TypeId lookupType(const std::string& name, const void* source = nullptr);
+            TypeId lookupType(const std::string& name, const types::ASTNode* source = nullptr);
 
             void installTypes();
             void installLibrary();

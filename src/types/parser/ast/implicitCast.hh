@@ -39,6 +39,7 @@ namespace baka::types {
         uint32_t getDestinationType() const { return DestinationType; }
         ImplicitConversionKind getConversionKind() const { return Kind; }
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Operand = rewrite(Operand); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Operand); }
         void Print(size_t tabs = 0) const override {
             INDENT(tabs);
             std::cout << "ImplicitCast(" << ImplicitConversionName(Kind) << ", "
@@ -52,6 +53,8 @@ namespace baka::types {
     // evaluation of Target (which may contain calls or index increments).
     class CompoundTargetNode : public ExpressionNode {
     public:
+        void visitExpressions(const ExpressionVisitor&) const override {}
+    public:
         void Print(size_t tabs = 0) const override {
             INDENT(tabs); std::cout << "CompoundTarget(saved address)\n";
         }
@@ -64,6 +67,7 @@ namespace baka::types {
         ExpressionNode* getTarget() const { return Target; }
         ExpressionNode* getValue() const { return Value; }
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Target = rewrite(Target); Value = rewrite(Value); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Target); visit(Value); }
         void Print(size_t tabs = 0) const override {
             INDENT(tabs); std::cout << "CompoundAssignment(\n";
             Target->Print(tabs + 1); Value->Print(tabs + 1);

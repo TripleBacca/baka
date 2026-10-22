@@ -3,7 +3,9 @@
 // compiler backend: it lets tests compare optimized and unoptimized behavior.
 #include "ir/ir.hh"
 #include <bit>
+#include <algorithm>
 #include <cmath>
+#include <limits>
 #include <map>
 #include <stdexcept>
 #include <unordered_map>
@@ -21,22 +23,46 @@ namespace ir_test {
         const Module& ModuleValue;
         std::map<uint64_t, unsigned char> Memory;
         std::map<uint32_t, uint64_t> Globals;
+
+        struct Allocation {
+            uint64_t address, size;
+            unsigned char unwritten;
+        };
+
+        std::vector<Allocation> Allocations;
         uint64_t NextAddress = 4096;
         size_t Steps = 0;
         bool Initialized = false;
-        std::vector<std::pair<uint32_t,Value>> ExitActions;
+        std::vector<std::pair<uint32_t, Value>> ExitActions;
         static constexpr uint64_t FunctionTag = uint64_t{1} << 60;
 
         struct Frame {
             std::map<uint32_t, uint64_t> addresses;
             std::map<uint32_t, Value> temporaries;
-            std::vector<Value> arguments;
         };
 
-        uint64_t allocate(TypeId type) {
+        uint64_t allocate(TypeId type, bool zero = false) {
             auto address = NextAddress;
-            NextAddress += ModuleValue.type(type).size + 16;
+            const auto size = ModuleValue.type(type).size;
+            Allocations.push_back({address, size, static_cast<unsigned char>(zero ? 0 : 0xa5)});
+            NextAddress += size + 16;
             return address;
+        }
+
+        unsigned char readByte(uint64_t address) const {
+            if (auto value = Memory.find(address); value != Memory.end()) {
+                return value->second;
+            }
+            auto allocation = std::upper_bound(
+                Allocations.begin(), Allocations.end(), address,
+                [](uint64_t address, const Allocation& allocation) { return address < allocation.address; });
+            if (allocation != Allocations.begin()) {
+                --allocation;
+                if (address - allocation->address < allocation->size) {
+                    return allocation->unwritten;
+                }
+            }
+            throw std::runtime_error("test interpreter: read outside object storage");
         }
 
         uint64_t mask(TypeId type) const {
@@ -46,6 +72,9 @@ namespace ir_test {
 
         int64_t signedValue(Value value, TypeId type) const {
             auto bits = ModuleValue.type(type).bits;
+            if (!bits || bits > 64) {
+                throw std::runtime_error("test interpreter: expected an integer width");
+            }
             value.bits &= mask(type);
             if (bits < 64 && (value.bits & (uint64_t{1} << (bits - 1)))) {
                 value.bits |= ~mask(type);
@@ -80,8 +109,12 @@ namespace ir_test {
         void store(uint64_t address, Value value, TypeId type) {
             const auto& info = ModuleValue.type(type);
             if (info.kind == TypeKind::Record) {
-                if (value.record.size() != info.size) throw std::runtime_error("test interpreter: invalid record store");
-                for (uint64_t i = 0; i < info.size; ++i) Memory[address + i] = value.record[i];
+                if (value.record.size() != info.size) {
+                    throw std::runtime_error("test interpreter: invalid record store");
+                }
+                for (uint64_t i = 0; i < info.size; ++i) {
+                    Memory[address + i] = value.record[i];
+                }
                 return;
             }
             uint64_t bits = value.bits;
@@ -98,12 +131,14 @@ namespace ir_test {
             const auto& info = ModuleValue.type(type);
             if (info.kind == TypeKind::Record) {
                 Value value;
-                for (uint64_t i = 0; i < info.size; ++i) value.record.push_back(Memory[address + i]);
+                for (uint64_t i = 0; i < info.size; ++i) {
+                    value.record.push_back(readByte(address + i));
+                }
                 return value;
             }
             uint64_t bits = 0;
             for (uint64_t i = 0; i < info.size; ++i) {
-                bits |= uint64_t{Memory[address + i]} << (i * 8);
+                bits |= uint64_t{readByte(address + i)} << (i * 8);
             }
             if (info.kind == TypeKind::Floating) {
                 return {0, info.bits == 32 ? static_cast<long double>(std::bit_cast<float>(static_cast<uint32_t>(bits)))
@@ -125,10 +160,21 @@ namespace ir_test {
                 return {0, target.bits == 32 ? static_cast<long double>(static_cast<float>(number))
                                              : static_cast<long double>(static_cast<double>(number))};
             }
-            uint64_t bits =
-                source.kind == TypeKind::Floating ? static_cast<uint64_t>(static_cast<int64_t>(value.floating))
-                : source.kind == TypeKind::Integer && source.isSigned ? static_cast<uint64_t>(signedValue(value, from))
-                                                                      : value.bits;
+            uint64_t bits;
+            if (source.kind == TypeKind::Floating) {
+                const auto number = std::trunc(value.floating);
+                const auto high = std::ldexp(1.L, target.isSigned ? target.bits - 1 : target.bits);
+                const auto low = target.isSigned ? -high : 0.L;
+                if (!std::isfinite(number) || number < low || number >= high) {
+                    throw std::runtime_error("test interpreter: out-of-range floating conversion");
+                }
+                bits = target.isSigned ? static_cast<uint64_t>(static_cast<int64_t>(number))
+                                       : static_cast<uint64_t>(number);
+            } else {
+                bits = source.kind == TypeKind::Integer && source.isSigned
+                           ? static_cast<uint64_t>(signedValue(value, from))
+                           : value.bits;
+            }
             return {target.kind == TypeKind::Integer ? bits & mask(to) : bits};
         }
 
@@ -178,8 +224,8 @@ namespace ir_test {
             auto a = left.bits, b = right.bits;
             auto sa =
                 source.kind == TypeKind::Integer ? signedValue(left, instruction.left.type) : static_cast<int64_t>(a);
-            auto sb =
-                source.kind == TypeKind::Integer ? signedValue(right, instruction.right.type) : static_cast<int64_t>(b);
+            auto sb = source.kind == TypeKind::Integer && instruction.right ? signedValue(right, instruction.right.type)
+                                                                            : static_cast<int64_t>(b);
             uint64_t result;
             switch (op) {
             case Opcode::Add:
@@ -195,13 +241,21 @@ namespace ir_test {
                 if (!b) {
                     throw std::runtime_error("test division by zero");
                 }
-                result = source.isSigned ? static_cast<uint64_t>(sa / sb) : a / b;
+                if (source.isSigned && sa == std::numeric_limits<int64_t>::min() && sb == -1) {
+                    result = a;
+                } else {
+                    result = source.isSigned ? static_cast<uint64_t>(sa / sb) : a / b;
+                }
                 break;
             case Opcode::Remainder:
                 if (!b) {
                     throw std::runtime_error("test remainder by zero");
                 }
-                result = source.isSigned ? static_cast<uint64_t>(sa % sb) : a % b;
+                if (source.isSigned && sa == std::numeric_limits<int64_t>::min() && sb == -1) {
+                    result = 0;
+                } else {
+                    result = source.isSigned ? static_cast<uint64_t>(sa % sb) : a % b;
+                }
                 break;
             case Opcode::ShiftLeft:
                 result = a << b;
@@ -299,13 +353,21 @@ namespace ir_test {
                     case Opcode::AddressOffset:
                         result = {a.bits + b.bits};
                         break;
-                    case Opcode::Argument:
-                        frame.arguments.push_back(a);
+                    case Opcode::ZeroMemory: {
+                        auto address = operand(in.result, frame).bits;
+                        for (uint64_t i = 0; i < a.bits; ++i) {
+                            Memory[address + i] = 0;
+                        }
                         continue;
-                    case Opcode::Call:
-                        result = invoke(static_cast<uint32_t>(a.bits & ~FunctionTag), frame.arguments);
-                        frame.arguments.clear();
+                    }
+                    case Opcode::Call: {
+                        std::vector<Value> arguments;
+                        for (auto argument : in.arguments) {
+                            arguments.push_back(operand(argument, frame));
+                        }
+                        result = invoke(static_cast<uint32_t>(a.bits & ~FunctionTag), arguments);
                         break;
+                    }
                     case Opcode::RegisterDestructor:
                         ExitActions.push_back({static_cast<uint32_t>(a.bits & ~FunctionTag), b});
                         continue;
@@ -340,7 +402,7 @@ namespace ir_test {
         explicit Interpreter(const Module& module) : ModuleValue(module) {
             Frame frame;
             for (const auto& object : module.globals) {
-                Globals[object.id] = allocate(object.type);
+                Globals[object.id] = allocate(object.type, true);
             }
             for (const auto& object : module.globals) {
                 for (size_t i = 0; i < object.bytes.size(); ++i) {
@@ -354,7 +416,9 @@ namespace ir_test {
 
         int64_t run(int n) {
             if (!Initialized) {
-                if (ModuleValue.initializer) invoke(ModuleValue.initializer, {});
+                if (ModuleValue.initializer) {
+                    invoke(ModuleValue.initializer, {});
+                }
                 Initialized = true;
             }
             for (const auto& function : ModuleValue.functions) {
@@ -365,15 +429,30 @@ namespace ir_test {
                         ExitActions.pop_back();
                         invoke(action.first, {action.second});
                     }
-                    return signedValue(value, ModuleValue.type(function.signature).element);
+                    const auto resultType = ModuleValue.type(function.signature).element;
+                    const auto& result = ModuleValue.type(resultType);
+                    if (result.kind == TypeKind::Void) {
+                        return 0;
+                    }
+                    if (result.kind != TypeKind::Integer) {
+                        throw std::runtime_error("test entry must return an integer or void");
+                    }
+                    return result.isSigned ? signedValue(value, resultType)
+                                           : std::bit_cast<int64_t>(value.bits & mask(resultType));
                 }
             }
             throw std::runtime_error("test interpreter: missing main");
         }
 
         int64_t globalInteger(const std::string& name) {
-            for (const auto& object : ModuleValue.globals) if (object.name == name)
-                return signedValue(load(Globals.at(object.id), object.type), object.type);
+            for (const auto& object : ModuleValue.globals) {
+                if (object.name == name) {
+                    return ModuleValue.type(object.type).isSigned
+                               ? signedValue(load(Globals.at(object.id), object.type), object.type)
+                               : std::bit_cast<int64_t>(load(Globals.at(object.id), object.type).bits &
+                                                        mask(object.type));
+                }
+            }
             throw std::runtime_error("test interpreter: missing observed global");
         }
     };

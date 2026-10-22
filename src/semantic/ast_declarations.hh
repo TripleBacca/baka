@@ -9,12 +9,12 @@
 namespace baka {
     namespace semantic {
         struct EvaluationContext {
-            enum class Purpose { ArrayBound, Enumerator } purpose;
+            enum class Purpose { ArrayBound, Enumerator, ConstantInitializer } purpose;
             ScopeId scope;
-            TypeId expected;
+            TypeId expected; // optional destination conversion, before publishing a constant
         };
 
-        // B implements this interface. Evaluation runs in the live declaration environment.
+        // Evaluation runs in the live declaration environment.
         class DeclarationEvaluator {
         public:
             virtual ~DeclarationEvaluator() = default;
@@ -28,44 +28,45 @@ namespace baka {
             DeclarationEvaluator* Evaluator;
             std::function<void(types::ExpressionNode*)> PrepareExpression;
 
-            IntegerResult EvaluateInteger(const types::ExpressionNode* expression,
-                                          EvaluationContext::Purpose purpose);
+            IntegerResult EvaluateInteger(types::ExpressionNode* expression, EvaluationContext::Purpose purpose);
+            void consumeArrayElement(TypeId type, const std::vector<types::ExpressionNode*>& values, size_t& cursor);
+            bool isAggregateValue(const types::ExpressionNode* expression, TypeId target) const;
 
         public:
             ASTDeclarations(Types& TypeSystem, Symbols& SymbolTable, Declarations& DeclarationChecker,
                             DeclarationEvaluator* Evaluator = nullptr);
 
             void setEvaluator(DeclarationEvaluator* evaluator);
+
             void setExpressionResolver(std::function<void(types::ExpressionNode*)> resolver) {
                 PrepareExpression = std::move(resolver);
             }
 
-            TypeId specifier(const types::IdentifierNode* name, types::TypeSpecifierModifier modifier, bool constant,
-                             const void* source = nullptr);
+            TypeId specifier(types::IdentifierNode* name, types::TypeSpecifierModifier modifier, bool constant,
+                             const types::ASTNode* source = nullptr);
 
-            TypeId typeName(const types::TypeNode& node);
+            TypeId typeName(types::TypeNode& node);
 
             // Build outward suffixes before recursing inward: int (*p)[3] is pointer-to-array.
-            TypeId declarator(TypeId base, const types::DeclarationIdentifierNode* node);
+            TypeId declarator(TypeId base, types::DeclarationIdentifierNode* node);
 
-            // C enters one Function scope, calls this, then visits the outer body in that SAME scope.
+            // Resolution enters one Function scope and visits the outer body in that same scope.
             // Nested blocks use Block scopes, so only genuine inner-block shadowing is legal.
-            std::vector<SymbolId> parameters(const types::FunctionParameterList& params);
+            std::vector<SymbolId> parameters(types::FunctionParameterList& params);
 
-            // B's initializer callback runs AFTER insertion; each declarator's bound runs BEFORE.
+            // Initializer checking runs after insertion; each declarator's bound runs before.
             // Thus int x=x; binds the new x, while int x[sizeof(x)]; sees the prior x.
-            using InitializerCheck = std::function<void(SymbolId, const types::ExpressionNode*)>;
+            using InitializerCheck = std::function<void(SymbolId, types::ExpressionNode*)>;
 
-            std::vector<SymbolId> declarationList(const types::DeclarationList& node,
-                                                  InitializerCheck initialize = {});
+            std::vector<SymbolId> declarationList(types::DeclarationList& node, InitializerCheck initialize = {});
 
             // Infer storage shape from initializer syntax before later declarations
             // ask sizeof(array). Element conversion checks remain in annotation.
             bool inferArrayBound(SymbolId symbol, const types::ExpressionNode* initializer);
 
-            std::vector<SymbolId> aliases(const types::TypedefNode& node);
+            std::vector<SymbolId> aliases(types::TypedefNode& node);
 
-            TypeId enumeration(const types::EnumNode& node);
+            TypeId enumeration(types::EnumNode& node);
         };
     }
 }

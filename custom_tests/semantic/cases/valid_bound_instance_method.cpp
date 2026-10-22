@@ -1,9 +1,0 @@
-class A {
-    int b;
-    int c;
-    int balls();
-};
-int main(int a) {
-    A d;
-    d.balls();
-}

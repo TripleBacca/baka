@@ -14,6 +14,7 @@ namespace types {
         std::vector<ExpressionNode*> Initializers;
         std::vector<IdentifierNode*> EnumValues; // TODO use lsit mayube?
     public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getEnumName()); for (auto* child : getEnumValues()) visit(child); for (auto* child : getInitializers()) visit(child); }
 
         EnumNode(IdentifierNode* name)
             : EnumName(name) {}

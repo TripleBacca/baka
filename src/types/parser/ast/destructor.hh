@@ -12,6 +12,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getBody()); }
             DestructorNode(StatementNode* body) :
                  Body(body) {
             }

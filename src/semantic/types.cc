@@ -1,4 +1,5 @@
 #include "types.hh"
+#include "base/target.hh"
 
 #include <algorithm>
 #include <limits>
@@ -6,30 +7,15 @@
 
 namespace baka {
     namespace semantic {
-        size_t Types::CanonicalHash(const Type& TypeInfo) const {
-            size_t Hash = static_cast<size_t>(TypeInfo.kind) * static_cast<size_t>(0xff51afd7ed558ccdULL);
-            MixHash(Hash, static_cast<size_t>(TypeInfo.builtin));
-            MixHash(Hash, static_cast<size_t>(TypeInfo.element.value));
-            MixHash(Hash, static_cast<size_t>(TypeInfo.bound.kind));
-            MixHash(Hash, static_cast<size_t>(TypeInfo.bound.count));
-            Hash = HashVector(Hash, TypeInfo.parameters);
-            MixHash(Hash, static_cast<size_t>(TypeInfo.variadic ? 1u : 0u));
-            return Hash;
-        }
-
-        bool Types::CanonicalEqual(const Type& LeftType, const Type& RightType) const {
-            return LeftType.kind == RightType.kind && LeftType.builtin == RightType.builtin &&
-                   LeftType.element == RightType.element && LeftType.bound == RightType.bound &&
-                   LeftType.parameters == RightType.parameters && LeftType.variadic == RightType.variadic;
-        }
-
-        size_t Types::InternHash::operator()(uint32_t index) const {
-            return TypeSystem->CanonicalHash(TypeSystem->TypeArena[index]);
-        }
-
-        bool Types::InternEqual::operator()(uint32_t Left, uint32_t Right) const {
-            return Left == Right ||
-                   TypeSystem->CanonicalEqual(TypeSystem->TypeArena[Left], TypeSystem->TypeArena[Right]);
+        size_t Types::KeyHash::operator()(const TypeKey& key) const {
+            size_t hash = static_cast<size_t>(key.kind);
+            MixHash(hash, static_cast<size_t>(key.builtin));
+            MixHash(hash, key.element.value);
+            MixHash(hash, static_cast<size_t>(key.bound.kind));
+            MixHash(hash, key.bound.count);
+            hash = HashVector(hash, key.parameters);
+            MixHash(hash, key.variadic);
+            return hash;
         }
 
         TypeId Types::AddType(Type type) {
@@ -41,12 +27,12 @@ namespace baka {
         }
 
         TypeId Types::InternType(Type type) {
-            auto id = AddType(std::move(type));
-            auto [Entry, added] = InternTable.insert(id.value);
-            if (!added) {
-                TypeArena.pop_back();
-                return {*Entry};
+            TypeKey key{type.kind, type.builtin, type.element, type.bound, type.parameters, type.variadic};
+            if (auto found = InternTable.find(key); found != InternTable.end()) {
+                return found->second;
             }
+            auto id = AddType(std::move(type));
+            InternTable.emplace(std::move(key), id);
             return id;
         }
 
@@ -61,6 +47,13 @@ namespace baka {
         bool Types::AlignChecked(uint64_t size, uint64_t alignment, uint64_t& out) {
             auto padding = (alignment - size % alignment) % alignment;
             return AddChecked(size, padding, out);
+        }
+
+        LayoutResult Types::ComputeStorageLayout(TypeId id, std::vector<TypeId>& active) const {
+            if (auto* stored = storedLayout(id)) {
+                return {QueryState::Ready, {stored->size, stored->alignment, {}, {}}, {}};
+            }
+            return ComputeLayout(id, active);
         }
 
         LayoutResult Types::ComputeLayout(TypeId id, std::vector<TypeId>& active) const {
@@ -83,25 +76,25 @@ namespace baka {
                 case Builtin::Bool:
                 case Builtin::Char:
                 case Builtin::UChar:
-                    Size = 1;
+                    Size = target::CharBits / target::ByteBits;
                     break;
                 case Builtin::Short:
                 case Builtin::UShort:
-                    Size = 2;
+                    Size = target::ShortBits / target::ByteBits;
                     break;
                 case Builtin::Int:
                 case Builtin::UInt:
                 case Builtin::Float:
-                    Size = 4;
+                    Size = target::IntBits / target::ByteBits;
                     break;
                 default:
-                    Size = 8;
+                    Size = target::LongBits / target::ByteBits;
                     break;
                 }
                 return {QueryState::Ready, {Size, Size, {}, {}}, {}};
             }
             if (TypeInfo.kind == TypeKind::Pointer) {
-                return {QueryState::Ready, {8, 8, {}, {}}, {}};
+                return {QueryState::Ready, {target::PointerBytes, target::PointerBytes, {}, {}}, {}};
             }
             if (TypeInfo.kind == TypeKind::Enum) {
                 if (TypeInfo.completion != Completion::Complete) {
@@ -123,7 +116,7 @@ namespace baka {
             } StackGuard{active};
 
             if (TypeInfo.kind == TypeKind::Array) {
-                auto element = ComputeLayout(TypeInfo.element, active);
+                auto element = ComputeStorageLayout(TypeInfo.element, active);
                 if (!element) {
                     return element;
                 }
@@ -144,7 +137,7 @@ namespace baka {
             }
             Layout result;
             if (TypeInfo.base.value) {
-                auto base = ComputeLayout(TypeInfo.base, active);
+                auto base = ComputeStorageLayout(TypeInfo.base, active);
                 if (!base) {
                     return base;
                 }
@@ -159,7 +152,7 @@ namespace baka {
                     result.offsets.push_back(std::nullopt);
                     continue;
                 }
-                auto field = ComputeLayout(member.type, active);
+                auto field = ComputeStorageLayout(member.type, active);
                 if (!field) {
                     return field;
                 }
@@ -167,9 +160,8 @@ namespace baka {
                 uint64_t offset = 0;
                 if (TypeInfo.kind == TypeKind::Union) {
                     result.size = std::max(result.size, field.layout.size);
-                }
-                else if (!AlignChecked(result.size, field.layout.alignment, offset) ||
-                    !AddChecked(offset, field.layout.size, result.size)) {
+                } else if (!AlignChecked(result.size, field.layout.alignment, offset) ||
+                           !AddChecked(offset, field.layout.size, result.size)) {
                     return {QueryState::Error, {}, "aggregate size overflow"};
                 }
                 result.offsets.push_back(offset);
@@ -181,7 +173,7 @@ namespace baka {
             return {QueryState::Ready, std::move(result), {}};
         }
 
-        Types::Types() : InternTable{8, {this}, {this}} {
+        Types::Types() {
             for (unsigned Index = 0; Index <= static_cast<unsigned>(Builtin::Double); ++Index) {
                 Type TypeInfo;
                 TypeInfo.kind = TypeKind::Builtin;
@@ -201,7 +193,7 @@ namespace baka {
         std::optional<Types::ArithmeticInfo> Types::arithmetic(TypeId id) const {
             const auto& TypeInfo = get(unConst(id));
             if (TypeInfo.kind == TypeKind::Enum) {
-                return ArithmeticInfo{32, 3, true, false};
+                return ArithmeticInfo{target::IntBits, 3, true, false};
             }
             if (TypeInfo.kind != TypeKind::Builtin) {
                 return std::nullopt;
@@ -212,25 +204,25 @@ namespace baka {
             case Builtin::Bool:
                 return ArithmeticInfo{1, 0, false, false};
             case Builtin::Char:
-                return ArithmeticInfo{8, 1, true, false};
+                return ArithmeticInfo{target::CharBits, 1, true, false};
             case Builtin::UChar:
-                return ArithmeticInfo{8, 1, false, false};
+                return ArithmeticInfo{target::CharBits, 1, false, false};
             case Builtin::Short:
-                return ArithmeticInfo{16, 2, true, false};
+                return ArithmeticInfo{target::ShortBits, 2, true, false};
             case Builtin::UShort:
-                return ArithmeticInfo{16, 2, false, false};
+                return ArithmeticInfo{target::ShortBits, 2, false, false};
             case Builtin::Int:
-                return ArithmeticInfo{32, 3, true, false};
+                return ArithmeticInfo{target::IntBits, 3, true, false};
             case Builtin::UInt:
-                return ArithmeticInfo{32, 3, false, false};
+                return ArithmeticInfo{target::IntBits, 3, false, false};
             case Builtin::Long:
-                return ArithmeticInfo{64, 4, true, false};
+                return ArithmeticInfo{target::LongBits, 4, true, false};
             case Builtin::ULong:
-                return ArithmeticInfo{64, 4, false, false};
+                return ArithmeticInfo{target::LongBits, 4, false, false};
             case Builtin::Float:
-                return ArithmeticInfo{32, 5, true, true};
+                return ArithmeticInfo{target::FloatBits, 5, true, true};
             case Builtin::Double:
-                return ArithmeticInfo{64, 6, true, true};
+                return ArithmeticInfo{target::DoubleBits, 6, true, true};
             }
             return std::nullopt;
         }
@@ -258,8 +250,8 @@ namespace baka {
         bool Types::isIntegral(TypeId id) const {
             const auto& TypeInfo = get(unConst(id));
             return TypeInfo.kind == TypeKind::Enum ||
-            (TypeInfo.kind == TypeKind::Builtin && TypeInfo.builtin >= Builtin::Bool &&
-                TypeInfo.builtin <= Builtin::ULong);
+                   (TypeInfo.kind == TypeKind::Builtin && TypeInfo.builtin >= Builtin::Bool &&
+                    TypeInfo.builtin <= Builtin::ULong);
         }
 
         bool Types::isVoid(TypeId id) const {
@@ -355,8 +347,7 @@ namespace baka {
                 return false;
             }
             auto& TypeInfo = TypeArena.at(id.value);
-            if (!(isAggregate(id) || TypeInfo.kind == TypeKind::Enum) ||
-                TypeInfo.completion != Completion::Forward) {
+            if (!(isAggregate(id) || TypeInfo.kind == TypeKind::Enum) || TypeInfo.completion != Completion::Forward) {
                 return false;
             }
             TypeInfo.completion = Completion::Defining;
@@ -365,8 +356,8 @@ namespace baka {
 
         bool Types::setBase(TypeId id, TypeId base) {
             if (!isAggregate(id) || !isAggregate(base) || get(id).completion != Completion::Defining ||
-                get(id).base.value || get(base).completion != Completion::Complete ||
-                get(id).kind == TypeKind::Union || get(base).kind == TypeKind::Union) {
+                get(id).base.value || get(base).completion != Completion::Complete || get(id).kind == TypeKind::Union ||
+                get(base).kind == TypeKind::Union) {
                 return false;
             }
             for (auto CurrentType = base; CurrentType.value; CurrentType = get(CurrentType).base) {
@@ -392,8 +383,7 @@ namespace baka {
                 if (MemberType.kind == TypeKind::Function && old.kind == TypeKind::Function && !member.isType &&
                     !MemberInfo.isType && !member.isDestructor && !MemberInfo.isDestructor &&
                     (MemberType.parameters != old.parameters || MemberType.variadic != old.variadic ||
-                        (member.isConstMethod != MemberInfo.isConstMethod && !member.isStatic &&
-                            !MemberInfo.isStatic))) {
+                     (member.isConstMethod != MemberInfo.isConstMethod && !member.isStatic && !MemberInfo.isStatic))) {
                     continue;
                 }
                 return false;
@@ -508,8 +498,7 @@ namespace baka {
             }
             for (const auto& MemberInfo : TypeInfo.members) {
                 if (!MemberInfo.isStatic && !MemberInfo.isType &&
-                    get(unConst(MemberInfo.type)).kind != TypeKind::Function &&
-                    recursivelyConst(MemberInfo.type)) {
+                    get(unConst(MemberInfo.type)).kind != TypeKind::Function && recursivelyConst(MemberInfo.type)) {
                     return true;
                 }
             }
