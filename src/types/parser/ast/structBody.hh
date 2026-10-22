@@ -19,6 +19,7 @@ namespace types {
         std::vector<ASTNode*> Members;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { for (auto* child : getMembers()) visit(child); }
             StructBodyNode() = default;
 
             void AddDeclaration(DeclarationList* decl) {

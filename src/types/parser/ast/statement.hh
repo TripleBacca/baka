@@ -35,6 +35,7 @@ namespace types {
     class CompoundStatementNode : public StatementNode
     {
     public:
+        void visitChildren(const NodeVisitor& visit) const override;
         using StatementVariant = std::variant<StatementNode*, DeclarationList*, TypedefNode*, FunctionNode*,
                                               StructDefinitionNode*, StructDeclarationNode*, ClassDefinitionNode*,
                                               ClassDeclarationNode*, UnionNode*, EnumNode*>;
@@ -67,6 +68,7 @@ namespace types {
 
     class EmptyStatementNode : public StatementNode {
     public:
+        void visitChildren(const NodeVisitor& visit) const override {  }
         void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
             std::cout << "EmptyStatement()" << std::endl;
@@ -76,10 +78,12 @@ namespace types {
     class ExpressionStatementNode : public StatementNode {
         ExpressionNode* Expression; // can be nullptr
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getExpression()); }
             ExpressionStatementNode(ExpressionNode* Expression) : Expression(Expression) {}
             ExpressionNode* getExpression() const { return Expression; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expression = rewrite(Expression); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expression); }
 
             void Print(size_t Tabs) const override {
                 INDENT(Tabs);

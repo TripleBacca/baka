@@ -18,6 +18,7 @@ namespace types {
         ExpressionNode* getElse() const { return ElseExpr; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { ConditionExpr = rewrite(ConditionExpr); ThenExpr = rewrite(ThenExpr); ElseExpr = rewrite(ElseExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(ConditionExpr); visit(ThenExpr); visit(ElseExpr); }
 
             void Print(size_t Tabs) const override {
             INDENT(Tabs);

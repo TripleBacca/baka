@@ -9,7 +9,7 @@ namespace baka {
             : TypeSystem(TypeSystem), SymbolTable(SymbolTable) {}
 
         TypeId Declarations::specifier(std::string name, bool constant, bool isUnsigned,
-                                       std::optional<TypeKind> expected, const void* source) {
+                                       std::optional<TypeKind> expected, const types::ASTNode* source) {
             auto id = SymbolTable.lookupType(name, source);
             if (!id.value) {
                 return {};
@@ -38,7 +38,8 @@ namespace baka {
             return TypeSystem.constant(id, constant);
         }
 
-        TypeId Declarations::boundArray(TypeId element, IntegerResult value, const void* expression, bool omitted) {
+        TypeId Declarations::boundArray(TypeId element, IntegerResult value, const types::ASTNode* expression,
+                                        bool omitted) {
             Bound bound;
             if (omitted) {
                 return TypeSystem.array(element);
@@ -60,7 +61,7 @@ namespace baka {
             return id;
         }
 
-        bool Declarations::validate(TypeId id, DeclarationContext context, const void* source) {
+        bool Declarations::validate(TypeId id, DeclarationContext context, const types::ASTNode* source) {
             if (!id.value) {
                 return false;
             }
@@ -87,8 +88,7 @@ namespace baka {
                 return {};
             }
             auto kind = TypeSystem.get(TypeSystem.unConst(NewDeclaration.type)).kind;
-            if (NewDeclaration.definition && kind == TypeKind::Function &&
-                NewDeclaration.kind == SymbolKind::Object) {
+            if (NewDeclaration.definition && kind == TypeKind::Function && NewDeclaration.kind == SymbolKind::Object) {
                 // A declaration with no body is a function prototype; C passes Function for bodies.
                 NewDeclaration.definition = false;
             }
@@ -104,8 +104,7 @@ namespace baka {
         SymbolId Declarations::functionDefinition(Declaration NewDeclaration) {
             const auto& TypeInfo = TypeSystem.get(TypeSystem.unConst(NewDeclaration.type));
             if (TypeInfo.kind != TypeKind::Function) {
-                SymbolTable.diagnose("function-body", "body attached to an object declarator",
-                                     NewDeclaration.source);
+                SymbolTable.diagnose("function-body", "body attached to an object declarator", NewDeclaration.source);
                 return {};
             }
             if (!TypeSystem.isVoid(TypeInfo.element) && !validate(TypeInfo.element, {}, NewDeclaration.source)) {
@@ -122,15 +121,14 @@ namespace baka {
             return SymbolTable.declare(std::move(NewDeclaration));
         }
 
-        SymbolId Declarations::alias(std::string name, TypeId type, const void* source) {
+        SymbolId Declarations::alias(std::string name, TypeId type, const types::ASTNode* source) {
             if (!validate(type, {false, false, false, false}, source)) {
                 return {};
             }
-            return SymbolTable.declare(
-                {std::move(name), SymbolKind::Alias, type, false, false, Linkage::None, source});
+            return SymbolTable.declare({std::move(name), SymbolKind::Alias, type, false, false, Linkage::None, source});
         }
 
-        TypeId Declarations::aggregate(std::string name, TypeKind kind, const void* source) {
+        TypeId Declarations::aggregate(std::string name, TypeKind kind, const types::ASTNode* source) {
             if (!name.empty()) {
                 auto old = SymbolTable.lookupCurrent(name);
                 if (!old.empty()) {
@@ -156,7 +154,7 @@ namespace baka {
             return type;
         }
 
-        bool Declarations::beginAggregate(TypeId id, const void* source) {
+        bool Declarations::beginAggregate(TypeId id, const types::ASTNode* source) {
             if (TypeSystem.beginDefinition(id)) {
                 return true;
             }
@@ -170,13 +168,12 @@ namespace baka {
             const auto& ownerName = TypeSystem.get(owner).name;
             if ((member.isConstructor && (ownerName.empty() || member.name != ownerName)) ||
                 (member.isDestructor && (ownerName.empty() || member.name != "~" + ownerName))) {
-                SymbolTable.diagnose("special-member-name",
-                                     "special member name does not match its enclosing type", member.source);
+                SymbolTable.diagnose("special-member-name", "special member name does not match its enclosing type",
+                                     member.source);
                 return false;
             }
             if (member.isStatic && member.isConstMethod) {
-                SymbolTable.diagnose("static-method", "static methods have no const-qualified receiver",
-                                     member.source);
+                SymbolTable.diagnose("static-method", "static methods have no const-qualified receiver", member.source);
                 return false;
             }
             bool field = !member.isType && !member.isStatic && TypeInfo.kind != TypeKind::Function;
@@ -186,19 +183,22 @@ namespace baka {
             if (!field && !validate(type, {false, true, true, false}, member.source)) {
                 return false;
             }
-            if (TypeSystem.get(owner).kind == TypeKind::Union && field && TypeSystem.isAggregate(type) &&
-                specialMembers(type).nontrivial) {
+            auto lifetimeType = TypeSystem.unConst(type);
+            while (TypeSystem.get(lifetimeType).kind == TypeKind::Array) {
+                lifetimeType = TypeSystem.unConst(TypeSystem.get(lifetimeType).element);
+            }
+            if (TypeSystem.get(owner).kind == TypeKind::Union && field && TypeSystem.isAggregate(lifetimeType) &&
+                specialMembers(lifetimeType).nontrivial) {
                 SymbolTable.diagnose("union-lifetime", "nontrivial union members are unsupported", member.source);
                 return false;
             }
-            if (member.isConstructor &&
-                (TypeInfo.kind != TypeKind::Function || !TypeSystem.isVoid(TypeInfo.element) || member.isStatic ||
-                 member.isConstMethod)) {
+            if (member.isConstructor && (TypeInfo.kind != TypeKind::Function || !TypeSystem.isVoid(TypeInfo.element) ||
+                                         member.isStatic || member.isConstMethod)) {
                 SymbolTable.diagnose("constructor", "invalid constructor signature", member.source);
                 return false;
             }
-            if (member.isConstructor && std::find(TypeInfo.parameters.begin(), TypeInfo.parameters.end(), owner) !=
-                                            TypeInfo.parameters.end()) {
+            if (member.isConstructor &&
+                std::find(TypeInfo.parameters.begin(), TypeInfo.parameters.end(), owner) != TypeInfo.parameters.end()) {
                 SymbolTable.diagnose("constructor-copy", "a constructor cannot take its own type by value",
                                      member.source);
                 return false;
@@ -216,7 +216,7 @@ namespace baka {
             return true;
         }
 
-        bool Declarations::base(TypeId owner, TypeId base, const void* source) {
+        bool Declarations::base(TypeId owner, TypeId base, const types::ASTNode* source) {
             if (TypeSystem.setBase(owner, base)) {
                 return true;
             }
@@ -224,21 +224,25 @@ namespace baka {
             return false;
         }
 
-        bool Declarations::finishAggregate(TypeId type, const void* source) {
+        bool Declarations::finishAggregate(TypeId type, const types::ASTNode* source) {
             auto layout = TypeSystem.finishDefinition(type);
             if (layout) {
+                if (TypeSystem.get(type).kind == TypeKind::Union && specialMembers(type).nontrivial) {
+                    SymbolTable.diagnose("union-lifetime", "nontrivial union lifetimes are unsupported", source);
+                    return false;
+                }
                 return true;
             }
             SymbolTable.diagnose("layout", layout.message, source);
             return false;
         }
 
-        SymbolId Declarations::enumerator(std::string name, TypeId type, IntegerResult value, const void* source) {
+        SymbolId Declarations::enumerator(std::string name, TypeId type, IntegerResult value,
+                                          const types::ASTNode* source) {
             if (TypeSystem.get(type).kind != TypeKind::Enum || value.state != ConstantState::Value ||
                 value.value < std::numeric_limits<int32_t>::min() ||
                 value.value > std::numeric_limits<int32_t>::max()) {
-                SymbolTable.diagnose("enumerator", "enumerator requires an available signed 32-bit constant",
-                                     source);
+                SymbolTable.diagnose("enumerator", "enumerator requires an available signed 32-bit constant", source);
                 return {};
             }
             auto id = SymbolTable.declare(
@@ -260,6 +264,10 @@ namespace baka {
         }
 
         SpecialMembers Declarations::specialMembers(TypeId id) const {
+            id = TypeSystem.unConst(id);
+            if (auto found = SpecialMemberCache.find(id.value); found != SpecialMemberCache.end()) {
+                return found->second;
+            }
             SpecialMembers result;
             const auto& TypeInfo = TypeSystem.get(TypeSystem.unConst(id));
             for (size_t Index = 0; Index < TypeInfo.members.size(); ++Index) {
@@ -272,10 +280,14 @@ namespace baka {
                 }
             }
             result.implicitDefaultConstructor = result.constructors.empty();
-            result.implicitCopyConstructor =
-                true; // explicit by-value copy constructors are invalid under this subset
+            result.implicitCopyConstructor = true; // explicit by-value copy constructors are invalid under this subset
             result.implicitDestructor = !result.destructor;
             result.nontrivial = !result.constructors.empty() || result.destructor.has_value();
+            for (const auto& member : TypeInfo.members) {
+                if (!member.isStatic && member.initializer) {
+                    result.nontrivial = true;
+                }
+            }
             if (TypeInfo.completion == Completion::Complete) {
                 if (TypeInfo.base.value) {
                     result.nontrivial = result.nontrivial || specialMembers(TypeInfo.base).nontrivial;
@@ -290,11 +302,14 @@ namespace baka {
                     }
                 }
             }
+            if (TypeInfo.completion == Completion::Complete) {
+                SpecialMemberCache.emplace(id.value, result);
+            }
             return result;
         }
 
         Declarations::Access Declarations::memberAccess(TypeId receiver, const std::string& name, bool arrow,
-                                                        bool staticContext, const void* source) {
+                                                        bool staticContext, const types::ASTNode* source) {
             if (arrow) {
                 auto TypeInfo = TypeSystem.get(TypeSystem.unConst(receiver));
                 if (TypeInfo.kind != TypeKind::Pointer) {
@@ -316,8 +331,7 @@ namespace baka {
                 const auto& MemberInfo = TypeSystem.get(found.owner).members[Index];
                 if (MemberInfo.isType || MemberInfo.isConstructor || MemberInfo.isDestructor ||
                     (staticContext && !MemberInfo.isStatic)) {
-                    SymbolTable.diagnose("member-context", "member is unavailable in this expression context",
-                                         source);
+                    SymbolTable.diagnose("member-context", "member is unavailable in this expression context", source);
                     return {};
                 }
             }
@@ -333,7 +347,7 @@ namespace baka {
         }
 
         TypeId Declarations::thisType(TypeId currentClass, bool staticContext, bool constMethod,
-                                      const void* source) {
+                                      const types::ASTNode* source) {
             if (!TypeSystem.isAggregate(currentClass) || staticContext) {
                 SymbolTable.diagnose("this", "this requires an instance member context", source);
                 return {};

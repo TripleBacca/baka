@@ -12,6 +12,7 @@ namespace baka {
 
         class ConstantNode : public ASTNode {
             public:
+        void visitChildren(const NodeVisitor& visit) const override {  }
                 virtual ~ConstantNode() = default;
         };
 

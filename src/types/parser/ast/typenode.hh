@@ -18,6 +18,7 @@ namespace baka {
 			// No identifier for name
 
 		public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTypeName()); }
 			TypeNode(bool isConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName) :
 				isConst(isConst), Modifier(modifier), TypeName(TypeName)
 			{

@@ -7,10 +7,16 @@
 #include <optional>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
 namespace baka {
+    namespace types {
+        class ASTNode;
+        class ExpressionNode;
+    }
+
     namespace semantic {
         // IDs are arena indices. Zero is always invalid/error; never a fabricated int.
         struct TypeId {
@@ -51,14 +57,17 @@ namespace baka {
             bool isConstructor = false;
             bool isDestructor = false;
             bool isConstMethod = false;
-            const void* source = nullptr;
+            const types::ASTNode* source = nullptr;
             size_t minimumArity = static_cast<size_t>(-1);
+            const types::ExpressionNode* initializer = nullptr;
+            bool operator==(const Member&) const = default;
         };
 
         struct Layout {
             uint64_t size = 0, alignment = 1;
             std::vector<std::optional<uint64_t>> offsets; // indexed like Type::members
             std::optional<uint64_t> baseOffset;
+            bool operator==(const Layout&) const = default;
         };
 
         struct Type {
@@ -76,6 +85,7 @@ namespace baka {
             // definitions have no layout. Completed nominal types cannot change
             // storage shape, so all later queries reuse these offsets and size.
             std::optional<Layout> objectLayout;
+            bool operator==(const Type&) const = default;
         };
 
         // 64-bit mixing constant (Kynea / golden ratio derived).
@@ -112,39 +122,41 @@ namespace baka {
             std::deque<Type> TypeArena{Type{}};
             std::vector<TypeId> BuiltinTypes;
 
-            // Hash-to-integer interning of canonical type IDs, including parameter vectors.
-            size_t CanonicalHash(const Type& TypeInfo) const;
-            // Structural equivalence of values two hash entries might share bucket space for.
-            bool CanonicalEqual(const Type& LeftType, const Type& RightType) const;
-
-            struct InternHash {
-                const Types* TypeSystem;
-                size_t operator()(uint32_t index) const;
+            struct TypeKey {
+                TypeKind kind;
+                Builtin builtin;
+                TypeId element;
+                Bound bound;
+                std::vector<TypeId> parameters;
+                bool variadic;
+                bool operator==(const TypeKey&) const = default;
             };
 
-            struct InternEqual {
-                const Types* TypeSystem;
-                bool operator()(uint32_t Left, uint32_t Right) const;
+            struct KeyHash {
+                size_t operator()(const TypeKey& key) const;
             };
 
-            using InternSet = std::unordered_set<uint32_t, InternHash, InternEqual>;
-            InternSet InternTable;
+            std::unordered_map<TypeKey, TypeId, KeyHash> InternTable;
 
             TypeId AddType(Type type);
             TypeId InternType(Type type);
             static bool AddChecked(uint64_t Left, uint64_t Right, uint64_t& out);
             static bool AlignChecked(uint64_t size, uint64_t alignment, uint64_t& out);
             LayoutResult ComputeLayout(TypeId id, std::vector<TypeId>& active) const;
+            LayoutResult ComputeStorageLayout(TypeId id, std::vector<TypeId>& active) const;
 
         public:
-            // InternTable captures this; identities are only valid inside one instance.
+            // Identities belong to one compilation context.
             Types(const Types&) = delete;
             Types& operator=(const Types&) = delete;
 
             Types();
 
             const Type& get(TypeId id) const;
-            size_t typeCount() const { return TypeArena.size() - 1; }
+
+            size_t typeCount() const {
+                return TypeArena.size() - 1;
+            }
 
             TypeId builtin(Builtin Right) const;
 
@@ -178,6 +190,12 @@ namespace baka {
             bool bindMemberSymbol(TypeId owner, size_t index, SymbolId symbol);
             LayoutResult finishDefinition(TypeId id);
             LayoutResult layout(TypeId id) const;
+
+            // Borrow cached nominal layout without copying its offset vector.
+            const Layout* storedLayout(TypeId id) const {
+                const auto& type = get(unConst(id));
+                return type.objectLayout ? &*type.objectLayout : nullptr;
+            }
 
             // Checks array formation even below pointer layers, independently of sizeof(pointer).
             bool validDerived(TypeId id) const;

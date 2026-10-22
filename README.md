@@ -22,7 +22,8 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 
 - `make lex file=<source_code_file_path>` : Runs the compiler in verbose mode upto the lexer stage.
 - `make semantic file=<source_code_file_path>` : Runs through semantic analysis for the supported language subset.
-- `make test-semantic` : Runs structural tests for every semantic pass and semantic acceptance/rejection programs.
+- `make test-semantic` : Runs representative semantic acceptance/rejection programs.
+- `make test-ir` : Checks TAC output and execution before and after optimization.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
 - `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
 - `make build` : Build the binary and put it in `/build/baka`
@@ -162,3 +163,16 @@ There are certain features we are not supporting:
 - Shaurya Goel (24114090)
 - Tanmay Arya (24114099)
 - Abhinav Shresth (24115008)
+
+
+## Semantic analysis and TAC
+
+After building, use `./build/baka --semantic source.cpp` to inspect the normalized
+AST and `./build/baka --ir source.cpp` to print checked typed TAC. Run
+`ctest --test-dir build --output-on-failure` for both stage suites, or
+`make test-semantic` / `make test-ir` to run either suite separately.
+
+The current architecture and language policies are documented in
+[src/semantic/README.md](src/semantic/README.md), with the lowering contract in
+[src/semantic/IR_READINESS.md](src/semantic/IR_READINESS.md) and the TAC model in
+[ir_context.md](ir_context.md).

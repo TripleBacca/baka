@@ -14,6 +14,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getArgs()); visit(getBody()); }
             ConstructorNode(FunctionParameterList* args, StatementNode* body) :
                 Args(args), Body(body) {
             }

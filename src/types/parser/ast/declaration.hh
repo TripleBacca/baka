@@ -23,6 +23,7 @@ namespace types {
         ASTNode* FunctionParameters = nullptr;
 
     public:
+        void visitChildren(const NodeVisitor& visit) const override { std::visit([&](auto* child) { visit(child); }, VariableName); for (auto* child : ArraySizes) visit(child); visit(FunctionParameters); }
         DeclarationIdentifierNode() = default;
 
         DeclarationIdentifierNode(size_t PointerCount, DeclarationIdentifierNode* VariableName, std::vector<ExpressionNode*> ArraySizes) :
@@ -166,10 +167,12 @@ namespace types {
         DeclarationIdentifierNode* VariableName;
         ExpressionNode* Initialization; // can be nullptr
     public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getDeclarator()); visit(getInitializer()); }
         SingleDeclarationNode(DeclarationIdentifierNode* VariableName, ExpressionNode* Initialization) :
         VariableName(VariableName), Initialization(Initialization) {}
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Initialization = rewrite(Initialization); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Initialization); }
 
             void Print(size_t Tabs = 0) const override {
             INDENT(Tabs);
@@ -209,6 +212,7 @@ namespace types {
         std::vector<SingleDeclarationNode*> Declarations;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTypeName()); for (auto* child : getDeclarations()) visit(child); }
         DeclarationList(bool IsStatic, bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, std::vector<SingleDeclarationNode*> Declarations) :
         IsStatic(IsStatic), IsConst(IsConst), Modifier(modifier), TypeName(TypeName), Declarations(std::move(Declarations)) {
 
@@ -266,6 +270,7 @@ namespace types {
         IdentifierNode* TypeName;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getTypeName()); visit(getDeclaration()); }
         FunctionParameter(bool IsConst, TypeSpecifierModifier modifier, IdentifierNode* TypeName, SingleDeclarationNode* SingleDeclarationNode) :
             IsConst(IsConst), Modifier(modifier), SDeclarationNode(SingleDeclarationNode), TypeName(TypeName) {
 
@@ -322,6 +327,7 @@ namespace types {
         std::vector<FunctionParameter*> Parameters;
         bool Variadic = false;
     public:
+        void visitChildren(const NodeVisitor& visit) const override { for (auto* child : getParameters()) visit(child); }
         FunctionParameterList(std::vector<FunctionParameter*> parameters, bool variadic = false)
             : Parameters(std::move(parameters)), Variadic(variadic) {}
         const std::vector<FunctionParameter*>& getParameters() const {

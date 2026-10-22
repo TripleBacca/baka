@@ -31,35 +31,37 @@ namespace baka {
         class Declarations {
             Types& TypeSystem;
             Symbols& SymbolTable;
+            mutable std::unordered_map<uint32_t, SpecialMembers> SpecialMemberCache;
 
         public:
             Declarations(Types& TypeSystem, Symbols& SymbolTable);
 
             TypeId specifier(std::string name, bool constant = false, bool isUnsigned = false,
-                             std::optional<TypeKind> expected = {}, const void* source = nullptr);
+                             std::optional<TypeKind> expected = {}, const types::ASTNode* source = nullptr);
 
-            TypeId boundArray(TypeId element, IntegerResult value, const void* expression = nullptr,
+            TypeId boundArray(TypeId element, IntegerResult value, const types::ASTNode* expression = nullptr,
                               bool omitted = false);
 
-            bool validate(TypeId id, DeclarationContext context = {}, const void* source = nullptr);
+            bool validate(TypeId id, DeclarationContext context = {}, const types::ASTNode* source = nullptr);
 
             SymbolId object(Declaration NewDeclaration, DeclarationContext context = {});
 
             SymbolId functionDefinition(Declaration NewDeclaration);
 
-            SymbolId alias(std::string name, TypeId type, const void* source = nullptr);
+            SymbolId alias(std::string name, TypeId type, const types::ASTNode* source = nullptr);
 
-            TypeId aggregate(std::string name, TypeKind kind, const void* source = nullptr);
+            TypeId aggregate(std::string name, TypeKind kind, const types::ASTNode* source = nullptr);
 
-            bool beginAggregate(TypeId id, const void* source = nullptr);
+            bool beginAggregate(TypeId id, const types::ASTNode* source = nullptr);
 
             bool member(TypeId owner, Member member);
 
-            bool base(TypeId owner, TypeId base, const void* source = nullptr);
+            bool base(TypeId owner, TypeId base, const types::ASTNode* source = nullptr);
 
-            bool finishAggregate(TypeId type, const void* source = nullptr);
+            bool finishAggregate(TypeId type, const types::ASTNode* source = nullptr);
 
-            SymbolId enumerator(std::string name, TypeId type, IntegerResult value, const void* source = nullptr);
+            SymbolId enumerator(std::string name, TypeId type, IntegerResult value,
+                                const types::ASTNode* source = nullptr);
 
             IntegerResult nextEnumerator(std::optional<int64_t> previous) const;
 
@@ -73,9 +75,10 @@ namespace baka {
             };
 
             Access memberAccess(TypeId receiver, const std::string& name, bool arrow = false,
-                                bool staticContext = false, const void* source = nullptr);
+                                bool staticContext = false, const types::ASTNode* source = nullptr);
 
-            TypeId thisType(TypeId currentClass, bool staticContext, bool constMethod, const void* source = nullptr);
+            TypeId thisType(TypeId currentClass, bool staticContext, bool constMethod,
+                            const types::ASTNode* source = nullptr);
         };
     }
 }

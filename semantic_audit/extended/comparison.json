@@ -1,0 +1,3436 @@
+[
+  {
+    "name": "for_empty_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_empty_empty_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "Cond: nullptr",
+      "Upd: nullptr",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_empty_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_empty_empty_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "Cond: nullptr",
+      "Upd: nullptr",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_empty_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_empty_empty_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "Cond: nullptr",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_empty_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_empty_empty_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "Cond: nullptr",
+      "CommaExpression(",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_empty_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_empty_present_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "CommaExpression(",
+      "Upd: nullptr",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_empty_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_empty_present_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": false
+  },
+  {
+    "name": "for_empty_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_empty_present_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_empty_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_empty_present_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "Decl: nullptr",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_expression_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_expression_empty_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/for_expression_empty_empty.cpp:1:29: error: expected expression (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "for_expression_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_expression_empty_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "Cond: nullptr",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": false
+  },
+  {
+    "name": "for_expression_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_expression_empty_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/for_expression_empty_present.cpp:1:32: error: expected ';' in 'for' statement specifier (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "for_expression_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_expression_empty_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": false
+  },
+  {
+    "name": "for_expression_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_expression_present_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "CommaExpression(",
+      "Upd: nullptr",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_expression_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_expression_present_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": false
+  },
+  {
+    "name": "for_expression_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_expression_present_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_expression_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_expression_present_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "CommaExpression(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_declaration_empty_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_declaration_empty_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "Cond: nullptr",
+      "Upd: nullptr",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_declaration_empty_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_declaration_empty_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "Cond: nullptr",
+      "Upd: nullptr",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_declaration_empty_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_declaration_empty_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "Cond: nullptr",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_declaration_empty_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_declaration_empty_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "Cond: nullptr",
+      "CommaExpression(",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "for_declaration_present_empty",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_declaration_present_empty.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "CommaExpression(",
+      "Upd: nullptr",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_declaration_present_empty_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_declaration_present_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": false
+  },
+  {
+    "name": "for_declaration_present_present",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_declaration_present_present.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Label: nullptr",
+      "CompoundStatement("
+    ],
+    "label_retained": null
+  },
+  {
+    "name": "for_declaration_present_present_label",
+    "group": "loop_matrix",
+    "note": "Valid header under the proposed optional label suffix grammar.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_declaration_present_present_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "for_ast_children": [
+      "DeclarationList(",
+      "CommaExpression(",
+      "CommaExpression(",
+      "Identifier(L)",
+      "CompoundStatement("
+    ],
+    "label_retained": true
+  },
+  {
+    "name": "while_missing_separator",
+    "group": "loop_extension",
+    "note": "Missing separator before a while label must be rejected.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_missing_separator.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "do_missing_separator",
+    "group": "loop_extension",
+    "note": "Missing separator before a do-while label must be rejected.",
+    "c_reference": false,
+    "baka": {
+      "program": "do_missing_separator.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "while_empty_label",
+    "group": "loop_extension",
+    "note": "A consumed label separator must require an identifier.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "do_empty_label",
+    "group": "loop_extension",
+    "note": "A consumed label separator must require an identifier.",
+    "c_reference": false,
+    "baka": {
+      "program": "do_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "for_empty_label",
+    "group": "loop_extension",
+    "note": "A fourth-clause separator must require an identifier.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_empty_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "while_multiple_labels",
+    "group": "loop_extension",
+    "note": "Only one optional label suffix should be accepted.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_multiple_labels.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/while_multiple_labels.cpp:1:22: error: expected ')' (PARSE)",
+          "semantic_audit/extended/programs/while_multiple_labels.cpp:1:22: error: expected expression (PARSE)",
+          "semantic_audit/extended/programs/while_multiple_labels.cpp:1:24: error: expected ';' after expression (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "while_numeric_label",
+    "group": "loop_extension",
+    "note": "Label suffix requires an identifier.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_numeric_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/while_numeric_label.cpp:1:21: error: expected ')' (PARSE)",
+          "semantic_audit/extended/programs/while_numeric_label.cpp:1:21: error: expected ';' after expression (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "do_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false,
+    "baka": {
+      "program": "do_typedef_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "while_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_typedef_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/while_typedef_label.cpp:1:36: error: identifier cannot be a type name (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "for_typedef_label",
+    "group": "loop_extension",
+    "note": "Compare type-name restrictions across all three loop parsers.",
+    "c_reference": false,
+    "baka": {
+      "program": "for_typedef_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/for_typedef_label.cpp:1:35: error: identifier cannot be a type name (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "do_label_after_body",
+    "group": "loop_extension",
+    "note": "The trailing do label must be available while checking its earlier body.",
+    "c_reference": false,
+    "baka": {
+      "program": "do_label_after_body.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_variable_same_name",
+    "group": "loop_extension",
+    "note": "Decide whether value identifiers and loop labels have independent namespaces.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_variable_same_name.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_goto_same_name",
+    "group": "loop_extension",
+    "note": "Ordinary goto labels and loop labels need explicit namespace rules.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_goto_same_name.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "goto_loop_label_only",
+    "group": "loop_extension",
+    "note": "A loop suffix must not implicitly define a goto destination.",
+    "c_reference": false,
+    "baka": {
+      "program": "goto_loop_label_only.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "break_goto_label_only",
+    "group": "loop_extension",
+    "note": "An ordinary label must not implicitly define a named loop target.",
+    "c_reference": false,
+    "baka": {
+      "program": "break_goto_label_only.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_forward_sibling",
+    "group": "loop_extension",
+    "note": "Named jumps cannot target future sibling loops.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_forward_sibling.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_exited_sibling",
+    "group": "loop_extension",
+    "note": "Named jumps cannot target completed sibling loops.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_exited_sibling.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_other_function",
+    "group": "loop_extension",
+    "note": "Do not leak loop targets across functions.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_other_function.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_nested_function",
+    "group": "loop_extension",
+    "note": "Reset target stacks on function entry even if nested functions parse.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_nested_function.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_reuse_siblings",
+    "group": "loop_extension",
+    "note": "Sibling label reuse should follow the chosen lexical label policy.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_reuse_siblings.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "loop_label_duplicate_nested",
+    "group": "loop_extension",
+    "note": "Duplicate active label rejection versus innermost shadowing needs a rule.",
+    "c_reference": false,
+    "baka": {
+      "program": "loop_label_duplicate_nested.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "continue_outer_for_from_switch",
+    "group": "loop_extension",
+    "note": "Named continue must select the outer for update, not switch exit.",
+    "c_reference": false,
+    "baka": {
+      "program": "continue_outer_for_from_switch.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "continue_outer_do",
+    "group": "loop_extension",
+    "note": "Named continue must select the outer do test.",
+    "c_reference": false,
+    "baka": {
+      "program": "continue_outer_do.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "break_outer_while_from_switch",
+    "group": "loop_extension",
+    "note": "Named break must leave the outer loop.",
+    "c_reference": false,
+    "baka": {
+      "program": "break_outer_while_from_switch.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "unbraced_goto_label_loop_body",
+    "group": "loop_extension",
+    "note": "The labeled statement must own its following statement.",
+    "c_reference": false,
+    "baka": {
+      "program": "unbraced_goto_label_loop_body.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "unbraced_case_loop_body",
+    "group": "loop_extension",
+    "note": "A case-labeled substatement must remain within its loop.",
+    "c_reference": false,
+    "baka": {
+      "program": "unbraced_case_loop_body.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "do_label_after_labeled_body",
+    "group": "loop_extension",
+    "note": "Trailing loop suffix plus labeled body must parse as one do statement.",
+    "c_reference": false,
+    "baka": {
+      "program": "do_label_after_labeled_body.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:29: error: expected 'while' after 'do' body (PARSE)",
+          "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:32: error: expected expression (PARSE)",
+          "semantic_audit/extended/programs/do_label_after_labeled_body.cpp:1:46: error: expected expression (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "dangling_else_after_label",
+    "group": "loop_extension",
+    "note": "Label ownership must not detach an if body from its else.",
+    "c_reference": false,
+    "baka": {
+      "program": "dangling_else_after_label.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/dangling_else_after_label.cpp:1:28: error: expected expression (PARSE)"
+        ]
+      }
+    }
+  },
+  {
+    "name": "while_const_condition_no_semicolon",
+    "group": "loop_extension",
+    "note": "A label cannot be inferred from adjacent identifiers without its delimiter.",
+    "c_reference": false,
+    "baka": {
+      "program": "while_const_condition_no_semicolon.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    }
+  },
+  {
+    "name": "const_field_whole_assignment",
+    "group": "c_review",
+    "note": "Recursively const fields make aggregate assignment nonmodifiable.",
+    "c_reference": true,
+    "baka": {
+      "program": "const_field_whole_assignment.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/const_field_whole_assignment.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/const_field_whole_assignment.reference.c:1:66: error: assignment of read-only variable \u2018a\u2019",
+        "    1 | struct S{const int x;};int main(){struct S a={1};struct S b={2};a=b;return 0;}",
+        "      |                                                                  ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/const_field_whole_assignment.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/const_field_whole_assignment.reference.c:1:66: error: assignment of read-only variable \u2018a\u2019",
+        "    1 | struct S{const int x;};int main(){struct S a={1};struct S b={2};a=b;return 0;}",
+        "      |                                                                  ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp:1:53: error: use of deleted function \u2018S& S::operator=(const S&)\u2019",
+        "    1 | struct S{const int x;};int main(){S a={1};S b={2};a=b;return 0;}",
+        "      |                                                     ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp:1:8: note: \u2018S& S::operator=(const S&)\u2019 is implicitly deleted because the default definition would be ill-formed:",
+        "    1 | struct S{const int x;};int main(){S a={1};S b={2};a=b;return 0;}",
+        "      |        ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp: At global scope:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp:1:8: error: non-static const member \u2018const int S::x\u2019, cannot use default assignment operator",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/const_field_whole_assignment.cpp:1:53: note: use \u2018-fdiagnostics-all-candidates\u2019 to display considered candidates",
+        "    1 | struct S{const int x;};int main(){S a={1};S b={2};a=b;return 0;}",
+        "      |                                                     ^"
+      ]
+    }
+  },
+  {
+    "name": "nested_const_field_assignment",
+    "group": "c_review",
+    "note": "Check const subobjects recursively, not only the outer declaration.",
+    "c_reference": true,
+    "baka": {
+      "program": "nested_const_field_assignment.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/nested_const_field_assignment.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/nested_const_field_assignment.reference.c:1:92: error: assignment of read-only variable \u2018x\u2019",
+        "    1 | struct A{const int x;};struct B{struct A a;};int main(){struct B x={{1}};struct B y={{2}};x=y;return 0;}",
+        "      |                                                                                            ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/nested_const_field_assignment.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/nested_const_field_assignment.reference.c:1:92: error: assignment of read-only variable \u2018x\u2019",
+        "    1 | struct A{const int x;};struct B{struct A a;};int main(){struct B x={{1}};struct B y={{2}};x=y;return 0;}",
+        "      |                                                                                            ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:72: error: use of deleted function \u2018B& B::operator=(const B&)\u2019",
+        "    1 | struct A{const int x;};struct B{A a;};int main(){B x={{1}};B y={{2}};x=y;return 0;}",
+        "      |                                                                        ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:31: note: \u2018B& B::operator=(const B&)\u2019 is implicitly deleted because the default definition would be ill-formed:",
+        "    1 | struct A{const int x;};struct B{A a;};int main(){B x={{1}};B y={{2}};x=y;return 0;}",
+        "      |                               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp: At global scope:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:31: error: use of deleted function \u2018A& A::operator=(const A&)\u2019",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:8: note: \u2018A& A::operator=(const A&)\u2019 is implicitly deleted because the default definition would be ill-formed:",
+        "    1 | struct A{const int x;};struct B{A a;};int main(){B x={{1}};B y={{2}};x=y;return 0;}",
+        "      |        ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:8: error: non-static const member \u2018const int A::x\u2019, cannot use default assignment operator",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:31: note: use \u2018-fdiagnostics-all-candidates\u2019 to display considered candidates",
+        "    1 | struct A{const int x;};struct B{A a;};int main(){B x={{1}};B y={{2}};x=y;return 0;}",
+        "      |                               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/nested_const_field_assignment.cpp:1:72: note: use \u2018-fdiagnostics-all-candidates\u2019 to display considered candidates",
+        "    1 | struct A{const int x;};struct B{A a;};int main(){B x={{1}};B y={{2}};x=y;return 0;}",
+        "      |                                                                        ^"
+      ]
+    }
+  },
+  {
+    "name": "for_static_object",
+    "group": "c_review",
+    "note": "C for declarations restrict storage classes; differs from C++.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_static_object.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/for_static_object.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/for_static_object.reference.c:1:27: error: declaration of static variable \u2018i\u2019 in \u2018for\u2019 loop initial declaration [-Wpedantic]",
+        "    1 | int main(){for(static int i=0;i<1;i++){break;}return 0;}",
+        "      |                           ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "for_typedef_declaration",
+    "group": "c_review",
+    "note": "C for declaration clause cannot declare a typedef.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_typedef_declaration.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/for_typedef_declaration.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/for_typedef_declaration.reference.c:1:12: error: declaration of non-variable \u2018T\u2019 in \u2018for\u2019 loop initial declaration [-Wpedantic]",
+        "    1 | int main(){for(typedef int T;1;1){break;}return 0;}",
+        "      |            ^~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "for_function_declaration",
+    "group": "c_review",
+    "note": "C for declaration clause cannot declare a function.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_function_declaration.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/for_function_declaration.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/for_function_declaration.reference.c:1:12: error: declaration of non-variable \u2018f\u2019 in \u2018for\u2019 loop initial declaration [-Wpedantic]",
+        "    1 | int main(){for(int f(int x);1;1){break;}return 0;}",
+        "      |            ^~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "function_initializer",
+    "group": "c_review",
+    "note": "A function declaration cannot have an initializer.",
+    "c_reference": true,
+    "baka": {
+      "program": "function_initializer.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/function_initializer.reference.c:1:1: error: function \u2018f\u2019 is initialized like a variable",
+        "    1 | int f(int x)=1;",
+        "      | ^~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/function_initializer.reference.c:1:1: error: function \u2018f\u2019 is initialized like a variable",
+        "    1 | int f(int x)=1;",
+        "      | ^~~"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_initializer.cpp:1:15: error: invalid pure specifier (only \u2018= 0\u2019 is allowed) before \u2018;\u2019 token",
+        "    1 | int f(int x)=1;",
+        "      |               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_initializer.cpp:1:5: error: function \u2018int f(int)\u2019 is initialized like a variable",
+        "    1 | int f(int x)=1;",
+        "      |     ^"
+      ]
+    }
+  },
+  {
+    "name": "prototype_incomplete_parameter",
+    "group": "c_review",
+    "note": "Allow incomplete by-value types in prototypes when the chosen rules permit them.",
+    "c_reference": true,
+    "baka": {
+      "program": "prototype_incomplete_parameter.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "definition_incomplete_parameter",
+    "group": "c_review",
+    "note": "An incomplete parameter type cannot be used in the definition.",
+    "c_reference": true,
+    "baka": {
+      "program": "definition_incomplete_parameter.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/definition_incomplete_parameter.reference.c:1:25: error: parameter 1 (\u2018x\u2019) has incomplete type",
+        "    1 | struct S;int f(struct S x){return 0;}",
+        "      |                ~~~~~~~~~^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/definition_incomplete_parameter.reference.c:1:25: error: parameter 1 (\u2018x\u2019) has incomplete type",
+        "    1 | struct S;int f(struct S x){return 0;}",
+        "      |                ~~~~~~~~~^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/definition_incomplete_parameter.cpp:1:18: error: \u2018x\u2019 has incomplete type",
+        "    1 | struct S;int f(S x){return 0;}",
+        "      |                ~~^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/definition_incomplete_parameter.cpp:1:8: note: forward declaration of \u2018struct S\u2019",
+        "    1 | struct S;int f(S x){return 0;}",
+        "      |        ^"
+      ]
+    }
+  },
+  {
+    "name": "prototype_incomplete_return",
+    "group": "c_review",
+    "note": "A prototype can precede completion of its return type.",
+    "c_reference": true,
+    "baka": {
+      "program": "prototype_incomplete_return.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "pointer_array_incomplete_element",
+    "group": "c_review",
+    "note": "A pointer does not rescue an array with incomplete element type.",
+    "c_reference": true,
+    "baka": {
+      "program": "pointer_array_incomplete_element.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/pointer_array_incomplete_element.reference.c:1:21: error: array type has incomplete element type \u2018struct S\u2019",
+        "    1 | struct S;struct S (*p)[2];",
+        "      |                     ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/pointer_array_incomplete_element.reference.c:1:21: error: array type has incomplete element type \u2018struct S\u2019",
+        "    1 | struct S;struct S (*p)[2];",
+        "      |                     ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "parameter_top_const_compatibility",
+    "group": "c_review",
+    "note": "Ignore top-level parameter const for signature compatibility, retain it in the body.",
+    "c_reference": true,
+    "baka": {
+      "program": "parameter_top_const_compatibility.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "parameter_pointee_const_conflict",
+    "group": "c_review",
+    "note": "Pointee const remains part of the function parameter type.",
+    "c_reference": true,
+    "baka": {
+      "program": "parameter_pointee_const_conflict.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/parameter_pointee_const_conflict.reference.c:1:25: error: conflicting types for \u2018f\u2019; have \u2018int(int *)\u2019",
+        "    1 | int f(const int *x);int f(int *x){return 0;}",
+        "      |                         ^",
+        "/tmp/baka-extended-audit/parameter_pointee_const_conflict.reference.c:1:5: note: previous declaration of \u2018f\u2019 with type \u2018int(const int *)\u2019",
+        "    1 | int f(const int *x);int f(int *x){return 0;}",
+        "      |     ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/parameter_pointee_const_conflict.reference.c:1:25: error: conflicting types for \u2018f\u2019; have \u2018int(int *)\u2019",
+        "    1 | int f(const int *x);int f(int *x){return 0;}",
+        "      |                         ^",
+        "/tmp/baka-extended-audit/parameter_pointee_const_conflict.reference.c:1:5: note: previous declaration of \u2018f\u2019 with type \u2018int(const int *)\u2019",
+        "    1 | int f(const int *x);int f(int *x){return 0;}",
+        "      |     ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "parameter_array_pointer_compatibility",
+    "group": "c_review",
+    "note": "Array parameters adjust to pointers before signature comparison.",
+    "c_reference": true,
+    "baka": {
+      "program": "parameter_array_pointer_compatibility.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "parameter_inner_bound_conflict",
+    "group": "c_review",
+    "note": "Array-parameter adjustment preserves inner dimensions.",
+    "c_reference": true,
+    "baka": {
+      "program": "parameter_inner_bound_conflict.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/parameter_inner_bound_conflict.reference.c:1:24: error: conflicting types for \u2018f\u2019; have \u2018int(int (*)[4])\u2019",
+        "    1 | int f(int a[2][3]);int f(int a[2][4]){return 0;}",
+        "      |                        ^",
+        "/tmp/baka-extended-audit/parameter_inner_bound_conflict.reference.c:1:5: note: previous declaration of \u2018f\u2019 with type \u2018int(int (*)[3])\u2019",
+        "    1 | int f(int a[2][3]);int f(int a[2][4]){return 0;}",
+        "      |     ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/parameter_inner_bound_conflict.reference.c:1:24: error: conflicting types for \u2018f\u2019; have \u2018int(int (*)[4])\u2019",
+        "    1 | int f(int a[2][3]);int f(int a[2][4]){return 0;}",
+        "      |                        ^",
+        "/tmp/baka-extended-audit/parameter_inner_bound_conflict.reference.c:1:5: note: previous declaration of \u2018f\u2019 with type \u2018int(int (*)[3])\u2019",
+        "    1 | int f(int a[2][3]);int f(int a[2][4]){return 0;}",
+        "      |     ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "zero_null_expression",
+    "group": "c_review",
+    "note": "C null pointer constant recognition uses eligible zero integral constant expressions.",
+    "c_reference": true,
+    "baka": {
+      "program": "zero_null_expression.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/zero_null_expression.cpp:1:10: error: invalid conversion from \u2018int\u2019 to \u2018int*\u2019 [-fpermissive]",
+        "    1 | int *p=(1-1);",
+        "      |        ~~^~~",
+        "      |          |",
+        "      |          int"
+      ]
+    }
+  },
+  {
+    "name": "zero_variable_not_null_constant",
+    "group": "c_review",
+    "note": "An ordinary zero-valued variable is not a C null pointer constant.",
+    "c_reference": true,
+    "baka": {
+      "program": "zero_variable_not_null_constant.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/zero_variable_not_null_constant.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/zero_variable_not_null_constant.reference.c:1:27: error: initialization of \u2018int *\u2019 from \u2018int\u2019 makes pointer from integer without a cast [-Wint-conversion]",
+        "    1 | int main(){int z=0;int *p=z;return 0;}",
+        "      |                           ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/zero_variable_not_null_constant.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/zero_variable_not_null_constant.reference.c:1:27: error: initialization of \u2018int *\u2019 from \u2018int\u2019 makes pointer from integer without a cast [-Wint-conversion]",
+        "    1 | int main(){int z=0;int *p=z;return 0;}",
+        "      |                           ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/zero_variable_not_null_constant.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/zero_variable_not_null_constant.cpp:1:27: error: invalid conversion from \u2018int\u2019 to \u2018int*\u2019 [-fpermissive]",
+        "    1 | int main(){int z=0;int *p=z;return 0;}",
+        "      |                           ^",
+        "      |                           |",
+        "      |                           int",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/zero_variable_not_null_constant.cpp:1:27: note: possible fix: take the address with \u2018&\u2019",
+        "    1 | int main(){int z=0;int *p=z;return 0;}",
+        "      |                           ^",
+        "      |                           &"
+      ]
+    }
+  },
+  {
+    "name": "const_local_not_c_ice",
+    "group": "c_review",
+    "note": "Const object and integer constant expression differ in C11 and C++.",
+    "c_reference": true,
+    "baka": {
+      "program": "const_local_not_c_ice.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/const_local_not_c_ice.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/const_local_not_c_ice.reference.c:1:36: error: case label does not reduce to an integer constant",
+        "    1 | int main(){const int k=2;switch(1){case k:return 1;}return 0;}",
+        "      |                                    ^~~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/const_local_not_c_ice.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/const_local_not_c_ice.reference.c:1:36: error: case label does not reduce to an integer constant",
+        "    1 | int main(){const int k=2;switch(1){case k:return 1;}return 0;}",
+        "      |                                    ^~~~"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "case_comma_not_ice",
+    "group": "c_review",
+    "note": "C integer constant-expression rules constrain operators, not only foldability.",
+    "c_reference": true,
+    "baka": {
+      "program": "case_comma_not_ice.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/case_comma_not_ice.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/case_comma_not_ice.reference.c:1:22: error: case label does not reduce to an integer constant",
+        "    1 | int main(){switch(1){case (1,2):return 1;}return 0;}",
+        "      |                      ^~~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/case_comma_not_ice.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/case_comma_not_ice.reference.c:1:22: error: case label does not reduce to an integer constant",
+        "    1 | int main(){switch(1){case (1,2):return 1;}return 0;}",
+        "      |                      ^~~~"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "case_unevaluated_call",
+    "group": "c_review",
+    "note": "Check C11 integer-constant-expression operand restrictions as well as unevaluated-operator exceptions; do not use runtime foldability alone.",
+    "c_reference": true,
+    "baka": {
+      "program": "case_unevaluated_call.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/case_unevaluated_call.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/case_unevaluated_call.reference.c:1:40: error: case label is not an integer constant expression [-Wpedantic]",
+        "    1 | int f(){return 1;}int main(){switch(1){case 1 || f():return 1;}return 0;}",
+        "      |                                        ^~~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/case_unevaluated_call.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/case_unevaluated_call.reference.c:1:40: error: case label is not an integer constant expression [-Wpedantic]",
+        "    1 | int f(){return 1;}int main(){switch(1){case 1 || f():return 1;}return 0;}",
+        "      |                                        ^~~~"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "vla_initializer",
+    "group": "c_review",
+    "note": "C11 forbids initializing a VLA; policy differs by version/feature support.",
+    "c_reference": true,
+    "baka": {
+      "program": "vla_initializer.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_initializer.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_initializer.reference.c:1:29: error: variable-sized object may not be initialized except with an empty initializer",
+        "    1 | int main(){int n=2;int a[n]={1,2};return 0;}",
+        "      |                             ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_initializer.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_initializer.reference.c:1:29: error: variable-sized object may not be initialized except with an empty initializer",
+        "    1 | int main(){int n=2;int a[n]={1,2};return 0;}",
+        "      |                             ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_initializer.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_initializer.cpp:1:24: error: ISO C++ forbids variable length array \u2018a\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;int a[n]={1,2};return 0;}",
+        "      |                        ^"
+      ]
+    }
+  },
+  {
+    "name": "vla_static_storage",
+    "group": "c_review",
+    "note": "C VLA objects cannot have static storage duration.",
+    "c_reference": true,
+    "baka": {
+      "program": "vla_static_storage.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_static_storage.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_static_storage.reference.c:1:31: error: storage size of \u2018a\u2019 isn\u2019t constant",
+        "    1 | int main(){int n=2;static int a[n];return 0;}",
+        "      |                               ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_static_storage.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_static_storage.reference.c:1:31: error: storage size of \u2018a\u2019 isn\u2019t constant",
+        "    1 | int main(){int n=2;static int a[n];return 0;}",
+        "      |                               ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_static_storage.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_static_storage.cpp:1:31: error: ISO C++ forbids variable length array \u2018a\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;static int a[n];return 0;}",
+        "      |                               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_static_storage.cpp:1:31: error: storage size of \u2018a\u2019 isn\u2019t constant"
+      ]
+    }
+  },
+  {
+    "name": "vm_pointer_file_scope",
+    "group": "c_review",
+    "note": "A variably modified pointer type has scope restrictions even though the pointer size is fixed.",
+    "c_reference": true,
+    "baka": {
+      "program": "vm_pointer_file_scope.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vm_pointer_file_scope.reference.c:1:13: error: variably modified \u2018p\u2019 at file scope",
+        "    1 | int n;int (*p)[n];",
+        "      |             ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vm_pointer_file_scope.reference.c:1:13: error: variably modified \u2018p\u2019 at file scope",
+        "    1 | int n;int (*p)[n];",
+        "      |             ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vm_pointer_file_scope.cpp:1:16: error: size of array \u2018p\u2019 is not an integral constant-expression",
+        "    1 | int n;int (*p)[n];",
+        "      |                ^"
+      ]
+    }
+  },
+  {
+    "name": "vla_struct_member",
+    "group": "c_review",
+    "note": "Variably modified aggregate members need deliberate rejection or extension rules.",
+    "c_reference": true,
+    "baka": {
+      "program": "vla_struct_member.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/vla_struct_member.cpp:1:27: error: unknown type name 'S' (PARSE)",
+          "semantic_audit/extended/programs/vla_struct_member.cpp:1:40: error: expected identifier or '(' (PARSE)",
+          "semantic_audit/extended/programs/vla_struct_member.cpp:1:47: error: expected identifier (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_struct_member.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_struct_member.reference.c:1:33: error: a member of a structure or union cannot have a variably modified type [-Wpedantic]",
+        "    1 | int main(){int n=2;struct S{int a[n];};return 0;}",
+        "      |                                 ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/vla_struct_member.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/vla_struct_member.reference.c:1:33: error: a member of a structure or union cannot have a variably modified type [-Wpedantic]",
+        "    1 | int main(){int n=2;struct S{int a[n];};return 0;}",
+        "      |                                 ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_struct_member.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/vla_struct_member.cpp:1:35: error: size of array \u2018a\u2019 is not an integral constant-expression",
+        "    1 | int main(){int n=2;struct S{int a[n];};return 0;}",
+        "      |                                   ^"
+      ]
+    }
+  },
+  {
+    "name": "void_return_void_expression",
+    "group": "c_review",
+    "note": "C11 disallows an expression in void return; C++ has a void-expression exception.",
+    "c_reference": true,
+    "baka": {
+      "program": "void_return_void_expression.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c: In function \u2018f\u2019:",
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c:1:27: error: ISO C forbids \u2018return\u2019 with expression, in function returning void [-Wpedantic]",
+        "    1 | void g(){}void f(){return g();}",
+        "      |                           ^~~",
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c:1:16: note: declared here",
+        "    1 | void g(){}void f(){return g();}",
+        "      |                ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c: In function \u2018f\u2019:",
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c:1:27: error: ISO C forbids \u2018return\u2019 with expression, in function returning void [-Wpedantic]",
+        "    1 | void g(){}void f(){return g();}",
+        "      |                           ^~~",
+        "/tmp/baka-extended-audit/void_return_void_expression.reference.c:1:16: note: declared here",
+        "    1 | void g(){}void f(){return g();}",
+        "      |                ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "label_before_declaration",
+    "group": "c_review",
+    "note": "A version choice: declaration after a label changes in C23.",
+    "c_reference": true,
+    "baka": {
+      "program": "label_before_declaration.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/label_before_declaration.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/label_before_declaration.reference.c:1:14: error: a label can only be part of a statement and a declaration is not a statement [-Wfree-labels]",
+        "    1 | int main(){L:int x=1;return x;}",
+        "      |              ^~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "label_at_block_end",
+    "group": "c_review",
+    "note": "A version choice: a label at block end changes in C23.",
+    "c_reference": true,
+    "baka": {
+      "program": "label_at_block_end.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/label_at_block_end.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/label_at_block_end.reference.c:1:12: error: label at end of compound statement [-Wfree-labels]",
+        "    1 | int main(){L:}",
+        "      |            ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "empty_aggregate_initializer",
+    "group": "c_review",
+    "note": "Empty brace initialization is version/language dependent.",
+    "c_reference": true,
+    "baka": {
+      "program": "empty_aggregate_initializer.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/empty_aggregate_initializer.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/empty_aggregate_initializer.reference.c:1:18: error: ISO C forbids empty initializer braces before C23 [-Wpedantic]",
+        "    1 | int main(){int x={};return x;}",
+        "      |                  ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "goto_into_vla_scope",
+    "group": "c_review",
+    "note": "C has specific restrictions on entering variably modified scopes.",
+    "c_reference": true,
+    "baka": {
+      "program": "goto_into_vla_scope.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:12: error: jump into scope of identifier with variably modified type",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |            ^~~~",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:36: note: label \u2018L\u2019 defined here",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                                    ^",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:31: note: \u2018a\u2019 declared here",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                               ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:12: error: jump into scope of identifier with variably modified type",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |            ^~~~",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:36: note: label \u2018L\u2019 defined here",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                                    ^",
+        "/tmp/baka-extended-audit/goto_into_vla_scope.reference.c:1:31: note: \u2018a\u2019 declared here",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                               ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp:1:31: error: ISO C++ forbids variable length array \u2018a\u2019 [-Wvla]",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp:1:36: error: jump to label \u2018L\u2019",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                                    ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp:1:17: note:   from here",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                 ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp:1:31: note:   crosses initialization of \u2018int a [n]\u2019",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                               ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/goto_into_vla_scope.cpp:1:23: note:   crosses initialization of \u2018int n\u2019",
+        "    1 | int main(){goto L;int n=2;int a[n];L:return 0;}",
+        "      |                       ^"
+      ]
+    }
+  },
+  {
+    "name": "switch_enters_vla_scope",
+    "group": "c_review",
+    "note": "Switch case entry has variably modified scope restrictions.",
+    "c_reference": true,
+    "baka": {
+      "program": "switch_enters_vla_scope.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:39: error: switch jumps into scope of identifier with variably modified type",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                       ^~~~",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:20: note: switch starts here",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                    ^~~~~~",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:34: note: \u2018a\u2019 declared here",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                  ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:39: error: switch jumps into scope of identifier with variably modified type",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                       ^~~~",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:20: note: switch starts here",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                    ^~~~~~",
+        "/tmp/baka-extended-audit/switch_enters_vla_scope.reference.c:1:34: note: \u2018a\u2019 declared here",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                  ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/switch_enters_vla_scope.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/switch_enters_vla_scope.cpp:1:34: error: ISO C++ forbids variable length array \u2018a\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                  ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/switch_enters_vla_scope.cpp:1:44: error: jump to case label",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                            ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/switch_enters_vla_scope.cpp:1:34: note:   crosses initialization of \u2018int a [n]\u2019",
+        "    1 | int main(){int n=2;switch(1){int a[n];case 1:return 0;}return 0;}",
+        "      |                                  ^"
+      ]
+    }
+  },
+  {
+    "name": "typedef_vla_redefinition",
+    "group": "c_review",
+    "note": "Compatible repeated typedef exemption excludes variably modified types in C11.",
+    "c_reference": true,
+    "baka": {
+      "program": "typedef_vla_redefinition.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c:1:49: error: redefinition of typedef \u2018A\u2019 with variably modified type",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                                 ^",
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c:1:32: note: previous declaration of \u2018A\u2019 with type \u2018A\u2019 {aka \u2018int[n]\u2019}",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c:1:49: error: redefinition of typedef \u2018A\u2019 with variably modified type",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                                 ^",
+        "/tmp/baka-extended-audit/typedef_vla_redefinition.reference.c:1:32: note: previous declaration of \u2018A\u2019 with type \u2018A\u2019 {aka \u2018int[n]\u2019}",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/typedef_vla_redefinition.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/typedef_vla_redefinition.cpp:1:32: error: ISO C++ forbids variable length array \u2018A\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/typedef_vla_redefinition.cpp:1:49: error: ISO C++ forbids variable length array \u2018A\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;typedef int A[n];typedef int A[n];return 0;}",
+        "      |                                                 ^"
+      ]
+    }
+  },
+  {
+    "name": "assign_aggregate_with_array_member",
+    "group": "c_review",
+    "note": "Whole arrays are unassignable but a struct containing an array can be assignable.",
+    "c_reference": true,
+    "baka": {
+      "program": "assign_aggregate_with_array_member.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "short_circuit_typecheck",
+    "group": "c_review",
+    "note": "Unevaluated operands still need name/type checking.",
+    "c_reference": true,
+    "baka": {
+      "program": "short_circuit_typecheck.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c:1:24: error: \u2018unknown\u2019 undeclared (first use in this function)",
+        "    1 | int main(){return 0 && unknown;}",
+        "      |                        ^~~~~~~",
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c:1:24: note: each undeclared identifier is reported only once for each function it appears in"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c:1:24: error: \u2018unknown\u2019 undeclared (first use in this function)",
+        "    1 | int main(){return 0 && unknown;}",
+        "      |                        ^~~~~~~",
+        "/tmp/baka-extended-audit/short_circuit_typecheck.reference.c:1:24: note: each undeclared identifier is reported only once for each function it appears in"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/short_circuit_typecheck.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/short_circuit_typecheck.cpp:1:24: error: \u2018unknown\u2019 was not declared in this scope; did you mean \u2018union\u2019?",
+        "    1 | int main(){return 0 && unknown;}",
+        "      |                        ^~~~~~~",
+        "      |                        union"
+      ]
+    }
+  },
+  {
+    "name": "sizeof_typechecks_identifier",
+    "group": "c_review",
+    "note": "Unevaluated sizeof still needs identifier resolution.",
+    "c_reference": true,
+    "baka": {
+      "program": "sizeof_typechecks_identifier.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c:1:26: error: \u2018unknown\u2019 undeclared (first use in this function)",
+        "    1 | int main(){return sizeof(unknown);}",
+        "      |                          ^~~~~~~",
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c:1:26: note: each undeclared identifier is reported only once for each function it appears in"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c:1:26: error: \u2018unknown\u2019 undeclared (first use in this function)",
+        "    1 | int main(){return sizeof(unknown);}",
+        "      |                          ^~~~~~~",
+        "/tmp/baka-extended-audit/sizeof_typechecks_identifier.reference.c:1:26: note: each undeclared identifier is reported only once for each function it appears in"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_typechecks_identifier.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_typechecks_identifier.cpp:1:26: error: \u2018unknown\u2019 was not declared in this scope; did you mean \u2018union\u2019?",
+        "    1 | int main(){return sizeof(unknown);}",
+        "      |                          ^~~~~~~",
+        "      |                          union"
+      ]
+    }
+  },
+  {
+    "name": "pointer_relational_null",
+    "group": "c_review",
+    "note": "Relational pointer constraints differ from pointer equality with null.",
+    "c_reference": true,
+    "baka": {
+      "program": "pointer_relational_null.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/pointer_relational_null.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/pointer_relational_null.reference.c:1:27: error: ordered comparison of pointer with integer zero [-Wpedantic]",
+        "    1 | int main(){int *p;return p<0;}",
+        "      |                           ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/pointer_relational_null.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/pointer_relational_null.reference.c:1:27: error: ordered comparison of pointer with integer zero [-Wpedantic]",
+        "    1 | int main(){int *p;return p<0;}",
+        "      |                           ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/pointer_relational_null.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/pointer_relational_null.cpp:1:27: error: ordered comparison of pointer with integer zero (\u2018int*\u2019 and \u2018int\u2019)",
+        "    1 | int main(){int *p;return p<0;}",
+        "      |                          ~^~"
+      ]
+    }
+  },
+  {
+    "name": "pointer_equality_null",
+    "group": "c_review",
+    "note": "Valid null equality provides a nearby control.",
+    "c_reference": true,
+    "baka": {
+      "program": "pointer_equality_null.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "function_pointer_relational",
+    "group": "c_review",
+    "note": "C relational pointer constraints do not admit function pointers.",
+    "c_reference": true,
+    "baka": {
+      "program": "function_pointer_relational.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/function_pointer_relational.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/function_pointer_relational.reference.c:1:38: error: ISO C forbids ordered comparisons of pointers to functions [-Wpedantic]",
+        "    1 | int f(){return 0;}int main(){return f<f;}",
+        "      |                                      ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/function_pointer_relational.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/function_pointer_relational.reference.c:1:38: error: ISO C forbids ordered comparisons of pointers to functions [-Wpedantic]",
+        "    1 | int f(){return 0;}int main(){return f<f;}",
+        "      |                                      ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_pointer_relational.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_pointer_relational.cpp:1:37: error: invalid template-argument-list",
+        "    1 | int f(){return 0;}int main(){return f<f;}",
+        "      |                                     ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_pointer_relational.cpp:1:37: note: function name as the left hand operand of \u2018<\u2019 is ill-formed in C++20; wrap the function name in \u2018()\u2019",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_pointer_relational.cpp:1:37: error: invalid conversion from \u2018int (*)()\u2019 to \u2018int\u2019 [-fpermissive]",
+        "    1 | int f(){return 0;}int main(){return f<f;}",
+        "      |                                     ^",
+        "      |                                     |",
+        "      |                                     int (*)()"
+      ]
+    }
+  },
+  {
+    "name": "conditional_void_pointer_qualification",
+    "group": "c_review",
+    "note": "Conditional pointer result must combine pointee qualifiers.",
+    "c_reference": true,
+    "baka": {
+      "program": "conditional_void_pointer_qualification.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "aggregate_condition",
+    "group": "c_review",
+    "note": "No implicit scalar condition for plain aggregates without conversion support.",
+    "c_reference": true,
+    "baka": {
+      "program": "aggregate_condition.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/aggregate_condition.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/aggregate_condition.reference.c:1:47: error: used struct type value where scalar is required",
+        "    1 | struct S{int x;};int main(){struct S s={1};if(s){return 1;}return 0;}",
+        "      |                                               ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/aggregate_condition.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/aggregate_condition.reference.c:1:47: error: used struct type value where scalar is required",
+        "    1 | struct S{int x;};int main(){struct S s={1};if(s){return 1;}return 0;}",
+        "      |                                               ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/aggregate_condition.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/aggregate_condition.cpp:1:40: error: could not convert \u2018s\u2019 from \u2018S\u2019 to \u2018bool\u2019",
+        "    1 | struct S{int x;};int main(){S s={1};if(s){return 1;}return 0;}",
+        "      |                                        ^",
+        "      |                                        |",
+        "      |                                        S"
+      ]
+    }
+  },
+  {
+    "name": "array_size_self_scope",
+    "group": "c_review",
+    "note": "A declared identifier enters scope after its declarator, not before its array bound.",
+    "c_reference": true,
+    "baka": {
+      "program": "array_size_self_scope.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/array_size_self_scope.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/array_size_self_scope.cpp:1:24: error: ISO C++ forbids variable length array \u2018n\u2019 [-Wvla]",
+        "    1 | int n=2;int main(){int n[n];return 0;}",
+        "      |                        ^"
+      ]
+    }
+  },
+  {
+    "name": "label_value_same_name",
+    "group": "c_review",
+    "note": "C ordinary identifiers and goto labels use separate namespaces.",
+    "c_reference": true,
+    "baka": {
+      "program": "label_value_same_name.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "unbraced_switch",
+    "group": "c_review",
+    "note": "C permits a switch body that is a statement rather than a brace block.",
+    "c_reference": true,
+    "baka": {
+      "program": "unbraced_switch.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/unbraced_switch.cpp:1:21: error: expected '{' (PARSE)",
+          "semantic_audit/extended/programs/unbraced_switch.cpp:2:1: error: expected '}' (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "ternary_middle_comma",
+    "group": "c_review",
+    "note": "The middle conditional operand is an expression and may contain an unparenthesized comma.",
+    "c_reference": true,
+    "baka": {
+      "program": "ternary_middle_comma.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:30: error: expected ':' in ternary expression (PARSE)",
+          "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:30: error: expected expression (PARSE)",
+          "semantic_audit/extended/programs/ternary_middle_comma.cpp:1:29: error: expected ';' after return statement (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "main_float_return",
+    "group": "c_review",
+    "note": "Hosted main signature validation is distinct from requiring a main in every unit.",
+    "c_reference": true,
+    "baka": {
+      "program": "main_float_return.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/main_float_return.reference.c:1:7: error: return type of \u2018main\u2019 is not \u2018int\u2019 [-Wmain]",
+        "    1 | float main(){return 0;}",
+        "      |       ^~~~"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/main_float_return.reference.c:1:7: error: return type of \u2018main\u2019 is not \u2018int\u2019 [-Wmain]",
+        "    1 | float main(){return 0;}",
+        "      |       ^~~~"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/main_float_return.cpp:1:1: error: \u2018::main\u2019 must return \u2018int\u2019",
+        "    1 | float main(){return 0;}",
+        "      | ^~~~~"
+      ]
+    }
+  },
+  {
+    "name": "main_bad_parameter",
+    "group": "c_review",
+    "note": "Hosted main parameter restrictions require an explicit execution-model policy.",
+    "c_reference": true,
+    "baka": {
+      "program": "main_bad_parameter.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/main_bad_parameter.reference.c:1:5: error: first argument of \u2018main\u2019 should be \u2018int\u2019 [-Wmain]",
+        "    1 | int main(float x){return 0;}",
+        "      |     ^~~~",
+        "/tmp/baka-extended-audit/main_bad_parameter.reference.c:1:5: error: \u2018main\u2019 takes only zero or two arguments [-Wmain]"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/main_bad_parameter.reference.c:1:5: error: first argument of \u2018main\u2019 should be \u2018int\u2019 [-Wmain]",
+        "    1 | int main(float x){return 0;}",
+        "      |     ^~~~",
+        "/tmp/baka-extended-audit/main_bad_parameter.reference.c:1:5: error: \u2018main\u2019 takes only zero or two arguments [-Wmain]"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/main_bad_parameter.cpp:1:5: error: first argument of \u2018int main(float)\u2019 should be \u2018int\u2019 [-Wmain]",
+        "    1 | int main(float x){return 0;}",
+        "      |     ^~~~",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/main_bad_parameter.cpp:1:5: error: \u2018int main(float)\u2019 takes only zero or two arguments [-Wmain]"
+      ]
+    }
+  },
+  {
+    "name": "sizeof_vla_bound_side_effect",
+    "group": "c_review",
+    "note": "VLA sizeof can evaluate bounds; blanket unevaluated-sizeof handling would be incorrect.",
+    "c_reference": true,
+    "baka": {
+      "program": "sizeof_vla_bound_side_effect.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_vla_bound_side_effect.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_vla_bound_side_effect.cpp:1:41: error: ISO C++ forbids variable length array [-Wvla]",
+        "    1 | int main(){int n=2;return sizeof(int[n++]);}",
+        "      |                                         ^"
+      ]
+    }
+  },
+  {
+    "name": "sizeof_vla_frozen_extent",
+    "group": "c_review",
+    "note": "A VLA instance retains the extent established at declaration.",
+    "c_reference": true,
+    "baka": {
+      "program": "sizeof_vla_frozen_extent.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_vla_frozen_extent.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/sizeof_vla_frozen_extent.cpp:1:24: error: ISO C++ forbids variable length array \u2018a\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;int a[n];n=3;return sizeof(a);}",
+        "      |                        ^"
+      ]
+    }
+  },
+  {
+    "name": "static_pointer_to_vla",
+    "group": "c_review",
+    "note": "A block-scope static pointer to VLA differs from a static VLA object.",
+    "c_reference": true,
+    "baka": {
+      "program": "static_pointer_to_vla.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/static_pointer_to_vla.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/static_pointer_to_vla.cpp:1:33: error: ISO C++ forbids variable length array \u2018p\u2019 [-Wvla]",
+        "    1 | int main(){int n=2;static int (*p)[n];return 0;}",
+        "      |                                 ^"
+      ]
+    }
+  },
+  {
+    "name": "aggregate_function_member",
+    "group": "c_review",
+    "note": "C forbids function-typed members; baka may intentionally treat this as a method declaration.",
+    "c_reference": true,
+    "baka": {
+      "program": "aggregate_function_member.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/aggregate_function_member.reference.c:1:14: error: field \u2018f\u2019 declared as a function",
+        "    1 | struct S{int f(int x);};",
+        "      |              ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/aggregate_function_member.reference.c:1:14: error: field \u2018f\u2019 declared as a function",
+        "    1 | struct S{int f(int x);};",
+        "      |              ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "flexible_array_member",
+    "group": "c_review",
+    "note": "Flexible arrays require parser support plus placement and containment restrictions if enabled.",
+    "c_reference": true,
+    "baka": {
+      "program": "flexible_array_member.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/flexible_array_member.cpp:1:27: error: expected expression (PARSE)",
+          "semantic_audit/extended/programs/flexible_array_member.cpp:1:29: error: expected identifier or '(' (PARSE)",
+          "semantic_audit/extended/programs/flexible_array_member.cpp:1:30: error: expected identifier (PARSE)",
+          "semantic_audit/extended/programs/flexible_array_member.cpp:1:30: error: expected ';' after struct/class body (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/flexible_array_member.cpp:1:20: error: ISO C++ forbids flexible array member \u2018values\u2019 [-Wpedantic]",
+        "    1 | struct S{int n;int values[];};",
+        "      |                    ^~~~~~"
+      ]
+    }
+  },
+  {
+    "name": "bitfield_member",
+    "group": "c_review",
+    "note": "Bit-fields are not currently represented in member declarations; scope decision required.",
+    "c_reference": true,
+    "baka": {
+      "program": "bitfield_member.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/bitfield_member.cpp:1:23: error: expected ',' or ';' in declaration (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "designated_initializer",
+    "group": "c_review",
+    "note": "Designated initialization is separate grammar and needs a deliberate support decision.",
+    "c_reference": true,
+    "baka": {
+      "program": "designated_initializer.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/designated_initializer.cpp:1:23: error: expected expression (PARSE)",
+          "semantic_audit/extended/programs/designated_initializer.cpp:1:23: error: expected '}' (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "duplicate_enum_values_valid",
+    "group": "c_review",
+    "note": "Duplicate enum numeric values can be legal even though duplicate names are not.",
+    "c_reference": true,
+    "baka": {
+      "program": "duplicate_enum_values_valid.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:9: error: expected '}' or ',' in enumeration (PARSE)",
+          "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:14: error: expected ';' after enum definition (PARSE)",
+          "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:15: error: expected identifier or '(' (PARSE)",
+          "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:15: error: expected identifier or '(' (PARSE)",
+          "semantic_audit/extended/programs/duplicate_enum_values_valid.cpp:1:16: error: expected identifier (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 0,
+      "diagnostics": []
+    }
+  },
+  {
+    "name": "function_empty_list_argument",
+    "group": "c_review",
+    "note": "C11 empty prototype syntax differs from C23 and C++ zero-parameter syntax.",
+    "c_reference": true,
+    "baka": {
+      "program": "function_empty_list_argument.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/function_empty_list_argument.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/function_empty_list_argument.reference.c:1:27: error: too many arguments to function \u2018f\u2019; expected 0, have 1",
+        "    1 | int f();int main(){return f(1);}",
+        "      |                           ^ ~",
+        "/tmp/baka-extended-audit/function_empty_list_argument.reference.c:1:5: note: declared here",
+        "    1 | int f();int main(){return f(1);}",
+        "      |     ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_empty_list_argument.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_empty_list_argument.cpp:1:28: error: too many arguments to function \u2018int f()\u2019",
+        "    1 | int f();int main(){return f(1);}",
+        "      |                           ~^~~",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/function_empty_list_argument.cpp:1:5: note: declared here",
+        "    1 | int f();int main(){return f(1);}",
+        "      |     ^"
+      ]
+    }
+  },
+  {
+    "name": "for_body_shadow_initializer",
+    "group": "c_review",
+    "note": "C and C++ differ on redeclaring the for variable in the outermost body block.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_body_shadow_initializer.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 0,
+        "diagnostics": []
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_c23": {
+      "exit_code": 0,
+      "diagnostics": []
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/for_body_shadow_initializer.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/for_body_shadow_initializer.cpp:1:37: error: redeclaration of \u2018int i\u2019",
+        "    1 | int main(){for(int i=0;i<2;i++){int i=4;}return 0;}",
+        "      |                                     ^",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/for_body_shadow_initializer.cpp:1:20: note: \u2018int i\u2019 previously declared here",
+        "    1 | int main(){for(int i=0;i<2;i++){int i=4;}return 0;}",
+        "      |                    ^"
+      ]
+    }
+  },
+  {
+    "name": "for_body_typedef_leak",
+    "group": "c_review",
+    "note": "Ensure any supported for-declared type ends scope after the loop.",
+    "c_reference": true,
+    "baka": {
+      "program": "for_body_typedef_leak.cpp",
+      "lex": {
+        "exit_code": 0,
+        "diagnostics": []
+      },
+      "parse": {
+        "exit_code": 1,
+        "diagnostics": [
+          "semantic_audit/extended/programs/for_body_typedef_leak.cpp:1:42: error: expected ';' after expression (PARSE)"
+        ]
+      }
+    },
+    "gcc_c11": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/for_body_typedef_leak.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/for_body_typedef_leak.reference.c:1:12: error: declaration of non-variable \u2018T\u2019 in \u2018for\u2019 loop initial declaration [-Wpedantic]",
+        "    1 | int main(){for(typedef int T;1;1){break;}T x;return 0;}",
+        "      |            ^~~",
+        "/tmp/baka-extended-audit/for_body_typedef_leak.reference.c:1:42: error: unknown type name \u2018T\u2019",
+        "    1 | int main(){for(typedef int T;1;1){break;}T x;return 0;}",
+        "      |                                          ^"
+      ]
+    },
+    "gcc_c23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/tmp/baka-extended-audit/for_body_typedef_leak.reference.c: In function \u2018main\u2019:",
+        "/tmp/baka-extended-audit/for_body_typedef_leak.reference.c:1:42: error: unknown type name \u2018T\u2019",
+        "    1 | int main(){for(typedef int T;1;1){break;}T x;return 0;}",
+        "      |                                          ^"
+      ]
+    },
+    "gcc_cpp23": {
+      "exit_code": 1,
+      "diagnostics": [
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/for_body_typedef_leak.cpp: In function \u2018int main()\u2019:",
+        "/home/saturn/CLionProjects/bakabaka/semantic_audit/extended/programs/for_body_typedef_leak.cpp:1:42: error: \u2018T\u2019 was not declared in this scope",
+        "    1 | int main(){for(typedef int T;1;1){break;}T x;return 0;}",
+        "      |                                          ^"
+      ]
+    }
+  }
+]

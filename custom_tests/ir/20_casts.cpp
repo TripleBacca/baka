@@ -1,1 +1,0 @@
-int main(int n){int x=n;void *p=&x;int *q=(int*)p;const int *r=q;bool b;if(q)b=true;else b=false;long addr=(long)q;int *s=(int*)addr;float f=(float)n;double d=f;char c=(char)300;unsigned char u=(unsigned char)c;x++;return *s+(int)d+c+u+b+((int*)0==nullptr)+*r-*q;}

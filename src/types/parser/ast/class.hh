@@ -14,6 +14,7 @@ namespace baka {
             StructBodyNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getName()); visit(getBaseName()); visit(getBody()); }
             ClassDefinitionNode(IdentifierNode* identifier, StructBodyNode* body) :
             ClassName(identifier), Body(body) {
             }
@@ -57,6 +58,7 @@ namespace baka {
         {
             IdentifierNode* ClassName;
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getName()); }
             ClassDeclarationNode(IdentifierNode* identifier) : ClassName(identifier) {
             }
 

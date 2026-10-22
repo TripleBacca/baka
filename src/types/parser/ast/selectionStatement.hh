@@ -19,6 +19,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getCondition()); visit(getBody()); }
             IfSubBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
@@ -26,6 +27,7 @@ namespace baka {
             StatementNode* getBody() const { return Body; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expr); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -50,6 +52,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getCondition()); visit(getBody()); }
             ElseIfSubBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
@@ -57,6 +60,7 @@ namespace baka {
             StatementNode* getBody() const { return Body; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expr); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
@@ -80,6 +84,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getBody()); }
             ElseSubBlockStatementNode(StatementNode* body) : Body(body) {
             }
 
@@ -102,6 +107,7 @@ namespace baka {
             ElseSubBlockStatementNode* ElseSubBlock;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getIf()); for (auto* child : getElseIfs()) visit(child); visit(getElse()); }
             IfSuperBlockStatementNode(IfSubBlockStatementNode* ifSubBlock, std::vector<ElseIfSubBlockStatementNode*> elseIfSubBlocks,
                                       ElseSubBlockStatementNode* elseSubBlock) : IfSubBlock(ifSubBlock), ElseIfSubBlocks(std::move(elseIfSubBlocks)), ElseSubBlock(elseSubBlock) {
             }
@@ -132,6 +138,7 @@ namespace baka {
             StatementNode* Body;
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getCondition()); visit(getBody()); }
             SwitchBlockStatementNode(ExpressionNode* expr, StatementNode* body) : Expr(expr), Body(body) {
             }
 
@@ -139,6 +146,7 @@ namespace baka {
             StatementNode* getBody() const { return Body; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { Expr = rewrite(Expr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(Expr); }
 
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);

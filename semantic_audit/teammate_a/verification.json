@@ -1,0 +1,89 @@
+{
+  "timestamp_utc": "2026-10-17T22:52:04.292262+00:00",
+  "build": "cmake --build build --parallel 2: passed",
+  "semantic_cli_integrated": false,
+  "audit": {
+    "original": {
+      "lex": {
+        "accepted": 113,
+        "diagnostic_rejections": 0,
+        "crashes": 0,
+        "timeouts": 0
+      },
+      "parse": {
+        "accepted": 95,
+        "diagnostic_rejections": 18,
+        "crashes": 0,
+        "timeouts": 0
+      },
+      "parse_changes": [
+        {
+          "program": "explicit_enum_value.cpp",
+          "previous_exit": 1,
+          "current_exit": 0
+        },
+        {
+          "program": "unsigned_alias.cpp",
+          "previous_exit": -6,
+          "current_exit": 1
+        },
+        {
+          "program": "unsigned_float.cpp",
+          "previous_exit": -6,
+          "current_exit": 1
+        },
+        {
+          "program": "unspecified_array_bound.cpp",
+          "previous_exit": 1,
+          "current_exit": 0
+        },
+        {
+          "program": "wrong_type_kind.cpp",
+          "previous_exit": -6,
+          "current_exit": 1
+        }
+      ]
+    },
+    "extended": {
+      "lex": {
+        "accepted": 108,
+        "diagnostic_rejections": 0,
+        "crashes": 0,
+        "timeouts": 0
+      },
+      "parse": {
+        "accepted": 94,
+        "diagnostic_rejections": 14,
+        "crashes": 0,
+        "timeouts": 0
+      },
+      "parse_changes": [
+        {
+          "program": "duplicate_enum_values_valid.cpp",
+          "previous_exit": 1,
+          "current_exit": 0
+        },
+        {
+          "program": "flexible_array_member.cpp",
+          "previous_exit": 1,
+          "current_exit": 0
+        }
+      ]
+    }
+  },
+  "known_integration_gaps": [
+    "C: semantic driver/traversal and source-span diagnostics",
+    "C: local aggregate and qualified object declaration parser dispatch",
+    "B: expression/evaluation/initializer and member-signature callbacks",
+    "B: retain ellipsis; duplicate storage/qualifier checks in function probes"
+  ],
+  "targeted_regressions": {
+    "service_and_ast_suites": 2,
+    "parser_checks": 15,
+    "passed": 17,
+    "failed": 0,
+    "warnings": "C++23 -Wall -Wextra -Wpedantic -Werror",
+    "excluded_fixture": "valid_aggregate_shadow.cpp: C-owned local aggregate parser dispatch"
+  },
+  "diff_whitespace_check": "passed"
+}

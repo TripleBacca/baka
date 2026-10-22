@@ -21,6 +21,7 @@ namespace types {
         void setBraced(bool value = true) { Braced = value; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { for (auto*& item : _expressions) item = rewrite(item); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { for (auto* item : _expressions) visit(item); }
 
             void Print(size_t Tabs = 0) const override
         {

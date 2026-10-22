@@ -16,6 +16,7 @@ namespace baka {
             // typedef
 
         public:
+        void visitChildren(const NodeVisitor& visit) const override { for (auto* child : getBody()) visit(child); }
             ProgramNode(std::vector<ASTNode*> body) : Body(std::move(body)) {
             }
 

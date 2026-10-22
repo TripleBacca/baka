@@ -12,6 +12,7 @@ namespace baka
 			types::DeclarationIdentifierNode* Declarator;
 			ExpressionNode* CastExpr;
 		public:
+        void visitChildren(const NodeVisitor& visit) const override { visit(getType()); visit(getDeclarator()); visit(getExpression()); }
 			CastFactorNode(types::TypeNode* Type, types::DeclarationIdentifierNode* Declarator, ExpressionNode* Expr)
 				: Type(Type), Declarator(Declarator), CastExpr(Expr) {}
 
@@ -20,6 +21,7 @@ namespace baka
 			ExpressionNode* getExpression() const { return CastExpr; }
 
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { CastExpr = rewrite(CastExpr); }
+            void visitExpressions(const ExpressionVisitor& visit) const override { visit(CastExpr); }
 
             void Print(size_t Tabs = 0) const override {
 				INDENT(Tabs);

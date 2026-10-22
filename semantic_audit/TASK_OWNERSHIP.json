@@ -1,0 +1,2034 @@
+[
+  {
+    "source": "CHECKLIST.md",
+    "line": 9,
+    "section": "1",
+    "item": 1,
+    "package": "A01",
+    "todo": "Specify primitive type widths, ranks, signedness, floating types, alignment, pointer size, and the type returned by `sizeof` for the target."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 10,
+    "section": "1",
+    "item": 2,
+    "package": "B01",
+    "todo": "Specify permitted implicit arithmetic, boolean, enum, pointer, `void*`, and inheritance conversions. C and C++ differ here."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 11,
+    "section": "1",
+    "item": 3,
+    "package": "B01",
+    "todo": "Specify value categories and the result categories of assignment, comma, conditional, casts, and prefix/postfix increment. C-based tests cannot automatically define these for a C++-like language."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 12,
+    "section": "1",
+    "item": 4,
+    "package": "A11",
+    "todo": "Specify whether function and constructor overloading are supported; otherwise diagnose conflicting same-name declarations/signatures."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 13,
+    "section": "1",
+    "item": 5,
+    "package": "A12",
+    "todo": "Specify array rules: constant bounds only versus VLAs, zero-length arrays, unspecified bounds, and parameter adjustment."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 14,
+    "section": "1",
+    "item": 6,
+    "package": "A06",
+    "todo": "Specify file-scope declaration/definition rules: C tentative definitions versus C++-like definitions, and internal linkage via `static`."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 15,
+    "section": "1",
+    "item": 7,
+    "package": "B18",
+    "todo": "Specify constant versus dynamic initialization for globals and local statics, including initialization order and guards if dynamic initialization is supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 16,
+    "section": "1",
+    "item": 8,
+    "package": "B16",
+    "todo": "Specify const initialization, aggregate initialization, brace narrowing, enum conversion, and string literal type rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 17,
+    "section": "1",
+    "item": 9,
+    "package": "A03",
+    "todo": "Specify ordinary-name/type-name/tag conflicts and shadowing. The current parser prohibits declarator names matching any visible type name, which already constrains this policy."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 18,
+    "section": "1",
+    "item": 10,
+    "package": "C16",
+    "todo": "Specify loop-label visibility, reuse, and duplicate active labels. A named break/continue should target an active enclosing loop."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 19,
+    "section": "1",
+    "item": 11,
+    "package": "C20",
+    "todo": "Specify jumps across initialization and object lifetimes; decide diagnostic severity for reaching the end of a non-void function."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 20,
+    "section": "1",
+    "item": 12,
+    "package": "C22",
+    "todo": "Specify whether nested function definitions, `new`/`delete`, and special member generation are supported. Reject unsupported constructs deliberately."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 21,
+    "section": "1",
+    "item": 13,
+    "package": "C11",
+    "todo": "Specify whether executable entry-point validation is required. Library compilation must not require a `main` definition."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 25,
+    "section": "2",
+    "item": 1,
+    "package": "C03",
+    "todo": "Add a semantic stage and CLI stop option to the driver stage enum, argument handling, diagnostics, and build targets."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 26,
+    "section": "2",
+    "item": 2,
+    "package": "C03",
+    "todo": "Keep the AST root available after the parsing block; run semantics only after successful lexing/parsing."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 27,
+    "section": "2",
+    "item": 3,
+    "package": "C01",
+    "todo": "Provide AST child/operator/value accessors or a visitor interface. Most nodes currently expose only `Print()`."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 28,
+    "section": "2",
+    "item": 4,
+    "package": "C02",
+    "todo": "Attach source spans to AST nodes, declarations, identifiers, and operators for diagnostics."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 29,
+    "section": "2",
+    "item": 5,
+    "package": "A02",
+    "todo": "Introduce semantic types for builtins, qualified types, pointers, arrays, functions, aggregates, enums, and the null-pointer literal."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 30,
+    "section": "2",
+    "item": 6,
+    "package": "A03",
+    "todo": "Assign stable identities to types, symbols, scopes, functions, and control-flow targets. Same spelling does not make two distinct structs/enums equal."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 31,
+    "section": "2",
+    "item": 7,
+    "package": "A03",
+    "todo": "Introduce symbols with kind, type, declaring scope, source location, storage duration/linkage, definition state, and member ownership."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 32,
+    "section": "2",
+    "item": 8,
+    "package": "A03",
+    "todo": "Add current-scope lookup separately from outward lookup. Same-scope duplicate checks must not prohibit legal shadowing."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 33,
+    "section": "2",
+    "item": 9,
+    "package": "A20",
+    "todo": "Make user-caused declaration conflicts produce diagnostics rather than `assert(false)` or uncaught exceptions in the symbol table/AST constructors."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 34,
+    "section": "2",
+    "item": 10,
+    "package": "A03",
+    "todo": "Avoid retaining pointers to hash-table entries across insertion/rehashing; the existing symbol-table header notes pointer instability."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 35,
+    "section": "2",
+    "item": 11,
+    "package": "B02",
+    "todo": "Annotate identifier references with their resolved symbols and expressions with types and value categories."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 36,
+    "section": "2",
+    "item": 12,
+    "package": "B02",
+    "todo": "Represent implicit conversions explicitly in a typed AST/IR or equivalent metadata so code generation sees the checked conversions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 37,
+    "section": "2",
+    "item": 13,
+    "package": "C04",
+    "todo": "Record evaluated constants, finalized array bounds, aggregate layouts, field offsets, and resolved jump targets for later stages."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 38,
+    "section": "2",
+    "item": 14,
+    "package": "C04",
+    "todo": "Maintain current function/return type, class/implicit object, lexical scopes, enclosing loops, and enclosing switches independently."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 39,
+    "section": "2",
+    "item": 15,
+    "package": "C05",
+    "todo": "Use an error type/symbol and suppress dependent duplicate diagnostics. Never pass invalid typed nodes to code generation."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 40,
+    "section": "2",
+    "item": 16,
+    "package": "A14",
+    "todo": "Preserve source order where declaration visibility and initialization depend on it. Member predeclaration for method lookup and source-ordered initialization are different needs."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 44,
+    "section": "3",
+    "item": 1,
+    "package": "A04",
+    "todo": "Resolve every value identifier; reject undeclared uses, uses before the permitted declaration point, and uses after leaving scope."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 45,
+    "section": "3",
+    "item": 2,
+    "package": "A04",
+    "todo": "Register each declarator at the correct point, including declaration lists such as `int a=1,b=a;`; resolve self-initialization under the chosen language rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 46,
+    "section": "3",
+    "item": 3,
+    "package": "A03",
+    "todo": "Apply global, function parameter, function-body, nested block, `for` initializer, class, and label scope rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 47,
+    "section": "3",
+    "item": 4,
+    "package": "A05",
+    "todo": "Make parameters visible in the function body and reject duplicates or prohibited redeclarations in the function's outermost block."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 48,
+    "section": "3",
+    "item": 5,
+    "package": "A03",
+    "todo": "Allow legal inner-scope shadowing without confusing distinct objects or types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 49,
+    "section": "3",
+    "item": 6,
+    "package": "A06",
+    "todo": "Reject duplicate local objects and conflicting symbol kinds, such as a function and object with the same conflicting name."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 50,
+    "section": "3",
+    "item": 7,
+    "package": "A06",
+    "todo": "Distinguish declarations from definitions; allow compatible prototypes and permitted redeclarations, reject multiple definitions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 51,
+    "section": "3",
+    "item": 8,
+    "package": "A06",
+    "todo": "Compare complete declaration types, qualifiers, array dimensions, parameter types, return types, and linkage as required."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 52,
+    "section": "3",
+    "item": 9,
+    "package": "C17",
+    "todo": "Give function-local labels function-wide visibility, including forward goto targets, independently of block-local object lookup."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 53,
+    "section": "3",
+    "item": 10,
+    "package": "C17",
+    "todo": "Keep each function's label and jump tables isolated. A goto cannot target another function's label."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 54,
+    "section": "3",
+    "item": 11,
+    "package": "A07",
+    "todo": "Resolve type names, aliases, enum constants, and aggregate members through the appropriate namespaces under baka's chosen rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 55,
+    "section": "3",
+    "item": 12,
+    "package": "A22",
+    "todo": "Register library functions through declarations or a deliberate builtin table. `printf`, `scanf`, and file functions are not automatically known merely because the README lists them."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 56,
+    "section": "3",
+    "item": 13,
+    "package": "A22",
+    "todo": "If reserved builtins have special rules, prevent incompatible redeclarations and record the actual builtin identity rather than recognizing calls by spelling alone."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 60,
+    "section": "4",
+    "item": 1,
+    "package": "A07",
+    "todo": "Expand aliases while preserving type identity and qualification; reject incompatible typedef redefinitions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 61,
+    "section": "4",
+    "item": 2,
+    "package": "A07",
+    "todo": "Keep aliases distinct from their underlying aggregate identity; redeclaring an alias must not overwrite an aggregate's completion state."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 62,
+    "section": "4",
+    "item": 3,
+    "package": "A08",
+    "todo": "Check `struct`/`class`/`union`/`enum` modifiers against the named type's actual category under the language's tag rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 63,
+    "section": "4",
+    "item": 4,
+    "package": "A08",
+    "todo": "Validate `unsigned` against permitted primitive spellings/types and the language's alias rules; do not crash on invalid input."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 64,
+    "section": "4",
+    "item": 5,
+    "package": "A08",
+    "todo": "Validate duplicate/conflicting specifiers consistently in declarations, definitions, parameters, casts, typedefs, and `sizeof` type operands."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 65,
+    "section": "4",
+    "item": 6,
+    "package": "A07",
+    "todo": "Interpret qualifiers on the type, not merely the declaration text; propagate const through typedefs, dereference, and aggregate member access."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 66,
+    "section": "4",
+    "item": 7,
+    "package": "A09",
+    "todo": "Build pointer/array/function types in declarator binding order, preserving parentheses. `int *a[2]` and `int (*a)[2]` differ."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 67,
+    "section": "4",
+    "item": 8,
+    "package": "A09",
+    "todo": "Distinguish function declarations from function-pointer variables, including nested function-pointer return types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 68,
+    "section": "4",
+    "item": 9,
+    "package": "A09",
+    "todo": "Reject arrays of functions, arrays of void, functions returning functions, and functions returning arrays directly, including invalid nested types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 69,
+    "section": "4",
+    "item": 10,
+    "package": "A10",
+    "todo": "Allow pointers to functions, pointers to arrays, and permitted pointers to incomplete types; do not reject them merely because a related by-value type is invalid."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 70,
+    "section": "4",
+    "item": 11,
+    "package": "A10",
+    "todo": "Reject plain void objects, void members, and void parameters except a separately supported void-parameter-list marker."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 71,
+    "section": "4",
+    "item": 12,
+    "package": "A10",
+    "todo": "Require complete types where storage, by-value arguments/results, member access, or size calculations require them."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 72,
+    "section": "4",
+    "item": 13,
+    "package": "A13",
+    "todo": "Detect recursive by-value aggregate layouts, including indirect cycles through arrays/members; allow recursive pointers."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 73,
+    "section": "4",
+    "item": 14,
+    "package": "A19",
+    "todo": "Validate legal storage specifiers by declaration context; distinguish static globals, locals, members, and functions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 74,
+    "section": "4",
+    "item": 15,
+    "package": "A09",
+    "todo": "Validate that a function definition's resolved declarator actually denotes a function. The parser currently accepts an object-like declarator followed by a body."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 78,
+    "section": "5",
+    "item": 1,
+    "package": "B03",
+    "todo": "Assign correct types and values to integer, unsigned, long, floating, character, boolean, string, and `nullptr` literals retained by the lexer."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 79,
+    "section": "5",
+    "item": 2,
+    "package": "B03",
+    "todo": "Preserve numeric signedness/width and decoded string length, including escapes, embedded zero bytes, and the terminator used for array sizing."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 80,
+    "section": "5",
+    "item": 3,
+    "package": "B03",
+    "todo": "Treat string literals as arrays with the language's chosen element qualification; reject direct writes regardless of their addressability."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 81,
+    "section": "5",
+    "item": 4,
+    "package": "B04",
+    "todo": "Distinguish objects, function designators, arrays, ordinary values, and null-pointer values."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 82,
+    "section": "5",
+    "item": 5,
+    "package": "B04",
+    "todo": "Apply lvalue-to-value, array-to-pointer, and function-to-pointer conversions only in the appropriate contexts."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 83,
+    "section": "5",
+    "item": 6,
+    "package": "B04",
+    "todo": "Suppress array/function decay for contexts such as address-of and `sizeof` where required."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 84,
+    "section": "5",
+    "item": 7,
+    "package": "B05",
+    "todo": "Apply integer promotions and usual arithmetic conversions before choosing operator result types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 85,
+    "section": "5",
+    "item": 8,
+    "package": "B04",
+    "todo": "Reject use of void results where a value is required; allow valid discarded-value contexts and supported void expressions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 86,
+    "section": "5",
+    "item": 9,
+    "package": "B04",
+    "todo": "Determine the type and value category of every expression, including single-element comma wrappers produced by the parser."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 90,
+    "section": "6",
+    "item": 1,
+    "package": "B05",
+    "todo": "Unary `+`/`-`: require arithmetic operands and apply promotions; reject aggregates and pointers."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 91,
+    "section": "6",
+    "item": 2,
+    "package": "B05",
+    "todo": "`~`: require an integral operand and apply promotions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 92,
+    "section": "6",
+    "item": 3,
+    "package": "B05",
+    "todo": "`!`, `&&`, `||`: require permitted condition conversions and produce the specified boolean/result type; retain short-circuit behavior for lowering and constant evaluation."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 93,
+    "section": "6",
+    "item": 4,
+    "package": "B05",
+    "todo": "`*`, `/`: require arithmetic operands. `%`, shifts, and bitwise binary operators require integral operands."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 94,
+    "section": "6",
+    "item": 5,
+    "package": "B06",
+    "todo": "`+`/`-`: distinguish arithmetic operations, pointer-plus/minus-integer, and compatible pointer subtraction; reject pointer addition and integer-minus-pointer."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 95,
+    "section": "6",
+    "item": 6,
+    "package": "B06",
+    "todo": "Require complete object pointee types for pointer arithmetic, indexing, and pointer increments; reject void/function-pointer arithmetic unless explicitly supported as an extension."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 96,
+    "section": "6",
+    "item": 7,
+    "package": "B06",
+    "todo": "Pointer subtraction: validate compatible element types and choose the target's pointer-difference result type."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 97,
+    "section": "6",
+    "item": 8,
+    "package": "B07",
+    "todo": "Comparisons: check arithmetic conversions or permitted pointer/null/enum comparisons; distinguish equality from ordering constraints."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 98,
+    "section": "6",
+    "item": 9,
+    "package": "B07",
+    "todo": "Reject implicit conversions that discard pointee constness, including unsafe multilevel-pointer qualification conversions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 99,
+    "section": "6",
+    "item": 10,
+    "package": "B07",
+    "todo": "Validate object-pointer, function-pointer, and `void*` conversions separately; equal storage size is not type compatibility."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 100,
+    "section": "6",
+    "item": 11,
+    "package": "B08",
+    "todo": "Unary dereference: require a suitable pointer/function-pointer operand and assign the correct resulting category/type."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 101,
+    "section": "6",
+    "item": 12,
+    "package": "B08",
+    "todo": "Address-of: require an addressable object or function as allowed; preserve array type in pointer-to-array results."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 102,
+    "section": "6",
+    "item": 13,
+    "package": "B08",
+    "todo": "Indexing: require pointer/array plus integral index, supporting `i[p]` only if part of the language; produce the element type/category."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 103,
+    "section": "6",
+    "item": 14,
+    "package": "B09",
+    "todo": "Plain assignment: require a modifiable object target and an allowed conversion to the destination type."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 104,
+    "section": "6",
+    "item": 15,
+    "package": "B09",
+    "todo": "Reject assignment to constants, whole arrays, functions, string literals, and non-modifiable expression results."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 105,
+    "section": "6",
+    "item": 16,
+    "package": "B10",
+    "todo": "Compound assignment: validate both the underlying operation and conversion back to the target type; preserve single evaluation of its left operand."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 106,
+    "section": "6",
+    "item": 17,
+    "package": "B10",
+    "todo": "Prefix/postfix increment/decrement: require a modifiable arithmetic object or appropriate pointer, subject to the language's bool rule; assign their different result categories."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 107,
+    "section": "6",
+    "item": 18,
+    "package": "B11",
+    "todo": "Conditional `?:`: validate the condition, unify branch types/qualifiers, handle permitted void/aggregate/pointer/null combinations, and compute the result category."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 108,
+    "section": "6",
+    "item": 19,
+    "package": "B11",
+    "todo": "Comma expressions: type-check each operand, use the final operand's type/category according to policy, and preserve sequencing."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 109,
+    "section": "6",
+    "item": 20,
+    "package": "B09",
+    "todo": "Reject aggregate operators unless aggregate assignment, comparison, or overloads are explicitly supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 113,
+    "section": "7",
+    "item": 1,
+    "package": "B12",
+    "todo": "Resolve the cast type plus abstract declarator; validate the target as a legal type."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 114,
+    "section": "7",
+    "item": 2,
+    "package": "B12",
+    "todo": "Validate arithmetic, enum, pointer, integer-pointer, inheritance, qualification, and void casts under explicit language rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 115,
+    "section": "7",
+    "item": 3,
+    "package": "B12",
+    "todo": "Reject illegal casts to array/function types and unsupported aggregate casts."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 116,
+    "section": "7",
+    "item": 4,
+    "package": "B12",
+    "todo": "Do not make a cast result assignable/addressable merely because its operand is."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 117,
+    "section": "7",
+    "item": 5,
+    "package": "B13",
+    "todo": "`sizeof(type)` and `sizeof(expr)`: require a permitted complete sized type; reject functions, void, and incomplete by-value types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 118,
+    "section": "7",
+    "item": 6,
+    "package": "B13",
+    "todo": "Type-check `sizeof` expressions without ordinary decay; non-VLA operands are unevaluated. If VLAs are supported, handle their evaluated bounds and runtime sizes as specified in the [extended review](extended/FINDINGS.md)."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 119,
+    "section": "7",
+    "item": 7,
+    "package": "B13",
+    "todo": "Permit `sizeof` of a pointer to an incomplete type; its pointee need not be complete."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 120,
+    "section": "7",
+    "item": 8,
+    "package": "A16",
+    "todo": "Compute sizes/alignment from target types, including array bounds, aggregate padding, union size, and inheritance."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 121,
+    "section": "7",
+    "item": 9,
+    "package": "A16",
+    "todo": "Produce a representable size value and diagnose type/array layouts that exceed implementation limits."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 125,
+    "section": "8",
+    "item": 1,
+    "package": "B14",
+    "todo": "Provide a typed constant evaluator separate from ordinary expression type checking."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 126,
+    "section": "8",
+    "item": 2,
+    "package": "B14",
+    "todo": "Define allowed operators, casts, literals, enumerators, constant objects, and `sizeof` in integral/static-address constant expressions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 127,
+    "section": "8",
+    "item": 3,
+    "package": "B14",
+    "todo": "Reject nonconstant expressions where constants are required, rather than accepting an arbitrary variable expression."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 128,
+    "section": "8",
+    "item": 4,
+    "package": "B14",
+    "todo": "Evaluate with target widths/signedness and the same conversions as ordinary expressions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 129,
+    "section": "8",
+    "item": 5,
+    "package": "B14",
+    "todo": "Diagnose division/remainder by zero, invalid shifts, and invalid overflow in required constant expressions according to the language rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 130,
+    "section": "8",
+    "item": 6,
+    "package": "B14",
+    "todo": "Respect short-circuit/conditional evaluation; do not report invalid evaluation of an unselected operand as if it ran."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 131,
+    "section": "8",
+    "item": 7,
+    "package": "B15",
+    "todo": "Check integral array bounds, positivity/zero-bound policy, constant/VLA context rules, and total allocation-size overflow."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 132,
+    "section": "8",
+    "item": 8,
+    "package": "B17",
+    "todo": "Infer omitted outer bounds from initializers where supported; require known inner dimensions for multidimensional arrays as appropriate."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 133,
+    "section": "8",
+    "item": 9,
+    "package": "A11",
+    "todo": "Preserve inner dimensions when adjusting an array parameter to a pointer."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 134,
+    "section": "8",
+    "item": 10,
+    "package": "B14",
+    "todo": "Support permitted constant address initializers, null pointers, and symbol-plus-offset values without inventing runtime values."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 138,
+    "section": "9",
+    "item": 1,
+    "package": "B16",
+    "todo": "Distinguish no initializer, scalar expression, empty braces, and nested brace lists. Preserve syntax needed by narrowing and aggregate rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 139,
+    "section": "9",
+    "item": 2,
+    "package": "B16",
+    "todo": "Check scalar assignment conversions and permitted scalar bracing; reject excess scalar elements."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 140,
+    "section": "9",
+    "item": 3,
+    "package": "B17",
+    "todo": "Validate array/struct/union initializer shape, recursive element types, element count, member order, and excess elements."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 141,
+    "section": "9",
+    "item": 4,
+    "package": "B17",
+    "todo": "Apply permitted brace elision and omitted-element zero/default initialization rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 142,
+    "section": "9",
+    "item": 5,
+    "package": "B17",
+    "todo": "Check string-to-character-array initialization, terminator space, nested string rows, and disallow incompatible element types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 143,
+    "section": "9",
+    "item": 6,
+    "package": "B17",
+    "todo": "Reject ordinary scalar/pointer initializers for whole arrays unless a specific language rule permits them."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 144,
+    "section": "9",
+    "item": 7,
+    "package": "B21",
+    "todo": "Validate aggregate copying and class construction separately; select applicable constructors and diagnose missing/ambiguous matches if supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 145,
+    "section": "9",
+    "item": 8,
+    "package": "B16",
+    "todo": "Require initialization for const objects where required; account for constructors/member defaults rather than checking a const flag alone."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 146,
+    "section": "9",
+    "item": 9,
+    "package": "B18",
+    "todo": "Validate global/static initializers under the chosen constant/dynamic initialization policy. Dynamic initialization is not universally an error in a C++-like language."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 147,
+    "section": "9",
+    "item": 10,
+    "package": "B18",
+    "todo": "Record static zero initialization, automatic initialization, member initialization, and any required runtime initialization work."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 148,
+    "section": "9",
+    "item": 11,
+    "package": "A19",
+    "todo": "Check static member declarations/definitions under baka's chosen rules and prevent accidental instance storage for static fields."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 149,
+    "section": "9",
+    "item": 12,
+    "package": "C20",
+    "todo": "Plan required constructor/destructor actions for automatic objects, arrays, members, bases, globals, and statics if object lifetimes are supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 153,
+    "section": "10",
+    "item": 1,
+    "package": "A11",
+    "todo": "Construct function signatures with return type, adjusted parameter types, variadic flag, member ownership, and applicable qualifiers."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 154,
+    "section": "10",
+    "item": 2,
+    "package": "A11",
+    "todo": "Validate compatible prototypes/definitions; reject duplicate definitions, conflicting return types, and forbidden linkage changes."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 155,
+    "section": "10",
+    "item": 3,
+    "package": "C11",
+    "todo": "Reject nested definitions if unsupported; handle block-scope prototypes according to the language rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 156,
+    "section": "10",
+    "item": 4,
+    "package": "B19",
+    "todo": "Distinguish a function call from a constructor call and a function-pointer call; reject calls on arithmetic/array/aggregate values unless callable objects are explicitly supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 157,
+    "section": "10",
+    "item": 5,
+    "package": "B19",
+    "todo": "Resolve direct and indirect callees and check required/excess argument counts against defaults and variadic status."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 158,
+    "section": "10",
+    "item": 6,
+    "package": "B19",
+    "todo": "Check conversion of every fixed argument to its parameter type, including pointee qualification and by-value aggregate completeness."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 159,
+    "section": "10",
+    "item": 7,
+    "package": "B20",
+    "todo": "Type-check default expressions, their declaration-time scope, permitted references, conversion to parameter types, and repeated-default restrictions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 160,
+    "section": "10",
+    "item": 8,
+    "package": "B20",
+    "todo": "Merge defaults across compatible declarations only if supported; otherwise diagnose conflicting repeated defaults."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 161,
+    "section": "10",
+    "item": 9,
+    "package": "B20",
+    "todo": "Apply variadic default promotions, including float/integer promotions, and check permitted variadic argument categories."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 162,
+    "section": "10",
+    "item": 10,
+    "package": "B19",
+    "todo": "Preserve argument boundaries: `f(a,b)` has two arguments; `f((a,b))` has one. Count only immediate children of the call's argument wrapper."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 163,
+    "section": "10",
+    "item": 11,
+    "package": "B19",
+    "todo": "Handle function decay/address-of, compatible function-pointer assignment, and signature validation on indirect calls."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 164,
+    "section": "10",
+    "item": 12,
+    "package": "B19",
+    "todo": "If overloads are supported, identify signatures, rank viable conversions, and reject no-match/ambiguous calls. Return type alone must not distinguish overloads under C++-like rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 165,
+    "section": "10",
+    "item": 13,
+    "package": "C11",
+    "todo": "Check every return against its enclosing function: expression present/absent, expression conversion, void-value policy, and constructor/destructor restrictions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 166,
+    "section": "10",
+    "item": 14,
+    "package": "C11",
+    "todo": "Diagnose return outside a function if representable after parser recovery/future grammar changes."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 167,
+    "section": "10",
+    "item": 15,
+    "package": "C11",
+    "todo": "Apply the chosen fall-through rule for non-void functions and the special executable `main` rules if supported."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 168,
+    "section": "10",
+    "item": 16,
+    "package": "B02",
+    "todo": "Supply the resolved call/result type and inserted conversions to lowering; argument passing/register assignment remains a later code-generation task."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 172,
+    "section": "11",
+    "item": 1,
+    "package": "C12",
+    "todo": "Check condition conversions in `if`, `else if`, `while`, `do while`, and present `for` conditions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 173,
+    "section": "11",
+    "item": 2,
+    "package": "C13",
+    "todo": "Treat omitted `for` conditions as true and omitted initializer/update as absent; type-check discarded updates without requiring boolean type."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 174,
+    "section": "11",
+    "item": 3,
+    "package": "C13",
+    "todo": "Enforce `for` declaration visibility through condition/update/body and end it after the loop."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 175,
+    "section": "11",
+    "item": 4,
+    "package": "C14",
+    "todo": "Unlabeled break: find an enclosing loop or switch; reject otherwise."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 176,
+    "section": "11",
+    "item": 5,
+    "package": "C14",
+    "todo": "Unlabeled continue: find an enclosing loop even when nested in a switch; reject a switch-only context."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 177,
+    "section": "11",
+    "item": 6,
+    "package": "C15",
+    "todo": "Named break/continue: resolve to an active enclosing loop, rejecting absent, already-exited, sibling, ordinary goto-label, or cross-function targets."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 178,
+    "section": "11",
+    "item": 7,
+    "package": "C16",
+    "todo": "Define and enforce duplicate active loop-label behavior and permitted reuse after a loop ends."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 179,
+    "section": "11",
+    "item": 8,
+    "package": "C15",
+    "todo": "Record continue targets correctly: `for` update, `while` test, and `do while` test; named continue uses the selected outer loop's target."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 180,
+    "section": "11",
+    "item": 9,
+    "package": "C18",
+    "todo": "Switch: require a permitted integral/enum type and apply the controlling expression's promotion/conversion rules."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 181,
+    "section": "11",
+    "item": 10,
+    "package": "C18",
+    "todo": "Require case/default labels to belong to an enclosing switch; nested switches have independent case/default sets."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 182,
+    "section": "11",
+    "item": 11,
+    "package": "C19",
+    "todo": "Type-check and constant-evaluate each case, convert to the switch comparison type, then reject duplicate converted values."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 183,
+    "section": "11",
+    "item": 12,
+    "package": "C19",
+    "todo": "Allow at most one default per switch; distinguish nested switch defaults from duplicates."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 184,
+    "section": "11",
+    "item": 13,
+    "package": "C17",
+    "todo": "Resolve goto targets function-wide, allow valid forward targets, and reject undefined or duplicate labels even across nested blocks."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 185,
+    "section": "11",
+    "item": 14,
+    "package": "C09",
+    "todo": "Track legal labeled statements and their bodies so control-flow lowering receives the correct destination."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 186,
+    "section": "11",
+    "item": 15,
+    "package": "C20",
+    "todo": "If C++-like lifetime rules apply, reject goto/switch entry that bypasses required initialization and compute cleanup when control exits scopes via return/break/continue/goto."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 187,
+    "section": "11",
+    "item": 16,
+    "package": "C11",
+    "todo": "Reset loop/switch/return context for every function, including any parsed nested function, to prevent inheriting the enclosing function's targets."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 191,
+    "section": "12",
+    "item": 1,
+    "package": "A13",
+    "todo": "Track forward-declared, being-defined, and complete aggregate states separately. Being inside a definition does not make by-value self-use valid."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 192,
+    "section": "12",
+    "item": 2,
+    "package": "A13",
+    "todo": "Enforce aggregate definition uniqueness and permitted class/struct tag compatibility without relying on a single parser `IsStruct` flag."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 193,
+    "section": "12",
+    "item": 3,
+    "package": "A14",
+    "todo": "Build member tables for fields, static fields, methods, typedefs, constructors, and destructors; detect conflicting/duplicate members."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 194,
+    "section": "12",
+    "item": 4,
+    "package": "A14",
+    "todo": "Preserve member declaration order for aggregate initialization and layout; predeclare methods/members for lookup only as language rules allow."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 195,
+    "section": "12",
+    "item": 5,
+    "package": "A23",
+    "todo": "Resolve `obj.member` on appropriate aggregate expressions and `ptr->member` on suitable pointers; reject missing members and wrong receiver types."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 196,
+    "section": "12",
+    "item": 6,
+    "package": "A23",
+    "todo": "Propagate receiver constness to non-static fields and validate permitted member calls on const objects."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 197,
+    "section": "12",
+    "item": 7,
+    "package": "A23",
+    "todo": "Resolve unqualified instance members through the implicit object; reject use without an object in static methods/free functions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 198,
+    "section": "12",
+    "item": 8,
+    "package": "A23",
+    "todo": "Permit `this` only where an implicit object exists; assign pointer-to-enclosing-class type and applicable qualification."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 199,
+    "section": "12",
+    "item": 9,
+    "package": "A19",
+    "todo": "Distinguish static and instance member access and prevent instance offsets being applied to static fields."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 200,
+    "section": "12",
+    "item": 10,
+    "package": "A15",
+    "todo": "Validate base class kind, completeness, self-inheritance, inheritance cycles, and unsupported multiple inheritance."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 201,
+    "section": "12",
+    "item": 11,
+    "package": "A15",
+    "todo": "Resolve inherited fields/methods and define hiding/overload behavior; apply permitted derived/base pointer and object conversions."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 202,
+    "section": "12",
+    "item": 12,
+    "package": "A16",
+    "todo": "Compute base-subobject and field offsets/alignment without recursive layout cycles."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 203,
+    "section": "12",
+    "item": 13,
+    "package": "A18",
+    "todo": "Validate constructor signatures, calls, defaults, duplicates/overloads, and any generated default constructor."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 204,
+    "section": "12",
+    "item": 14,
+    "package": "A18",
+    "todo": "Validate destructor uniqueness and any generated destructor; preserve all declarations so duplicate checks are possible."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 205,
+    "section": "12",
+    "item": 15,
+    "package": "A18",
+    "todo": "Define required base/member construction/destruction order and the availability of required special members."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 206,
+    "section": "12",
+    "item": 16,
+    "package": "A19",
+    "todo": "Union: retain its name/type identity, validate members, layout by maximum member size/alignment, and restrict simultaneous member initialization."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 207,
+    "section": "12",
+    "item": 17,
+    "package": "A19",
+    "todo": "If unions can contain nontrivial class members, implement explicit lifetime/special-member rules or reject that unsupported combination."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 208,
+    "section": "12",
+    "item": 18,
+    "package": "A17",
+    "todo": "Enum: register type identity and enumerator value symbols, detect duplicate/conflicting names, and assign increasing implicit values."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 209,
+    "section": "12",
+    "item": 19,
+    "package": "A17",
+    "todo": "If explicit enum initializers are added, require valid integral constants, allow references to earlier enumerators, and check representable values/increment overflow."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 210,
+    "section": "12",
+    "item": 20,
+    "package": "B07",
+    "todo": "Apply enum conversion rules consistently in assignment, arithmetic, comparison, switch, initialization, and calls."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 211,
+    "section": "12",
+    "item": 21,
+    "package": "A13",
+    "todo": "Anonymous aggregates/enums need valid internal identity even when no source name exists."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 215,
+    "section": "13",
+    "item": 1,
+    "package": "A22",
+    "todo": "Provide declarations/semantic types for supported I/O, file APIs, and command-line parameters, since there is no preprocessor/header inclusion."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 216,
+    "section": "13",
+    "item": 2,
+    "package": "B23",
+    "todo": "Validate builtin calls using the same signature checks as normal calls; optionally check literal printf/scanf formats when builtin identity is known."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 217,
+    "section": "13",
+    "item": 3,
+    "package": "B22",
+    "todo": "If `new`/`delete` are intended features, first add AST/parser support, then check allocated type completeness, constructor arguments, array bounds, pointer result, delete operand type, and required destruction."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 218,
+    "section": "13",
+    "item": 4,
+    "package": "B22",
+    "todo": "If allocation is unsupported, diagnose it explicitly; lexer keywords alone do not implement the feature."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 219,
+    "section": "13",
+    "item": 5,
+    "package": "C02",
+    "todo": "Report errors at the use/operator and include the previous declaration location for conflicts where useful."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 220,
+    "section": "13",
+    "item": 6,
+    "package": "C21",
+    "todo": "Keep unreachable code, unused declarations, suspicious narrowing, use of uninitialized locals, returned addresses of locals, obvious bounds mistakes, and missing returns as a separately chosen warning/dataflow policy."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 221,
+    "section": "13",
+    "item": 7,
+    "package": "C21",
+    "todo": "Do not make general runtime bounds, null dereference, memory lifetime, or division-by-zero detection mandatory compile-time rejection. Required constant-expression failures are a separate matter."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 222,
+    "section": "13",
+    "item": 8,
+    "package": "A06",
+    "todo": "Do not report merely declared external functions as undefined without an explicit whole-program/linking policy."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 223,
+    "section": "13",
+    "item": 9,
+    "package": "C22",
+    "todo": "Do not import unsupported language features just because the external C test corpus contains them: `extern`, signed declarations, namespaces, scope resolution, access control, multiple inheritance, enum classes, references, templates, virtual methods, and operator overloads need their own explicit scope decision."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 246,
+    "section": "15",
+    "item": 1,
+    "package": "C06",
+    "todo": "Accept `return;` as an absent expression; let semantics check whether the function permits it."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 247,
+    "section": "15",
+    "item": 2,
+    "package": "C06",
+    "todo": "Accept standalone empty statements and empty loop bodies. Current expression-statement parsing expects an expression even at `;`."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 248,
+    "section": "15",
+    "item": 3,
+    "package": "A20",
+    "todo": "Support omitted array bounds in permitted declarations/abstract declarators and preserve an explicit unspecified-bound marker."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 249,
+    "section": "15",
+    "item": 4,
+    "package": "A17",
+    "todo": "Add explicit enum initializer expressions if they belong to the feature set; current enum grammar accepts names only."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 250,
+    "section": "15",
+    "item": 5,
+    "package": "A19",
+    "todo": "Retain union names in `UnionNode`; parser-local registration is unavailable as a substitute for a semantic AST declaration."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 251,
+    "section": "15",
+    "item": 6,
+    "package": "B20",
+    "todo": "Retain `...` in `FunctionParameterList`/the signature; it is currently consumed and discarded."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 252,
+    "section": "15",
+    "item": 7,
+    "package": "A18",
+    "todo": "Preserve all constructor/destructor declarations or diagnose duplicates before overwriting. A single pointer cannot support overload/duplicate analysis."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 253,
+    "section": "15",
+    "item": 8,
+    "package": "A14",
+    "todo": "Preserve member order across fields/functions/typedefs when source order matters; `StructBodyNode` currently separates them into collections."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 254,
+    "section": "15",
+    "item": 9,
+    "package": "B16",
+    "todo": "Preserve whether an initializer was braced when language rules need it; expression and single-element brace forms must not become indistinguishable."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 255,
+    "section": "15",
+    "item": 10,
+    "package": "C01",
+    "todo": "Add access to literal values, expression children/operators, full nested declarators, qualifiers, bodies, and parameter lists."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 256,
+    "section": "15",
+    "item": 11,
+    "package": "A20",
+    "todo": "Replace user-input assertions/uncaught errors for invalid modifiers and type-state transitions with diagnostics."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 257,
+    "section": "15",
+    "item": 12,
+    "package": "A20",
+    "todo": "Fix parser lookahead/recovery when a type-kind conflict triggers aggregate-state mutation; `enum E{A}; struct E x;` currently crashes."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 258,
+    "section": "15",
+    "item": 13,
+    "package": "B19",
+    "todo": "Preserve the existing nested comma wrapper in calls: probing confirms argument boundaries already survive parsing. A dedicated argument list is optional, not a prerequisite."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 259,
+    "section": "15",
+    "item": 14,
+    "package": "C09",
+    "todo": "Preserve a meaningful statement/label relationship. Label parsers currently create null statement pointers and rely on later block siblings; unbraced labeled bodies need particular care."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 260,
+    "section": "15",
+    "item": 15,
+    "package": "C05",
+    "todo": "Keep malformed delimiter, missing keyword, and grammar recovery work in the parser. Semantics cannot recover discarded or never-parsed syntax."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 261,
+    "section": "15",
+    "item": 16,
+    "package": "A20",
+    "todo": "Clarify supported type spellings/parameter syntax: unnamed parameters are explicitly excluded by README; `main(void)` and `long long` declarations need parser decisions if desired."
+  },
+  {
+    "source": "CHECKLIST.md",
+    "line": 262,
+    "section": "15",
+    "item": 17,
+    "package": "C22",
+    "todo": "Keep README-excluded syntax excluded unless intentionally expanding scope; semantic analysis does not implement preprocessing or missing grammar."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 11,
+    "section": "Newly confirmed parser tasks",
+    "item": 1,
+    "package": "C07",
+    "todo": "Fix for-header delimiter ownership."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 12,
+    "section": "Newly confirmed parser tasks",
+    "item": 2,
+    "package": "C07",
+    "todo": "Reject no valid ordinary header just because its initializer is an expression and its condition is omitted. `for(i=0;;)` and `for(i=0;;i++)` are currently rejected; their strict-C reference inputs are accepted."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 13,
+    "section": "Newly confirmed parser tasks",
+    "item": 3,
+    "package": "C07",
+    "todo": "Consume each clause separator once. Both the expression-initializer branch and present-condition branch currently have extra semicolon matches."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 14,
+    "section": "Newly confirmed parser tasks",
+    "item": 4,
+    "package": "C07",
+    "todo": "Preserve all three clauses and the optional label independently. Five of twelve labeled matrix inputs parse successfully with `Label: nullptr`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 15,
+    "section": "Newly confirmed parser tasks",
+    "item": 5,
+    "package": "C07",
+    "todo": "Preserve the label in `for(;i<3;;L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 16,
+    "section": "Newly confirmed parser tasks",
+    "item": 6,
+    "package": "C07",
+    "todo": "Preserve the label in `for(i=0;;;L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 17,
+    "section": "Newly confirmed parser tasks",
+    "item": 7,
+    "package": "C07",
+    "todo": "Preserve the condition/update positions and label in `for(i=0;;i++;L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 18,
+    "section": "Newly confirmed parser tasks",
+    "item": 8,
+    "package": "C07",
+    "todo": "Preserve the label in `for(i=0;i<3;;L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 19,
+    "section": "Newly confirmed parser tasks",
+    "item": 9,
+    "package": "C07",
+    "todo": "Preserve the label in `for(int j=0;i<3;;L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 20,
+    "section": "Newly confirmed parser tasks",
+    "item": 10,
+    "package": "C07",
+    "todo": "Verify the AST shape, not only exit status: affected inputs place `L` in the update expression, and one moves `i++` into the condition."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 21,
+    "section": "Newly confirmed parser tasks",
+    "item": 11,
+    "package": "C08",
+    "todo": "Make the loop-label suffix grammar consistent."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 22,
+    "section": "Newly confirmed parser tasks",
+    "item": 12,
+    "package": "C08",
+    "todo": "Require the separator in `while(condition; Label)` and `do ... while(condition; Label);`. Both parsers currently accept `while(1 L)`."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 23,
+    "section": "Newly confirmed parser tasks",
+    "item": 13,
+    "package": "C08",
+    "todo": "Require an identifier after a consumed label separator. `while(1;)`, `do ... while(1;);`, and `for(;;;)` currently succeed."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 24,
+    "section": "Newly confirmed parser tasks",
+    "item": 14,
+    "package": "C08",
+    "todo": "Apply one type-name collision policy across all loop kinds. `do ... while(1; T);` accepts a typedef name that matching while/for forms reject."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 25,
+    "section": "Newly confirmed parser tasks",
+    "item": 15,
+    "package": "C08",
+    "todo": "Keep rejecting numeric and multiple label suffixes; those controls already produce parser errors."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 26,
+    "section": "Newly confirmed parser tasks",
+    "item": 16,
+    "package": "C09",
+    "todo": "Repair label ownership in statement bodies. This refines the earlier null-label-body warning with confirmed AST evidence."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 27,
+    "section": "Newly confirmed parser tasks",
+    "item": 17,
+    "package": "C09",
+    "todo": "Attach the statement after `again:` to that label node. `while(i<3; L) again: i++;` currently places `i++` outside the loop in the AST."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 28,
+    "section": "Newly confirmed parser tasks",
+    "item": 18,
+    "package": "C09",
+    "todo": "Handle case/default labels as actual labeled substatements, including unbraced loop bodies within switches."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 29,
+    "section": "Newly confirmed parser tasks",
+    "item": 19,
+    "package": "C09",
+    "todo": "Parse `do again: i++; while(i<3; L);` as a single do-loop; it currently fails."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 30,
+    "section": "Newly confirmed parser tasks",
+    "item": 20,
+    "package": "C09",
+    "todo": "Preserve an if body's labeled statement so `if(1) L: return 1; else return 0;` parses; it currently fails."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 31,
+    "section": "Newly confirmed parser tasks",
+    "item": 21,
+    "package": "C10",
+    "todo": "Fix two additional expression/statement grammar omissions."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 32,
+    "section": "Newly confirmed parser tasks",
+    "item": 22,
+    "package": "B11",
+    "todo": "Allow the middle operand in `a ? 2,3 : 4` to contain a comma expression; the current parser rejects it."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 33,
+    "section": "Newly confirmed parser tasks",
+    "item": 23,
+    "package": "C10",
+    "todo": "Parse a general switch body statement instead of always calling `CompoundStatement()`. `switch(1) case 1: return 1;` currently fails."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 41,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 1,
+    "package": "B09",
+    "todo": "Add recursive aggregate modifiability checks, including const fields inside nested members."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 42,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 2,
+    "package": "A10",
+    "todo": "Allow incomplete parameter types in prototypes; require completeness in definitions."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 43,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 3,
+    "package": "B16",
+    "todo": "Reject initialized function declarators."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 44,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 4,
+    "package": "A10",
+    "todo": "Validate incomplete array elements even beneath pointer declarators."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 45,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 5,
+    "package": "A12",
+    "todo": "Validate VLA initialization, static VLA objects, VM scope/linkage, and repeated VM typedefs."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 46,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 6,
+    "package": "C20",
+    "todo": "Check goto/switch entry into variably modified scopes."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 47,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 7,
+    "package": "B13",
+    "todo": "Handle evaluated VLA sizeof bounds and retain declaration-time extents."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 51,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 8,
+    "package": "A11",
+    "todo": "Normalize adjusted parameter types; ignore top-level parameter qualifiers for signature compatibility, retaining pointee qualifiers."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 52,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 9,
+    "package": "B07",
+    "todo": "Recognize eligible zero integral constant expressions as null constants, not ordinary zero-valued variables."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 53,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 10,
+    "package": "B14",
+    "todo": "Keep integer-constant-expression validity distinct from runtime foldability."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 54,
+    "section": "New semantic details missing from the previous checklist",
+    "item": 11,
+    "package": "C13",
+    "todo": "For a C11-style for clause, restrict declared entities/storage classes; do not apply that restriction to every C version."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 60,
+    "section": "Corrections and positive controls to add",
+    "item": 1,
+    "package": "B13",
+    "todo": "Correct the old blanket statement that sizeof operands never execute. The main checklist now links to the VLA exception above. Parsing can establish that a type is represented; execution semantics remain untestable until code generation exists."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 61,
+    "section": "Corrections and positive controls to add",
+    "item": 2,
+    "package": "A12",
+    "todo": "Separate static VLA objects from block-scope static pointers to VLA types. `static_pointer_to_vla` is accepted by the C11 reference while `vla_static_storage` is rejected."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 62,
+    "section": "Corrections and positive controls to add",
+    "item": 3,
+    "package": "A11",
+    "todo": "Compare compatible signatures after adjustment: retain controls for top-level parameter const, array-to-pointer adjustment, and changed inner array dimensions."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 63,
+    "section": "Corrections and positive controls to add",
+    "item": 4,
+    "package": "B09",
+    "todo": "Permit assignable aggregates that contain array members. Whole-array assignment being invalid must not prohibit that aggregate copy."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 64,
+    "section": "Corrections and positive controls to add",
+    "item": 5,
+    "package": "B04",
+    "todo": "Keep unevaluated-expression name/type checking separate from evaluation. `0 && unknown` and `sizeof(unknown)` still need resolution."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 65,
+    "section": "Corrections and positive controls to add",
+    "item": 6,
+    "package": "B07",
+    "todo": "Keep pointer equality and ordering checks separate. The reference accepts `p==0`, rejects `p<0`, and rejects ordering function pointers."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 66,
+    "section": "Corrections and positive controls to add",
+    "item": 7,
+    "package": "A17",
+    "todo": "Keep same-valued enumerators distinct from duplicate enumerator names when explicit values become parsable."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 67,
+    "section": "Corrections and positive controls to add",
+    "item": 8,
+    "package": "A04",
+    "todo": "Make declaration-point tests include array bounds: the outer `n` is relevant in `int n=2; ... int n[n];` under the C comparison rules."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 73,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 1,
+    "package": "A11",
+    "todo": "Choose C11/C23 behavior for empty function parameter lists."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 74,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 2,
+    "package": "C22",
+    "todo": "Choose whether labels before declarations or at block ends are supported."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 75,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 3,
+    "package": "B16",
+    "todo": "Choose whether empty brace initialization is supported."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 76,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 4,
+    "package": "C13",
+    "todo": "Choose whether to retain the older for-declaration restriction."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 80,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 5,
+    "package": "C22",
+    "todo": "Resolve C11-versus-baka policy for void-valued return expressions, const-local case values, zero-expression null constants, and for-body redeclaration of the initializer variable. Strict reference modes give different outcomes."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 81,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 6,
+    "package": "A21",
+    "todo": "Decide whether flexible array members, bit-fields, and designated initializers belong in scope. The probes confirm parser support is absent. If enabled, they require their own AST forms and checks; do not silently describe them as already supported by generic aggregate checks."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 82,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 7,
+    "package": "A23",
+    "todo": "State whether methods in structs are intentional extensions; a C function-member constraint must not accidentally reject baka's method declarations."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 83,
+    "section": "Version and language decisions exposed by the probes",
+    "item": 8,
+    "package": "A11",
+    "todo": "Do not classify compatible C declarations as conflicts solely because GCC's C++ mode interprets the same spelling as distinct overloads. Reference compiler acceptance is not proof of semantic equivalence."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 97,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 1,
+    "package": "C15",
+    "todo": "Register a loop's attached label before traversing its body, including a do-loop whose suffix occurs later in source order."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 98,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 2,
+    "package": "C15",
+    "todo": "Resolve loop targets using the active loop stack, independently from ordinary value-name and goto-label lookup."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 99,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 3,
+    "package": "C16",
+    "todo": "Define collisions between variable names, goto labels, type names, and loop labels. Decide duplicate active-label behavior separately from sibling reuse."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 100,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 4,
+    "package": "C15",
+    "todo": "Reject jumps to future/exited siblings, to another function's loop, and from a nested function to an outer function's loop."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 101,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 5,
+    "package": "C16",
+    "todo": "Do not let `goto L` resolve only because a loop suffix defines `L`; do not let `break L` resolve only because an ordinary `L:` label exists."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 102,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 6,
+    "package": "C15",
+    "todo": "Lower named continue to the selected loop's update/test, and named break to that loop's exit, even through nested switches."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 103,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 7,
+    "package": "C08",
+    "todo": "Keep the suffix out of runtime expression evaluation; a label spelling must never become an ordinary variable read/update clause."
+  },
+  {
+    "source": "extended/FINDINGS.md",
+    "line": 104,
+    "section": "Loop-label semantic contract and regression tasks",
+    "item": 8,
+    "package": "C20",
+    "todo": "Add execution checks once lowering exists for outer-for continue, outer-do continue, outer-loop break through a switch, and scope cleanup."
+  }
+]

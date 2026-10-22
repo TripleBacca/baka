@@ -1,0 +1,34 @@
+IR::TAC:
+module {
+  declare @printf.9: fn(ptr<i8>, ...)->i32
+  declare @scanf.10: fn(ptr<i8>, ...)->i32
+  function @main.12: fn(i32)->i32 {
+    parameter n.13: i32
+    local a.14: i32
+    local b.15: u32
+  bb1: ; predecessors [] successors []
+    (store, &a.14:ptr<i32>, 2147483647:i32, _)
+    (load, %t1:i32, &a.14:ptr<i32>, _)
+    (add, %t2:i32, %t1:i32, 1:i32)
+    (store, &a.14:ptr<i32>, %t2:i32, _)
+    (load, %t3:i32, &a.14:ptr<i32>, _)
+    (store, &b.15:ptr<u32>, 4294967295:u32, _)
+    (load, %t4:u32, &b.15:ptr<u32>, _)
+    (add, %t5:u32, %t4:u32, 1:u32)
+    (store, &b.15:ptr<u32>, %t5:u32, _)
+    (load, %t6:i32, &a.14:ptr<i32>, _)
+    (lt, %t7:u1, %t6:i32, 0:i32)
+    (cast, %t8:i32, %t7:u1, _)
+    (load, %t9:u32, &b.15:ptr<u32>, _)
+    (cast, %t10:u32, 0:i32, _)
+    (eq, %t11:u1, %t9:u32, %t10:u32)
+    (cast, %t12:i32, %t11:u1, _)
+    (add, %t13:i32, %t8:i32, %t12:i32)
+    (load, %t14:i32, &n.13:ptr<i32>, _)
+    (cast, %t15:u32, %t14:i32, _)
+    (shr, %t16:u32, %t15:u32, 2:i32)
+    (cast, %t17:i32, %t16:u32, _)
+    (add, %t18:i32, %t13:i32, %t17:i32)
+    (ret, _, %t18:i32, _)
+  }
+}
