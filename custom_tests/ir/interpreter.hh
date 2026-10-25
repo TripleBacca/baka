@@ -39,6 +39,7 @@ namespace ir_test {
         struct Frame {
             std::map<uint32_t, uint64_t> addresses;
             std::map<uint32_t, Value> temporaries;
+            std::vector<Value> arguments;
         };
 
         uint64_t allocate(TypeId type, bool zero = false) {
@@ -348,23 +349,26 @@ namespace ir_test {
                         result = load(a.bits, in.result.type);
                         break;
                     case Opcode::Store:
-                        store(operand(in.result, frame).bits, a, in.left.type);
+                        store(a.bits, b, in.right.type);
                         continue;
                     case Opcode::AddressOffset:
                         result = {a.bits + b.bits};
                         break;
                     case Opcode::ZeroMemory: {
-                        auto address = operand(in.result, frame).bits;
-                        for (uint64_t i = 0; i < a.bits; ++i) {
-                            Memory[address + i] = 0;
+                        for (uint64_t i = 0; i < b.bits; ++i) {
+                            Memory[a.bits + i] = 0;
                         }
                         continue;
                     }
+                    case Opcode::Param:
+                        frame.arguments.push_back(a);
+                        continue;
                     case Opcode::Call: {
-                        std::vector<Value> arguments;
-                        for (auto argument : in.arguments) {
-                            arguments.push_back(operand(argument, frame));
+                        if (frame.arguments.size() != b.bits) {
+                            throw std::runtime_error("test interpreter: call param count mismatch");
                         }
+                        auto arguments = std::move(frame.arguments);
+                        frame.arguments.clear();
                         result = invoke(static_cast<uint32_t>(a.bits & ~FunctionTag), arguments);
                         break;
                     }
@@ -375,8 +379,11 @@ namespace ir_test {
                         current = in.left.id;
                         transferred = true;
                         break;
-                    case Opcode::Branch:
-                        current = truth(a, in.left.type) ? in.right.id : in.result.id;
+                    case Opcode::JumpIf:
+                        if (!truth(a, in.left.type)) {
+                            continue;
+                        }
+                        current = in.right.id;
                         transferred = true;
                         break;
                     case Opcode::Return:

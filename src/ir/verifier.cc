@@ -312,8 +312,38 @@ namespace baka {
                     if (block.instructions.empty() || !IsTerminator(block.instructions.back().opcode)) {
                         error("block lacks terminator");
                     }
+                    std::vector<Operand> arguments;
+                    bool validArguments = true;
                     for (size_t i = 0; i < block.instructions.size(); ++i) {
-                        checkInstruction(block.instructions[i], function, blocks, i + 1 == block.instructions.size());
+                        const auto& in = block.instructions[i];
+                        const auto errorsBefore = errors.size();
+                        checkInstruction(in, function, blocks, i + 1 == block.instructions.size());
+                        if (in.opcode == Opcode::Param) {
+                            arguments.push_back(in.left);
+                            validArguments &= errors.size() == errorsBefore;
+                        } else if (in.opcode == Opcode::Call) {
+                            if (validArguments && errors.size() == errorsBefore) {
+                                require(in, in.right.integer == arguments.size(), "call param count mismatch");
+                                const auto& target = module.type(module.type(in.left.type).element);
+                                for (size_t a = 0; a < arguments.size() && a < target.parameters.size(); ++a) {
+                                    require(in, arguments[a].type == target.parameters[a],
+                                            "call argument type mismatch");
+                                }
+                            }
+                            arguments.clear();
+                            validArguments = true;
+                        } else if (!arguments.empty()) {
+                            error("param sequence must immediately precede call", in.source);
+                            arguments.clear();
+                            validArguments = true;
+                        }
+                        if (in.opcode == Opcode::JumpIf &&
+                            (i + 2 != block.instructions.size() || block.instructions.back().opcode != Opcode::Jump)) {
+                            error("conditional jump must be followed by the block's final goto", in.source);
+                        }
+                    }
+                    if (!arguments.empty()) {
+                        error("param sequence lacks call", block.instructions.back().source);
                     }
                 }
                 checkDefinitions(function, blocks, universe);
@@ -383,12 +413,6 @@ namespace baka {
                 checkOperand(in.result, in.source, function, blocks);
                 checkOperand(in.left, in.source, function, blocks);
                 checkOperand(in.right, in.source, function, blocks);
-                for (auto argument : in.arguments) {
-                    checkOperand(argument, in.source, function, blocks);
-                }
-                if (in.opcode != Opcode::Call && !in.arguments.empty()) {
-                    error("arguments attached to non-call instruction", in.source);
-                }
                 if (errors.size() != errorsBeforeOperands) {
                     return;
                 }
@@ -420,13 +444,13 @@ namespace baka {
                             "invalid load");
                     break;
                 case Opcode::Store:
-                    require(in, valueType(in.left.type) && pointerTo(in.result, in.left.type) && !in.right,
+                    require(in, !in.result && valueType(in.right.type) && pointerTo(in.left, in.right.type),
                             "invalid store");
                     break;
                 case Opcode::ZeroMemory:
                     require(in,
-                            in.result && module.type(in.result.type).kind == TypeKind::Pointer && in.left &&
-                                module.type(in.left.type).kind == TypeKind::Integer && !in.right,
+                            !in.result && in.left && module.type(in.left.type).kind == TypeKind::Pointer && in.right &&
+                                module.type(in.right.type).kind == TypeKind::Integer,
                             "invalid bulk zero operation");
                     break;
                 case Opcode::Cast:
@@ -440,19 +464,20 @@ namespace baka {
                                 module.type(in.right.type).kind == TypeKind::Integer,
                             "invalid byte-offset operation");
                     break;
+                case Opcode::Param:
+                    require(in, !in.result && valueType(in.left.type) && !in.right, "invalid param");
+                    break;
                 case Opcode::Call: {
                     auto pointer = in.left ? module.type(in.left.type) : Type{};
                     auto target = pointer.kind == TypeKind::Pointer ? module.type(pointer.element) : Type{};
-                    const auto& arguments = in.arguments;
-                    require(in, target.kind == TypeKind::Function && !in.right, "invalid call target/count");
-                    if (target.kind == TypeKind::Function) {
+                    const bool count =
+                        in.right.kind == OperandKind::Integer && module.type(in.right.type).kind == TypeKind::Integer;
+                    require(in, target.kind == TypeKind::Function && count, "invalid call target/count");
+                    if (target.kind == TypeKind::Function && count) {
                         require(in,
-                                arguments.size() >= target.parameters.size() &&
-                                    (target.variadic || arguments.size() == target.parameters.size()),
+                                in.right.integer >= target.parameters.size() &&
+                                    (target.variadic || in.right.integer == target.parameters.size()),
                                 "call arity mismatch");
-                        for (size_t a = 0; a < arguments.size() && a < target.parameters.size(); ++a) {
-                            require(in, arguments[a].type == target.parameters[a], "call argument type mismatch");
-                        }
                         require(in,
                                 module.type(target.element).kind == TypeKind::Void
                                     ? !in.result
@@ -474,11 +499,9 @@ namespace baka {
                 case Opcode::Jump:
                     require(in, !in.result && in.left.kind == OperandKind::Block && !in.right, "invalid jump");
                     break;
-                case Opcode::Branch:
-                    require(in,
-                            in.result.kind == OperandKind::Block && scalar(in.left.type) &&
-                                in.right.kind == OperandKind::Block,
-                            "invalid branch");
+                case Opcode::JumpIf:
+                    require(in, !in.result && scalar(in.left.type) && in.right.kind == OperandKind::Block,
+                            "invalid conditional jump");
                     break;
                 case Opcode::Return:
                     require(in,

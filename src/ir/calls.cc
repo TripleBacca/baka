@@ -92,7 +92,7 @@ namespace baka {
             if (!callee) {
                 callee = value(node->getCallee());
             }
-            // Capture each value before constructing the call's owned argument vector;
+            // Capture each value before staging the call's param instructions;
             // later argument side effects cannot reload an earlier source value.
             for (size_t index = 0; index < expressions.size(); ++index) {
                 auto argument = value(expressions[index]);

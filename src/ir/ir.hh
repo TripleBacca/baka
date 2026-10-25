@@ -76,11 +76,12 @@ namespace baka {
             Negate,
             Complement,
             LogicalNot,
+            Param,
             Call,
             RegisterDestructor,
             ZeroMemory,
             Jump,
-            Branch,
+            JumpIf,
             Return
         };
 
@@ -88,11 +89,14 @@ namespace baka {
             size_t line = 0, column = 0;
         };
 
-        // A typed quadruple: (opcode, result, left, right). Branch uses result
-        // for its false label; Jump uses left. A call owns its captured argument
-        // operands; no adjacency or ambient argument-stack convention is required.
+        // A strict typed quadruple: (opcode, result, left, right). Result is
+        // always a produced value. Param uses left; a contiguous Param sequence
+        // immediately precedes Call (left=callee, right=literal argument count).
+        // Arguments are evaluated/captured before any Params are emitted.
+        // JumpIf uses left=condition, right=target and is immediately followed by
+        // Jump to the false target. Both jumps form one block's control-flow tail.
         // Complete records are first-class values: Load captures a snapshot, Copy
-        // copies a value, and Store writes the entire record. Call arguments/Call/Return
+        // copies a value, and Store writes the entire record. Param/Call/Return
         // retain record types; no target ABI or hidden return pointer is imposed.
         // RegisterDestructor has no result, left=void(T*) callable, right=T*
         // receiver. The runtime pushes this callback after successful initialization
@@ -101,20 +105,14 @@ namespace baka {
             Opcode opcode = Opcode::Copy;
             Operand result, left, right;
             SourceSpan source;
-            std::vector<Operand> arguments;
             bool operator==(const Instruction&) const = default;
 
-            static Instruction call(Operand result, Operand callee, std::vector<Operand> arguments,
-                                    SourceSpan source = {}) {
-                return {Opcode::Call, result, callee, {}, source, std::move(arguments)};
+            static Instruction call(Operand result, Operand callee, Operand count, SourceSpan source = {}) {
+                return {Opcode::Call, result, callee, count, source};
             }
 
             static Instruction store(Operand address, Operand value, SourceSpan source = {}) {
-                return {Opcode::Store, address, value, {}, source, {}};
-            }
-
-            static Instruction branch(Operand condition, Operand yes, Operand no, SourceSpan source = {}) {
-                return {Opcode::Branch, no, condition, yes, source, {}};
+                return {Opcode::Store, {}, address, value, source};
             }
         };
 

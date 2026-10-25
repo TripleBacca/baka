@@ -62,6 +62,125 @@ namespace {
         bad.functions[0].temporaries.push_back(1);
         bad.functions[0].blocks[0].instructions[0].left = {ir::OperandKind::Temporary, 1, 1};
         Require(!ir::Verify(bad).empty(), "undefined temporary accepted");
+
+        auto rejected = [](const ir::Module& candidate, const char* message) {
+            const auto diagnostics = ir::Verify(candidate);
+            Require(std::any_of(diagnostics.begin(), diagnostics.end(),
+                                [&](const auto& diagnostic) { return diagnostic.message == message; }),
+                    message);
+        };
+        const ir::Operand one{ir::OperandKind::Integer, 1, 0, 1};
+        const ir::Operand zero{ir::OperandKind::Integer, 1, 0, 0};
+        const ir::Operand temporary{ir::OperandKind::Temporary, 1, 1};
+
+        auto calls = module;
+        ir::Function callee;
+        callee.id = 2;
+        callee.name = "callee";
+        callee.signature = calls.function(1, {1}, false);
+        const ir::Operand target{ir::OperandKind::Function, calls.pointer(callee.signature), callee.id};
+        calls.functions.push_back(callee);
+        calls.functions[0].temporaries.push_back(1);
+        calls.functions[0].blocks[0].instructions = {{ir::Opcode::Param, {}, one},
+                                                     ir::Instruction::call(temporary, target, one),
+                                                     {ir::Opcode::Return, {}, temporary}};
+        Require(ir::Verify(calls).empty(), "valid param/call sequence rejected");
+
+        bad = calls;
+        bad.functions[0].blocks[0].instructions.erase(bad.functions[0].blocks[0].instructions.begin());
+        rejected(bad, "call param count mismatch");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions.insert(bad.functions[0].blocks[0].instructions.begin(),
+                                                       {ir::Opcode::Param, {}, one});
+        rejected(bad, "call param count mismatch");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions[1].right = zero;
+        rejected(bad, "call arity mismatch");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions[1].right = temporary;
+        rejected(bad, "invalid call target/count");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions.insert(bad.functions[0].blocks[0].instructions.begin() + 1,
+                                                       {ir::Opcode::Copy, temporary, one});
+        rejected(bad, "param sequence must immediately precede call");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions[0].left = temporary;
+        rejected(bad, "temporary used before definition");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions[0].result = temporary;
+        rejected(bad, "invalid param");
+        bad = calls;
+        bad.functions[0].blocks[0].instructions = {{ir::Opcode::Param, {}, one}};
+        rejected(bad, "param sequence lacks call");
+
+        // Params cannot leak across control flow, even along a single CFG edge.
+        bad = calls;
+        bad.functions[0].blocks[0].instructions = {{ir::Opcode::Param, {}, one},
+                                                   {ir::Opcode::Jump, {}, {ir::OperandKind::Block, 0, 2}}};
+        bad.functions[0].blocks.push_back(
+            {2, {ir::Instruction::call(temporary, target, one), {ir::Opcode::Return, {}, temporary}}});
+        ir::BuildCFG(bad.functions[0]);
+        rejected(bad, "call param count mismatch");
+
+        ir::Type floating;
+        floating.kind = ir::TypeKind::Floating;
+        floating.bits = 64;
+        floating.size = floating.alignment = 8;
+        const auto floatingId = static_cast<ir::TypeId>(calls.types.size());
+        calls.types.push_back(floating);
+        bad = calls;
+        bad.functions[0].blocks[0].instructions[0].left = {ir::OperandKind::Floating, floatingId};
+        rejected(bad, "call argument type mismatch");
+
+        // Variadic extras remain ordinary params, while fixed params stay typed.
+        auto variadic = calls;
+        variadic.functions[1].signature = variadic.function(1, {1}, true);
+        auto& variadicInstructions = variadic.functions[0].blocks[0].instructions;
+        variadicInstructions[1].left.type = variadic.pointer(variadic.functions[1].signature);
+        variadicInstructions[1].right.integer = 2;
+        variadicInstructions.insert(variadicInstructions.begin() + 1,
+                                    {ir::Opcode::Param, {}, {ir::OperandKind::Floating, floatingId}});
+        Require(ir::Verify(variadic).empty(), "valid variadic params rejected");
+
+        // A zero-argument call directly after another call consumes no stale params.
+        ir::Function noArguments;
+        noArguments.id = 3;
+        noArguments.name = "no_arguments";
+        noArguments.signature = calls.function(1, {}, false);
+        const ir::Operand noArgumentsTarget{ir::OperandKind::Function, calls.pointer(noArguments.signature), 3};
+        calls.functions.push_back(noArguments);
+        calls.functions[0].blocks[0].instructions.insert(calls.functions[0].blocks[0].instructions.begin() + 2,
+                                                         ir::Instruction::call(temporary, noArgumentsTarget, zero));
+        Require(ir::Verify(calls).empty(), "consecutive/zero-argument call rejected");
+
+        // Both edges of if_goto/goto participate in CFG validation and folding.
+        auto branches = module;
+        branches.functions[0].blocks = {{1,
+                                         {{ir::Opcode::JumpIf, {}, one, {ir::OperandKind::Block, 0, 2}},
+                                          {ir::Opcode::Jump, {}, {ir::OperandKind::Block, 0, 3}}}},
+                                        {2, {{ir::Opcode::Return, {}, one}}},
+                                        {3, {{ir::Opcode::Return, {}, zero}}}};
+        ir::BuildCFG(branches.functions[0]);
+        Require(ir::Verify(branches).empty(), "valid conditional jump pair rejected");
+        Require(branches.functions[0].blocks[0].successors == std::vector<ir::BlockId>({2, 3}),
+                "conditional jump pair lost a CFG edge");
+        bad = branches;
+        bad.functions[0].blocks[0].instructions.pop_back();
+        rejected(bad, "conditional jump must be followed by the block's final goto");
+        bad = branches;
+        bad.functions[0].temporaries.push_back(1);
+        bad.functions[0].blocks[0].instructions.insert(bad.functions[0].blocks[0].instructions.begin() + 1,
+                                                       {ir::Opcode::Copy, temporary, one});
+        rejected(bad, "conditional jump must be followed by the block's final goto");
+        for (uint64_t condition : {0, 1}) {
+            auto folded = branches;
+            folded.functions[0].blocks[0].instructions[0].left.integer = condition;
+            ir::Optimize(folded);
+            Require(ir::Verify(folded).empty(), "folded conditional jump pair is invalid");
+            Require(folded.functions[0].blocks.size() == 2, "constant branch retained unreachable block");
+            ir_test::Interpreter executor(folded);
+            Require(executor.run(0) == static_cast<int64_t>(condition), "constant branch chose wrong successor");
+        }
     }
 }
 

@@ -73,12 +73,11 @@ namespace baka {
         }
 
         bool IsTerminator(Opcode opcode) {
-            return opcode == Opcode::Jump || opcode == Opcode::Branch || opcode == Opcode::Return;
+            return opcode == Opcode::Jump || opcode == Opcode::Return;
         }
 
         bool DefinesTemporary(const Instruction& instruction) {
-            return instruction.result.kind == OperandKind::Temporary && instruction.opcode != Opcode::Store &&
-                   instruction.opcode != Opcode::ZeroMemory;
+            return instruction.result.kind == OperandKind::Temporary;
         }
 
         std::vector<Operand> Uses(const Instruction& instruction) {
@@ -89,10 +88,6 @@ namespace baka {
             if (instruction.right) {
                 result.push_back(instruction.right);
             }
-            if (instruction.opcode == Opcode::Store || instruction.opcode == Opcode::ZeroMemory) {
-                result.push_back(instruction.result);
-            }
-            result.insert(result.end(), instruction.arguments.begin(), instruction.arguments.end());
             return result;
         }
     }
