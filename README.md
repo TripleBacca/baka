@@ -5,6 +5,10 @@ baka is a compiler for a C++ like language.
 
 ### Usage
 
+Requirements: Linux, a C++23 compiler (GCC 13 or newer), CMake 3.20 or newer,
+GNU Make and Python 3. The build uses four parallel jobs by default;
+use `make build JOBS=2` to change this.
+
 You can build the compiler by running the following command:
 ```bash
 make build
@@ -22,10 +26,11 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 
 - `make lex file=<source_code_file_path>` : Runs the compiler in verbose mode upto the lexer stage.
 - `make semantic file=<source_code_file_path>` : Runs through semantic analysis for the supported language subset.
+- `make ir file=<source_code_file_path>` : Generates and prints typed three-address IR.
 - `make test-semantic` : Runs representative semantic acceptance/rejection programs.
 - `make test-ir` : Generates TAC and compares it with the expected IR output.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
-- `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
+- `make test` : Runs the supplied test suites from `custom_tests/` (or `test/` in submission packages).
 - `make build` : Build the binary and put it in `/build/baka`
 - `make clean` : Clean up the build artifacts
 
@@ -33,13 +38,14 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 - `--lex` - run only the lexer and print/output tokens
 - `--parse` - run up through parsing and output the AST
 - `--semantic` - run declaration registration, resolution/renaming, type annotation, and read-only semantic checks
+- `--ir` - run semantic checking and generate typed three-address IR
 - `--build_type` - set the build type (e.g. `debug` / `release`)
 - `--verbose` - print detailed logs during compilation
 
 
 To use the compiler, run it with the desired flags and provide the source code file as an argument.
 ```bash
-./baka <options> <source_code_file>
+./build/baka <options> <source_code_file>
 ```
 
 
@@ -49,7 +55,7 @@ To use the compiler, run it with the desired flags and provide the source code f
  To see more verbose logs about the various tokens identified, you can use the `--verbose` flag.
 
  ```bash
- ./baka --verbose --lex --build_type release <source_code_file>
+ ./build/baka --verbose --lex --build_type release <source_code_file>
  ```
 
 
@@ -59,12 +65,13 @@ To use the compiler, run it with the desired flags and provide the source code f
  To see more verbose logs about the AST created, you can use the `--verbose` flag.
 
  ```bash
- ./baka --verbose --parse --build_type release <source_code_file>
+ ./build/baka --verbose --parse --build_type release <source_code_file>
  ```
 
 
 ### Featureset
-We are hoping we can support the following featureset:
+The supported language subset includes the following features through IR generation.
+There is no native code generation or program execution at this stage.
 
 **Basic Features**
 - All arithmetic and logical operators
@@ -172,6 +179,15 @@ After building, use `./build/baka --semantic source.cpp` to inspect the normaliz
 AST and `./build/baka --ir source.cpp` to print checked typed TAC. Run
 `ctest --test-dir build --output-on-failure` for both stage suites, or
 `make test-semantic` / `make test-ir` to run either suite separately.
+
+IR tests only generate and structurally verify IR, then compare it with `.expected`
+files. They do not execute the source program or IR, and no optimization passes run.
+The file APIs (`fopen`, `fclose`, `fread`, `fwrite`, `read`, `write`) are external
+declarations; their runtime implementations are not included.
+
+In the assignment 3 package, `./run.sh` builds the compiler and runs the semantic
+and IR suites. For example, `make ir file=test/ir/24_typedefs.cpp` prints a fixture's
+IR after building.
 
 The current architecture and language policies are documented in
 [src/semantic/README.md](src/semantic/README.md), with the lowering contract in

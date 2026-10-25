@@ -26,8 +26,7 @@ Language-subset exclusions are policies, not claims of complete C++ coverage.
 - [x] Index function locals, imported type identities and IR object/function lookup.
 - [x] Use bulk zeroing and loop-based array lifetimes for bounded generated code.
 - [x] Validate malformed IR operands/type graphs without unchecked type-table access.
-- [x] Check representative semantic diagnostics and generated IR output;
-  poison automatic test storage and retain TAC output fixtures.
+- [x] Check representative semantic diagnostics and retain generated TAC output fixtures.
 - [x] Replace obsolete IR-readiness documentation with current contracts.
 
 ## Deliberately separate future capabilities

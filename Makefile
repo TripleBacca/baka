@@ -1,12 +1,21 @@
+JOBS ?= 4
+
 help:
 	@printf "baka : C++ like language compiler\n"
-	@printf "make help \t\t\t\t show this help file\n"
-	@printf "make build \t\t\t\t build the compiler\n"
-	@printf "make test \t\t\t\t test the compiler\n"
-	@printf "make clean \t\t\t\t clean up build artifacts\n"
-	@printf "make lex file=path/to/file \t\t run the compiler till the lexer stage\n"
-	@printf "make parse file=path/to/file \t\t run the compiler till the parser stage\n"
-	@printf "make parse-folder dir=path/to/dir \t run parser on all files in dir recursively, output to .out files\n"
+	@printf '%-40s %s\n' \
+		'make help' 'show this help' \
+		'make build' 'build the compiler' \
+		'make test' 'run compiler tests' \
+		'make test-semantic' 'run semantic acceptance and rejection tests' \
+		'make test-ir' 'generate IR and compare with expected output' \
+		'make bless' 'refresh lexer/parser expected output and check semantic/IR tests' \
+		'make submit' 'generate assignment submission files' \
+		'make clean' 'clean up build artifacts' \
+		'make lex file=path/to/file' 'run the compiler through lexing' \
+		'make parse file=path/to/file' 'run the compiler through parsing' \
+		'make semantic file=path/to/file' 'run semantic analysis and print the annotated AST' \
+		'make ir file=path/to/file' 'generate and print typed three-address IR' \
+		'make parse-folder dir=path/to/dir' 'parse files recursively and write .out files'
 
 test: build
 	./custom_test_hook $(STAGE_ARGS)
@@ -23,7 +32,7 @@ bless: build
 build:
 	mkdir -p build
 	cmake -S src -B build
-	cmake --build build --parallel
+	cmake --build build --parallel $(JOBS)
 
 lex:
 	./build/baka --lex --verbose $(file)
@@ -60,4 +69,4 @@ clean:
 	rm -rf build/*
 
 
-.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir
+.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir bless submit

@@ -21,8 +21,7 @@ or ambiguous construction and prohibited lifetime-entry jumps are semantic error
 
 Lowering imports declarations, emits ordinary functions, emits requested special
 members and destructor helpers, emits module startup, builds CFGs and verifies the
-result. Optional optimization runs after verification and is followed by verification.
-The normal CLI emits unoptimized TAC.
+result. No optimization passes run; the CLI emits unoptimized TAC.
 
 ## Code organization
 
@@ -41,7 +40,7 @@ The normal CLI emits unoptimized TAC.
 | `lifetimes.cc` | Special-member bodies, activation flags, temporary ownership and array loops |
 | `runtime_initialization.cc` | Ordered global startup and first-use static guards |
 | `cfg.cc`, `verifier.cc` | Edges, linearization, structural/type validation and temporary dataflow |
-| `optimization.cc`, `constant_folding.cc`, `dead_code.cc` | Substitution, numeric folding and liveness-based removal |
+| `constant_folding.cc` | Numeric evaluation for static data; optimization pass implementations remain unused |
 | `printer.cc` | Deterministic TAC output |
 
 There is one structured expression/statement emitter. Expressions emit into the
@@ -152,16 +151,16 @@ types and result types; variadic extras are ordinary params after semantic promo
 A conditional block ends with `if_goto condition, true_block` followed by
 `goto false_block`. Both instructions form its control-flow tail; the verifier
 rejects conditional jumps elsewhere. CFG construction includes both successors,
-and constant folding reduces the pair to one goto. There is no implicit fallthrough
+and both branches remain in the generated IR. There is no implicit fallthrough
 between blocks.
 
 The printed function body is a flat instruction listing. Only jump destinations
 receive labels such as `L2:`; straight-line code has no labels. Predecessor/successor
 lists and basic-block headers are omitted. The in-memory IR retains blocks and CFG
-edges for verification, optimization and code generation.
+edges for verification and future code generation.
 
 `Uses()` includes param values and memory destination addresses; params, calls
-and memory operations remain observable during optimization. Unary negation,
+and memory operations are emitted explicitly. Unary negation,
 bitwise complement and logical NOT retain their dedicated opcodes.
 
 The opcode audit retains typed byte offsets, bulk zeroing and destructor registration:
@@ -181,10 +180,8 @@ arithmetic wraps at its declared width; comparisons consume converted operands;
 boolean casts test truth. Floating operands/results round at their declared width.
 Unavailable folds and out-of-range floating casts remain explicit operations.
 
-The test interpreter is intentionally independent. It poisons unwritten automatic
-storage, zeroes static storage, and compares optimized/unoptimized execution. This
-prevents a missing automatic initialization store from passing solely because the
-old interpreter happened to return zero for unwritten bytes.
+IR fixtures check generated instructions and their printed output. Neither source
+programs nor IR are executed by the test suite.
 
 ## Construction, ownership and cleanup
 
@@ -211,20 +208,15 @@ successful initialization and invoked in reverse order after entry returns. Exce
 thread-safe/reentrant guards and active-member tracking for nontrivial unions are
 outside the current subset.
 
-## Validation and optimization
+## Validation
 
 The verifier validates operand kinds/IDs before opcode-specific dereferences,
 rejects malformed structural type cycles, checks calls and stored values, compares
 CFG edges with terminators, and performs definite-assignment dataflow for temporaries.
-A small verifier test checks missing terminators and uses of undefined temporaries.
-
-Optimization consists of block-local constant folding and copy propagation,
-reachability removal, and temporary-liveness dead-code elimination. It preserves
-stores, bulk zeroing, calls, destructor registration, control effects and potentially
-faulting loads/divisions. No alias-based dead-store removal or SSA optimizer is implied.
+Verification runs as part of normal IR generation. No optimization passes run.
 
 Source fixtures group related language features, following the lexer/parser suites.
-Each IR fixture checks deterministic TAC output and expected results using an
-independent interpreter, before and after optimization. The lifetime programs also
-exercise construction order, scope cleanup, arrays and static destruction.
+Each IR fixture checks deterministic TAC output against its saved `.expected` file.
+The lifetime fixtures include instructions for construction order, scope cleanup,
+arrays and static destruction.
 See `src/semantic/README.md` for phase contracts and intentional language policies.

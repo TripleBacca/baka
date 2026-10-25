@@ -1,34 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-mkdir -p $SUBMISSION_ROOT_DIR/src
-cp -r src/* $SUBMISSION_ROOT_DIR/src
+mkdir -p "$SUBMISSION_ROOT_DIR/src"
+tar --exclude='cmake-build-*' -C src -cf - . | tar -C "$SUBMISSION_ROOT_DIR/src" -xf -
 
-mkdir -p $SUBMISSION_ROOT_DIR/build
-mkdir -p $SUBMISSION_ROOT_DIR/test/ir
-mkdir -p $SUBMISSION_ROOT_DIR/test/semantic
-cp -r custom_tests/ir/* $SUBMISSION_ROOT_DIR/test/ir
-cp -r custom_tests/semantic/* $SUBMISSION_ROOT_DIR/test/semantic
+mkdir -p "$SUBMISSION_ROOT_DIR/build" "$SUBMISSION_ROOT_DIR/test/ir" "$SUBMISSION_ROOT_DIR/test/semantic"
+cp -r custom_tests/ir/. "$SUBMISSION_ROOT_DIR/test/ir/"
+cp -r custom_tests/semantic/. "$SUBMISSION_ROOT_DIR/test/semantic/"
 
-cp custom_test_hook $SUBMISSION_ROOT_DIR/
+cp custom_test_hook "$SUBMISSION_ROOT_DIR/"
 
-touch $SUBMISSION_ROOT_DIR/Makefile
-echo "STAGE_ARGS := semantic ir" > $SUBMISSION_ROOT_DIR/Makefile
-echo "$(cat Makefile)" >> $SUBMISSION_ROOT_DIR/Makefile
+printf 'STAGE_ARGS := semantic ir\n' > "$SUBMISSION_ROOT_DIR/Makefile"
+cat Makefile >> "$SUBMISSION_ROOT_DIR/Makefile"
 
 
-cp README.md $SUBMISSION_ROOT_DIR/
+cp README.md ir_context.md "$SUBMISSION_ROOT_DIR/"
 
-find $SUBMISSION_ROOT_DIR/test -name '*.expected' -exec sed -i 's#custom_tests/#test/#g' {} +
+find "$SUBMISSION_ROOT_DIR/test" -name '*.expected' -exec sed -i 's#custom_tests/#test/#g' {} +
 
-touch $SUBMISSION_ROOT_DIR/run.sh
-echo "#!/usr/bin/env bash
-make test" > $SUBMISSION_ROOT_DIR/run.sh
-chmod +x $SUBMISSION_ROOT_DIR/run.sh
+cat > "$SUBMISSION_ROOT_DIR/run.sh" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+cd -- "$(dirname -- "$0")"
+make test
+EOF
+chmod +x "$SUBMISSION_ROOT_DIR/run.sh"
 
-# build, bless, test and delete build files
-make -C "$SUBMISSION_ROOT_DIR" build
-if ./$SUBMISSION_ROOT_DIR/custom_test_hook bless semantic ir && make -C "$SUBMISSION_ROOT_DIR" test; then
+# Verify the saved expectations without regenerating them, then remove build artifacts.
+if make -C "$SUBMISSION_ROOT_DIR" test; then
     rc=0
 else
     rc=$?

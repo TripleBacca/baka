@@ -184,11 +184,10 @@ short diagnostic fragments in `custom_tests/semantic/cases.json`. Related featur
 are exercised together in the IR fixtures: arithmetic, calls, arrays, aggregate
 values, runtime initialization and object lifetimes.
 
-Each IR fixture checks its printed TAC and expected execution results in one run.
-The independent interpreter executes both optimized and unoptimized modules,
-poisons unwritten automatic storage and zeroes static storage. A small verifier
-test checks rejection of missing terminators and undefined temporaries. CTest and
-`custom_test_hook` invoke these same stage runners.
+Each IR fixture generates and structurally verifies TAC, then compares the printed
+output with its saved `.expected` file. No interpreter or optimization passes run.
+CTest and `custom_test_hook` invoke these same stage runners. Submission packages
+store the fixtures under `test/` instead of `custom_tests/`.
 
 See [IR_READINESS.md](IR_READINESS.md) for the consumer contract and
 [../../ir_context.md](../../ir_context.md) for the current TAC model.

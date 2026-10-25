@@ -2,13 +2,11 @@
 set -euo pipefail
 
 mkdir -p $SUBMISSION_ROOT_DIR/src
-cp -r src/* $SUBMISSION_ROOT_DIR/src
+tar --exclude='cmake-build-*' -C src -cf - . | tar -C "$SUBMISSION_ROOT_DIR/src" -xf -
 
 mkdir -p $SUBMISSION_ROOT_DIR/build
 mkdir -p $SUBMISSION_ROOT_DIR/test/parse
 
-# shoot me
-# give me a gun
 cp -r custom_tests/parse/*_sub.expected $SUBMISSION_ROOT_DIR/test/parse
 cp -r custom_tests/parse/*_sub.cpp $SUBMISSION_ROOT_DIR/test/parse
 
@@ -30,9 +28,8 @@ echo "#!/usr/bin/env bash
 make test" > $SUBMISSION_ROOT_DIR/run.sh
 chmod +x $SUBMISSION_ROOT_DIR/run.sh
 
-# build,bless,test and delete build files
-make -C "$SUBMISSION_ROOT_DIR" build
-if ./$SUBMISSION_ROOT_DIR/custom_test_hook bless parse && make -C "$SUBMISSION_ROOT_DIR" test; then
+# Verify saved expectations without regenerating them.
+if make -C "$SUBMISSION_ROOT_DIR" test; then
     rc=0
 else
     rc=$?
