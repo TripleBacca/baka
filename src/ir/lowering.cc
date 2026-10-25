@@ -170,7 +170,12 @@ namespace baka {
         }
 
         void Lowerer::emitCall(Operand result, Operand callee, std::vector<Operand> arguments) {
-            emit(Instruction::call(result, callee, std::move(arguments), State.Source));
+            // Stage only captured values: nested calls and branching argument
+            // expressions have already finished before this contiguous sequence.
+            for (auto argument : arguments) {
+                emit(Opcode::Param, {}, argument);
+            }
+            emit(Instruction::call(result, callee, integer(integerType(), arguments.size()), State.Source));
         }
 
         void Lowerer::store(Operand address, Operand value) {
@@ -188,7 +193,8 @@ namespace baka {
         }
 
         void Lowerer::branch(Operand condition, BlockId yes, BlockId no) {
-            emit(Instruction::branch(condition, label(yes), label(no), State.Source));
+            emit(Opcode::JumpIf, {}, condition, label(yes));
+            jump(no);
         }
 
         void Lowerer::link(BlockId destination) {

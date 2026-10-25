@@ -7,15 +7,15 @@ module {
     local a.14: i32
     local b.15: u32
   bb1: ; predecessors [] successors []
-    (store, &a.14:ptr<i32>, 2147483647:i32, _)
+    (store, _, &a.14:ptr<i32>, 2147483647:i32)
     (load, %t1:i32, &a.14:ptr<i32>, _)
     (add, %t2:i32, %t1:i32, 1:i32)
-    (store, &a.14:ptr<i32>, %t2:i32, _)
+    (store, _, &a.14:ptr<i32>, %t2:i32)
     (load, %t3:i32, &a.14:ptr<i32>, _)
-    (store, &b.15:ptr<u32>, 4294967295:u32, _)
+    (store, _, &b.15:ptr<u32>, 4294967295:u32)
     (load, %t4:u32, &b.15:ptr<u32>, _)
     (add, %t5:u32, %t4:u32, 1:u32)
-    (store, &b.15:ptr<u32>, %t5:u32, _)
+    (store, _, &b.15:ptr<u32>, %t5:u32)
     (load, %t6:i32, &a.14:ptr<i32>, _)
     (lt, %t7:u1, %t6:i32, 0:i32)
     (cast, %t8:i32, %t7:u1, _)

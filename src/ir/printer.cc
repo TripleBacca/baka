@@ -135,6 +135,8 @@ namespace baka {
                     return "complement";
                 case Opcode::LogicalNot:
                     return "not";
+                case Opcode::Param:
+                    return "param";
                 case Opcode::Call:
                     return "call";
                 case Opcode::RegisterDestructor:
@@ -142,9 +144,9 @@ namespace baka {
                 case Opcode::ZeroMemory:
                     return "zero_memory";
                 case Opcode::Jump:
-                    return "jump";
-                case Opcode::Branch:
-                    return "branch";
+                    return "goto";
+                case Opcode::JumpIf:
+                    return "if_goto";
                 case Opcode::Return:
                     return "ret";
                 }
@@ -234,13 +236,6 @@ namespace baka {
                                << Value(module, function, instruction.result) << ", "
                                << Value(module, function, instruction.left) << ", "
                                << Value(module, function, instruction.right);
-                        if (instruction.opcode == Opcode::Call) {
-                            output << ", [";
-                            for (size_t i = 0; i < instruction.arguments.size(); ++i) {
-                                output << (i ? ", " : "") << Value(module, function, instruction.arguments[i]);
-                            }
-                            output << ']';
-                        }
                         output << ")\n";
                     }
                 }

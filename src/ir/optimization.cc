@@ -17,12 +17,6 @@ namespace baka {
             void SubstituteUses(Instruction& instruction, const std::map<uint32_t, Operand>& values) {
                 SubstituteOperand(instruction.left, values);
                 SubstituteOperand(instruction.right, values);
-                for (auto& argument : instruction.arguments) {
-                    SubstituteOperand(argument, values);
-                }
-                if (instruction.opcode == Opcode::Store || instruction.opcode == Opcode::ZeroMemory) {
-                    SubstituteOperand(instruction.result, values);
-                }
             }
         }
 
@@ -44,9 +38,18 @@ namespace baka {
                                 constants[in.result.id] = in.left;
                             }
                         }
-                        if (in.opcode == Opcode::Branch && in.left.kind == OperandKind::Integer) {
-                            auto destination = in.left.integer ? in.right : in.result;
-                            in = {Opcode::Jump, {}, destination, {}, in.source};
+                    }
+                    // A conditional block ends with if_goto + goto. Fold the pair
+                    // as a unit so no instructions can follow an unconditional jump.
+                    if (block.instructions.size() >= 2) {
+                        auto& conditional = block.instructions[block.instructions.size() - 2];
+                        if (conditional.opcode == Opcode::JumpIf && conditional.left.kind == OperandKind::Integer &&
+                            block.instructions.back().opcode == Opcode::Jump) {
+                            if (conditional.left.integer) {
+                                block.instructions.back() = {
+                                    Opcode::Jump, {}, conditional.right, {}, conditional.source};
+                            }
+                            block.instructions.erase(block.instructions.end() - 2);
                         }
                     }
                 }

@@ -30,11 +30,13 @@ namespace baka {
                     }
                 };
                 if (end.opcode == Opcode::Jump) {
+                    if (block.instructions.size() >= 2) {
+                        const auto& conditional = block.instructions[block.instructions.size() - 2];
+                        if (conditional.opcode == Opcode::JumpIf) {
+                            edge(conditional.right);
+                        }
+                    }
                     edge(end.left);
-                }
-                if (end.opcode == Opcode::Branch) {
-                    edge(end.right);
-                    edge(end.result);
                 }
             }
             for (auto& block : function.blocks) {

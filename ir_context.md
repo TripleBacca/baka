@@ -46,8 +46,8 @@ The normal CLI emits unoptimized TAC.
 
 There is one structured expression/statement emitter. Expressions emit into the
 current block and may leave the insertion point in a new block after a branch.
-There is no separate expression-region pass, adjacency-based argument stack, or
-AST-pointer evaluation cursor.
+There is no separate expression-region pass or AST-pointer evaluation cursor.
+Call arguments use a contiguous, block-local `param` sequence followed by `call`.
 
 ## Types, storage and identities
 
@@ -77,25 +77,57 @@ checking a module. Operand identity is independent of its printed source name.
 
 ## Instructions
 
-Scalar TAC retains opcode/result/left/right operands, with opcode-specific builders
-for stores, branches and calls. Important operand roles are:
+Every instruction is a strict typed quadruple `(opcode, result, left, right)`;
+there is no extra argument payload. The result field is used only for a produced
+temporary. Important operand roles are:
 
 | Instruction | Contract |
 | --- | --- |
 | `Load` | Result is a typed temporary; left is its storage address |
-| `Store` | Result is the destination address; left is the captured value |
+| `Store` | No result; left is the destination address; right is the captured value |
 | `AddressOffset` | Result is a pointer; left is a pointer; right is an integer byte offset |
-| `Call` | Left is a callable pointer; the instruction owns its argument vector; result is absent for void |
-| `ZeroMemory` | Result is a destination pointer; left is a byte count; right is absent |
-| `Branch` | Left is scalar condition; right is true block; result is false block |
-| `Jump` | Left is destination block |
+| `Param` (`param`) | No result; left is one captured argument value; right is absent |
+| `Call` | Left is a callable pointer; right is an integer literal argument count; result is absent for void |
+| `ZeroMemory` | No result; left is a destination pointer; right is a byte count |
+| `JumpIf` (`if_goto`) | No result; left is a scalar condition; right is the true block |
+| `Jump` (`goto`) | No result; left is the destination block |
 | `Return` | Left is the optional captured result |
 | `RegisterDestructor` | Left is a void(T*) callable; right is its receiver |
 
-Arguments are evaluated in source order and captured before the call instruction.
-Nested calls therefore have independent argument operands. `Uses()` includes call
-arguments and memory destination addresses; calls and memory operations remain
-observable during optimization.
+The callee is captured first, then arguments are evaluated and captured in source
+order. Only after all evaluations finish are the `param` instructions emitted,
+immediately followed by `call`. For `f(a, g(b))`, the essential sequence is:
+
+```text
+t1 = load a
+t2 = load b
+param t2
+t3 = call g, 1
+param t1
+param t3
+t4 = call f, 2
+```
+
+Each call consumes exactly its preceding params, in order; zero-argument calls
+have no params. No instruction or block boundary may interrupt a param sequence.
+This includes calls through function pointers and constructor/destructor calls;
+instance methods pass `this` as their first param. Records remain captured values.
+The verifier checks grouping, counts, fixed argument types and result types;
+variadic extras are ordinary params after semantic promotions.
+
+A conditional block ends with `if_goto condition, true_block` followed by
+`goto false_block`. Both instructions form its control-flow tail; the verifier
+rejects conditional jumps elsewhere. CFG construction includes both successors,
+and constant folding reduces the pair to one goto. There is no implicit fallthrough
+between blocks.
+
+`Uses()` includes param values and memory destination addresses; params, calls
+and memory operations remain observable during optimization. Unary negation,
+bitwise complement and logical NOT retain their dedicated opcodes.
+
+The opcode audit retains typed byte offsets, bulk zeroing and destructor registration:
+each already fits the operand limit, and expanding them would add casts, loops or
+an otherwise unnecessary runtime helper interface.
 
 Temporaries are mutable rather than SSA values. Conditional results and lifetime
 flags can have multiple definitions. Verification requires a definition along every

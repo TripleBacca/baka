@@ -209,7 +209,7 @@ namespace baka {
         }
 
         void Lowerer::zeroObject(Operand destination, TypeId id, uint64_t bytes) {
-            emit(Opcode::ZeroMemory, destination,
+            emit(Opcode::ZeroMemory, {}, destination,
                  integer(importType(Analyzer.types().sizeType()), bytes ? bytes : Result.type(id).size));
         }
 

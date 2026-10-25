@@ -48,7 +48,9 @@ current insertion point. A fresh function context owns receiver overrides, pendi
 temporaries, construction destinations, jump blocks and activation flags. There are
 no disconnected expression-region queues or AST-pointer evaluation cursors.
 
-Calls capture arguments before emitting a call instruction that owns those operands.
+Calls capture the callee and all argument values before emitting contiguous `param`
+instructions followed by `call` with a literal argument count. Nested calls finish
+before the outer call's params are staged; param sequences never cross block boundaries.
 Aggregate values remain typed snapshots; native register/memory ABI classification
 and hidden return storage are deliberately deferred. Constructors receive explicit
 object pointers. Only requested implicit constructors are emitted. Destructor
