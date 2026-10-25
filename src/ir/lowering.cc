@@ -192,7 +192,7 @@ namespace baka {
             for (auto argument : arguments) {
                 emit(Opcode::Param, {}, argument);
             }
-            emit(Instruction::call(result, callee, integer(integerType(), arguments.size()), State.Source));
+            emit(Instruction::call(result, callee, State.Source));
         }
 
         void Lowerer::store(Operand address, Operand value) {

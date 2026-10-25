@@ -246,5 +246,21 @@
   "22_heap_calls.cpp": {
     "runs": [[0, 2111123], [1, 3222234]],
     "failed_allocations": [[0, 11112]]
+  },
+  "23_destructor_calls.cpp": {
+    "runs": [
+      [
+        0,
+        0
+      ],
+      [
+        2,
+        0
+      ]
+    ],
+    "global": [
+      "trace",
+      32
+    ]
   }
 }

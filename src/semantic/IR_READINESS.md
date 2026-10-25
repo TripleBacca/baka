@@ -49,7 +49,7 @@ temporaries, construction destinations, jump blocks and activation flags. There 
 no disconnected expression-region queues or AST-pointer evaluation cursors.
 
 Calls capture the callee and all argument values before emitting contiguous `param`
-instructions followed by `call` with a literal argument count. Nested calls finish
+instructions followed by `call` with only a callee and optional result. Nested calls finish
 before the outer call's params are staged; param sequences never cross block boundaries.
 Aggregate values remain typed snapshots; native register/memory ABI classification
 and hidden return storage are deliberately deferred. Constructors receive explicit

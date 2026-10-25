@@ -94,7 +94,8 @@ namespace baka {
 
         // A strict typed quadruple: (opcode, result, left, right). Result is
         // always a produced value. Param uses left; a contiguous Param sequence
-        // immediately precedes Call (left=callee, right=literal argument count).
+        // immediately precedes Call (left=callee, right is absent). The call
+        // consumes that entire sequence, including variadic arguments.
         // Arguments are evaluated/captured before any Params are emitted.
         // JumpIf uses left=condition, right=target and is immediately followed by
         // Jump to the false target. Both jumps form one block's control-flow tail.
@@ -110,8 +111,8 @@ namespace baka {
             SourceSpan source;
             bool operator==(const Instruction&) const = default;
 
-            static Instruction call(Operand result, Operand callee, Operand count, SourceSpan source = {}) {
-                return {Opcode::Call, result, callee, count, source};
+            static Instruction call(Operand result, Operand callee, SourceSpan source = {}) {
+                return {Opcode::Call, result, callee, {}, source};
             }
 
             static Instruction store(Operand address, Operand value, SourceSpan source = {}) {
