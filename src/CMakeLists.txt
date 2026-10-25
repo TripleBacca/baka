@@ -53,12 +53,20 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 # The stage runners use the same source fixtures as custom_test_hook.
 include(CTest)
+set(BAKA_TEST_FIXTURES "${CMAKE_SOURCE_DIR}/../custom_tests")
+if(NOT EXISTS "${BAKA_TEST_FIXTURES}/ir/execute.cc")
+    set(BAKA_TEST_FIXTURES "${CMAKE_SOURCE_DIR}/../test")
+endif()
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
-    add_executable(ir_execution_tests ../custom_tests/ir/execute.cc)
-    target_link_libraries(ir_execution_tests PRIVATE ir lexer driver baka_heap_runtime)
-    add_test(NAME semantic COMMAND ${Python3_EXECUTABLE}
-        ${CMAKE_SOURCE_DIR}/../custom_tests/semantic/run.py --compiler $<TARGET_FILE:baka>)
-    add_test(NAME ir COMMAND ${Python3_EXECUTABLE}
-        ${CMAKE_SOURCE_DIR}/../custom_tests/ir/run.py --compiler $<TARGET_FILE:baka>)
+    if(EXISTS "${BAKA_TEST_FIXTURES}/ir/execute.cc")
+        add_executable(ir_execution_tests "${BAKA_TEST_FIXTURES}/ir/execute.cc")
+        target_link_libraries(ir_execution_tests PRIVATE ir lexer driver baka_heap_runtime)
+        add_test(NAME ir COMMAND ${Python3_EXECUTABLE}
+            "${BAKA_TEST_FIXTURES}/ir/run.py" --compiler $<TARGET_FILE:baka>)
+    endif()
+    if(EXISTS "${BAKA_TEST_FIXTURES}/semantic/run.py")
+        add_test(NAME semantic COMMAND ${Python3_EXECUTABLE}
+            "${BAKA_TEST_FIXTURES}/semantic/run.py" --compiler $<TARGET_FILE:baka>)
+    endif()
 endif()

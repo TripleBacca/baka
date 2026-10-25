@@ -26,8 +26,10 @@ chmod +x $SUBMISSION_ROOT_DIR/run.sh
 
 # build,bless,test and delete build files
 make -C "$SUBMISSION_ROOT_DIR" build
-./$SUBMISSION_ROOT_DIR/custom_test_hook bless lex
-make -C "$SUBMISSION_ROOT_DIR" test
-rc=$?
+if ./$SUBMISSION_ROOT_DIR/custom_test_hook bless lex && make -C "$SUBMISSION_ROOT_DIR" test; then
+    rc=0
+else
+    rc=$?
+fi
 rm -rf "$SUBMISSION_ROOT_DIR"/build/*
 exit $rc
