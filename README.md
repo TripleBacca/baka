@@ -23,7 +23,7 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 - `make lex file=<source_code_file_path>` : Runs the compiler in verbose mode upto the lexer stage.
 - `make semantic file=<source_code_file_path>` : Runs through semantic analysis for the supported language subset.
 - `make test-semantic` : Runs representative semantic acceptance/rejection programs.
-- `make test-ir` : Checks TAC output and execution before and after optimization.
+- `make test-ir` : Generates TAC and compares it with the expected IR output.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
 - `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
 - `make build` : Build the binary and put it in `/build/baka`

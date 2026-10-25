@@ -82,13 +82,5 @@ namespace baka {
             }
         }
 
-        void Optimize(Module& module) {
-            ConstantFold(module);
-            CopyPropagate(module);
-            EliminateDeadCode(module);
-            for (auto& function : module.functions) {
-                BuildCFG(function);
-            }
-        }
     }
 }

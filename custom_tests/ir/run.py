@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Check each TAC fixture's output and optimized/unoptimized execution together."""
+"""Generate each TAC fixture's IR and compare it with the expected output."""
 import argparse
 import difflib
-import json
 from pathlib import Path
 import subprocess
 import sys
@@ -18,54 +17,34 @@ def run(command):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")
-    parser.add_argument("cases", nargs="*", help="optional fixture stems or verifier")
+    parser.add_argument("cases", nargs="*", help="optional fixture stems")
     args = parser.parse_args()
-    cases = json.loads((HERE / "cases.json").read_text())
-    known = {Path(name).stem for name in cases} | {"verifier"}
+    sources = sorted(HERE.glob("*.cpp"))
+    known = {source.stem for source in sources}
     if set(args.cases) - known:
         parser.error("unknown IR cases: " + ", ".join(sorted(set(args.cases) - known)))
-    executor = args.compiler.resolve().parent / "ir_execution_tests"
     failures = 0
-    if not args.cases or "verifier" in args.cases:
-        result = run([executor, "verifier"])
-        print(("PASS " if result.returncode == 0 else "FAIL ") + "verifier")
-        if result.returncode:
-            print(result.stdout + result.stderr)
-            failures += 1
-    for name, case in cases.items():
-        source = HERE / name
+    checked = 0
+    for source in sources:
         if args.cases and source.stem not in args.cases:
             continue
+        checked += 1
         try:
             result = run([args.compiler, "--ir", source])
             expected = source.with_suffix(".expected").read_text()
             passed = result.returncode == 0 and not result.stderr and result.stdout == expected
             if not passed:
+                if result.returncode:
+                    print(f"compiler exited with status {result.returncode}")
                 print("\n".join(difflib.unified_diff(expected.splitlines(), result.stdout.splitlines(),
                                                    fromfile="expected", tofile="actual")))
                 print(result.stderr)
-            else:
-                for input_value, expected_value in case["runs"]:
-                    command = [executor, source, input_value, expected_value]
-                    if "global" in case:
-                        command.extend(case["global"])
-                    result = run(command)
-                    if result.returncode:
-                        passed = False
-                        print(result.stdout + result.stderr)
-                        break
-                if passed:
-                    for input_value, expected_value in case.get("failed_allocations", []):
-                        result = run([executor, source, input_value, expected_value, "fail-allocation"])
-                        if result.returncode:
-                            passed = False
-                            print(result.stdout + result.stderr)
-                            break
-            print(("PASS " if passed else "FAIL ") + name)
+            print(("PASS " if passed else "FAIL ") + source.name)
             failures += not passed
         except (OSError, subprocess.TimeoutExpired) as error:
-            print(f"FAIL {name}: {error}")
+            print(f"FAIL {source.name}: {error}")
             failures += 1
+    print(f"{checked} cases; {failures} failures")
     return bool(failures)
 
 

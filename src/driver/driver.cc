@@ -206,7 +206,7 @@ int baka::driver::run(int argc, char* argv[]) {
             // alive. IR owns its copied types, identities and strings afterward.
             if (Analyzed && Gctx::TillStage() == Stage::IR) {
                 ir::Lowerer Lowerer(*Analyzer.checkedProgram());
-                if (Lowerer.lower(false)) {
+                if (Lowerer.lower()) {
                     ir::Print(Lowerer.module(), std::cout);
                 } else {
                     for (const auto& Entry : Lowerer.diagnostics()) {

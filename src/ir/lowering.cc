@@ -373,7 +373,7 @@ namespace baka {
             }
         }
 
-        bool Lowerer::lower(const types::ProgramNode& program, bool optimize) {
+        bool Lowerer::lower(const types::ProgramNode& program) {
             if (Started) {
                 Diagnostics.push_back({"an IR lowerer can only be used once", {}});
                 return false;
@@ -398,11 +398,6 @@ namespace baka {
                 Diagnostics.insert(Diagnostics.end(), errors.begin(), errors.end());
                 if (!Diagnostics.empty()) {
                     return false;
-                }
-                if (optimize) {
-                    Optimize(Result);
-                    errors = Verify(Result);
-                    Diagnostics.insert(Diagnostics.end(), errors.begin(), errors.end());
                 }
             } catch (const Failure&) {
                 if (Diagnostics.empty()) {

@@ -62,14 +62,14 @@ IR loops. Bulk zero operations represent omitted ranges without scalar expansion
 
 ## Verification and numeric behavior
 
-Lowering verifies the module before and after optional optimization. The verifier
+Lowering verifies the generated module without running optimization passes. The verifier
 checks type graphs, operand/instruction shapes, call arguments, CFG consistency and
 definite assignment of mutable temporaries. Malformed operand kinds and type IDs
 are diagnosed before opcode-specific table accesses.
 
-Compiler constant evaluation and optimization share width-aware arithmetic and
-conversion operations. The test interpreter is independent and uses poisoned
-automatic storage. Source fixtures cover arithmetic, calls, aggregate values,
+Compiler constant evaluation uses width-aware arithmetic and conversion
+operations. IR tests generate TAC and compare it with saved expected output.
+Source fixtures cover arithmetic, calls, aggregate values,
 initialization and cleanup; semantic rejection cases cover invalid types, bindings,
 construction and control flow.
 

@@ -206,7 +206,6 @@ namespace baka {
         void ConstantFold(Module& module);
         void CopyPropagate(Module& module);
         void EliminateDeadCode(Module& module);
-        void Optimize(Module& module);
         void Print(const Module& module, std::ostream& output);
     }
 }

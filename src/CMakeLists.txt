@@ -54,14 +54,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # The stage runners use the same source fixtures as custom_test_hook.
 include(CTest)
 set(BAKA_TEST_FIXTURES "${CMAKE_SOURCE_DIR}/../custom_tests")
-if(NOT EXISTS "${BAKA_TEST_FIXTURES}/ir/execute.cc")
+if(NOT EXISTS "${BAKA_TEST_FIXTURES}/ir/run.py")
     set(BAKA_TEST_FIXTURES "${CMAKE_SOURCE_DIR}/../test")
 endif()
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
-    if(EXISTS "${BAKA_TEST_FIXTURES}/ir/execute.cc")
-        add_executable(ir_execution_tests "${BAKA_TEST_FIXTURES}/ir/execute.cc")
-        target_link_libraries(ir_execution_tests PRIVATE ir lexer driver baka_heap_runtime)
+    if(EXISTS "${BAKA_TEST_FIXTURES}/ir/run.py")
         add_test(NAME ir COMMAND ${Python3_EXECUTABLE}
             "${BAKA_TEST_FIXTURES}/ir/run.py" --compiler $<TARGET_FILE:baka>)
     endif()

@@ -194,15 +194,15 @@ namespace baka {
             explicit Lowerer(semantic::CheckedProgram program)
                 : Analyzer(program.analyzer()), BoundProgram(&program.program()) {}
 
-            bool lower(bool optimize = false) {
+            bool lower() {
                 if (!BoundProgram) {
                     Diagnostics.push_back({"IR lowering requires a checked program view", {}});
                     return false;
                 }
-                return lower(*BoundProgram, optimize);
+                return lower(*BoundProgram);
             }
 
-            bool lower(const types::ProgramNode& program, bool optimize = false);
+            bool lower(const types::ProgramNode& program);
 
             const Module& module() const {
                 return Result;
