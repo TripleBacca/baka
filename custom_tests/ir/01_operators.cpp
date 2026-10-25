@@ -1,6 +1,7 @@
 enum E { First = 2, Next };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = 10;
     unsigned int u = 4294967295u;
     int a = -7;
     double x = 2.5;

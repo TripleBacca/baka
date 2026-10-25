@@ -7,6 +7,14 @@ public phases:
 register declarations -> resolve bindings -> annotate and normalize -> check
 ```
 
+The built-in library declarations include `printf`, `scanf`, `fopen`, `fclose`,
+`fread`, `fwrite`, `read`, and `write`. `FILE` is an opaque, incomplete record;
+`fopen` returns `FILE*`, and the stream functions accept `FILE*`. `read` and
+`write` accept integer file descriptors. On the LP64 target, byte counts use
+`unsigned long` (`size_t`), and `read`/`write` return `long` (`ssize_t`). These
+functions lower to external IR declarations and calls; no implementation is
+provided by the compiler.
+
 Successful analysis publishes a `CheckedProgram` view. It couples the exact AST
 with the analyzer that owns its IDs. The driver passes this view to IR lowering;
 the resulting module owns its types, layout, strings and instruction operands.

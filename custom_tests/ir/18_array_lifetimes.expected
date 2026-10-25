@@ -1,112 +1,119 @@
 IR::TAC:
+FILE = opaque
 Item = record(i32) size 4 align 4
 Owner = record([2 x Item]) size 8 align 4
-global next.11: i32 = zero
-global trace.12: i32 = zero
-initializer @.module_init.32
+global next.18: i32 = zero
+global trace.19: i32 = zero
+initializer @.module_init.39
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
-function @main.18: fn(i32)->i32 {
-  parameter n.21: i32
-  local owner.22: Owner
-  local values.23: [2 x Item]
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @main.25: fn(i32)->i32 {
+  parameter n.28: i32
+  local owner.29: Owner
+  local values.30: [2 x Item]
   (copy, %t2:u1, 0:u1, _)
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &owner.22:ptr<Owner>, _)
-  (call, _, @Owner.default_ctor.26, _)
+  (param, _, &owner.29:ptr<Owner>, _)
+  (call, _, @Owner.default_ctor.33, _)
   (copy, %t1:u1, 1:u1, _)
   (if_goto, _, %t1:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &owner.22:ptr<Owner>, _)
-  (call, _, @Owner.default_dtor.27, _)
+  (param, _, &owner.29:ptr<Owner>, _)
+  (call, _, @Owner.default_dtor.34, _)
   (goto, _, L3, _)
 L3:
-  (offset, %t3:ptr<Item>, &values.23:ptr<[2 x Item]>, 0:i64)
+  (offset, %t3:ptr<Item>, &values.30:ptr<[2 x Item]>, 0:i64)
   (param, _, %t3:ptr<Item>, _)
-  (call, _, @Item.ctor.2.24, _)
-  (offset, %t4:ptr<Item>, &values.23:ptr<[2 x Item]>, 4:i64)
+  (call, _, @Item.ctor.2.31, _)
+  (offset, %t4:ptr<Item>, &values.30:ptr<[2 x Item]>, 4:i64)
   (param, _, %t4:ptr<Item>, _)
-  (call, _, @Item.ctor.2.24, _)
+  (call, _, @Item.ctor.2.31, _)
   (copy, %t2:u1, 1:u1, _)
   (if_goto, _, %t2:u1, L4)
   (goto, _, L5, _)
 L4:
   (copy, %t2:u1, 0:u1, _)
-  (param, _, &values.23:ptr<[2 x Item]>, _)
-  (call, _, @.array_dtor.18.28, _)
+  (param, _, &values.30:ptr<[2 x Item]>, _)
+  (call, _, @.array_dtor.25.35, _)
   (goto, _, L5, _)
 L5:
-  (load, %t5:i32, &trace.12:ptr<i32>, _)
+  (load, %t5:i32, &trace.19:ptr<i32>, _)
   (ret, _, %t5:i32, _)
 }
-function @Item.ctor.2.24: fn(ptr<Item>)->void internal {
-  parameter this.19: ptr<Item>
-  (load, %t1:ptr<Item>, &this.19:ptr<ptr<Item>>, _)
+function @Item.ctor.2.31: fn(ptr<Item>)->void internal {
+  parameter this.26: ptr<Item>
+  (load, %t1:ptr<Item>, &this.26:ptr<ptr<Item>>, _)
   (offset, %t2:ptr<i32>, %t1:ptr<Item>, 0:i64)
-  (load, %t3:ptr<Item>, &this.19:ptr<ptr<Item>>, _)
+  (load, %t3:ptr<Item>, &this.26:ptr<ptr<Item>>, _)
   (offset, %t4:ptr<i32>, %t3:ptr<Item>, 0:i64)
-  (load, %t5:i32, &next.11:ptr<i32>, _)
+  (load, %t5:i32, &next.18:ptr<i32>, _)
   (add, %t6:i32, %t5:i32, 1:i32)
-  (store, _, &next.11:ptr<i32>, %t6:i32)
+  (store, _, &next.18:ptr<i32>, %t6:i32)
   (store, _, %t4:ptr<i32>, %t5:i32)
   (load, %t7:i32, %t4:ptr<i32>, _)
-  (load, %t8:i32, &trace.12:ptr<i32>, _)
+  (load, %t8:i32, &trace.19:ptr<i32>, _)
   (mul, %t9:i32, %t8:i32, 10:i32)
-  (load, %t10:ptr<Item>, &this.19:ptr<ptr<Item>>, _)
+  (load, %t10:ptr<Item>, &this.26:ptr<ptr<Item>>, _)
   (offset, %t11:ptr<i32>, %t10:ptr<Item>, 0:i64)
   (load, %t12:i32, %t11:ptr<i32>, _)
   (add, %t13:i32, %t9:i32, %t12:i32)
-  (store, _, &trace.12:ptr<i32>, %t13:i32)
-  (load, %t14:i32, &trace.12:ptr<i32>, _)
+  (store, _, &trace.19:ptr<i32>, %t13:i32)
+  (load, %t14:i32, &trace.19:ptr<i32>, _)
   (ret, _, _, _)
 }
-function @Item.dtor.25: fn(ptr<Item>)->void internal {
-  parameter this.20: ptr<Item>
-  (load, %t1:i32, &trace.12:ptr<i32>, _)
+function @Item.dtor.32: fn(ptr<Item>)->void internal {
+  parameter this.27: ptr<Item>
+  (load, %t1:i32, &trace.19:ptr<i32>, _)
   (mul, %t2:i32, %t1:i32, 10:i32)
-  (load, %t3:ptr<Item>, &this.20:ptr<ptr<Item>>, _)
+  (load, %t3:ptr<Item>, &this.27:ptr<ptr<Item>>, _)
   (offset, %t4:ptr<i32>, %t3:ptr<Item>, 0:i64)
   (load, %t5:i32, %t4:ptr<i32>, _)
   (add, %t6:i32, %t2:i32, %t5:i32)
-  (store, _, &trace.12:ptr<i32>, %t6:i32)
-  (load, %t7:i32, &trace.12:ptr<i32>, _)
-  (load, %t8:ptr<Item>, &this.20:ptr<ptr<Item>>, _)
+  (store, _, &trace.19:ptr<i32>, %t6:i32)
+  (load, %t7:i32, &trace.19:ptr<i32>, _)
+  (load, %t8:ptr<Item>, &this.27:ptr<ptr<Item>>, _)
   (ret, _, _, _)
 }
-function @Owner.default_ctor.26: fn(ptr<Owner>)->void internal {
-  parameter this.29: ptr<Owner>
-  (load, %t1:ptr<Owner>, &this.29:ptr<ptr<Owner>>, _)
+function @Owner.default_ctor.33: fn(ptr<Owner>)->void internal {
+  parameter this.36: ptr<Owner>
+  (load, %t1:ptr<Owner>, &this.36:ptr<ptr<Owner>>, _)
   (offset, %t2:ptr<[2 x Item]>, %t1:ptr<Owner>, 0:i64)
   (offset, %t3:ptr<Item>, %t2:ptr<[2 x Item]>, 0:i64)
   (param, _, %t3:ptr<Item>, _)
-  (call, _, @Item.ctor.2.24, _)
+  (call, _, @Item.ctor.2.31, _)
   (offset, %t4:ptr<Item>, %t2:ptr<[2 x Item]>, 4:i64)
   (param, _, %t4:ptr<Item>, _)
-  (call, _, @Item.ctor.2.24, _)
+  (call, _, @Item.ctor.2.31, _)
   (ret, _, _, _)
 }
-function @Owner.default_dtor.27: fn(ptr<Owner>)->void internal {
-  parameter this.30: ptr<Owner>
-  (load, %t1:ptr<Owner>, &this.30:ptr<ptr<Owner>>, _)
+function @Owner.default_dtor.34: fn(ptr<Owner>)->void internal {
+  parameter this.37: ptr<Owner>
+  (load, %t1:ptr<Owner>, &this.37:ptr<ptr<Owner>>, _)
   (offset, %t2:ptr<[2 x Item]>, %t1:ptr<Owner>, 0:i64)
   (param, _, %t2:ptr<[2 x Item]>, _)
-  (call, _, @.array_dtor.18.28, _)
+  (call, _, @.array_dtor.25.35, _)
   (ret, _, _, _)
 }
-function @.array_dtor.18.28: fn(ptr<[2 x Item]>)->void internal {
-  parameter this.31: ptr<[2 x Item]>
-  (load, %t1:ptr<[2 x Item]>, &this.31:ptr<ptr<[2 x Item]>>, _)
+function @.array_dtor.25.35: fn(ptr<[2 x Item]>)->void internal {
+  parameter this.38: ptr<[2 x Item]>
+  (load, %t1:ptr<[2 x Item]>, &this.38:ptr<ptr<[2 x Item]>>, _)
   (offset, %t2:ptr<Item>, %t1:ptr<[2 x Item]>, 4:i64)
   (param, _, %t2:ptr<Item>, _)
-  (call, _, @Item.dtor.25, _)
+  (call, _, @Item.dtor.32, _)
   (offset, %t3:ptr<Item>, %t1:ptr<[2 x Item]>, 0:i64)
   (param, _, %t3:ptr<Item>, _)
-  (call, _, @Item.dtor.25, _)
+  (call, _, @Item.dtor.32, _)
   (ret, _, _, _)
 }
-function @.module_init.32: fn()->void internal {
-  (store, _, &next.11:ptr<i32>, 1:i32)
+function @.module_init.39: fn()->void internal {
+  (store, _, &next.18:ptr<i32>, 1:i32)
   (ret, _, _, _)
 }

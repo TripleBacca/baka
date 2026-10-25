@@ -1,0 +1,71 @@
+IR::TAC:
+FILE = opaque
+internal .string.27: [10 x i8] readonly = zero bytes[696e7075742e74787400]
+internal .string.28: [3 x i8] readonly = zero bytes[722b00]
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @main.19: fn(i32)->i32 {
+  parameter fd.20: i32
+  local file.21: ptr<FILE>
+  local buffer.22: [16 x i8]
+  local elements.23: u64
+  local written.24: u64
+  local bytes.25: i64
+  local sent.26: i64
+  (cast, %t1:ptr<i8>, &.string.27:ptr<[10 x i8]>, _)
+  (cast, %t2:ptr<i8>, &.string.28:ptr<[3 x i8]>, _)
+  (param, _, %t1:ptr<i8>, _)
+  (param, _, %t2:ptr<i8>, _)
+  (call, %t3:ptr<FILE>, @fopen.12, _)
+  (store, _, &file.21:ptr<ptr<FILE>>, %t3:ptr<FILE>)
+  (cast, %t4:ptr<i8>, &buffer.22:ptr<[16 x i8]>, _)
+  (cast, %t5:ptr<void>, %t4:ptr<i8>, _)
+  (cast, %t6:u64, 1:i32, _)
+  (cast, %t7:u64, 16:i32, _)
+  (load, %t8:ptr<FILE>, &file.21:ptr<ptr<FILE>>, _)
+  (param, _, %t5:ptr<void>, _)
+  (param, _, %t6:u64, _)
+  (param, _, %t7:u64, _)
+  (param, _, %t8:ptr<FILE>, _)
+  (call, %t9:u64, @fread.14, _)
+  (store, _, &elements.23:ptr<u64>, %t9:u64)
+  (cast, %t10:ptr<i8>, &buffer.22:ptr<[16 x i8]>, _)
+  (cast, %t11:ptr<void>, %t10:ptr<i8>, _)
+  (cast, %t12:u64, 1:i32, _)
+  (load, %t13:u64, &elements.23:ptr<u64>, _)
+  (load, %t14:ptr<FILE>, &file.21:ptr<ptr<FILE>>, _)
+  (param, _, %t11:ptr<void>, _)
+  (param, _, %t12:u64, _)
+  (param, _, %t13:u64, _)
+  (param, _, %t14:ptr<FILE>, _)
+  (call, %t15:u64, @fwrite.15, _)
+  (store, _, &written.24:ptr<u64>, %t15:u64)
+  (load, %t16:i32, &fd.20:ptr<i32>, _)
+  (cast, %t17:ptr<i8>, &buffer.22:ptr<[16 x i8]>, _)
+  (cast, %t18:ptr<void>, %t17:ptr<i8>, _)
+  (cast, %t19:u64, 16:i32, _)
+  (param, _, %t16:i32, _)
+  (param, _, %t18:ptr<void>, _)
+  (param, _, %t19:u64, _)
+  (call, %t20:i64, @read.16, _)
+  (store, _, &bytes.25:ptr<i64>, %t20:i64)
+  (load, %t21:i32, &fd.20:ptr<i32>, _)
+  (cast, %t22:ptr<i8>, &buffer.22:ptr<[16 x i8]>, _)
+  (cast, %t23:ptr<void>, %t22:ptr<i8>, _)
+  (cast, %t24:u64, 16:i32, _)
+  (param, _, %t21:i32, _)
+  (param, _, %t23:ptr<void>, _)
+  (param, _, %t24:u64, _)
+  (call, %t25:i64, @write.17, _)
+  (store, _, &sent.26:ptr<i64>, %t25:i64)
+  (load, %t26:ptr<FILE>, &file.21:ptr<ptr<FILE>>, _)
+  (param, _, %t26:ptr<FILE>, _)
+  (call, %t27:i32, @fclose.13, _)
+  (ret, _, %t27:i32, _)
+}

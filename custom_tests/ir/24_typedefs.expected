@@ -1,0 +1,39 @@
+IR::TAC:
+FILE = opaque
+Pair = record(i32, i32) size 8 align 4
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @add.26: fn(i32, i32)->i32 {
+  parameter a.29: i32
+  parameter b.30: i32
+  (load, %t1:i32, &a.29:ptr<i32>, _)
+  (load, %t2:i32, &b.30:ptr<i32>, _)
+  (add, %t3:i32, %t1:i32, %t2:i32)
+  (ret, _, %t3:i32, _)
+}
+function @main.28: fn(i32)->i32 {
+  parameter n.31: i32
+  local pair.32: Pair
+  local value.33: ptr<i32>
+  (offset, %t1:ptr<i32>, &pair.32:ptr<Pair>, 0:i64)
+  (load, %t2:i32, &n.31:ptr<i32>, _)
+  (store, _, %t1:ptr<i32>, %t2:i32)
+  (offset, %t3:ptr<i32>, &pair.32:ptr<Pair>, 4:i64)
+  (store, _, %t3:ptr<i32>, 2:i32)
+  (offset, %t4:ptr<i32>, &pair.32:ptr<Pair>, 0:i64)
+  (store, _, &value.33:ptr<ptr<i32>>, %t4:ptr<i32>)
+  (load, %t5:ptr<i32>, &value.33:ptr<ptr<i32>>, _)
+  (load, %t6:i32, %t5:ptr<i32>, _)
+  (offset, %t7:ptr<i32>, &pair.32:ptr<Pair>, 4:i64)
+  (load, %t8:i32, %t7:ptr<i32>, _)
+  (param, _, %t6:i32, _)
+  (param, _, %t8:i32, _)
+  (call, %t9:i32, @add.26, _)
+  (ret, _, %t9:i32, _)
+}

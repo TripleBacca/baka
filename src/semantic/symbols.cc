@@ -291,7 +291,27 @@ namespace baka {
                      Linkage::External});
             declare({"scanf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false, false,
                      Linkage::External});
-            // No guessed FILE layout or undeclared file API signatures.
+            // FILE is opaque: only pointers to it cross the library boundary.
+            auto file = TypeSystem.nominal(TypeKind::Struct, "FILE");
+            declare({"FILE", SymbolKind::Type, file});
+            auto stream = TypeSystem.pointer(file);
+            auto buffer = TypeSystem.pointer(TypeSystem.builtin(Builtin::Void));
+            auto inputBuffer = TypeSystem.pointer(TypeSystem.constant(TypeSystem.builtin(Builtin::Void)));
+            // The target is LP64: size_t is unsigned long, ssize_t is long.
+            auto size = TypeSystem.builtin(Builtin::ULong);
+            auto count = TypeSystem.builtin(Builtin::Long);
+            declare({"fopen", SymbolKind::BuiltinFunction, TypeSystem.function(stream, {string, string}), false, false,
+                     Linkage::External});
+            declare({"fclose", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {stream}), false, false,
+                     Linkage::External});
+            declare({"fread", SymbolKind::BuiltinFunction, TypeSystem.function(size, {buffer, size, size, stream}),
+                     false, false, Linkage::External});
+            declare({"fwrite", SymbolKind::BuiltinFunction, TypeSystem.function(size, {inputBuffer, size, size, stream}),
+                     false, false, Linkage::External});
+            declare({"read", SymbolKind::BuiltinFunction, TypeSystem.function(count, {integer, buffer, size}), false,
+                     false, Linkage::External});
+            declare({"write", SymbolKind::BuiltinFunction, TypeSystem.function(count, {integer, inputBuffer, size}),
+                     false, false, Linkage::External});
         }
     }
 }

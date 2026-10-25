@@ -18,6 +18,11 @@ struct X {
     int* p;
 };
 
+enum Y {
+    L,
+    K
+};
+
 struct Opaque;
 Opaque* raw;
 
@@ -38,6 +43,7 @@ union Number {
 
 int main(int n) {
     Link a = {n, nullptr, nullptr};
+    Y y = L;
     Other other = {&a};
     a.other = &other;
     X x = {1, 2, &a.value};

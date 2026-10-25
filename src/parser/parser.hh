@@ -68,7 +68,11 @@ namespace parser {
         size_t ReportedErrorCount = 0;
 
         public:
-        Parser(std::span<types::Token> Tokens, std::span<types::TokenSourceLocation> TokenSourceLocations) : Tokens(Tokens), TokenSourceLocations(TokenSourceLocations) {};
+        Parser(std::span<types::Token> Tokens, std::span<types::TokenSourceLocation> TokenSourceLocations) : Tokens(Tokens), TokenSourceLocations(TokenSourceLocations) {
+            ParserSTE file;
+            file.SetIsStruct();
+            TypeLookup.AddEntry("FILE", file);
+        };
         types::ASTNode* Parse();
 
         // states needed for parser
