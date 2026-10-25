@@ -30,6 +30,26 @@ namespace baka {
         }
 
         void ExpressionChecker::materializeCall(types::FunctionCallPostfixExpr* call) {
+            if (auto kind = types::heapCallKind(call); kind != types::HeapCallKind::None) {
+                const bool allocation = kind == types::HeapCallKind::Allocate;
+                auto* arguments = call->getArguments();
+                TypeId signature{call->semanticInfo().CallSignature};
+                if (auto* list = dynamic_cast<types::CommaExpressionNode*>(arguments)) {
+                    size_t index = 0;
+                    list->rewriteExpressions([&](auto* child) {
+                        if (index++ == 0) {
+                            return materializeImpl(child, !allocation);
+                        }
+                        return signature.value ? materializeArgument(child, index - 2, signature) :
+                                                 materializeImpl(child, true);
+                    });
+                } else if (arguments) {
+                    call->rewriteExpressions([&](auto* child) {
+                        return child == arguments ? materializeImpl(child, !allocation) : child;
+                    });
+                }
+                return;
+            }
             TypeId signature{call->semanticInfo().CallSignature};
             if (signature.value) {
                 // The outer comma node is an argument-list container. A nested

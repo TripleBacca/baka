@@ -143,7 +143,16 @@ Other intentional subset rules:
 - Nonempty braced construction of a class with user constructors is diagnosed;
   use `Type(arguments)`. Nontrivial union members, including arrays, are rejected.
 - Parameters require names. Local aggregate definitions, `main(void)`, `long long`
-  declarations, references, `new` and `delete` remain outside the implemented syntax.
+  declarations and references remain outside the implemented syntax.
+- `new(p, args...)` takes a pointer variable as a type witness. Its value is not
+  read: `T* p = new(p, args...)` allocates and constructs one `T`. For a fixed
+  array pointer `T (*p)[N]`, it constructs `N` elements and evaluates the
+  remaining arguments for each element in order. `delete(p)` destroys them in
+  reverse order and releases storage; deleting null does nothing.
+  Allocation failure returns null and skips constructor arguments. These calls
+  are compiler-provided; dynamic array lengths, placement allocation, custom
+  allocators and exceptions are not implemented. The `__baka_allocate` and
+  `__baka_deallocate` runtime names are reserved.
 - `main` is an ordinary function for semantic checking. Native entry-point and ABI
   rules belong to a future backend. Existing fallthrough lowering produces a zero
   result; no all-paths-return analysis is implied.

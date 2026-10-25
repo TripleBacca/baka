@@ -54,6 +54,13 @@ def main():
                         passed = False
                         print(result.stdout + result.stderr)
                         break
+                if passed:
+                    for input_value, expected_value in case.get("failed_allocations", []):
+                        result = run([executor, source, input_value, expected_value, "fail-allocation"])
+                        if result.returncode:
+                            passed = False
+                            print(result.stdout + result.stderr)
+                            break
             print(("PASS " if passed else "FAIL ") + name)
             failures += not passed
         except (OSError, subprocess.TimeoutExpired) as error:

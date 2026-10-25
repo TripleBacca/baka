@@ -147,6 +147,10 @@ namespace baka {
             if (NewDeclaration.source) {
                 DeclarationPoints[NewDeclaration.source] = point;
             }
+            if (NewDeclaration.name == "__baka_allocate" || NewDeclaration.name == "__baka_deallocate") {
+                diagnose("reserved", "name is reserved for the allocation runtime", NewDeclaration.source);
+                return {};
+            }
             if (!NewDeclaration.type.value) {
                 diagnose("type", "invalid declaration type", NewDeclaration.source);
                 return {};

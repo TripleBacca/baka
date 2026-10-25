@@ -30,7 +30,9 @@ namespace ir_test {
         };
 
         std::vector<Allocation> Allocations;
+        std::map<uint64_t, uint64_t> HeapAllocations;
         uint64_t NextAddress = 4096;
+        bool FailNextAllocation = false;
         size_t Steps = 0;
         bool Initialized = false;
         std::vector<std::pair<uint32_t, Value>> ExitActions;
@@ -308,6 +310,43 @@ namespace ir_test {
 
         Value invoke(uint32_t id, const std::vector<Value>& arguments) {
             auto* function = ModuleValue.functionById(id);
+            if (function && function->name == "__baka_allocate") {
+                if (FailNextAllocation) {
+                    FailNextAllocation = false;
+                    return {};
+                }
+                const auto bytes = arguments.at(0).bits;
+                const auto alignment = arguments.at(1).bits;
+                if (!alignment || (alignment & (alignment - 1)) ||
+                    NextAddress > std::numeric_limits<uint64_t>::max() - 16 ||
+                    alignment > std::numeric_limits<uint64_t>::max() - NextAddress - 16 ||
+                    bytes > std::numeric_limits<uint64_t>::max() - NextAddress - alignment - 16) {
+                    return {};
+                }
+                const auto address = (NextAddress + alignment - 1) & ~(alignment - 1);
+                const auto size = std::max<uint64_t>(bytes, 1);
+                Allocations.push_back({address, size, 0xa5});
+                HeapAllocations[address] = size;
+                NextAddress = address + size + 16;
+                return {address};
+            }
+            if (function && function->name == "__baka_deallocate") {
+                const auto address = arguments.at(0).bits;
+                if (!address) {
+                    return {};
+                }
+                auto found = HeapAllocations.find(address);
+                if (found == HeapAllocations.end()) {
+                    throw std::runtime_error("test interpreter: invalid heap deallocation");
+                }
+                const auto size = found->second;
+                HeapAllocations.erase(found);
+                std::erase_if(Allocations, [&](const Allocation& item) { return item.address == address; });
+                for (auto it = Memory.lower_bound(address); it != Memory.end() && it->first - address < size;) {
+                    it = Memory.erase(it);
+                }
+                return {};
+            }
             if (!function || !function->defined) {
                 throw std::runtime_error("test interpreter: external call");
             }
@@ -419,6 +458,10 @@ namespace ir_test {
                     store(Globals.at(object.id) + initial.offset, operand(initial.value, frame), initial.value.type);
                 }
             }
+        }
+
+        void failNextAllocation() {
+            FailNextAllocation = true;
         }
 
         int64_t run(int n) {

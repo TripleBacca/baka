@@ -6,6 +6,7 @@ add_library(ir
     addresses.cc
     operators.cc
     calls.cc
+    heap.cc
     conditional.cc
     statements.cc
     functions.cc
@@ -24,3 +25,5 @@ add_library(ir
 )
 target_link_libraries(ir PUBLIC semantic)
 target_include_directories(ir PUBLIC ${CMAKE_SOURCE_DIR})
+
+add_library(baka_heap_runtime STATIC heap_runtime.cc)

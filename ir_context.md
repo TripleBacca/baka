@@ -66,6 +66,14 @@ Complete record values are snapshots:
 `Load` captures bytes, `Copy` copies a value, and `Store` writes the complete value.
 Calls and returns keep record types; native ABI classification is deferred.
 
+Function-style `new(p, args...)` lowers to `__baka_allocate(size, alignment)`
+through ordinary `param`/`call` instructions. The first pointer variable supplies
+the object or fixed-array type without loading its value. A successful allocation
+is followed by typed stores or constructor calls. `delete(p)` invokes destructors
+before calling `__baka_deallocate(ptr<void>)`; null skips both. Allocation failure
+returns null and skips initialization. Heap objects are not registered for scope
+cleanup or module-exit destruction.
+
 The module starts with named aggregate definitions. References use the declared
 name rather than repeating an internal numeric record ID:
 

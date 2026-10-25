@@ -56,7 +56,7 @@ include(CTest)
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_executable(ir_execution_tests ../custom_tests/ir/execute.cc)
-    target_link_libraries(ir_execution_tests PRIVATE ir lexer driver)
+    target_link_libraries(ir_execution_tests PRIVATE ir lexer driver baka_heap_runtime)
     add_test(NAME semantic COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_SOURCE_DIR}/../custom_tests/semantic/run.py --compiler $<TARGET_FILE:baka>)
     add_test(NAME ir COMMAND ${Python3_EXECUTABLE}
