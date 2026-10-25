@@ -1,28 +1,35 @@
 IR::TAC:
+FILE = opaque
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
-function @main.12: fn(i32)->i32 {
-  parameter n.13: i32
-  local a.14: i32
-  local b.15: u32
-  (store, _, &a.14:ptr<i32>, 2147483647:i32)
-  (load, %t1:i32, &a.14:ptr<i32>, _)
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @main.19: fn(i32)->i32 {
+  parameter n.20: i32
+  local a.21: i32
+  local b.22: u32
+  (store, _, &a.21:ptr<i32>, 2147483647:i32)
+  (load, %t1:i32, &a.21:ptr<i32>, _)
   (add, %t2:i32, %t1:i32, 1:i32)
-  (store, _, &a.14:ptr<i32>, %t2:i32)
-  (load, %t3:i32, &a.14:ptr<i32>, _)
-  (store, _, &b.15:ptr<u32>, 4294967295:u32)
-  (load, %t4:u32, &b.15:ptr<u32>, _)
+  (store, _, &a.21:ptr<i32>, %t2:i32)
+  (load, %t3:i32, &a.21:ptr<i32>, _)
+  (store, _, &b.22:ptr<u32>, 4294967295:u32)
+  (load, %t4:u32, &b.22:ptr<u32>, _)
   (add, %t5:u32, %t4:u32, 1:u32)
-  (store, _, &b.15:ptr<u32>, %t5:u32)
-  (load, %t6:i32, &a.14:ptr<i32>, _)
+  (store, _, &b.22:ptr<u32>, %t5:u32)
+  (load, %t6:i32, &a.21:ptr<i32>, _)
   (lt, %t7:u1, %t6:i32, 0:i32)
   (cast, %t8:i32, %t7:u1, _)
-  (load, %t9:u32, &b.15:ptr<u32>, _)
+  (load, %t9:u32, &b.22:ptr<u32>, _)
   (cast, %t10:u32, 0:i32, _)
   (eq, %t11:u1, %t9:u32, %t10:u32)
   (cast, %t12:i32, %t11:u1, _)
   (add, %t13:i32, %t8:i32, %t12:i32)
-  (load, %t14:i32, &n.13:ptr<i32>, _)
+  (load, %t14:i32, &n.20:ptr<i32>, _)
   (cast, %t15:u32, %t14:i32, _)
   (shr, %t16:u32, %t15:u32, 2:i32)
   (cast, %t17:i32, %t16:u32, _)

@@ -262,5 +262,20 @@
       "trace",
       32
     ]
+  },
+  "24_typedefs.cpp": {
+    "runs": [
+      [
+        0,
+        2
+      ],
+      [
+        5,
+        7
+      ]
+    ]
+  },
+  "25_file_calls.cpp": {
+    "runs": []
   }
 }

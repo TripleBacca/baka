@@ -1,236 +1,243 @@
 IR::TAC:
+FILE = opaque
 Box = record(i32) size 4 align 4
 Host = record(ptr<fn(Box, i32)->i32>) size 8 align 8
-global created.11: i32 = zero
-global destroyed.12: i32 = zero
+global created.18: i32 = zero
+global destroyed.19: i32 = zero
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
-function @take.17: fn(Box, i32)->i32 {
-  parameter value.40: Box
-  parameter extra.41: i32
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @take.24: fn(Box, i32)->i32 {
+  parameter value.47: Box
+  parameter extra.48: i32
   (copy, %t1:u1, 0:u1, _)
   (copy, %t1:u1, 1:u1, _)
-  (offset, %t2:ptr<i32>, &value.40:ptr<Box>, 0:i64)
+  (offset, %t2:ptr<i32>, &value.47:ptr<Box>, 0:i64)
   (load, %t3:i32, %t2:ptr<i32>, _)
-  (load, %t4:i32, &extra.41:ptr<i32>, _)
+  (load, %t4:i32, &extra.48:ptr<i32>, _)
   (add, %t5:i32, %t3:i32, %t4:i32)
   (if_goto, _, %t1:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &value.40:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &value.47:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L3, _)
 L3:
   (ret, _, %t5:i32, _)
 }
-function @exact.21: fn(i32)->i32 {
-  parameter n.42: i32
-  (load, %t1:i32, &n.42:ptr<i32>, _)
+function @exact.28: fn(i32)->i32 {
+  parameter n.49: i32
+  (load, %t1:i32, &n.49:ptr<i32>, _)
   (add, %t2:i32, %t1:i32, 10:i32)
   (ret, _, %t2:i32, _)
 }
-function @exact.23: fn(f64)->i32 {
-  parameter n.43: f64
+function @exact.30: fn(f64)->i32 {
+  parameter n.50: f64
   (ret, _, 100:i32, _)
 }
-function @Host.member.26: fn(ptr<Host>, Box)->i32 {
-  parameter this.44: ptr<Host>
-  parameter value.45: Box
+function @Host.member.33: fn(ptr<Host>, Box)->i32 {
+  parameter this.51: ptr<Host>
+  parameter value.52: Box
   (copy, %t1:u1, 0:u1, _)
   (copy, %t1:u1, 1:u1, _)
-  (offset, %t2:ptr<i32>, &value.45:ptr<Box>, 0:i64)
+  (offset, %t2:ptr<i32>, &value.52:ptr<Box>, 0:i64)
   (load, %t3:i32, %t2:ptr<i32>, _)
   (mul, %t4:i32, %t3:i32, 2:i32)
   (if_goto, _, %t1:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &value.45:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &value.52:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L3, _)
 L3:
   (ret, _, %t4:i32, _)
 }
-function @Host.member.28: fn(ptr<Host>, ptr<i8>)->i32 {
-  parameter this.46: ptr<Host>
-  parameter value.47: ptr<i8>
+function @Host.member.35: fn(ptr<Host>, ptr<i8>)->i32 {
+  parameter this.53: ptr<Host>
+  parameter value.54: ptr<i8>
   (ret, _, 100:i32, _)
 }
-function @Host.plain.30: fn(Box)->i32 {
-  parameter value.48: Box
+function @Host.plain.37: fn(Box)->i32 {
+  parameter value.55: Box
   (copy, %t1:u1, 0:u1, _)
   (copy, %t1:u1, 1:u1, _)
-  (offset, %t2:ptr<i32>, &value.48:ptr<Box>, 0:i64)
+  (offset, %t2:ptr<i32>, &value.55:ptr<Box>, 0:i64)
   (load, %t3:i32, %t2:ptr<i32>, _)
   (add, %t4:i32, %t3:i32, 5:i32)
   (if_goto, _, %t1:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &value.48:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &value.55:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L3, _)
 L3:
   (ret, _, %t4:i32, _)
 }
-function @main.35: fn(i32)->i32 {
-  parameter n.49: i32
-  local host.50: Host
-  local pointer.53: ptr<fn(Box, i32)->i32>
-  local result.54: i32
-  local .constructed.57: Box
-  local .constructed.58: Box
-  local .constructed.59: Box
-  local .constructed.60: Box
-  local .constructed.61: Box
+function @main.42: fn(i32)->i32 {
+  parameter n.56: i32
+  local host.57: Host
+  local pointer.60: ptr<fn(Box, i32)->i32>
+  local result.61: i32
+  local .constructed.64: Box
+  local .constructed.65: Box
+  local .constructed.66: Box
+  local .constructed.67: Box
+  local .constructed.68: Box
   (copy, %t27:u1, 0:u1, _)
   (copy, %t22:u1, 0:u1, _)
   (copy, %t15:u1, 0:u1, _)
   (copy, %t9:u1, 0:u1, _)
   (copy, %t5:u1, 0:u1, _)
-  (offset, %t1:ptr<ptr<fn(Box, i32)->i32>>, &host.50:ptr<Host>, 0:i64)
-  (store, _, %t1:ptr<ptr<fn(Box, i32)->i32>>, @take.17:ptr<fn(Box, i32)->i32>)
+  (offset, %t1:ptr<ptr<fn(Box, i32)->i32>>, &host.57:ptr<Host>, 0:i64)
+  (store, _, %t1:ptr<ptr<fn(Box, i32)->i32>>, @take.24:ptr<fn(Box, i32)->i32>)
   (load, %t2:ptr<fn(Box, i32)->i32>, %t1:ptr<ptr<fn(Box, i32)->i32>>, _)
-  (store, _, &pointer.53:ptr<ptr<fn(Box, i32)->i32>>, @take.17:ptr<fn(Box, i32)->i32>)
-  (load, %t3:i32, &n.49:ptr<i32>, _)
-  (param, _, &.constructed.57:ptr<Box>, _)
+  (store, _, &pointer.60:ptr<ptr<fn(Box, i32)->i32>>, @take.24:ptr<fn(Box, i32)->i32>)
+  (load, %t3:i32, &n.56:ptr<i32>, _)
+  (param, _, &.constructed.64:ptr<Box>, _)
   (param, _, %t3:i32, _)
   (param, _, 1:i32, _)
-  (call, _, @Box.ctor.2.55, _)
-  (load, %t4:Box, &.constructed.57:ptr<Box>, _)
+  (call, _, @Box.ctor.2.62, _)
+  (load, %t4:Box, &.constructed.64:ptr<Box>, _)
   (copy, %t5:u1, 1:u1, _)
   (copy, %t5:u1, 0:u1, _)
   (param, _, %t4:Box, _)
   (param, _, 2:i32, _)
-  (call, %t6:i32, @take.17, _)
-  (load, %t7:i32, &n.49:ptr<i32>, _)
-  (param, _, &.constructed.58:ptr<Box>, _)
+  (call, %t6:i32, @take.24, _)
+  (load, %t7:i32, &n.56:ptr<i32>, _)
+  (param, _, &.constructed.65:ptr<Box>, _)
   (param, _, %t7:i32, _)
   (param, _, 1:i32, _)
-  (call, _, @Box.ctor.2.55, _)
-  (load, %t8:Box, &.constructed.58:ptr<Box>, _)
+  (call, _, @Box.ctor.2.62, _)
+  (load, %t8:Box, &.constructed.65:ptr<Box>, _)
   (copy, %t9:u1, 1:u1, _)
   (copy, %t9:u1, 0:u1, _)
-  (param, _, &host.50:ptr<Host>, _)
+  (param, _, &host.57:ptr<Host>, _)
   (param, _, %t8:Box, _)
-  (call, %t10:i32, @Host.member.26, _)
+  (call, %t10:i32, @Host.member.33, _)
   (add, %t11:i32, %t6:i32, %t10:i32)
-  (load, %t12:ptr<fn(Box, i32)->i32>, &pointer.53:ptr<ptr<fn(Box, i32)->i32>>, _)
-  (load, %t13:i32, &n.49:ptr<i32>, _)
-  (param, _, &.constructed.59:ptr<Box>, _)
+  (load, %t12:ptr<fn(Box, i32)->i32>, &pointer.60:ptr<ptr<fn(Box, i32)->i32>>, _)
+  (load, %t13:i32, &n.56:ptr<i32>, _)
+  (param, _, &.constructed.66:ptr<Box>, _)
   (param, _, %t13:i32, _)
   (param, _, 1:i32, _)
-  (call, _, @Box.ctor.2.55, _)
-  (load, %t14:Box, &.constructed.59:ptr<Box>, _)
+  (call, _, @Box.ctor.2.62, _)
+  (load, %t14:Box, &.constructed.66:ptr<Box>, _)
   (copy, %t15:u1, 1:u1, _)
   (copy, %t15:u1, 0:u1, _)
   (param, _, %t14:Box, _)
   (param, _, 3:i32, _)
   (call, %t16:i32, %t12, _)
   (add, %t17:i32, %t11:i32, %t16:i32)
-  (offset, %t18:ptr<ptr<fn(Box, i32)->i32>>, &host.50:ptr<Host>, 0:i64)
+  (offset, %t18:ptr<ptr<fn(Box, i32)->i32>>, &host.57:ptr<Host>, 0:i64)
   (load, %t19:ptr<fn(Box, i32)->i32>, %t18:ptr<ptr<fn(Box, i32)->i32>>, _)
-  (load, %t20:i32, &n.49:ptr<i32>, _)
-  (param, _, &.constructed.60:ptr<Box>, _)
+  (load, %t20:i32, &n.56:ptr<i32>, _)
+  (param, _, &.constructed.67:ptr<Box>, _)
   (param, _, %t20:i32, _)
   (param, _, 1:i32, _)
-  (call, _, @Box.ctor.2.55, _)
-  (load, %t21:Box, &.constructed.60:ptr<Box>, _)
+  (call, _, @Box.ctor.2.62, _)
+  (load, %t21:Box, &.constructed.67:ptr<Box>, _)
   (copy, %t22:u1, 1:u1, _)
   (copy, %t22:u1, 0:u1, _)
   (param, _, %t21:Box, _)
   (param, _, 4:i32, _)
   (call, %t23:i32, %t19, _)
   (add, %t24:i32, %t17:i32, %t23:i32)
-  (load, %t25:i32, &n.49:ptr<i32>, _)
-  (param, _, &.constructed.61:ptr<Box>, _)
+  (load, %t25:i32, &n.56:ptr<i32>, _)
+  (param, _, &.constructed.68:ptr<Box>, _)
   (param, _, %t25:i32, _)
   (param, _, 1:i32, _)
-  (call, _, @Box.ctor.2.55, _)
-  (load, %t26:Box, &.constructed.61:ptr<Box>, _)
+  (call, _, @Box.ctor.2.62, _)
+  (load, %t26:Box, &.constructed.68:ptr<Box>, _)
   (copy, %t27:u1, 1:u1, _)
   (copy, %t27:u1, 0:u1, _)
   (param, _, %t26:Box, _)
-  (call, %t28:i32, @Host.plain.30, _)
+  (call, %t28:i32, @Host.plain.37, _)
   (add, %t29:i32, %t24:i32, %t28:i32)
-  (load, %t30:i32, &n.49:ptr<i32>, _)
+  (load, %t30:i32, &n.56:ptr<i32>, _)
   (param, _, %t30:i32, _)
-  (call, %t31:i32, @exact.21, _)
+  (call, %t31:i32, @exact.28, _)
   (add, %t32:i32, %t29:i32, %t31:i32)
-  (store, _, &result.54:ptr<i32>, %t32:i32)
+  (store, _, &result.61:ptr<i32>, %t32:i32)
   (if_goto, _, %t27:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t27:u1, 0:u1, _)
-  (param, _, &.constructed.61:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &.constructed.68:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L3, _)
 L3:
   (if_goto, _, %t22:u1, L4)
   (goto, _, L5, _)
 L4:
   (copy, %t22:u1, 0:u1, _)
-  (param, _, &.constructed.60:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &.constructed.67:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L5, _)
 L5:
   (if_goto, _, %t15:u1, L6)
   (goto, _, L7, _)
 L6:
   (copy, %t15:u1, 0:u1, _)
-  (param, _, &.constructed.59:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &.constructed.66:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L7, _)
 L7:
   (if_goto, _, %t9:u1, L8)
   (goto, _, L9, _)
 L8:
   (copy, %t9:u1, 0:u1, _)
-  (param, _, &.constructed.58:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &.constructed.65:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L9, _)
 L9:
   (if_goto, _, %t5:u1, L10)
   (goto, _, L11, _)
 L10:
   (copy, %t5:u1, 0:u1, _)
-  (param, _, &.constructed.57:ptr<Box>, _)
-  (call, _, @Box.dtor.56, _)
+  (param, _, &.constructed.64:ptr<Box>, _)
+  (call, _, @Box.dtor.63, _)
   (goto, _, L11, _)
 L11:
-  (load, %t33:i32, &result.54:ptr<i32>, _)
-  (load, %t34:i32, &created.11:ptr<i32>, _)
+  (load, %t33:i32, &result.61:ptr<i32>, _)
+  (load, %t34:i32, &created.18:ptr<i32>, _)
   (mul, %t35:i32, %t34:i32, 100:i32)
   (add, %t36:i32, %t33:i32, %t35:i32)
-  (load, %t37:i32, &destroyed.12:ptr<i32>, _)
+  (load, %t37:i32, &destroyed.19:ptr<i32>, _)
   (mul, %t38:i32, %t37:i32, 10:i32)
   (add, %t39:i32, %t36:i32, %t38:i32)
   (ret, _, %t39:i32, _)
 }
-function @Box.ctor.2.55: fn(ptr<Box>, i32, i32)->void internal {
-  parameter this.36: ptr<Box>
-  parameter n.37: i32
-  parameter extra.38: i32
-  (load, %t1:ptr<Box>, &this.36:ptr<ptr<Box>>, _)
+function @Box.ctor.2.62: fn(ptr<Box>, i32, i32)->void internal {
+  parameter this.43: ptr<Box>
+  parameter n.44: i32
+  parameter extra.45: i32
+  (load, %t1:ptr<Box>, &this.43:ptr<ptr<Box>>, _)
   (offset, %t2:ptr<i32>, %t1:ptr<Box>, 0:i64)
-  (load, %t3:ptr<Box>, &this.36:ptr<ptr<Box>>, _)
+  (load, %t3:ptr<Box>, &this.43:ptr<ptr<Box>>, _)
   (offset, %t4:ptr<i32>, %t3:ptr<Box>, 0:i64)
-  (load, %t5:i32, &n.37:ptr<i32>, _)
-  (load, %t6:i32, &extra.38:ptr<i32>, _)
+  (load, %t5:i32, &n.44:ptr<i32>, _)
+  (load, %t6:i32, &extra.45:ptr<i32>, _)
   (add, %t7:i32, %t5:i32, %t6:i32)
   (store, _, %t4:ptr<i32>, %t7:i32)
   (load, %t8:i32, %t4:ptr<i32>, _)
-  (load, %t9:i32, &created.11:ptr<i32>, _)
+  (load, %t9:i32, &created.18:ptr<i32>, _)
   (add, %t10:i32, %t9:i32, 1:i32)
-  (store, _, &created.11:ptr<i32>, %t10:i32)
+  (store, _, &created.18:ptr<i32>, %t10:i32)
   (ret, _, _, _)
 }
-function @Box.dtor.56: fn(ptr<Box>)->void internal {
-  parameter this.39: ptr<Box>
-  (load, %t1:i32, &destroyed.12:ptr<i32>, _)
+function @Box.dtor.63: fn(ptr<Box>)->void internal {
+  parameter this.46: ptr<Box>
+  (load, %t1:i32, &destroyed.19:ptr<i32>, _)
   (add, %t2:i32, %t1:i32, 1:i32)
-  (store, _, &destroyed.12:ptr<i32>, %t2:i32)
-  (load, %t3:ptr<Box>, &this.39:ptr<ptr<Box>>, _)
+  (store, _, &destroyed.19:ptr<i32>, %t2:i32)
+  (load, %t3:ptr<Box>, &this.46:ptr<ptr<Box>>, _)
   (ret, _, _, _)
 }
