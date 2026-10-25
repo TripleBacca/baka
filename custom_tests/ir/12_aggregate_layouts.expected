@@ -1,87 +1,87 @@
 IR::TAC:
 module {
-  type record#15(Base) size 8 align 4
-  type record#16(Derived) size 12 align 4
-  type record#17(Holder) size 12 align 4
-  type record#18(Number) size 8 align 8
+  Base = record(i32, i32) size 8 align 4
+  Derived = record(Base, i32) size 12 align 4
+  Holder = record(Base, i32) size 12 align 4
+  Number = union(i64, i32) size 8 align 8
   declare @printf.9: fn(ptr<i8>, ...)->i32
   declare @scanf.10: fn(ptr<i8>, ...)->i32
-  function @identity.23: fn(record#18(Number))->record#18(Number) {
-    parameter value.26: record#18(Number)
+  function @identity.23: fn(Number)->Number {
+    parameter value.26: Number
   bb1: ; predecessors [] successors []
-    (load, %t1:record#18(Number), &value.26:ptr<record#18(Number)>, _)
-    (ret, _, %t1:record#18(Number), _)
+    (load, %t1:Number, &value.26:ptr<Number>, _)
+    (ret, _, %t1:Number, _)
   }
   function @main.25: fn(i32)->i32 {
     parameter n.27: i32
-    local d.28: record#16(Derived)
-    local sliced.29: record#15(Base)
-    local holder.30: record#17(Holder)
-    local array.31: [2 x record#15(Base)]
-    local number.32: record#18(Number)
-    local copy.33: record#18(Number)
-    local .slice.34: record#16(Derived)
+    local d.28: Derived
+    local sliced.29: Base
+    local holder.30: Holder
+    local array.31: [2 x Base]
+    local number.32: Number
+    local copy.33: Number
+    local .slice.34: Derived
   bb1: ; predecessors [] successors []
-    (offset, %t1:ptr<i32>, &d.28:ptr<record#16(Derived)>, 0:i64)
+    (offset, %t1:ptr<i32>, &d.28:ptr<Derived>, 0:i64)
     (load, %t2:i32, &n.27:ptr<i32>, _)
     (store, _, %t1:ptr<i32>, %t2:i32)
-    (offset, %t3:ptr<i32>, &d.28:ptr<record#16(Derived)>, 4:i64)
+    (offset, %t3:ptr<i32>, &d.28:ptr<Derived>, 4:i64)
     (store, _, %t3:ptr<i32>, 2:i32)
-    (offset, %t4:ptr<i32>, &d.28:ptr<record#16(Derived)>, 8:i64)
+    (offset, %t4:ptr<i32>, &d.28:ptr<Derived>, 8:i64)
     (store, _, %t4:ptr<i32>, 3:i32)
-    (load, %t5:record#16(Derived), &d.28:ptr<record#16(Derived)>, _)
-    (store, _, &.slice.34:ptr<record#16(Derived)>, %t5:record#16(Derived))
-    (offset, %t6:ptr<record#15(Base)>, &.slice.34:ptr<record#16(Derived)>, 0:i64)
-    (load, %t7:record#15(Base), %t6:ptr<record#15(Base)>, _)
-    (store, _, &sliced.29:ptr<record#15(Base)>, %t7:record#15(Base))
-    (offset, %t8:ptr<record#15(Base)>, &holder.30:ptr<record#17(Holder)>, 0:i64)
-    (load, %t9:record#15(Base), &sliced.29:ptr<record#15(Base)>, _)
-    (store, _, %t8:ptr<record#15(Base)>, %t9:record#15(Base))
-    (offset, %t10:ptr<i32>, &holder.30:ptr<record#17(Holder)>, 8:i64)
+    (load, %t5:Derived, &d.28:ptr<Derived>, _)
+    (store, _, &.slice.34:ptr<Derived>, %t5:Derived)
+    (offset, %t6:ptr<Base>, &.slice.34:ptr<Derived>, 0:i64)
+    (load, %t7:Base, %t6:ptr<Base>, _)
+    (store, _, &sliced.29:ptr<Base>, %t7:Base)
+    (offset, %t8:ptr<Base>, &holder.30:ptr<Holder>, 0:i64)
+    (load, %t9:Base, &sliced.29:ptr<Base>, _)
+    (store, _, %t8:ptr<Base>, %t9:Base)
+    (offset, %t10:ptr<i32>, &holder.30:ptr<Holder>, 8:i64)
     (store, _, %t10:ptr<i32>, 4:i32)
-    (offset, %t11:ptr<i32>, &array.31:ptr<[2 x record#15(Base)]>, 0:i64)
+    (offset, %t11:ptr<i32>, &array.31:ptr<[2 x Base]>, 0:i64)
     (store, _, %t11:ptr<i32>, 0:i32)
-    (offset, %t12:ptr<i32>, &array.31:ptr<[2 x record#15(Base)]>, 4:i64)
+    (offset, %t12:ptr<i32>, &array.31:ptr<[2 x Base]>, 4:i64)
     (store, _, %t12:ptr<i32>, 0:i32)
-    (offset, %t13:ptr<i32>, &array.31:ptr<[2 x record#15(Base)]>, 8:i64)
+    (offset, %t13:ptr<i32>, &array.31:ptr<[2 x Base]>, 8:i64)
     (store, _, %t13:ptr<i32>, 0:i32)
-    (offset, %t14:ptr<i32>, &array.31:ptr<[2 x record#15(Base)]>, 12:i64)
+    (offset, %t14:ptr<i32>, &array.31:ptr<[2 x Base]>, 12:i64)
     (store, _, %t14:ptr<i32>, 0:i32)
-    (cast, %t15:ptr<record#15(Base)>, &array.31:ptr<[2 x record#15(Base)]>, _)
+    (cast, %t15:ptr<Base>, &array.31:ptr<[2 x Base]>, _)
     (cast, %t16:i64, 1:i32, _)
     (mul, %t17:i64, %t16:i64, 8:i64)
-    (offset, %t18:ptr<record#15(Base)>, %t15:ptr<record#15(Base)>, %t17:i64)
-    (load, %t19:record#15(Base), &sliced.29:ptr<record#15(Base)>, _)
-    (store, _, %t18:ptr<record#15(Base)>, %t19:record#15(Base))
-    (load, %t20:record#15(Base), %t18:ptr<record#15(Base)>, _)
-    (offset, %t21:ptr<i32>, &d.28:ptr<record#16(Derived)>, 0:i64)
+    (offset, %t18:ptr<Base>, %t15:ptr<Base>, %t17:i64)
+    (load, %t19:Base, &sliced.29:ptr<Base>, _)
+    (store, _, %t18:ptr<Base>, %t19:Base)
+    (load, %t20:Base, %t18:ptr<Base>, _)
+    (offset, %t21:ptr<i32>, &d.28:ptr<Derived>, 0:i64)
     (store, _, %t21:ptr<i32>, 99:i32)
     (load, %t22:i32, %t21:ptr<i32>, _)
-    (offset, %t23:ptr<i64>, &number.32:ptr<record#18(Number)>, 0:i64)
+    (offset, %t23:ptr<i64>, &number.32:ptr<Number>, 0:i64)
     (cast, %t24:i64, 100:i32, _)
     (store, _, %t23:ptr<i64>, %t24:i64)
-    (load, %t25:record#18(Number), &number.32:ptr<record#18(Number)>, _)
-    (param, _, %t25:record#18(Number), _)
-    (call, %t26:record#18(Number), @identity.23:ptr<fn(record#18(Number))->record#18(Number)>, 1:i64)
-    (store, _, &copy.33:ptr<record#18(Number)>, %t26:record#18(Number))
-    (offset, %t27:ptr<i32>, &sliced.29:ptr<record#15(Base)>, 0:i64)
+    (load, %t25:Number, &number.32:ptr<Number>, _)
+    (param, _, %t25:Number, _)
+    (call, %t26:Number, @identity.23:ptr<fn(Number)->Number>, 1:i64)
+    (store, _, &copy.33:ptr<Number>, %t26:Number)
+    (offset, %t27:ptr<i32>, &sliced.29:ptr<Base>, 0:i64)
     (load, %t28:i32, %t27:ptr<i32>, _)
-    (offset, %t29:ptr<record#15(Base)>, &holder.30:ptr<record#17(Holder)>, 0:i64)
-    (offset, %t30:ptr<i32>, %t29:ptr<record#15(Base)>, 4:i64)
+    (offset, %t29:ptr<Base>, &holder.30:ptr<Holder>, 0:i64)
+    (offset, %t30:ptr<i32>, %t29:ptr<Base>, 4:i64)
     (load, %t31:i32, %t30:ptr<i32>, _)
     (add, %t32:i32, %t28:i32, %t31:i32)
-    (cast, %t33:ptr<record#15(Base)>, &array.31:ptr<[2 x record#15(Base)]>, _)
+    (cast, %t33:ptr<Base>, &array.31:ptr<[2 x Base]>, _)
     (cast, %t34:i64, 1:i32, _)
     (mul, %t35:i64, %t34:i64, 8:i64)
-    (offset, %t36:ptr<record#15(Base)>, %t33:ptr<record#15(Base)>, %t35:i64)
-    (offset, %t37:ptr<i32>, %t36:ptr<record#15(Base)>, 0:i64)
+    (offset, %t36:ptr<Base>, %t33:ptr<Base>, %t35:i64)
+    (offset, %t37:ptr<i32>, %t36:ptr<Base>, 0:i64)
     (load, %t38:i32, %t37:ptr<i32>, _)
     (add, %t39:i32, %t32:i32, %t38:i32)
-    (offset, %t40:ptr<i64>, &copy.33:ptr<record#18(Number)>, 0:i64)
+    (offset, %t40:ptr<i64>, &copy.33:ptr<Number>, 0:i64)
     (load, %t41:i64, %t40:ptr<i64>, _)
     (cast, %t42:i32, %t41:i64, _)
     (add, %t43:i32, %t39:i32, %t42:i32)
-    (offset, %t44:ptr<i32>, &d.28:ptr<record#16(Derived)>, 8:i64)
+    (offset, %t44:ptr<i32>, &d.28:ptr<Derived>, 8:i64)
     (load, %t45:i32, %t44:ptr<i32>, _)
     (add, %t46:i32, %t43:i32, %t45:i32)
     (ret, _, %t46:i32, _)

@@ -72,6 +72,8 @@ namespace baka {
             case K::Union:
                 target.kind = TypeKind::Record;
                 target.name = source.name;
+                target.isUnion = source.kind == K::Union;
+                target.memberTypes.resize(target.memberOffsets.size());
                 break;
             default:
                 fail(nullptr, "cannot import erroneous semantic type into IR");
@@ -89,6 +91,21 @@ namespace baka {
             Result.types.push_back(std::move(target));
             auto result = static_cast<TypeId>(Result.types.size() - 1);
             TypeMap[id.value] = result;
+            if (Result.types[result].kind == TypeKind::Record && Result.types[result].complete) {
+                // Publish the nominal identity before importing fields: pointers
+                // may refer back to this record, or to mutually recursive records.
+                if (source.base.value) {
+                    auto base = importType(source.base);
+                    Result.types[result].base = base;
+                }
+                for (size_t i = 0; i < source.members.size(); ++i) {
+                    if (Result.types[result].memberOffsets[i]) {
+                        auto field = importType(source.members[i].type);
+                        // Recursive imports can reallocate Result.types.
+                        Result.types[result].memberTypes[i] = field;
+                    }
+                }
+            }
             return result;
         }
 

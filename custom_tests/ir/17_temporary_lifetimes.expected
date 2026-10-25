@@ -1,30 +1,30 @@
 IR::TAC:
 module {
-  type record#15(A) size 4 align 4
+  A = record(i32) size 4 align 4
   global trace.11: i64 = zero
   declare @printf.9: fn(ptr<i8>, ...)->i32
   declare @scanf.10: fn(ptr<i8>, ...)->i32
-  function @A.get.14: fn(ptr<record#15(A)>)->i32 {
-    parameter this.22: ptr<record#15(A)>
+  function @A.get.14: fn(ptr<A>)->i32 {
+    parameter this.22: ptr<A>
   bb1: ; predecessors [] successors []
-    (load, %t1:ptr<record#15(A)>, &this.22:ptr<ptr<record#15(A)>>, _)
-    (offset, %t2:ptr<i32>, %t1:ptr<record#15(A)>, 0:i64)
+    (load, %t1:ptr<A>, &this.22:ptr<ptr<A>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<A>, 0:i64)
     (load, %t3:i32, %t2:ptr<i32>, _)
     (ret, _, %t3:i32, _)
   }
-  function @get.16: fn(record#15(A))->i32 {
-    parameter parameter.23: record#15(A)
+  function @get.16: fn(A)->i32 {
+    parameter parameter.23: A
   bb1: ; predecessors [] successors [bb2, bb3]
     (copy, %t1:u1, 0:u1, _)
     (copy, %t1:u1, 1:u1, _)
-    (offset, %t2:ptr<i32>, &parameter.23:ptr<record#15(A)>, 0:i64)
+    (offset, %t2:ptr<i32>, &parameter.23:ptr<A>, 0:i64)
     (load, %t3:i32, %t2:ptr<i32>, _)
     (if_goto, _, %t1:u1, bb2)
     (goto, _, bb3, _)
   bb2: ; predecessors [bb1] successors [bb3]
     (copy, %t1:u1, 0:u1, _)
-    (param, _, &parameter.23:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &parameter.23:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb3, _)
   bb3: ; predecessors [bb1, bb2] successors []
     (ret, _, %t3:i32, _)
@@ -36,14 +36,14 @@ module {
     local y.27: i32
     local z.28: i32
     local valid.29: u1
-    local .constructed.32: record#15(A)
-    local .constructed.33: record#15(A)
-    local .constructed.34: record#15(A)
-    local .constructed.35: record#15(A)
-    local .constructed.36: record#15(A)
-    local .constructed.37: record#15(A)
-    local .constructed.38: record#15(A)
-    local .constructed.39: record#15(A)
+    local .constructed.32: A
+    local .constructed.33: A
+    local .constructed.34: A
+    local .constructed.35: A
+    local .constructed.36: A
+    local .constructed.37: A
+    local .constructed.38: A
+    local .constructed.39: A
   bb1: ; predecessors [] successors [bb2, bb3]
     (copy, %t36:u1, 0:u1, _)
     (copy, %t34:u1, 0:u1, _)
@@ -53,33 +53,33 @@ module {
     (copy, %t10:u1, 0:u1, _)
     (copy, %t4:u1, 0:u1, _)
     (copy, %t2:u1, 0:u1, _)
-    (param, _, &.constructed.32:ptr<record#15(A)>, _)
+    (param, _, &.constructed.32:ptr<A>, _)
     (param, _, 1:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t1:record#15(A), &.constructed.32:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t1:A, &.constructed.32:ptr<A>, _)
     (copy, %t2:u1, 1:u1, _)
     (if_goto, _, %t2:u1, bb2)
     (goto, _, bb3, _)
   bb2: ; predecessors [bb1] successors [bb3]
     (copy, %t2:u1, 0:u1, _)
-    (param, _, &.constructed.32:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.32:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb3, _)
   bb3: ; predecessors [bb1, bb2] successors [bb4, bb5]
-    (param, _, &.constructed.33:ptr<record#15(A)>, _)
+    (param, _, &.constructed.33:ptr<A>, _)
     (param, _, 2:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t3:record#15(A), &.constructed.33:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t3:A, &.constructed.33:ptr<A>, _)
     (copy, %t4:u1, 1:u1, _)
-    (param, _, &.constructed.33:ptr<record#15(A)>, _)
-    (call, %t5:i32, @A.get.14:ptr<fn(ptr<record#15(A)>)->i32>, 1:i64)
+    (param, _, &.constructed.33:ptr<A>, _)
+    (call, %t5:i32, @A.get.14:ptr<fn(ptr<A>)->i32>, 1:i64)
     (store, _, &x.25:ptr<i32>, %t5:i32)
     (if_goto, _, %t4:u1, bb4)
     (goto, _, bb5, _)
   bb4: ; predecessors [bb3] successors [bb5]
     (copy, %t4:u1, 0:u1, _)
-    (param, _, &.constructed.33:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.33:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb5, _)
   bb5: ; predecessors [bb3, bb4] successors [bb6, bb7]
     (load, %t6:i32, &n.24:ptr<i32>, _)
@@ -87,13 +87,13 @@ module {
     (if_goto, _, %t7:u1, bb6)
     (goto, _, bb7, _)
   bb6: ; predecessors [bb5] successors [bb8]
-    (param, _, &.constructed.34:ptr<record#15(A)>, _)
+    (param, _, &.constructed.34:ptr<A>, _)
     (param, _, 3:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t9:record#15(A), &.constructed.34:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t9:A, &.constructed.34:ptr<A>, _)
     (copy, %t10:u1, 1:u1, _)
-    (param, _, &.constructed.34:ptr<record#15(A)>, _)
-    (call, %t11:i32, @A.get.14:ptr<fn(ptr<record#15(A)>)->i32>, 1:i64)
+    (param, _, &.constructed.34:ptr<A>, _)
+    (call, %t11:i32, @A.get.14:ptr<fn(ptr<A>)->i32>, 1:i64)
     (cast, %t12:u1, %t11:i32, _)
     (copy, %t8:u1, %t12:u1, _)
     (goto, _, bb8, _)
@@ -106,25 +106,25 @@ module {
     (goto, _, bb10, _)
   bb9: ; predecessors [bb8] successors [bb10]
     (copy, %t10:u1, 0:u1, _)
-    (param, _, &.constructed.34:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.34:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb10, _)
   bb10: ; predecessors [bb8, bb9] successors [bb11, bb12]
-    (param, _, &.constructed.35:ptr<record#15(A)>, _)
+    (param, _, &.constructed.35:ptr<A>, _)
     (param, _, 4:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t13:record#15(A), &.constructed.35:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t13:A, &.constructed.35:ptr<A>, _)
     (copy, %t14:u1, 1:u1, _)
     (copy, %t14:u1, 0:u1, _)
-    (param, _, %t13:record#15(A), _)
-    (call, %t15:i32, @get.16:ptr<fn(record#15(A))->i32>, 1:i64)
+    (param, _, %t13:A, _)
+    (call, %t15:i32, @get.16:ptr<fn(A)->i32>, 1:i64)
     (store, _, &y.27:ptr<i32>, %t15:i32)
     (if_goto, _, %t14:u1, bb11)
     (goto, _, bb12, _)
   bb11: ; predecessors [bb10] successors [bb12]
     (copy, %t14:u1, 0:u1, _)
-    (param, _, &.constructed.35:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.35:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb12, _)
   bb12: ; predecessors [bb10, bb11] successors [bb13, bb14]
     (load, %t16:i32, &n.24:ptr<i32>, _)
@@ -132,41 +132,41 @@ module {
     (if_goto, _, %t17:u1, bb13)
     (goto, _, bb14, _)
   bb13: ; predecessors [bb12] successors [bb15]
-    (param, _, &.constructed.36:ptr<record#15(A)>, _)
+    (param, _, &.constructed.36:ptr<A>, _)
     (param, _, 5:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t20:record#15(A), &.constructed.36:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t20:A, &.constructed.36:ptr<A>, _)
     (copy, %t21:u1, 1:u1, _)
-    (copy, %t19:ptr<record#15(A)>, &.constructed.36:ptr<record#15(A)>, _)
-    (copy, %t18:record#15(A), %t20:record#15(A), _)
+    (copy, %t19:ptr<A>, &.constructed.36:ptr<A>, _)
+    (copy, %t18:A, %t20:A, _)
     (goto, _, bb15, _)
   bb14: ; predecessors [bb12] successors [bb15]
-    (param, _, &.constructed.37:ptr<record#15(A)>, _)
+    (param, _, &.constructed.37:ptr<A>, _)
     (param, _, 6:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t22:record#15(A), &.constructed.37:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t22:A, &.constructed.37:ptr<A>, _)
     (copy, %t23:u1, 1:u1, _)
-    (copy, %t19:ptr<record#15(A)>, &.constructed.37:ptr<record#15(A)>, _)
-    (copy, %t18:record#15(A), %t22:record#15(A), _)
+    (copy, %t19:ptr<A>, &.constructed.37:ptr<A>, _)
+    (copy, %t18:A, %t22:A, _)
     (goto, _, bb15, _)
   bb15: ; predecessors [bb13, bb14] successors [bb16, bb17]
-    (param, _, %t19:ptr<record#15(A)>, _)
-    (call, %t24:i32, @A.get.14:ptr<fn(ptr<record#15(A)>)->i32>, 1:i64)
+    (param, _, %t19:ptr<A>, _)
+    (call, %t24:i32, @A.get.14:ptr<fn(ptr<A>)->i32>, 1:i64)
     (store, _, &z.28:ptr<i32>, %t24:i32)
     (if_goto, _, %t23:u1, bb16)
     (goto, _, bb17, _)
   bb16: ; predecessors [bb15] successors [bb17]
     (copy, %t23:u1, 0:u1, _)
-    (param, _, &.constructed.37:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.37:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb17, _)
   bb17: ; predecessors [bb15, bb16] successors [bb18, bb19]
     (if_goto, _, %t21:u1, bb18)
     (goto, _, bb19, _)
   bb18: ; predecessors [bb17] successors [bb19]
     (copy, %t21:u1, 0:u1, _)
-    (param, _, &.constructed.36:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.36:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb19, _)
   bb19: ; predecessors [bb17, bb18] successors [bb20, bb21]
     (load, %t25:i64, &trace.11:ptr<i64>, _)
@@ -187,30 +187,30 @@ module {
     (cast, %t31:i64, 0:i32, _)
     (store, _, &trace.11:ptr<i64>, %t31:i64)
     (load, %t32:i64, &trace.11:ptr<i64>, _)
-    (param, _, &.constructed.38:ptr<record#15(A)>, _)
+    (param, _, &.constructed.38:ptr<A>, _)
     (param, _, 7:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t33:record#15(A), &.constructed.38:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t33:A, &.constructed.38:ptr<A>, _)
     (copy, %t34:u1, 1:u1, _)
-    (param, _, &.constructed.39:ptr<record#15(A)>, _)
+    (param, _, &.constructed.39:ptr<A>, _)
     (param, _, 8:i32, _)
-    (call, _, @A.ctor.2.30:ptr<fn(ptr<record#15(A)>, i32)->void>, 2:i64)
-    (load, %t35:record#15(A), &.constructed.39:ptr<record#15(A)>, _)
+    (call, _, @A.ctor.2.30:ptr<fn(ptr<A>, i32)->void>, 2:i64)
+    (load, %t35:A, &.constructed.39:ptr<A>, _)
     (copy, %t36:u1, 1:u1, _)
     (if_goto, _, %t36:u1, bb23)
     (goto, _, bb24, _)
   bb23: ; predecessors [bb22] successors [bb24]
     (copy, %t36:u1, 0:u1, _)
-    (param, _, &.constructed.39:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.39:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb24, _)
   bb24: ; predecessors [bb22, bb23] successors [bb25, bb26]
     (if_goto, _, %t34:u1, bb25)
     (goto, _, bb26, _)
   bb25: ; predecessors [bb24] successors [bb26]
     (copy, %t34:u1, 0:u1, _)
-    (param, _, &.constructed.38:ptr<record#15(A)>, _)
-    (call, _, @A.dtor.31:ptr<fn(ptr<record#15(A)>)->void>, 1:i64)
+    (param, _, &.constructed.38:ptr<A>, _)
+    (call, _, @A.dtor.31:ptr<fn(ptr<A>)->void>, 1:i64)
     (goto, _, bb26, _)
   bb26: ; predecessors [bb24, bb25] successors [bb27, bb28]
     (load, %t37:u1, &valid.29:ptr<u1>, _)
@@ -273,14 +273,14 @@ module {
     (copy, %t48:u1, %t53:u1, _)
     (goto, _, bb38, _)
   }
-  function @A.ctor.2.30: fn(ptr<record#15(A)>, i32)->void internal {
-    parameter this.19: ptr<record#15(A)>
+  function @A.ctor.2.30: fn(ptr<A>, i32)->void internal {
+    parameter this.19: ptr<A>
     parameter n.20: i32
   bb1: ; predecessors [] successors []
-    (load, %t1:ptr<record#15(A)>, &this.19:ptr<ptr<record#15(A)>>, _)
-    (offset, %t2:ptr<i32>, %t1:ptr<record#15(A)>, 0:i64)
-    (load, %t3:ptr<record#15(A)>, &this.19:ptr<ptr<record#15(A)>>, _)
-    (offset, %t4:ptr<i32>, %t3:ptr<record#15(A)>, 0:i64)
+    (load, %t1:ptr<A>, &this.19:ptr<ptr<A>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<A>, 0:i64)
+    (load, %t3:ptr<A>, &this.19:ptr<ptr<A>>, _)
+    (offset, %t4:ptr<i32>, %t3:ptr<A>, 0:i64)
     (load, %t5:i32, &n.20:ptr<i32>, _)
     (store, _, %t4:ptr<i32>, %t5:i32)
     (load, %t6:i32, %t4:ptr<i32>, _)
@@ -294,20 +294,20 @@ module {
     (load, %t13:i64, &trace.11:ptr<i64>, _)
     (ret, _, _, _)
   }
-  function @A.dtor.31: fn(ptr<record#15(A)>)->void internal {
-    parameter this.21: ptr<record#15(A)>
+  function @A.dtor.31: fn(ptr<A>)->void internal {
+    parameter this.21: ptr<A>
   bb1: ; predecessors [] successors []
     (load, %t1:i64, &trace.11:ptr<i64>, _)
     (cast, %t2:i64, 10:i32, _)
     (mul, %t3:i64, %t1:i64, %t2:i64)
-    (load, %t4:ptr<record#15(A)>, &this.21:ptr<ptr<record#15(A)>>, _)
-    (offset, %t5:ptr<i32>, %t4:ptr<record#15(A)>, 0:i64)
+    (load, %t4:ptr<A>, &this.21:ptr<ptr<A>>, _)
+    (offset, %t5:ptr<i32>, %t4:ptr<A>, 0:i64)
     (load, %t6:i32, %t5:ptr<i32>, _)
     (cast, %t7:i64, %t6:i32, _)
     (add, %t8:i64, %t3:i64, %t7:i64)
     (store, _, &trace.11:ptr<i64>, %t8:i64)
     (load, %t9:i64, &trace.11:ptr<i64>, _)
-    (load, %t10:ptr<record#15(A)>, &this.21:ptr<ptr<record#15(A)>>, _)
+    (load, %t10:ptr<A>, &this.21:ptr<ptr<A>>, _)
     (ret, _, _, _)
   }
 }

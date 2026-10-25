@@ -30,7 +30,7 @@ and remains usable after the frontend is destroyed. Lowering is single-use.
 | Calls | `ExecutionPlans::call`: selected callable and complete argument-expression list |
 | Default construction | `LifetimePlan::defaultConstructor`: availability, signature/member and arguments |
 | Initialization | `InitializationPlan`: typed operations, offsets, receiver context and compact ranges |
-| Field/base access | Completed stored semantic layout, copied into the owned IR record type |
+| Field/base access | Completed stored semantic layout and field/base types, copied into the owned IR record type |
 | Local storage | Published per-function symbol index |
 | Jumps | Resolved target IDs and ordered `ExecutionPlans::cleanup` obligations |
 | Normal scope exit | Lexical object ownership, with published lifetime traits |

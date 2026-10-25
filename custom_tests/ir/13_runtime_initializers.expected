@@ -1,13 +1,13 @@
 IR::TAC:
 module {
-  type record#17(Pair) size 8 align 4
-  type record#18(Holder) size 1 align 1
+  Pair = record(i32, i32) size 8 align 4
+  Holder = record() size 1 align 1
   global calls.11: i32 = zero
   global computed.14: i32 = zero
   global constant.15: i32 = zero
   global values.16: [3 x i32] = zero
-  global seed.20: record#17(Pair) = zero
-  global snapshot.21: record#17(Pair) = zero
+  global seed.20: Pair = zero
+  global snapshot.21: Pair = zero
   global fixed.22: i32 readonly-after-init = zero
   internal Holder.value.24: i32 = zero
   internal count.31: i32 = zero
@@ -61,7 +61,7 @@ module {
   }
   function @main.28: fn(i32)->i32 {
     parameter n.33: i32
-    local holder.34: record#18(Holder)
+    local holder.34: Holder
     local result.35: i32
   bb1: ; predecessors [] successors []
     (load, %t1:i32, &n.33:ptr<i32>, _)
@@ -94,13 +94,13 @@ module {
     (offset, %t25:ptr<i32>, %t22:ptr<i32>, %t24:i64)
     (load, %t26:i32, %t25:ptr<i32>, _)
     (add, %t27:i32, %t21:i32, %t26:i32)
-    (offset, %t28:ptr<i32>, &seed.20:ptr<record#17(Pair)>, 0:i64)
+    (offset, %t28:ptr<i32>, &seed.20:ptr<Pair>, 0:i64)
     (load, %t29:i32, %t28:ptr<i32>, _)
     (add, %t30:i32, %t27:i32, %t29:i32)
-    (offset, %t31:ptr<i32>, &seed.20:ptr<record#17(Pair)>, 4:i64)
+    (offset, %t31:ptr<i32>, &seed.20:ptr<Pair>, 4:i64)
     (load, %t32:i32, %t31:ptr<i32>, _)
     (add, %t33:i32, %t30:i32, %t32:i32)
-    (offset, %t34:ptr<i32>, &snapshot.21:ptr<record#17(Pair)>, 0:i64)
+    (offset, %t34:ptr<i32>, &snapshot.21:ptr<Pair>, 0:i64)
     (load, %t35:i32, %t34:ptr<i32>, _)
     (add, %t36:i32, %t33:i32, %t35:i32)
     (load, %t37:i32, &fixed.22:ptr<i32>, _)
@@ -132,14 +132,14 @@ module {
     (param, _, 30:i32, _)
     (call, %t8:i32, @calc.13:ptr<fn(i32)->i32>, 1:i64)
     (store, _, %t7:ptr<i32>, %t8:i32)
-    (offset, %t9:ptr<i32>, &seed.20:ptr<record#17(Pair)>, 0:i64)
+    (offset, %t9:ptr<i32>, &seed.20:ptr<Pair>, 0:i64)
     (param, _, 40:i32, _)
     (call, %t10:i32, @calc.13:ptr<fn(i32)->i32>, 1:i64)
     (store, _, %t9:ptr<i32>, %t10:i32)
-    (offset, %t11:ptr<i32>, &seed.20:ptr<record#17(Pair)>, 4:i64)
+    (offset, %t11:ptr<i32>, &seed.20:ptr<Pair>, 4:i64)
     (store, _, %t11:ptr<i32>, 2:i32)
-    (load, %t12:record#17(Pair), &seed.20:ptr<record#17(Pair)>, _)
-    (store, _, &snapshot.21:ptr<record#17(Pair)>, %t12:record#17(Pair))
+    (load, %t12:Pair, &seed.20:ptr<Pair>, _)
+    (store, _, &snapshot.21:ptr<Pair>, %t12:Pair)
     (param, _, 50:i32, _)
     (call, %t13:i32, @calc.13:ptr<fn(i32)->i32>, 1:i64)
     (store, _, &fixed.22:ptr<i32>, %t13:i32)
