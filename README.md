@@ -153,7 +153,8 @@ There are certain features we are not supporting:
 ### Stages Status
 - [x] Lexer
 - [x] Parser
-- [x] Semantic Analysis for the supported subset ([passes and policies](src/semantic/README.md), [remaining TODOs](src/semantic/TODO.md))
+- [x] Semantic Analysis for the supported subset ([passes and policies](src/semantic/README.md))
+- [x] IR Generation ([typed TAC](ir_context.md))
 - [ ] Optimization Passes
 - [ ] Codegen
 
