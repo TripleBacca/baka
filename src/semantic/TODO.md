@@ -34,7 +34,8 @@ Language-subset exclusions are policies, not claims of complete C++ coverage.
 
 - A native backend, platform calling convention, symbol ABI and selectable targets.
 - Exceptions/unwinding, concurrent/reentrant static initialization and nontrivial unions.
-- Additional grammar such as local aggregate definitions, references and allocation.
+- Additional grammar such as local aggregate definitions, references, standard
+  `new T` syntax and dynamic-length arrays.
 - Full C++ overload ranking and context-uniform user-defined conversions.
 - Warning/dataflow analyses, including unused declarations and all-paths-return checks.
 - A separate immutable typed syntax tree if future language growth warrants migration;

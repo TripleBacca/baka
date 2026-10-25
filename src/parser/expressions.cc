@@ -61,12 +61,16 @@ namespace parser {
 
             return AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, ConstantNode);
 
-        } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::IDENTIFIER) {
+        } else if(ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::IDENTIFIER ||
+                  ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::K_NEW ||
+                  ConstantOrIdentifierOrThis.TokenType_v == types::TokenType::K_DELETE) {
             auto& Identifier = ConstantOrIdentifierOrThis;
             Advance();
 
-            assert(std::holds_alternative<std::string_view>(Identifier.Value));
-            auto* IdentifierNode = AllocNodeAt<types::IdentifierNode>(SourceStart, std::get<std::string_view>(Identifier.Value));
+            auto name = Identifier.TokenType_v == types::TokenType::K_NEW ? std::string_view("new") :
+                        Identifier.TokenType_v == types::TokenType::K_DELETE ? std::string_view("delete") :
+                        std::get<std::string_view>(Identifier.Value);
+            auto* IdentifierNode = AllocNodeAt<types::IdentifierNode>(SourceStart, name);
 
             auto* PrimaryExpressionNode = AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, IdentifierNode);
 

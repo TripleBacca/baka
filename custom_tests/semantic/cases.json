@@ -66,6 +66,11 @@
   "invalid_goto_enters_lifetime.cpp": [
     "goto jumps past initialization of 'value'"
   ],
+  "invalid_heap_calls.cpp": [
+    "new requires a pointer variable",
+    "delete requires an object pointer",
+    "new value is not convertible to the allocated type"
+  ],
   "independent_across_functions.cpp": [
     "undeclared name 'missing'",
     "bitwise operator requires integers"

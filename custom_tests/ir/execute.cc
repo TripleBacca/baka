@@ -11,6 +11,9 @@
 
 using namespace baka;
 
+extern "C" void* __baka_allocate(uint64_t bytes, uint64_t alignment) noexcept;
+extern "C" void __baka_deallocate(void* pointer) noexcept;
+
 namespace {
     void Require(bool condition, const char* message) {
         if (!condition) {
@@ -96,6 +99,13 @@ namespace {
     }
 
     void CheckVerifier() {
+        auto* allocation = __baka_allocate(64, 64);
+        Require(allocation && reinterpret_cast<uintptr_t>(allocation) % 64 == 0,
+                "runtime allocation lost alignment");
+        __baka_deallocate(allocation);
+        Require(__baka_allocate(UINT64_MAX, 64) == nullptr, "runtime allocation accepted overflow");
+        __baka_deallocate(nullptr);
+
         ir::Module module;
         ir::Type integer;
         integer.kind = ir::TypeKind::Integer;
@@ -248,7 +258,8 @@ int main(int argc, char** argv) {
             CheckRecordDefinitions();
             return 0;
         }
-        Require(argc == 4 || argc == 6, "usage: ir_execution_tests source input result [global result]");
+        Require(argc == 4 || argc == 5 || argc == 6,
+                "usage: ir_execution_tests source input result [fail-allocation|global result]");
         auto module = Compile(argv[1]);
         const int input = std::stoi(argv[2]);
         const int64_t expected = std::stoll(argv[3]);
@@ -258,6 +269,10 @@ int main(int argc, char** argv) {
                 Require(ir::Verify(module).empty(), "optimized IR failed verification");
             }
             ir_test::Interpreter executor(module);
+            if (argc == 5) {
+                Require(std::string(argv[4]) == "fail-allocation", "unknown execution option");
+                executor.failNextAllocation();
+            }
             const auto actual = executor.run(input);
             if (actual != expected) {
                 std::cerr << "input " << input << ": expected " << expected << ", got " << actual

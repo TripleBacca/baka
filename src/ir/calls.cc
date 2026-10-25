@@ -71,6 +71,9 @@ namespace baka {
         }
 
         Operand Lowerer::call(const types::FunctionCallPostfixExpr* node) {
+            if (auto kind = types::heapCallKind(node); kind != types::HeapCallKind::None) {
+                return heapCall(node, kind == types::HeapCallKind::Allocate);
+            }
             const auto& metadata = node->semanticInfo();
             const auto& plan = Analyzer.executionPlans().call(node);
             if (plan.construction) {

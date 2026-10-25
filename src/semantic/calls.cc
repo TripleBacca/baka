@@ -185,6 +185,9 @@ namespace baka {
         }
 
         ExprResult ExpressionChecker::checkCall(const types::FunctionCallPostfixExpr* node) {
+            if (auto kind = types::heapCallKind(node); kind != types::HeapCallKind::None) {
+                return checkHeapCall(node, kind == types::HeapCallKind::Allocate);
+            }
             auto arguments = argumentList(node->getArguments());
             for (const auto& argument : arguments) {
                 if (argument.error) {
@@ -333,6 +336,95 @@ namespace baka {
                 }
             }
             return makeValue(resultType);
+        }
+
+        ExprResult ExpressionChecker::checkHeapCall(const types::FunctionCallPostfixExpr* node, bool allocation) {
+            auto* list = dynamic_cast<const types::CommaExpressionNode*>(node->getArguments());
+            std::vector<types::ExpressionNode*> arguments;
+            if (list) {
+                arguments.assign(list->getExpressions().begin(), list->getExpressions().end());
+            } else if (node->getArguments()) {
+                arguments.push_back(node->getArguments());
+            }
+            if (arguments.empty() || (!allocation && arguments.size() != 1)) {
+                SymbolTable.diagnose("allocation", allocation ? "new requires a pointer variable" :
+                                                  "delete requires one pointer", node);
+                return makeError();
+            }
+            auto witness = check(arguments.front(), false);
+            if (witness.error) {
+                return makeError();
+            }
+            auto pointer = TypeSystem.unConst(witness.type);
+            auto* variable = dynamic_cast<const types::PrimaryExpressionNode*>(arguments.front());
+            if (TypeSystem.get(pointer).kind != TypeKind::Pointer ||
+                (allocation && (witness.category != ValueCategory::LValue || !variable ||
+                                !std::holds_alternative<types::IdentifierNode*>(variable->getExpression())))) {
+                SymbolTable.diagnose("allocation", allocation ? "new requires a pointer variable" :
+                                                  "delete requires an object pointer", node);
+                return makeError();
+            }
+            auto target = TypeSystem.unConst(TypeSystem.get(pointer).element);
+            if (!isCompleteObject(target)) {
+                SymbolTable.diagnose("allocation", "allocation requires a complete object type", node);
+                return makeError();
+            }
+            auto element = target;
+            while (TypeSystem.get(element).kind == TypeKind::Array) {
+                element = TypeSystem.unConst(TypeSystem.get(element).element);
+            }
+            if (!allocation) {
+                return makeValue(TypeSystem.builtin(Builtin::Void));
+            }
+            std::vector<ExprResult> values;
+            for (size_t i = 1; i < arguments.size(); ++i) {
+                values.push_back(check(arguments[i], true));
+                if (values.back().error) {
+                    return makeError();
+                }
+            }
+            if (TypeSystem.isAggregate(element)) {
+                std::vector<FunctionCandidate> candidates;
+                const auto& record = TypeSystem.get(element);
+                for (size_t i = 0; i < record.members.size(); ++i) {
+                    const auto& member = record.members[i];
+                    if (member.isConstructor) {
+                        candidates.push_back({member.type, {}, member.minimumArity, element,
+                                              static_cast<uint32_t>(i + 1)});
+                    }
+                }
+                if (!candidates.empty()) {
+                    auto selection = selectOverload(candidates, values);
+                    if (selection.ambiguous || !selection.candidate) {
+                        SymbolTable.diagnose("constructor", selection.ambiguous ?
+                            "ambiguous overload resolution" : "no viable overload for this constructor call", node);
+                        return makeError();
+                    }
+                    if (Annotating) {
+                        auto& info = const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo();
+                        info.MemberOwner = element.value;
+                        info.MemberIndex = selection.candidate->memberIndex;
+                        info.CallSignature = selection.candidate->type.value;
+                        info.Construction = true;
+                        for (size_t i = 0; i < selection.conversions.size() && i < values.size(); ++i) {
+                            if (selection.conversions[i].owner.value) {
+                                ConstructorConversions[{arguments[i + 1], selection.conversions[i].owner.value}] =
+                                    selection.conversions[i];
+                            }
+                        }
+                    }
+                } else if (!values.empty()) {
+                    SymbolTable.diagnose("constructor", "aggregate has no matching constructor", node);
+                    return makeError();
+                }
+            } else if (values.size() > 1 ||
+                       (values.size() == 1 && !isAssignable(values[0].type, element, values[0]))) {
+                SymbolTable.diagnose("initializer", "new value is not convertible to the allocated type", node);
+                return makeError();
+            } else if (values.size() == 1) {
+                planConversion(arguments[1], element);
+            }
+            return makeValue(witness.type);
         }
     }
 }

@@ -63,6 +63,7 @@ namespace baka {
             } State;
 
             uint32_t NextObject = 1;
+            uint32_t HeapAllocate = 0, HeapDeallocate = 0;
             bool Started = false;
             std::vector<const types::SingleDeclarationNode*> GlobalInitializers;
             std::map<TypeId, semantic::TypeId> ReverseTypes;
@@ -119,6 +120,8 @@ namespace baka {
             Operand increment(const types::ExpressionNode* target, bool decrement, bool postfix,
                               bool returnAddress = false);
             Operand call(const types::FunctionCallPostfixExpr* node);
+            Operand heapCall(const types::FunctionCallPostfixExpr* node, bool allocation);
+            uint32_t heapFunction(bool allocation);
             Operand constructionValue(const types::ExpressionNode* node,
                                       const std::vector<const types::ExpressionNode*>& arguments);
 

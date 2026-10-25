@@ -302,5 +302,19 @@ namespace types {
             }
     };
 
+    enum class HeapCallKind { None, Allocate, Deallocate };
+
+    inline HeapCallKind heapCallKind(const FunctionCallPostfixExpr* call) {
+        auto* primary = dynamic_cast<const PrimaryExpressionNode*>(call->getCallee());
+        if (!primary || !std::holds_alternative<IdentifierNode*>(primary->getExpression())) {
+            return HeapCallKind::None;
+        }
+        auto name = std::get<IdentifierNode*>(primary->getExpression())->GetName();
+        if (name == "new") {
+            return HeapCallKind::Allocate;
+        }
+        return name == "delete" ? HeapCallKind::Deallocate : HeapCallKind::None;
+    }
+
 }
 }

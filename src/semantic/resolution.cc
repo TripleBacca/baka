@@ -48,6 +48,10 @@ namespace baka {
                 auto payload = primary->getExpression();
                 if (auto* name = std::get_if<types::IdentifierNode*>(&payload); name && *name) {
                     auto* identifier = *name;
+                    if (identifier->GetName() == "new" || identifier->GetName() == "delete") {
+                        identifier->semanticInfo().Resolved = true;
+                        return;
+                    }
                     auto found = SymbolTable.lookup(std::string(identifier->GetName()));
                     // Local names shadow members; members shadow the surrounding global
                     // scope in an instance/static method. Aggregate scopes persist.

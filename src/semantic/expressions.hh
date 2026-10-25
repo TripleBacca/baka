@@ -82,6 +82,7 @@ namespace baka {
             ExprResult checkMember(const types::ExpressionNode* base, const types::IdentifierNode* member, bool arrow,
                                    const types::ASTNode* source);
             ExprResult checkCall(const types::FunctionCallPostfixExpr* node);
+            ExprResult checkHeapCall(const types::FunctionCallPostfixExpr* node, bool allocation);
             ExprResult checkTernary(const types::TernaryOpNode* node);
             ExprResult checkCast(const types::CastFactorNode* node);
             ExprResult checkSizeof(const types::SizeofNode* node);
