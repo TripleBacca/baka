@@ -57,13 +57,35 @@ types distinguish void, integer, floating, pointer, array, function and nominal 
 Pointers use the shared target layout. Booleans have one value bit and one storage
 byte. Source qualifiers are checked by semantics and erased during import.
 
-Records retain size, alignment, member offsets and optional base offset. Their
-nominal identities remain distinct even when names/layouts match. Incomplete records
+Records retain field types, size, alignment, member offsets, union identity and an
+optional base type/offset. Their nominal identities remain distinct even when
+names/layouts match. Incomplete records
 remain opaque and cannot be used as stored values. Function declarations may mention
 opaque record parameters/results; definitions and actual calls require complete values.
 Complete record values are snapshots:
 `Load` captures bytes, `Copy` copies a value, and `Store` writes the complete value.
 Calls and returns keep record types; native ABI classification is deferred.
+
+The module starts with named aggregate definitions. References use the declared
+name rather than repeating an internal numeric record ID:
+
+```text
+X = record(i32, i32, ptr<i32>) size 16 align 8
+Node = record(i32, ptr<Node>) size 16 align 8
+Derived = record(X, i32) size 24 align 8
+Number = union(i32, f64) size 8 align 8
+Opaque = opaque
+```
+
+Fields appear in storage order; an inherited base is the first subobject. Methods,
+static members and typedef declarations occupy no per-object storage and are not
+included. Typedef aliases share their underlying representation type. Recursive
+pointers may refer to names declared elsewhere in the module. Unions use `union(...)`
+to distinguish overlapping fields from sequential record fields. Duplicate source
+names receive a `.typeID` suffix; anonymous records and names colliding with primitive
+IR type names also receive unique names. Internal TypeIds still index the module's
+owned type table. Verification checks field/base types, offsets, bounds and rejects
+recursive by-value containment while accepting recursive pointers.
 
 Objects own a storage type, linkage/storage flags, optional sparse scalar/relocation
 initializers and literal bytes. Ordinary source globals are zero-filled and explicit

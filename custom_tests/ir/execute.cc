@@ -5,6 +5,7 @@
 #include "parser/parser.hh"
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -36,6 +37,62 @@ namespace {
         ir::Lowerer lowerer(*analyzer.checkedProgram());
         Require(lowerer.lower(), "fixture failed IR lowering");
         return lowerer.takeModule();
+    }
+
+    void CheckRecordDefinitions() {
+        ir::Module module;
+        ir::Type integer;
+        integer.kind = ir::TypeKind::Integer;
+        integer.bits = 32;
+        integer.isSigned = true;
+        integer.size = integer.alignment = 4;
+        module.types.push_back(integer);
+        ir::Type node;
+        node.kind = ir::TypeKind::Record;
+        node.name = "Node";
+        node.complete = true;
+        node.size = 16;
+        node.alignment = 8;
+        node.memberOffsets = {0, 8};
+        module.types.push_back(node);
+        const auto pointer = module.pointer(2);
+        module.types[2].memberTypes = {1, pointer};
+        Require(ir::Verify(module).empty(), "self-referential pointer field rejected");
+        std::ostringstream output;
+        ir::Print(module, output);
+        Require(output.str().find("Node = record(i32, ptr<Node>) size 16 align 8") != std::string::npos,
+                "named record definition omits its fields");
+        Require(output.str().find("record#") == std::string::npos, "numeric record reference still printed");
+
+        auto bad = module;
+        bad.types[2].memberTypes.pop_back();
+        Require(!ir::Verify(bad).empty(), "missing field type accepted");
+        bad = module;
+        bad.types[2].memberTypes[1] = 9999;
+        Require(!ir::Verify(bad).empty(), "invalid field type ID accepted");
+        bad = module;
+        bad.types[2].memberTypes[1] = 2;
+        bad.types[2].memberOffsets[1] = 0;
+        Require(!ir::Verify(bad).empty(), "recursive by-value field accepted");
+        bad = module;
+        bad.types[2].memberOffsets[1] = 12;
+        Require(!ir::Verify(bad).empty(), "field exceeding record size accepted");
+        bad = module;
+        bad.types[2].base = 2;
+        Require(!ir::Verify(bad).empty(), "base type without an offset accepted");
+
+        // Distinct nominal records with the same source name need distinct text names.
+        auto duplicate = module;
+        duplicate.types.push_back(module.types[2]);
+        output.str("");
+        ir::Print(duplicate, output);
+        Require(output.str().find("Node.2 = record(i32, ptr<Node.2>)") != std::string::npos &&
+                    output.str().find("Node.4 = record(i32, ptr<Node.2>)") != std::string::npos,
+                "same-named records lost their nominal identities");
+        duplicate.types[4].name = "i32";
+        output.str("");
+        ir::Print(duplicate, output);
+        Require(output.str().find("i32.4 = record(") != std::string::npos, "record name collides with primitive type");
     }
 
     void CheckVerifier() {
@@ -188,6 +245,7 @@ int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "verifier") {
             CheckVerifier();
+            CheckRecordDefinitions();
             return 0;
         }
         Require(argc == 4 || argc == 6, "usage: ir_execution_tests source input result [global result]");

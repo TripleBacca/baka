@@ -1,6 +1,6 @@
 IR::TAC:
 module {
-  type record#16(A) size 16 align 8
+  A = record(i32, ptr<fn(i32)->i32>) size 16 align 8
   declare @printf.9: fn(ptr<i8>, ...)->i32
   declare @scanf.10: fn(ptr<i8>, ...)->i32
   function @inc.12: fn(i32)->i32 {
@@ -10,26 +10,26 @@ module {
     (add, %t2:i32, %t1:i32, 1:i32)
     (ret, _, %t2:i32, _)
   }
-  function @A.get.16: fn(ptr<record#16(A)>, i32)->i32 {
-    parameter this.26: ptr<record#16(A)>
+  function @A.get.16: fn(ptr<A>, i32)->i32 {
+    parameter this.26: ptr<A>
     parameter y.27: i32
   bb1: ; predecessors [] successors []
-    (load, %t1:ptr<record#16(A)>, &this.26:ptr<ptr<record#16(A)>>, _)
-    (offset, %t2:ptr<i32>, %t1:ptr<record#16(A)>, 0:i64)
+    (load, %t1:ptr<A>, &this.26:ptr<ptr<A>>, _)
+    (offset, %t2:ptr<i32>, %t1:ptr<A>, 0:i64)
     (load, %t3:i32, %t2:ptr<i32>, _)
     (load, %t4:i32, &y.27:ptr<i32>, _)
     (add, %t5:i32, %t3:i32, %t4:i32)
     (ret, _, %t5:i32, _)
   }
-  function @A.next.18: fn(ptr<record#16(A)>, i32)->i32 {
-    parameter this.28: ptr<record#16(A)>
+  function @A.next.18: fn(ptr<A>, i32)->i32 {
+    parameter this.28: ptr<A>
     parameter y.29: i32
   bb1: ; predecessors [] successors []
-    (load, %t1:ptr<record#16(A)>, &this.28:ptr<ptr<record#16(A)>>, _)
+    (load, %t1:ptr<A>, &this.28:ptr<ptr<A>>, _)
     (load, %t2:i32, &y.29:ptr<i32>, _)
-    (param, _, %t1:ptr<record#16(A)>, _)
+    (param, _, %t1:ptr<A>, _)
     (param, _, %t2:i32, _)
-    (call, %t3:i32, @A.get.16:ptr<fn(ptr<record#16(A)>, i32)->i32>, 2:i64)
+    (call, %t3:i32, @A.get.16:ptr<fn(ptr<A>, i32)->i32>, 2:i64)
     (ret, _, %t3:i32, _)
   }
   function @A.plain.20: fn(i32)->i32 {
@@ -41,16 +41,16 @@ module {
   }
   function @main.24: fn(i32)->i32 {
     parameter n.31: i32
-    local a.32: record#16(A)
-    local p.33: ptr<record#16(A)>
+    local a.32: A
+    local p.33: ptr<A>
     local fp.35: ptr<fn(i32)->i32>
   bb1: ; predecessors [] successors []
-    (store, _, &p.33:ptr<ptr<record#16(A)>>, &a.32:ptr<record#16(A)>)
-    (offset, %t1:ptr<i32>, &a.32:ptr<record#16(A)>, 0:i64)
+    (store, _, &p.33:ptr<ptr<A>>, &a.32:ptr<A>)
+    (offset, %t1:ptr<i32>, &a.32:ptr<A>, 0:i64)
     (load, %t2:i32, &n.31:ptr<i32>, _)
     (store, _, %t1:ptr<i32>, %t2:i32)
     (load, %t3:i32, %t1:ptr<i32>, _)
-    (offset, %t4:ptr<ptr<fn(i32)->i32>>, &a.32:ptr<record#16(A)>, 8:i64)
+    (offset, %t4:ptr<ptr<fn(i32)->i32>>, &a.32:ptr<A>, 8:i64)
     (store, _, %t4:ptr<ptr<fn(i32)->i32>>, @inc.12:ptr<fn(i32)->i32>)
     (load, %t5:ptr<fn(i32)->i32>, %t4:ptr<ptr<fn(i32)->i32>>, _)
     (store, _, &fp.35:ptr<ptr<fn(i32)->i32>>, @inc.12:ptr<fn(i32)->i32>)
@@ -58,25 +58,25 @@ module {
     (load, %t7:i32, &n.31:ptr<i32>, _)
     (param, _, %t7:i32, _)
     (call, %t8:i32, %t6:ptr<fn(i32)->i32>, 1:i64)
-    (param, _, &a.32:ptr<record#16(A)>, _)
+    (param, _, &a.32:ptr<A>, _)
     (param, _, %t8:i32, _)
-    (call, %t9:i32, @A.next.18:ptr<fn(ptr<record#16(A)>, i32)->i32>, 2:i64)
-    (load, %t10:ptr<record#16(A)>, &p.33:ptr<ptr<record#16(A)>>, _)
+    (call, %t9:i32, @A.next.18:ptr<fn(ptr<A>, i32)->i32>, 2:i64)
+    (load, %t10:ptr<A>, &p.33:ptr<ptr<A>>, _)
     (load, %t11:i32, &n.31:ptr<i32>, _)
     (param, _, %t11:i32, _)
     (call, %t12:i32, @inc.12:ptr<fn(i32)->i32>, 1:i64)
-    (param, _, %t10:ptr<record#16(A)>, _)
+    (param, _, %t10:ptr<A>, _)
     (param, _, %t12:i32, _)
-    (call, %t13:i32, @A.get.16:ptr<fn(ptr<record#16(A)>, i32)->i32>, 2:i64)
+    (call, %t13:i32, @A.get.16:ptr<fn(ptr<A>, i32)->i32>, 2:i64)
     (add, %t14:i32, %t9:i32, %t13:i32)
-    (offset, %t15:ptr<ptr<fn(i32)->i32>>, &a.32:ptr<record#16(A)>, 8:i64)
+    (offset, %t15:ptr<ptr<fn(i32)->i32>>, &a.32:ptr<A>, 8:i64)
     (load, %t16:ptr<fn(i32)->i32>, %t15:ptr<ptr<fn(i32)->i32>>, _)
     (load, %t17:i32, &n.31:ptr<i32>, _)
     (param, _, %t17:i32, _)
     (call, %t18:i32, %t16:ptr<fn(i32)->i32>, 1:i64)
     (add, %t19:i32, %t14:i32, %t18:i32)
-    (load, %t20:ptr<record#16(A)>, &p.33:ptr<ptr<record#16(A)>>, _)
-    (offset, %t21:ptr<ptr<fn(i32)->i32>>, %t20:ptr<record#16(A)>, 8:i64)
+    (load, %t20:ptr<A>, &p.33:ptr<ptr<A>>, _)
+    (offset, %t21:ptr<ptr<fn(i32)->i32>>, %t20:ptr<A>, 8:i64)
     (load, %t22:ptr<fn(i32)->i32>, %t21:ptr<ptr<fn(i32)->i32>>, _)
     (load, %t23:i32, &n.31:ptr<i32>, _)
     (param, _, %t23:i32, _)

@@ -23,6 +23,7 @@ namespace baka {
                 bool signatureValueType(TypeId id, bool definition) const;
                 bool pointerTo(Operand address, TypeId value) const;
                 bool acyclic(TypeId id);
+                bool acyclicStorage(TypeId id, std::vector<unsigned char>& storageColors);
                 void checkTypes();
                 void checkInitializer();
                 void checkGlobals();
@@ -110,20 +111,51 @@ namespace baka {
                         error("invalid type kind");
                         continue;
                     }
-                    if (type.kind != TypeKind::Record && (!type.memberOffsets.empty() || type.baseOffset)) {
+                    if (type.kind != TypeKind::Record && (!type.memberOffsets.empty() || !type.memberTypes.empty() ||
+                                                          type.baseOffset || type.base || type.isUnion)) {
                         error("record offsets attached to a non-record type");
                     }
                     if (type.kind == TypeKind::Record) {
-                        if (!type.complete && (!type.memberOffsets.empty() || type.baseOffset)) {
+                        if (!type.complete && (!type.memberOffsets.empty() || !type.memberTypes.empty() ||
+                                               type.baseOffset || type.base)) {
                             error("incomplete record has stored offsets");
                         }
-                        for (auto offset : type.memberOffsets) {
+                        if (type.memberTypes.size() != type.memberOffsets.size()) {
+                            error("record field types and offsets disagree");
+                        }
+                        for (size_t i = 0; i < type.memberOffsets.size(); ++i) {
+                            const auto offset = type.memberOffsets[i];
                             if (offset && *offset >= type.size) {
                                 error("stored member offset exceeds record size");
+                            }
+                            if (i >= type.memberTypes.size()) {
+                                continue;
+                            }
+                            const auto field = type.memberTypes[i];
+                            if (bool(offset) != bool(field)) {
+                                error("record field types and offsets disagree");
+                            } else if (field) {
+                                if (!storageType(field)) {
+                                    error("invalid record field type");
+                                } else if (offset && *offset <= type.size &&
+                                           module.type(field).size > type.size - *offset) {
+                                    error("record field exceeds record size");
+                                }
                             }
                         }
                         if (type.baseOffset && *type.baseOffset >= type.size) {
                             error("stored base offset exceeds record size");
+                        }
+                        if (bool(type.base) != bool(type.baseOffset)) {
+                            error("record base type and offset disagree");
+                        } else if (type.base) {
+                            if (!validType(type.base) || module.type(type.base).kind != TypeKind::Record ||
+                                !module.type(type.base).complete || type.isUnion) {
+                                error("invalid record base type");
+                            } else if (*type.baseOffset <= type.size &&
+                                       module.type(type.base).size > type.size - *type.baseOffset) {
+                                error("record base exceeds record size");
+                            }
                         }
                     }
                     if ((type.kind == TypeKind::Pointer || type.kind == TypeKind::Array ||
@@ -154,6 +186,41 @@ namespace baka {
                         return;
                     }
                 }
+                // Named records may recurse through pointers, but their stored
+                // fields and bases must never contain themselves by value.
+                std::vector<unsigned char> storageColors(module.types.size());
+                for (TypeId id = 1; id < module.types.size(); ++id) {
+                    if (!acyclicStorage(id, storageColors)) {
+                        error("recursive by-value record layout");
+                        return;
+                    }
+                }
+            }
+
+            bool Verifier::acyclicStorage(TypeId id, std::vector<unsigned char>& storageColors) {
+                if (storageColors[id] == 1) {
+                    return false;
+                }
+                if (storageColors[id] == 2) {
+                    return true;
+                }
+                storageColors[id] = 1;
+                const auto& type = module.type(id);
+                if (type.kind == TypeKind::Array && !acyclicStorage(type.element, storageColors)) {
+                    return false;
+                }
+                if (type.kind == TypeKind::Record) {
+                    if (type.base && !acyclicStorage(type.base, storageColors)) {
+                        return false;
+                    }
+                    for (auto field : type.memberTypes) {
+                        if (field && !acyclicStorage(field, storageColors)) {
+                            return false;
+                        }
+                    }
+                }
+                storageColors[id] = 2;
+                return true;
             }
 
             bool Verifier::acyclic(TypeId id) {

@@ -8,6 +8,24 @@
 namespace baka {
     namespace ir {
         namespace {
+            std::string RecordName(const Module& module, TypeId id) {
+                const auto& name = module.type(id).name;
+                if (name.empty()) {
+                    return "anonymous." + std::to_string(id);
+                }
+                // Source names are sufficient unless two nominal types share a
+                // name, or a source name collides with a primitive IR type name.
+                const bool primitive = name == "void" || name == "fn" || name == "ptr" || name == "record" ||
+                                       name == "union" || name == "opaque" || name == "i1" || name == "u1" ||
+                                       name == "i8" || name == "u8" || name == "i16" || name == "u16" ||
+                                       name == "i32" || name == "u32" || name == "i64" || name == "u64" ||
+                                       name == "f32" || name == "f64";
+                const bool duplicate = std::any_of(module.types.begin(), module.types.end(), [&](const Type& type) {
+                    return type.kind == TypeKind::Record && &type != &module.type(id) && type.name == name;
+                });
+                return primitive || duplicate ? name + "." + std::to_string(id) : name;
+            }
+
             std::string TypeName(const Module& module, TypeId id) {
                 const auto& type = module.type(id);
                 switch (type.kind) {
@@ -22,7 +40,7 @@ namespace baka {
                 case TypeKind::Array:
                     return "[" + std::to_string(type.count) + " x " + TypeName(module, type.element) + "]";
                 case TypeKind::Record:
-                    return "record#" + std::to_string(id) + "(" + type.name + ")";
+                    return RecordName(module, id);
                 case TypeKind::Function: {
                     std::string result = "fn(";
                     for (size_t i = 0; i < type.parameters.size(); ++i) {
@@ -159,11 +177,24 @@ namespace baka {
             for (TypeId id = 1; id < module.types.size(); ++id) {
                 const auto& type = module.type(id);
                 if (type.kind == TypeKind::Record) {
-                    output << "  type " << TypeName(module, id);
+                    output << "  " << TypeName(module, id) << " = ";
                     if (type.complete) {
-                        output << " size " << type.size << " align " << type.alignment;
+                        output << (type.isUnion ? "union(" : "record(");
+                        bool separator = false;
+                        if (type.base) {
+                            output << TypeName(module, type.base);
+                            separator = true;
+                        }
+                        for (auto field : type.memberTypes) {
+                            if (!field) {
+                                continue;
+                            }
+                            output << (separator ? ", " : "") << TypeName(module, field);
+                            separator = true;
+                        }
+                        output << ") size " << type.size << " align " << type.alignment;
                     } else {
-                        output << " opaque";
+                        output << "opaque";
                     }
                     output << '\n';
                 }

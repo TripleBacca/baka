@@ -1,37 +1,37 @@
 IR::TAC:
 module {
-  type record#15(Guard) size 1 align 1
+  Guard = record() size 1 align 1
   global live.11: i32 = zero
   global destroyed.12: i32 = zero
   declare @printf.9: fn(ptr<i8>, ...)->i32
   declare @scanf.10: fn(ptr<i8>, ...)->i32
   function @early.14: fn()->i32 {
-    local a.19: record#15(Guard)
-    local b.20: record#15(Guard)
+    local a.19: Guard
+    local b.20: Guard
   bb1: ; predecessors [] successors [bb2, bb3]
     (copy, %t2:u1, 0:u1, _)
     (copy, %t1:u1, 0:u1, _)
-    (param, _, &a.19:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &a.19:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t1:u1, 1:u1, _)
-    (param, _, &b.20:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &b.20:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t2:u1, 1:u1, _)
     (load, %t3:i32, &live.11:ptr<i32>, _)
     (if_goto, _, %t2:u1, bb2)
     (goto, _, bb3, _)
   bb2: ; predecessors [bb1] successors [bb3]
     (copy, %t2:u1, 0:u1, _)
-    (param, _, &b.20:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &b.20:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb3, _)
   bb3: ; predecessors [bb1, bb2] successors [bb4, bb5]
     (if_goto, _, %t1:u1, bb4)
     (goto, _, bb5, _)
   bb4: ; predecessors [bb3] successors [bb5]
     (copy, %t1:u1, 0:u1, _)
-    (param, _, &a.19:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &a.19:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb5, _)
   bb5: ; predecessors [bb3, bb4] successors []
     (ret, _, %t3:i32, _)
@@ -39,12 +39,12 @@ module {
   function @main.16: fn(i32)->i32 {
     parameter n.21: i32
     local i.22: i32
-    local a.23: record#15(Guard)
+    local a.23: Guard
     local j.24: i32
-    local b.25: record#15(Guard)
+    local b.25: Guard
     local i.26: i32
-    local c.27: record#15(Guard)
-    local d.28: record#15(Guard)
+    local c.27: Guard
+    local d.28: Guard
     local result.29: i32
   bb1: ; predecessors [] successors [bb2]
     (copy, %t4:u1, 0:u1, _)
@@ -59,8 +59,8 @@ module {
     (if_goto, _, %t6:u1, bb3)
     (goto, _, bb5, _)
   bb3: ; predecessors [bb2] successors [bb6]
-    (param, _, &a.23:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &a.23:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t1:u1, 1:u1, _)
     (store, _, &j.24:ptr<i32>, 0:i32)
     (goto, _, bb6, _)
@@ -78,8 +78,8 @@ module {
     (if_goto, _, %t8:u1, bb7)
     (goto, _, bb9, _)
   bb7: ; predecessors [bb6] successors [bb10, bb11]
-    (param, _, &b.25:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &b.25:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t2:u1, 1:u1, _)
     (if_goto, _, %t2:u1, bb10)
     (goto, _, bb11, _)
@@ -93,23 +93,23 @@ module {
     (goto, _, bb15, _)
   bb10: ; predecessors [bb7] successors [bb11]
     (copy, %t2:u1, 0:u1, _)
-    (param, _, &b.25:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &b.25:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb11, _)
   bb11: ; predecessors [bb7, bb10] successors [bb12, bb13]
     (if_goto, _, %t1:u1, bb12)
     (goto, _, bb13, _)
   bb12: ; predecessors [bb11] successors [bb13]
     (copy, %t1:u1, 0:u1, _)
-    (param, _, &a.23:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &a.23:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb13, _)
   bb13: ; predecessors [bb11, bb12] successors [bb4]
     (goto, _, bb4, _)
   bb14: ; predecessors [bb9] successors [bb15]
     (copy, %t1:u1, 0:u1, _)
-    (param, _, &a.23:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &a.23:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb15, _)
   bb15: ; predecessors [bb9, bb14] successors [bb4]
     (goto, _, bb4, _)
@@ -119,8 +119,8 @@ module {
     (if_goto, _, %t14:u1, bb17)
     (goto, _, bb18, _)
   bb17: ; predecessors [bb16] successors [bb20, bb22]
-    (param, _, &c.27:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &c.27:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t3:u1, 1:u1, _)
     (load, %t15:i32, &i.26:ptr<i32>, _)
     (eq, %t16:u1, %t15:i32, 0:i32)
@@ -145,21 +145,21 @@ module {
     (goto, _, bb20, _)
   bb24: ; predecessors [bb20] successors [bb25]
     (copy, %t3:u1, 0:u1, _)
-    (param, _, &c.27:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &c.27:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb25, _)
   bb25: ; predecessors [bb20, bb24] successors [bb16]
     (goto, _, bb16, _)
   bb26: ; predecessors [bb19] successors [bb27]
     (copy, %t3:u1, 0:u1, _)
-    (param, _, &c.27:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &c.27:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb27, _)
   bb27: ; predecessors [bb19, bb26] successors [bb18]
     (goto, _, bb18, _)
   bb28: ; predecessors [bb18, bb29] successors [bb31, bb32]
-    (param, _, &d.28:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &d.28:ptr<Guard>, _)
+    (call, _, @Guard.ctor.1.30:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (copy, %t4:u1, 1:u1, _)
     (if_goto, _, %t4:u1, bb31)
     (goto, _, bb32, _)
@@ -180,23 +180,23 @@ module {
     (ret, _, %t27:i32, _)
   bb31: ; predecessors [bb28] successors [bb32]
     (copy, %t4:u1, 0:u1, _)
-    (param, _, &d.28:ptr<record#15(Guard)>, _)
-    (call, _, @Guard.dtor.31:ptr<fn(ptr<record#15(Guard)>)->void>, 1:i64)
+    (param, _, &d.28:ptr<Guard>, _)
+    (call, _, @Guard.dtor.31:ptr<fn(ptr<Guard>)->void>, 1:i64)
     (goto, _, bb32, _)
   bb32: ; predecessors [bb28, bb31] successors [bb30]
     (goto, _, bb30, _)
   }
-  function @Guard.ctor.1.30: fn(ptr<record#15(Guard)>)->void internal {
-    parameter this.17: ptr<record#15(Guard)>
+  function @Guard.ctor.1.30: fn(ptr<Guard>)->void internal {
+    parameter this.17: ptr<Guard>
   bb1: ; predecessors [] successors []
-    (load, %t1:ptr<record#15(Guard)>, &this.17:ptr<ptr<record#15(Guard)>>, _)
+    (load, %t1:ptr<Guard>, &this.17:ptr<ptr<Guard>>, _)
     (load, %t2:i32, &live.11:ptr<i32>, _)
     (add, %t3:i32, %t2:i32, 1:i32)
     (store, _, &live.11:ptr<i32>, %t3:i32)
     (ret, _, _, _)
   }
-  function @Guard.dtor.31: fn(ptr<record#15(Guard)>)->void internal {
-    parameter this.18: ptr<record#15(Guard)>
+  function @Guard.dtor.31: fn(ptr<Guard>)->void internal {
+    parameter this.18: ptr<Guard>
   bb1: ; predecessors [] successors []
     (load, %t1:i32, &live.11:ptr<i32>, _)
     (sub, %t2:i32, %t1:i32, 1:i32)
@@ -204,7 +204,7 @@ module {
     (load, %t3:i32, &destroyed.12:ptr<i32>, _)
     (add, %t4:i32, %t3:i32, 1:i32)
     (store, _, &destroyed.12:ptr<i32>, %t4:i32)
-    (load, %t5:ptr<record#15(Guard)>, &this.18:ptr<ptr<record#15(Guard)>>, _)
+    (load, %t5:ptr<Guard>, &this.18:ptr<ptr<Guard>>, _)
     (ret, _, _, _)
   }
 }

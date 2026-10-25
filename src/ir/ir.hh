@@ -29,7 +29,10 @@ namespace baka {
             // follow semantic member indices; non-instance declarations have no
             // offset. No frontend arena is needed to retain layout after lowering.
             std::vector<std::optional<uint64_t>> memberOffsets;
+            std::vector<TypeId> memberTypes; // same indices; zero for non-storage members
             std::optional<uint64_t> baseOffset;
+            TypeId base = 0;
+            bool isUnion = false;
             bool operator==(const Type&) const = default;
         };
 
