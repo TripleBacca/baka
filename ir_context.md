@@ -74,7 +74,8 @@ before calling `__baka_deallocate(ptr<void>)`; null skips both. Allocation failu
 returns null and skips initialization. Heap objects are not registered for scope
 cleanup or module-exit destruction.
 
-The module starts with named aggregate definitions. References use the declared
+The printed IR describes one translation unit directly, without a `module { ... }`
+wrapper. It starts with named aggregate definitions. References use the declared
 name rather than repeating an internal numeric record ID:
 
 ```text
@@ -117,7 +118,7 @@ temporary. Important operand roles are:
 | `Store` | No result; left is the destination address; right is the captured value |
 | `AddressOffset` | Result is a pointer; left is a pointer; right is an integer byte offset |
 | `Param` (`param`) | No result; left is one captured argument value; right is absent |
-| `Call` | Left is a callable pointer; right is an integer literal argument count; result is absent for void |
+| `Call` | Left is a callable pointer; right is absent; result is absent for void |
 | `ZeroMemory` | No result; left is a destination pointer; right is a byte count |
 | `JumpIf` (`if_goto`) | No result; left is a scalar condition; right is the true block |
 | `Jump` (`goto`) | No result; left is the destination block |
@@ -132,24 +133,32 @@ immediately followed by `call`. For `f(a, g(b))`, the essential sequence is:
 t1 = load a
 t2 = load b
 param t2
-t3 = call g, 1
+t3 = call g
 param t1
 param t3
-t4 = call f, 2
+t4 = call f
 ```
 
-Each call consumes exactly its preceding params, in order; zero-argument calls
-have no params. No instruction or block boundary may interrupt a param sequence.
+Each call consumes its entire preceding param sequence, in order, with no explicit
+argument-count operand. The printed callee is just its function name or indirect-call
+temporary; its signature remains in the typed IR and function declaration.
+Zero-argument calls have no params. No instruction or block boundary may interrupt
+a param sequence.
 This includes calls through function pointers and constructor/destructor calls;
 instance methods pass `this` as their first param. Records remain captured values.
-The verifier checks grouping, counts, fixed argument types and result types;
-variadic extras are ordinary params after semantic promotions.
+The verifier checks grouping, arity against the callee signature, fixed argument
+types and result types; variadic extras are ordinary params after semantic promotions.
 
 A conditional block ends with `if_goto condition, true_block` followed by
 `goto false_block`. Both instructions form its control-flow tail; the verifier
 rejects conditional jumps elsewhere. CFG construction includes both successors,
 and constant folding reduces the pair to one goto. There is no implicit fallthrough
 between blocks.
+
+The printed function body is a flat instruction listing. Only jump destinations
+receive labels such as `L2:`; straight-line code has no labels. Predecessor/successor
+lists and basic-block headers are omitted. The in-memory IR retains blocks and CFG
+edges for verification, optimization and code generation.
 
 `Uses()` includes param values and memory destination addresses; params, calls
 and memory operations remain observable during optimization. Unary negation,

@@ -390,8 +390,11 @@ namespace baka {
                             validArguments &= errors.size() == errorsBefore;
                         } else if (in.opcode == Opcode::Call) {
                             if (validArguments && errors.size() == errorsBefore) {
-                                require(in, in.right.integer == arguments.size(), "call param count mismatch");
                                 const auto& target = module.type(module.type(in.left.type).element);
+                                require(in,
+                                        arguments.size() >= target.parameters.size() &&
+                                            (target.variadic || arguments.size() == target.parameters.size()),
+                                        "call arity mismatch");
                                 for (size_t a = 0; a < arguments.size() && a < target.parameters.size(); ++a) {
                                     require(in, arguments[a].type == target.parameters[a],
                                             "call argument type mismatch");
@@ -537,14 +540,8 @@ namespace baka {
                 case Opcode::Call: {
                     auto pointer = in.left ? module.type(in.left.type) : Type{};
                     auto target = pointer.kind == TypeKind::Pointer ? module.type(pointer.element) : Type{};
-                    const bool count =
-                        in.right.kind == OperandKind::Integer && module.type(in.right.type).kind == TypeKind::Integer;
-                    require(in, target.kind == TypeKind::Function && count, "invalid call target/count");
-                    if (target.kind == TypeKind::Function && count) {
-                        require(in,
-                                in.right.integer >= target.parameters.size() &&
-                                    (target.variadic || in.right.integer == target.parameters.size()),
-                                "call arity mismatch");
+                    require(in, target.kind == TypeKind::Function && !in.right, "invalid call operands");
+                    if (target.kind == TypeKind::Function) {
                         require(in,
                                 module.type(target.element).kind == TypeKind::Void
                                     ? !in.result

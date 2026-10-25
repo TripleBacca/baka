@@ -1,154 +1,144 @@
 IR::TAC:
-module {
-  global trace.11: i32 = zero
-  declare @printf.9: fn(ptr<i8>, ...)->i32
-  declare @scanf.10: fn(ptr<i8>, ...)->i32
-  function @step.13: fn(i32)->i32 {
-    parameter value.31: i32
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &trace.11:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 10:i32)
-    (load, %t3:i32, &value.31:ptr<i32>, _)
-    (add, %t4:i32, %t2:i32, %t3:i32)
-    (store, _, &trace.11:ptr<i32>, %t4:i32)
-    (load, %t5:i32, &trace.11:ptr<i32>, _)
-    (load, %t6:i32, &value.31:ptr<i32>, _)
-    (ret, _, %t6:i32, _)
-  }
-  function @pack.17: fn(i32, i32, i32)->i32 {
-    parameter a.32: i32
-    parameter b.33: i32
-    parameter c.34: i32
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &a.32:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 100:i32)
-    (load, %t3:i32, &b.33:ptr<i32>, _)
-    (mul, %t4:i32, %t3:i32, 10:i32)
-    (add, %t5:i32, %t2:i32, %t4:i32)
-    (load, %t6:i32, &c.34:ptr<i32>, _)
-    (add, %t7:i32, %t5:i32, %t6:i32)
-    (ret, _, %t7:i32, _)
-  }
-  function @zero.18: fn()->i32 {
-  bb1: ; predecessors [] successors []
-    (ret, _, 7:i32, _)
-  }
-  function @bump.20: fn(ptr<i32>)->void {
-    parameter value.35: ptr<i32>
-  bb1: ; predecessors [] successors []
-    (load, %t1:ptr<i32>, &value.35:ptr<ptr<i32>>, _)
-    (load, %t2:i32, %t1:ptr<i32>, _)
-    (add, %t3:i32, %t2:i32, 1:i32)
-    (store, _, %t1:ptr<i32>, %t3:i32)
-    (load, %t4:i32, %t1:ptr<i32>, _)
-    (ret, _, _, _)
-  }
-  function @factorial.22: fn(i32)->i32 {
-    parameter n.36: i32
-  bb1: ; predecessors [] successors [bb3, bb4]
-    (load, %t1:i32, &n.36:ptr<i32>, _)
-    (le, %t2:u1, %t1:i32, 1:i32)
-    (if_goto, _, %t2:u1, bb3)
-    (goto, _, bb4, _)
-  bb2: ; predecessors [bb4] successors []
-    (load, %t3:i32, &n.36:ptr<i32>, _)
-    (load, %t4:i32, &n.36:ptr<i32>, _)
-    (sub, %t5:i32, %t4:i32, 1:i32)
-    (param, _, %t5:i32, _)
-    (call, %t6:i32, @factorial.22:ptr<fn(i32)->i32>, 1:i64)
-    (mul, %t7:i32, %t3:i32, %t6:i32)
-    (ret, _, %t7:i32, _)
-  bb3: ; predecessors [bb1] successors []
-    (ret, _, 1:i32, _)
-  bb4: ; predecessors [bb1] successors [bb2]
-    (goto, _, bb2, _)
-  }
-  function @first.25: fn(i32, i32)->i32 {
-    parameter a.37: i32
-    parameter b.38: i32
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &a.37:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 10:i32)
-    (load, %t3:i32, &b.38:ptr<i32>, _)
-    (add, %t4:i32, %t2:i32, %t3:i32)
-    (ret, _, %t4:i32, _)
-  }
-  function @second.28: fn(i32, i32)->i32 {
-    parameter a.39: i32
-    parameter b.40: i32
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &a.39:ptr<i32>, _)
-    (add, %t2:i32, 1000:i32, %t1:i32)
-    (load, %t3:i32, &b.40:ptr<i32>, _)
-    (add, %t4:i32, %t2:i32, %t3:i32)
-    (ret, _, %t4:i32, _)
-  }
-  function @main.30: fn(i32)->i32 {
-    parameter n.41: i32
-    local x.42: i32
-    local result.43: i32
-    local fp.46: ptr<fn(i32, i32)->i32>
-    local indirect.47: i32
-  bb1: ; predecessors [] successors [bb2, bb3]
-    (store, _, &x.42:ptr<i32>, 1:i32)
-    (load, %t1:i32, &x.42:ptr<i32>, _)
-    (add, %t2:i32, %t1:i32, 1:i32)
-    (store, _, &x.42:ptr<i32>, %t2:i32)
-    (param, _, 2:i32, _)
-    (call, %t3:i32, @step.13:ptr<fn(i32)->i32>, 1:i64)
-    (load, %t4:i32, &x.42:ptr<i32>, _)
-    (add, %t5:i32, %t4:i32, 1:i32)
-    (store, _, &x.42:ptr<i32>, %t5:i32)
-    (param, _, 3:i32, _)
-    (call, %t6:i32, @step.13:ptr<fn(i32)->i32>, 1:i64)
-    (param, _, %t3:i32, _)
-    (param, _, %t4:i32, _)
-    (param, _, %t6:i32, _)
-    (call, %t7:i32, @pack.17:ptr<fn(i32, i32, i32)->i32>, 3:i64)
-    (load, %t8:i32, &n.41:ptr<i32>, _)
-    (cast, %t9:u1, %t8:i32, _)
-    (if_goto, _, %t9:u1, bb2)
-    (goto, _, bb3, _)
-  bb2: ; predecessors [bb1] successors [bb4]
-    (call, %t11:i32, @zero.18:ptr<fn()->i32>, 0:i64)
-    (copy, %t10:i32, %t11:i32, _)
-    (goto, _, bb4, _)
-  bb3: ; predecessors [bb1] successors [bb4]
-    (param, _, 3:i32, _)
-    (call, %t12:i32, @factorial.22:ptr<fn(i32)->i32>, 1:i64)
-    (copy, %t10:i32, %t12:i32, _)
-    (goto, _, bb4, _)
-  bb4: ; predecessors [bb2, bb3] successors []
-    (param, _, %t1:i32, _)
-    (param, _, %t7:i32, _)
-    (param, _, %t10:i32, _)
-    (call, %t13:i32, @pack.17:ptr<fn(i32, i32, i32)->i32>, 3:i64)
-    (store, _, &result.43:ptr<i32>, %t13:i32)
-    (param, _, &x.42:ptr<i32>, _)
-    (call, _, @bump.20:ptr<fn(ptr<i32>)->void>, 1:i64)
-    (store, _, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, @first.25:ptr<fn(i32, i32)->i32>)
-    (load, %t14:ptr<fn(i32, i32)->i32>, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, _)
-    (load, %t15:i32, &x.42:ptr<i32>, _)
-    (store, _, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, @second.28:ptr<fn(i32, i32)->i32>)
-    (load, %t16:ptr<fn(i32, i32)->i32>, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, _)
-    (load, %t17:i32, &x.42:ptr<i32>, _)
-    (add, %t18:i32, %t17:i32, 1:i32)
-    (store, _, &x.42:ptr<i32>, %t18:i32)
-    (param, _, %t15:i32, _)
-    (param, _, %t17:i32, _)
-    (call, %t19:i32, %t14:ptr<fn(i32, i32)->i32>, 2:i64)
-    (store, _, &indirect.47:ptr<i32>, %t19:i32)
-    (load, %t20:i32, &result.43:ptr<i32>, _)
-    (load, %t21:i32, &n.41:ptr<i32>, _)
-    (param, _, %t21:i32, _)
-    (call, %t22:i32, @factorial.22:ptr<fn(i32)->i32>, 1:i64)
-    (add, %t23:i32, %t20:i32, %t22:i32)
-    (load, %t24:i32, &x.42:ptr<i32>, _)
-    (add, %t25:i32, %t23:i32, %t24:i32)
-    (load, %t26:i32, &trace.11:ptr<i32>, _)
-    (add, %t27:i32, %t25:i32, %t26:i32)
-    (load, %t28:i32, &indirect.47:ptr<i32>, _)
-    (add, %t29:i32, %t27:i32, %t28:i32)
-    (ret, _, %t29:i32, _)
-  }
+global trace.11: i32 = zero
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+function @step.13: fn(i32)->i32 {
+  parameter value.31: i32
+  (load, %t1:i32, &trace.11:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (load, %t3:i32, &value.31:ptr<i32>, _)
+  (add, %t4:i32, %t2:i32, %t3:i32)
+  (store, _, &trace.11:ptr<i32>, %t4:i32)
+  (load, %t5:i32, &trace.11:ptr<i32>, _)
+  (load, %t6:i32, &value.31:ptr<i32>, _)
+  (ret, _, %t6:i32, _)
+}
+function @pack.17: fn(i32, i32, i32)->i32 {
+  parameter a.32: i32
+  parameter b.33: i32
+  parameter c.34: i32
+  (load, %t1:i32, &a.32:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 100:i32)
+  (load, %t3:i32, &b.33:ptr<i32>, _)
+  (mul, %t4:i32, %t3:i32, 10:i32)
+  (add, %t5:i32, %t2:i32, %t4:i32)
+  (load, %t6:i32, &c.34:ptr<i32>, _)
+  (add, %t7:i32, %t5:i32, %t6:i32)
+  (ret, _, %t7:i32, _)
+}
+function @zero.18: fn()->i32 {
+  (ret, _, 7:i32, _)
+}
+function @bump.20: fn(ptr<i32>)->void {
+  parameter value.35: ptr<i32>
+  (load, %t1:ptr<i32>, &value.35:ptr<ptr<i32>>, _)
+  (load, %t2:i32, %t1:ptr<i32>, _)
+  (add, %t3:i32, %t2:i32, 1:i32)
+  (store, _, %t1:ptr<i32>, %t3:i32)
+  (load, %t4:i32, %t1:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @factorial.22: fn(i32)->i32 {
+  parameter n.36: i32
+  (load, %t1:i32, &n.36:ptr<i32>, _)
+  (le, %t2:u1, %t1:i32, 1:i32)
+  (if_goto, _, %t2:u1, L3)
+  (goto, _, L4, _)
+L2:
+  (load, %t3:i32, &n.36:ptr<i32>, _)
+  (load, %t4:i32, &n.36:ptr<i32>, _)
+  (sub, %t5:i32, %t4:i32, 1:i32)
+  (param, _, %t5:i32, _)
+  (call, %t6:i32, @factorial.22, _)
+  (mul, %t7:i32, %t3:i32, %t6:i32)
+  (ret, _, %t7:i32, _)
+L3:
+  (ret, _, 1:i32, _)
+L4:
+  (goto, _, L2, _)
+}
+function @first.25: fn(i32, i32)->i32 {
+  parameter a.37: i32
+  parameter b.38: i32
+  (load, %t1:i32, &a.37:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (load, %t3:i32, &b.38:ptr<i32>, _)
+  (add, %t4:i32, %t2:i32, %t3:i32)
+  (ret, _, %t4:i32, _)
+}
+function @second.28: fn(i32, i32)->i32 {
+  parameter a.39: i32
+  parameter b.40: i32
+  (load, %t1:i32, &a.39:ptr<i32>, _)
+  (add, %t2:i32, 1000:i32, %t1:i32)
+  (load, %t3:i32, &b.40:ptr<i32>, _)
+  (add, %t4:i32, %t2:i32, %t3:i32)
+  (ret, _, %t4:i32, _)
+}
+function @main.30: fn(i32)->i32 {
+  parameter n.41: i32
+  local x.42: i32
+  local result.43: i32
+  local fp.46: ptr<fn(i32, i32)->i32>
+  local indirect.47: i32
+  (store, _, &x.42:ptr<i32>, 1:i32)
+  (load, %t1:i32, &x.42:ptr<i32>, _)
+  (add, %t2:i32, %t1:i32, 1:i32)
+  (store, _, &x.42:ptr<i32>, %t2:i32)
+  (param, _, 2:i32, _)
+  (call, %t3:i32, @step.13, _)
+  (load, %t4:i32, &x.42:ptr<i32>, _)
+  (add, %t5:i32, %t4:i32, 1:i32)
+  (store, _, &x.42:ptr<i32>, %t5:i32)
+  (param, _, 3:i32, _)
+  (call, %t6:i32, @step.13, _)
+  (param, _, %t3:i32, _)
+  (param, _, %t4:i32, _)
+  (param, _, %t6:i32, _)
+  (call, %t7:i32, @pack.17, _)
+  (load, %t8:i32, &n.41:ptr<i32>, _)
+  (cast, %t9:u1, %t8:i32, _)
+  (if_goto, _, %t9:u1, L2)
+  (goto, _, L3, _)
+L2:
+  (call, %t11:i32, @zero.18, _)
+  (copy, %t10:i32, %t11:i32, _)
+  (goto, _, L4, _)
+L3:
+  (param, _, 3:i32, _)
+  (call, %t12:i32, @factorial.22, _)
+  (copy, %t10:i32, %t12:i32, _)
+  (goto, _, L4, _)
+L4:
+  (param, _, %t1:i32, _)
+  (param, _, %t7:i32, _)
+  (param, _, %t10:i32, _)
+  (call, %t13:i32, @pack.17, _)
+  (store, _, &result.43:ptr<i32>, %t13:i32)
+  (param, _, &x.42:ptr<i32>, _)
+  (call, _, @bump.20, _)
+  (store, _, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, @first.25:ptr<fn(i32, i32)->i32>)
+  (load, %t14:ptr<fn(i32, i32)->i32>, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (load, %t15:i32, &x.42:ptr<i32>, _)
+  (store, _, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, @second.28:ptr<fn(i32, i32)->i32>)
+  (load, %t16:ptr<fn(i32, i32)->i32>, &fp.46:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (load, %t17:i32, &x.42:ptr<i32>, _)
+  (add, %t18:i32, %t17:i32, 1:i32)
+  (store, _, &x.42:ptr<i32>, %t18:i32)
+  (param, _, %t15:i32, _)
+  (param, _, %t17:i32, _)
+  (call, %t19:i32, %t14, _)
+  (store, _, &indirect.47:ptr<i32>, %t19:i32)
+  (load, %t20:i32, &result.43:ptr<i32>, _)
+  (load, %t21:i32, &n.41:ptr<i32>, _)
+  (param, _, %t21:i32, _)
+  (call, %t22:i32, @factorial.22, _)
+  (add, %t23:i32, %t20:i32, %t22:i32)
+  (load, %t24:i32, &x.42:ptr<i32>, _)
+  (add, %t25:i32, %t23:i32, %t24:i32)
+  (load, %t26:i32, &trace.11:ptr<i32>, _)
+  (add, %t27:i32, %t25:i32, %t26:i32)
+  (load, %t28:i32, &indirect.47:ptr<i32>, _)
+  (add, %t29:i32, %t27:i32, %t28:i32)
+  (ret, _, %t29:i32, _)
 }

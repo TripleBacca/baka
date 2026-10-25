@@ -149,23 +149,20 @@ namespace {
         calls.functions.push_back(callee);
         calls.functions[0].temporaries.push_back(1);
         calls.functions[0].blocks[0].instructions = {{ir::Opcode::Param, {}, one},
-                                                     ir::Instruction::call(temporary, target, one),
+                                                     ir::Instruction::call(temporary, target),
                                                      {ir::Opcode::Return, {}, temporary}};
         Require(ir::Verify(calls).empty(), "valid param/call sequence rejected");
 
         bad = calls;
         bad.functions[0].blocks[0].instructions.erase(bad.functions[0].blocks[0].instructions.begin());
-        rejected(bad, "call param count mismatch");
+        rejected(bad, "call arity mismatch");
         bad = calls;
         bad.functions[0].blocks[0].instructions.insert(bad.functions[0].blocks[0].instructions.begin(),
                                                        {ir::Opcode::Param, {}, one});
-        rejected(bad, "call param count mismatch");
-        bad = calls;
-        bad.functions[0].blocks[0].instructions[1].right = zero;
         rejected(bad, "call arity mismatch");
         bad = calls;
-        bad.functions[0].blocks[0].instructions[1].right = temporary;
-        rejected(bad, "invalid call target/count");
+        bad.functions[0].blocks[0].instructions[1].right = one;
+        rejected(bad, "invalid call operands");
         bad = calls;
         bad.functions[0].blocks[0].instructions.insert(bad.functions[0].blocks[0].instructions.begin() + 1,
                                                        {ir::Opcode::Copy, temporary, one});
@@ -185,9 +182,9 @@ namespace {
         bad.functions[0].blocks[0].instructions = {{ir::Opcode::Param, {}, one},
                                                    {ir::Opcode::Jump, {}, {ir::OperandKind::Block, 0, 2}}};
         bad.functions[0].blocks.push_back(
-            {2, {ir::Instruction::call(temporary, target, one), {ir::Opcode::Return, {}, temporary}}});
+            {2, {ir::Instruction::call(temporary, target), {ir::Opcode::Return, {}, temporary}}});
         ir::BuildCFG(bad.functions[0]);
-        rejected(bad, "call param count mismatch");
+        rejected(bad, "call arity mismatch");
 
         ir::Type floating;
         floating.kind = ir::TypeKind::Floating;
@@ -204,10 +201,13 @@ namespace {
         variadic.functions[1].signature = variadic.function(1, {1}, true);
         auto& variadicInstructions = variadic.functions[0].blocks[0].instructions;
         variadicInstructions[1].left.type = variadic.pointer(variadic.functions[1].signature);
-        variadicInstructions[1].right.integer = 2;
         variadicInstructions.insert(variadicInstructions.begin() + 1,
                                     {ir::Opcode::Param, {}, {ir::OperandKind::Floating, floatingId}});
         Require(ir::Verify(variadic).empty(), "valid variadic params rejected");
+        bad = variadic;
+        bad.functions[0].blocks[0].instructions.erase(bad.functions[0].blocks[0].instructions.begin(),
+                                                      bad.functions[0].blocks[0].instructions.begin() + 2);
+        rejected(bad, "call arity mismatch");
 
         // A zero-argument call directly after another call consumes no stale params.
         ir::Function noArguments;
@@ -217,7 +217,7 @@ namespace {
         const ir::Operand noArgumentsTarget{ir::OperandKind::Function, calls.pointer(noArguments.signature), 3};
         calls.functions.push_back(noArguments);
         calls.functions[0].blocks[0].instructions.insert(calls.functions[0].blocks[0].instructions.begin() + 2,
-                                                         ir::Instruction::call(temporary, noArgumentsTarget, zero));
+                                                         ir::Instruction::call(temporary, noArgumentsTarget));
         Require(ir::Verify(calls).empty(), "consecutive/zero-argument call rejected");
 
         // Both edges of if_goto/goto participate in CFG validation and folding.

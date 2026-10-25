@@ -1,139 +1,130 @@
 IR::TAC:
-module {
-  Base = record(i32) size 4 align 4
-  Member = record(i32) size 4 align 4
-  Derived = record(Base, Member, i32) size 12 align 4
-  global trace.11: i32 = zero
-  declare @printf.9: fn(ptr<i8>, ...)->i32
-  declare @scanf.10: fn(ptr<i8>, ...)->i32
-  function @main.20: fn(i32)->i32 {
-    parameter n.27: i32
-    local value.28: Derived
-  bb1: ; predecessors [] successors [bb3, bb4]
-    (copy, %t1:u1, 0:u1, _)
-    (param, _, &value.28:ptr<Derived>, _)
-    (call, _, @Derived.ctor.3.33:ptr<fn(ptr<Derived>)->void>, 1:i64)
-    (copy, %t1:u1, 1:u1, _)
-    (offset, %t2:ptr<i32>, &value.28:ptr<Derived>, 8:i64)
-    (load, %t3:i32, %t2:ptr<i32>, _)
-    (ne, %t4:u1, %t3:i32, 3:i32)
-    (if_goto, _, %t4:u1, bb3)
-    (goto, _, bb4, _)
-  bb2: ; predecessors [bb4] successors [bb7, bb8]
-    (if_goto, _, %t1:u1, bb7)
-    (goto, _, bb8, _)
-  bb3: ; predecessors [bb1] successors [bb5, bb6]
-    (neg, %t5:i32, 1:i32, _)
-    (if_goto, _, %t1:u1, bb5)
-    (goto, _, bb6, _)
-  bb4: ; predecessors [bb1] successors [bb2]
-    (goto, _, bb2, _)
-  bb5: ; predecessors [bb3] successors [bb6]
-    (copy, %t1:u1, 0:u1, _)
-    (param, _, &value.28:ptr<Derived>, _)
-    (call, _, @Derived.dtor.34:ptr<fn(ptr<Derived>)->void>, 1:i64)
-    (goto, _, bb6, _)
-  bb6: ; predecessors [bb3, bb5] successors []
-    (ret, _, %t5:i32, _)
-  bb7: ; predecessors [bb2] successors [bb8]
-    (copy, %t1:u1, 0:u1, _)
-    (param, _, &value.28:ptr<Derived>, _)
-    (call, _, @Derived.dtor.34:ptr<fn(ptr<Derived>)->void>, 1:i64)
-    (goto, _, bb8, _)
-  bb8: ; predecessors [bb2, bb7] successors []
-    (load, %t6:i32, &trace.11:ptr<i32>, _)
-    (ret, _, %t6:i32, _)
-  }
-  function @Base.ctor.2.29: fn(ptr<Base>)->void internal {
-    parameter this.21: ptr<Base>
-  bb1: ; predecessors [] successors []
-    (load, %t1:ptr<Base>, &this.21:ptr<ptr<Base>>, _)
-    (offset, %t2:ptr<i32>, %t1:ptr<Base>, 0:i64)
-    (store, _, %t2:ptr<i32>, 1:i32)
-    (load, %t3:i32, &trace.11:ptr<i32>, _)
-    (mul, %t4:i32, %t3:i32, 10:i32)
-    (add, %t5:i32, %t4:i32, 1:i32)
-    (store, _, &trace.11:ptr<i32>, %t5:i32)
-    (load, %t6:i32, &trace.11:ptr<i32>, _)
-    (ret, _, _, _)
-  }
-  function @Base.dtor.30: fn(ptr<Base>)->void internal {
-    parameter this.22: ptr<Base>
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &trace.11:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 10:i32)
-    (add, %t3:i32, %t2:i32, 6:i32)
-    (store, _, &trace.11:ptr<i32>, %t3:i32)
-    (load, %t4:i32, &trace.11:ptr<i32>, _)
-    (load, %t5:ptr<Base>, &this.22:ptr<ptr<Base>>, _)
-    (ret, _, _, _)
-  }
-  function @Member.ctor.2.31: fn(ptr<Member>)->void internal {
-    parameter this.23: ptr<Member>
-  bb1: ; predecessors [] successors []
-    (load, %t1:ptr<Member>, &this.23:ptr<ptr<Member>>, _)
-    (offset, %t2:ptr<i32>, %t1:ptr<Member>, 0:i64)
-    (store, _, %t2:ptr<i32>, 2:i32)
-    (load, %t3:i32, &trace.11:ptr<i32>, _)
-    (mul, %t4:i32, %t3:i32, 10:i32)
-    (add, %t5:i32, %t4:i32, 2:i32)
-    (store, _, &trace.11:ptr<i32>, %t5:i32)
-    (load, %t6:i32, &trace.11:ptr<i32>, _)
-    (ret, _, _, _)
-  }
-  function @Member.dtor.32: fn(ptr<Member>)->void internal {
-    parameter this.24: ptr<Member>
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &trace.11:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 10:i32)
-    (add, %t3:i32, %t2:i32, 5:i32)
-    (store, _, &trace.11:ptr<i32>, %t3:i32)
-    (load, %t4:i32, &trace.11:ptr<i32>, _)
-    (load, %t5:ptr<Member>, &this.24:ptr<ptr<Member>>, _)
-    (ret, _, _, _)
-  }
-  function @Derived.ctor.3.33: fn(ptr<Derived>)->void internal {
-    parameter this.25: ptr<Derived>
-  bb1: ; predecessors [] successors []
-    (load, %t1:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
-    (offset, %t2:ptr<Base>, %t1:ptr<Derived>, 0:i64)
-    (param, _, %t2:ptr<Base>, _)
-    (call, _, @Base.ctor.2.29:ptr<fn(ptr<Base>)->void>, 1:i64)
-    (offset, %t3:ptr<Member>, %t1:ptr<Derived>, 4:i64)
-    (param, _, %t3:ptr<Member>, _)
-    (call, _, @Member.ctor.2.31:ptr<fn(ptr<Member>)->void>, 1:i64)
-    (offset, %t4:ptr<i32>, %t1:ptr<Derived>, 8:i64)
-    (load, %t5:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
-    (offset, %t6:ptr<i32>, %t5:ptr<Derived>, 0:i64)
-    (load, %t7:i32, %t6:ptr<i32>, _)
-    (load, %t8:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
-    (offset, %t9:ptr<Member>, %t8:ptr<Derived>, 4:i64)
-    (offset, %t10:ptr<i32>, %t9:ptr<Member>, 0:i64)
-    (load, %t11:i32, %t10:ptr<i32>, _)
-    (add, %t12:i32, %t7:i32, %t11:i32)
-    (store, _, %t4:ptr<i32>, %t12:i32)
-    (load, %t13:i32, &trace.11:ptr<i32>, _)
-    (mul, %t14:i32, %t13:i32, 10:i32)
-    (add, %t15:i32, %t14:i32, 3:i32)
-    (store, _, &trace.11:ptr<i32>, %t15:i32)
-    (load, %t16:i32, &trace.11:ptr<i32>, _)
-    (ret, _, _, _)
-  }
-  function @Derived.dtor.34: fn(ptr<Derived>)->void internal {
-    parameter this.26: ptr<Derived>
-  bb1: ; predecessors [] successors []
-    (load, %t1:i32, &trace.11:ptr<i32>, _)
-    (mul, %t2:i32, %t1:i32, 10:i32)
-    (add, %t3:i32, %t2:i32, 4:i32)
-    (store, _, &trace.11:ptr<i32>, %t3:i32)
-    (load, %t4:i32, &trace.11:ptr<i32>, _)
-    (load, %t5:ptr<Derived>, &this.26:ptr<ptr<Derived>>, _)
-    (offset, %t6:ptr<Member>, %t5:ptr<Derived>, 4:i64)
-    (param, _, %t6:ptr<Member>, _)
-    (call, _, @Member.dtor.32:ptr<fn(ptr<Member>)->void>, 1:i64)
-    (offset, %t7:ptr<Base>, %t5:ptr<Derived>, 0:i64)
-    (param, _, %t7:ptr<Base>, _)
-    (call, _, @Base.dtor.30:ptr<fn(ptr<Base>)->void>, 1:i64)
-    (ret, _, _, _)
-  }
+Base = record(i32) size 4 align 4
+Member = record(i32) size 4 align 4
+Derived = record(Base, Member, i32) size 12 align 4
+global trace.11: i32 = zero
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+function @main.20: fn(i32)->i32 {
+  parameter n.27: i32
+  local value.28: Derived
+  (copy, %t1:u1, 0:u1, _)
+  (param, _, &value.28:ptr<Derived>, _)
+  (call, _, @Derived.ctor.3.33, _)
+  (copy, %t1:u1, 1:u1, _)
+  (offset, %t2:ptr<i32>, &value.28:ptr<Derived>, 8:i64)
+  (load, %t3:i32, %t2:ptr<i32>, _)
+  (ne, %t4:u1, %t3:i32, 3:i32)
+  (if_goto, _, %t4:u1, L3)
+  (goto, _, L4, _)
+L2:
+  (if_goto, _, %t1:u1, L7)
+  (goto, _, L8, _)
+L3:
+  (neg, %t5:i32, 1:i32, _)
+  (if_goto, _, %t1:u1, L5)
+  (goto, _, L6, _)
+L4:
+  (goto, _, L2, _)
+L5:
+  (copy, %t1:u1, 0:u1, _)
+  (param, _, &value.28:ptr<Derived>, _)
+  (call, _, @Derived.dtor.34, _)
+  (goto, _, L6, _)
+L6:
+  (ret, _, %t5:i32, _)
+L7:
+  (copy, %t1:u1, 0:u1, _)
+  (param, _, &value.28:ptr<Derived>, _)
+  (call, _, @Derived.dtor.34, _)
+  (goto, _, L8, _)
+L8:
+  (load, %t6:i32, &trace.11:ptr<i32>, _)
+  (ret, _, %t6:i32, _)
+}
+function @Base.ctor.2.29: fn(ptr<Base>)->void internal {
+  parameter this.21: ptr<Base>
+  (load, %t1:ptr<Base>, &this.21:ptr<ptr<Base>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Base>, 0:i64)
+  (store, _, %t2:ptr<i32>, 1:i32)
+  (load, %t3:i32, &trace.11:ptr<i32>, _)
+  (mul, %t4:i32, %t3:i32, 10:i32)
+  (add, %t5:i32, %t4:i32, 1:i32)
+  (store, _, &trace.11:ptr<i32>, %t5:i32)
+  (load, %t6:i32, &trace.11:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Base.dtor.30: fn(ptr<Base>)->void internal {
+  parameter this.22: ptr<Base>
+  (load, %t1:i32, &trace.11:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (add, %t3:i32, %t2:i32, 6:i32)
+  (store, _, &trace.11:ptr<i32>, %t3:i32)
+  (load, %t4:i32, &trace.11:ptr<i32>, _)
+  (load, %t5:ptr<Base>, &this.22:ptr<ptr<Base>>, _)
+  (ret, _, _, _)
+}
+function @Member.ctor.2.31: fn(ptr<Member>)->void internal {
+  parameter this.23: ptr<Member>
+  (load, %t1:ptr<Member>, &this.23:ptr<ptr<Member>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Member>, 0:i64)
+  (store, _, %t2:ptr<i32>, 2:i32)
+  (load, %t3:i32, &trace.11:ptr<i32>, _)
+  (mul, %t4:i32, %t3:i32, 10:i32)
+  (add, %t5:i32, %t4:i32, 2:i32)
+  (store, _, &trace.11:ptr<i32>, %t5:i32)
+  (load, %t6:i32, &trace.11:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Member.dtor.32: fn(ptr<Member>)->void internal {
+  parameter this.24: ptr<Member>
+  (load, %t1:i32, &trace.11:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (add, %t3:i32, %t2:i32, 5:i32)
+  (store, _, &trace.11:ptr<i32>, %t3:i32)
+  (load, %t4:i32, &trace.11:ptr<i32>, _)
+  (load, %t5:ptr<Member>, &this.24:ptr<ptr<Member>>, _)
+  (ret, _, _, _)
+}
+function @Derived.ctor.3.33: fn(ptr<Derived>)->void internal {
+  parameter this.25: ptr<Derived>
+  (load, %t1:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
+  (offset, %t2:ptr<Base>, %t1:ptr<Derived>, 0:i64)
+  (param, _, %t2:ptr<Base>, _)
+  (call, _, @Base.ctor.2.29, _)
+  (offset, %t3:ptr<Member>, %t1:ptr<Derived>, 4:i64)
+  (param, _, %t3:ptr<Member>, _)
+  (call, _, @Member.ctor.2.31, _)
+  (offset, %t4:ptr<i32>, %t1:ptr<Derived>, 8:i64)
+  (load, %t5:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
+  (offset, %t6:ptr<i32>, %t5:ptr<Derived>, 0:i64)
+  (load, %t7:i32, %t6:ptr<i32>, _)
+  (load, %t8:ptr<Derived>, &this.25:ptr<ptr<Derived>>, _)
+  (offset, %t9:ptr<Member>, %t8:ptr<Derived>, 4:i64)
+  (offset, %t10:ptr<i32>, %t9:ptr<Member>, 0:i64)
+  (load, %t11:i32, %t10:ptr<i32>, _)
+  (add, %t12:i32, %t7:i32, %t11:i32)
+  (store, _, %t4:ptr<i32>, %t12:i32)
+  (load, %t13:i32, &trace.11:ptr<i32>, _)
+  (mul, %t14:i32, %t13:i32, 10:i32)
+  (add, %t15:i32, %t14:i32, 3:i32)
+  (store, _, &trace.11:ptr<i32>, %t15:i32)
+  (load, %t16:i32, &trace.11:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Derived.dtor.34: fn(ptr<Derived>)->void internal {
+  parameter this.26: ptr<Derived>
+  (load, %t1:i32, &trace.11:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (add, %t3:i32, %t2:i32, 4:i32)
+  (store, _, &trace.11:ptr<i32>, %t3:i32)
+  (load, %t4:i32, &trace.11:ptr<i32>, _)
+  (load, %t5:ptr<Derived>, &this.26:ptr<ptr<Derived>>, _)
+  (offset, %t6:ptr<Member>, %t5:ptr<Derived>, 4:i64)
+  (param, _, %t6:ptr<Member>, _)
+  (call, _, @Member.dtor.32, _)
+  (offset, %t7:ptr<Base>, %t5:ptr<Derived>, 0:i64)
+  (param, _, %t7:ptr<Base>, _)
+  (call, _, @Base.dtor.30, _)
+  (ret, _, _, _)
 }

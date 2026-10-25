@@ -403,9 +403,6 @@ namespace ir_test {
                         frame.arguments.push_back(a);
                         continue;
                     case Opcode::Call: {
-                        if (frame.arguments.size() != b.bits) {
-                            throw std::runtime_error("test interpreter: call param count mismatch");
-                        }
                         auto arguments = std::move(frame.arguments);
                         frame.arguments.clear();
                         result = invoke(static_cast<uint32_t>(a.bits & ~FunctionTag), arguments);

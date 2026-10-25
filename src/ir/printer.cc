@@ -4,6 +4,7 @@
 #include <limits>
 #include <ostream>
 #include <sstream>
+#include <unordered_set>
 
 namespace baka {
     namespace ir {
@@ -59,7 +60,7 @@ namespace baka {
                 }
             }
 
-            std::string Value(const Module& module, const Function& function, Operand operand) {
+            std::string Value(const Module& module, const Function& function, Operand operand, bool annotated = true) {
                 std::ostringstream out;
                 switch (operand.kind) {
                 case OperandKind::None:
@@ -82,7 +83,7 @@ namespace baka {
                     break;
                 }
                 case OperandKind::Block:
-                    return "bb" + std::to_string(operand.id);
+                    return "L" + std::to_string(operand.id);
                 case OperandKind::Integer: {
                     const auto& type = module.type(operand.type);
                     uint64_t bits = operand.integer;
@@ -100,7 +101,7 @@ namespace baka {
                     out << std::setprecision(std::numeric_limits<long double>::max_digits10) << operand.floating;
                     break;
                 }
-                return out.str() + ':' + TypeName(module, operand.type);
+                return annotated ? out.str() + ':' + TypeName(module, operand.type) : out.str();
             }
 
             const char* Name(Opcode opcode) {
@@ -173,11 +174,11 @@ namespace baka {
         }
 
         void Print(const Module& module, std::ostream& output) {
-            output << "IR::TAC:\nmodule {\n";
+            output << "IR::TAC:\n";
             for (TypeId id = 1; id < module.types.size(); ++id) {
                 const auto& type = module.type(id);
                 if (type.kind == TypeKind::Record) {
-                    output << "  " << TypeName(module, id) << " = ";
+                    output << TypeName(module, id) << " = ";
                     if (type.complete) {
                         output << (type.isUnion ? "union(" : "record(");
                         bool separator = false;
@@ -201,8 +202,7 @@ namespace baka {
             }
             Function globalContext;
             for (const auto& object : module.globals) {
-                output << "  "
-                       << (object.external   ? "extern "
+                output << (object.external   ? "extern "
                            : object.internal ? "internal "
                                              : "global ")
                        << object.name << '.' << object.id << ": " << TypeName(module, object.type);
@@ -226,11 +226,11 @@ namespace baka {
             }
             if (module.initializer) {
                 const auto* initializer = module.functionById(module.initializer);
-                output << "  initializer @" << initializer->name << '.' << initializer->id << '\n';
+                output << "initializer @" << initializer->name << '.' << initializer->id << '\n';
             }
             for (const auto& function : module.functions) {
-                output << "  " << (function.defined ? "function " : "declare ") << '@' << function.name << '.'
-                       << function.id << ": " << TypeName(module, function.signature);
+                output << (function.defined ? "function " : "declare ") << '@' << function.name << '.' << function.id
+                       << ": " << TypeName(module, function.signature);
                 if (function.internal) {
                     output << " internal";
                 }
@@ -241,7 +241,7 @@ namespace baka {
                 output << " {\n";
                 for (auto id : function.parameters) {
                     auto* object = module.object(function, id);
-                    output << "    parameter " << object->name << '.' << id << ": " << TypeName(module, object->type)
+                    output << "  parameter " << object->name << '.' << id << ": " << TypeName(module, object->type)
                            << '\n';
                 }
                 for (const auto& object : function.objects) {
@@ -249,30 +249,35 @@ namespace baka {
                         function.parameters.end()) {
                         continue;
                     }
-                    output << "    local " << object.name << '.' << object.id << ": " << TypeName(module, object.type)
+                    output << "  local " << object.name << '.' << object.id << ": " << TypeName(module, object.type)
                            << '\n';
                 }
+                // The text is a flat instruction listing. Only jump destinations
+                // need labels; CFG edges remain internal to verification/optimization.
+                std::unordered_set<BlockId> targets;
                 for (const auto& block : function.blocks) {
-                    output << "  bb" << block.id << ": ; predecessors [";
-                    for (size_t i = 0; i < block.predecessors.size(); ++i) {
-                        output << (i ? ", " : "") << "bb" << block.predecessors[i];
-                    }
-                    output << "] successors [";
-                    for (size_t i = 0; i < block.successors.size(); ++i) {
-                        output << (i ? ", " : "") << "bb" << block.successors[i];
-                    }
-                    output << "]\n";
                     for (const auto& instruction : block.instructions) {
-                        output << "    (" << Name(instruction.opcode) << ", "
+                        if (instruction.opcode == Opcode::Jump) {
+                            targets.insert(instruction.left.id);
+                        } else if (instruction.opcode == Opcode::JumpIf) {
+                            targets.insert(instruction.right.id);
+                        }
+                    }
+                }
+                for (const auto& block : function.blocks) {
+                    if (targets.count(block.id)) {
+                        output << 'L' << block.id << ":\n";
+                    }
+                    for (const auto& instruction : block.instructions) {
+                        output << "  (" << Name(instruction.opcode) << ", "
                                << Value(module, function, instruction.result) << ", "
-                               << Value(module, function, instruction.left) << ", "
+                               << Value(module, function, instruction.left, instruction.opcode != Opcode::Call) << ", "
                                << Value(module, function, instruction.right);
                         output << ")\n";
                     }
                 }
-                output << "  }\n";
+                output << "}\n";
             }
-            output << "}\n";
         }
     }
 }
