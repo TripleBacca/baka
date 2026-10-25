@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 BASE_DIR="submissions"
 mkdir -p $BASE_DIR
