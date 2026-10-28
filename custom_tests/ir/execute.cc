@@ -249,6 +249,108 @@ namespace {
             Require(executor.run(0) == static_cast<int64_t>(condition), "constant branch chose wrong successor");
         }
     }
+
+    void CheckOptimizations() {
+        ir::Module module;
+        ir::Type integer;
+        integer.kind = ir::TypeKind::Integer;
+        integer.bits = 32;
+        integer.isSigned = true;
+        integer.size = integer.alignment = 4;
+        module.types.push_back(integer);
+        ir::Function function;
+        function.id = 1;
+        function.name = "optimized";
+        function.signature = module.function(1, {}, false);
+        function.defined = true;
+        function.temporaries = {0, 1, 1};
+        const ir::Operand one{ir::OperandKind::Integer, 1, 0, 1};
+        const ir::Operand two{ir::OperandKind::Integer, 1, 0, 2};
+        const ir::Operand t1{ir::OperandKind::Temporary, 1, 1};
+        const ir::Operand t2{ir::OperandKind::Temporary, 1, 2};
+        const ir::Operand b2{ir::OperandKind::Block, 0, 2};
+        const ir::Operand b3{ir::OperandKind::Block, 0, 3};
+        function.blocks = {
+            {1, {{ir::Opcode::Copy, t1, one}, {ir::Opcode::Jump, {}, b2}}},
+            {2, {{ir::Opcode::Add, t2, t1, {ir::OperandKind::Integer, 1, 0, 0}},
+                 {ir::Opcode::Jump, {}, b3}}},
+            {3, {{ir::Opcode::Return, {}, t2}}}};
+        module.functions.push_back(std::move(function));
+        ir::BuildCFG(module.functions[0]);
+        Require(ir::Verify(module).empty(), "cross-block optimization input invalid");
+        ir::Optimize(module);
+        Require(ir::Verify(module).empty(), "cross-block optimization produced invalid IR");
+        Require(module.functions[0].blocks.back().instructions.back().left == one,
+                "constant did not propagate across blocks and integer identity");
+
+        // A copy must keep the old value even when its source is reassigned.
+        auto mutableCopy = module;
+        mutableCopy.functions[0].blocks = {
+            {1, {{ir::Opcode::Copy, t1, one}, {ir::Opcode::Copy, t2, t1},
+                 {ir::Opcode::Copy, t1, two}, {ir::Opcode::Jump, {}, b2}}},
+            {2, {{ir::Opcode::Return, {}, t2}}}};
+        ir::BuildCFG(mutableCopy.functions[0]);
+        Require(ir::Verify(mutableCopy).empty(), "mutable copy input invalid");
+        ir::Optimize(mutableCopy);
+        Require(ir::Verify(mutableCopy).empty(), "mutable copy optimization invalid");
+        Require(mutableCopy.functions[0].blocks.back().instructions.back().left == one,
+                "copy propagation used a redefined source");
+
+        // Conflicting definitions at a join may not become a constant.
+        auto join = module;
+        auto& joined = join.functions[0];
+        joined.signature = join.function(1, {1}, false);
+        joined.parameters = {10};
+        ir::Object parameter;
+        parameter.id = 10;
+        parameter.type = 1;
+        joined.objects.push_back(parameter);
+        const ir::Operand address{ir::OperandKind::Object, join.pointer(1), 10};
+        const ir::Operand b4{ir::OperandKind::Block, 0, 4};
+        joined.blocks = {
+            {1, {{ir::Opcode::Load, t1, address}, {ir::Opcode::JumpIf, {}, t1, b2},
+                 {ir::Opcode::Jump, {}, b3}}},
+            {2, {{ir::Opcode::Copy, t2, one}, {ir::Opcode::Jump, {}, b4}}},
+            {3, {{ir::Opcode::Copy, t2, two}, {ir::Opcode::Jump, {}, b4}}},
+            {4, {{ir::Opcode::Return, {}, t2}}}};
+        ir::BuildCFG(joined);
+        Require(ir::Verify(join).empty(), "join optimization input invalid");
+        ir::Optimize(join);
+        Require(ir::Verify(join).empty(), "join optimization produced invalid IR");
+        Require(join.functions[0].blocks.back().instructions.back().left.kind == ir::OperandKind::Temporary,
+                "conflicting constants propagated through a join");
+
+        // Reusing a pure expression must remove one computation, not its input load.
+        auto duplicate = join;
+        auto& duplicates = duplicate.functions[0];
+        duplicates.temporaries.push_back(1);
+        const ir::Operand t3{ir::OperandKind::Temporary, 1, 3};
+        duplicates.blocks = {{1, {{ir::Opcode::Load, t1, address},
+                                  {ir::Opcode::Add, t2, t1, one},
+                                  {ir::Opcode::Add, t3, t1, one},
+                                  {ir::Opcode::Return, {}, t3}}}};
+        ir::BuildCFG(duplicates);
+        Require(ir::Verify(duplicate).empty(), "value numbering input invalid");
+        ir::Optimize(duplicate);
+        Require(ir::Verify(duplicate).empty(), "value numbering produced invalid IR");
+        unsigned additions = 0;
+        for (const auto& instruction : duplicate.functions[0].blocks[0].instructions)
+            additions += instruction.opcode == ir::Opcode::Add;
+        Require(additions == 1, "duplicate pure expression was not reused");
+
+        // An unknown condition with the same target on both arms is unconditional.
+        auto sameTarget = join;
+        sameTarget.functions[0].blocks[0].instructions.back().left = b2;
+        ir::BuildCFG(sameTarget.functions[0]);
+        Require(ir::Verify(sameTarget).empty(), "same-target branch input invalid");
+        ir::Optimize(sameTarget);
+        Require(ir::Verify(sameTarget).empty(), "same-target branch optimization invalid");
+        Require(sameTarget.functions[0].blocks[0].instructions.back().opcode == ir::Opcode::Jump &&
+                    std::none_of(sameTarget.functions[0].blocks[0].instructions.begin(),
+                                 sameTarget.functions[0].blocks[0].instructions.end(),
+                                 [](const auto& instruction) { return instruction.opcode == ir::Opcode::JumpIf; }),
+                "same-target branch was not simplified");
+    }
 }
 
 int main(int argc, char** argv) {
@@ -256,6 +358,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && std::string(argv[1]) == "verifier") {
             CheckVerifier();
             CheckRecordDefinitions();
+            CheckOptimizations();
             return 0;
         }
         Require(argc == 4 || argc == 5 || argc == 6,

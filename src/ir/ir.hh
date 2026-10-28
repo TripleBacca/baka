@@ -90,6 +90,7 @@ namespace baka {
 
         struct SourceSpan {
             size_t line = 0, column = 0;
+            bool operator==(const SourceSpan&) const = default;
         };
 
         // A strict typed quadruple: (opcode, result, left, right). Result is

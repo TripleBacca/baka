@@ -218,10 +218,12 @@ rejects malformed structural type cycles, checks calls and stored values, compar
 CFG edges with terminators, and performs definite-assignment dataflow for temporaries.
 A small verifier test checks missing terminators and uses of undefined temporaries.
 
-Optimization consists of block-local constant folding and copy propagation,
-reachability removal, and temporary-liveness dead-code elimination. It preserves
-stores, bulk zeroing, calls, destructor registration, control effects and potentially
-faulting loads/divisions. No alias-based dead-store removal or SSA optimizer is implied.
+Optimization repeats local constant folding and copy propagation, CFG-wide
+copy/constant propagation, conservative integer identities and local value numbering,
+branch simplification, jump threading, reachability removal and temporary-liveness
+dead-code elimination until stable. It preserves stores, bulk zeroing, calls,
+destructor registration, control effects and potentially faulting loads/divisions.
+There is no alias-based dead-store removal or SSA optimizer.
 
 Source fixtures group related language features, following the lexer/parser suites.
 Each IR fixture checks deterministic TAC output and expected results using an
