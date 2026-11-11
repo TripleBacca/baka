@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <map>
+#include <set>
 
 namespace baka {
     namespace ir {
@@ -202,10 +204,17 @@ namespace baka {
         bool DefinesTemporary(const Instruction& instruction);
         std::vector<Operand> Uses(const Instruction& instruction);
         void BuildCFG(Function& function);
+        // Global backward liveness (an analysis only; every transformation stays
+        // block-local). `uses` are upward-exposed reads and `defs` whole-value writes
+        // per block, over any name space; requires current CFG edges. Returns the
+        // names live on exit from each block.
+        using LiveSets = std::map<BlockId, std::set<uint64_t>>;
+        LiveSets LiveOut(const Function& function, const LiveSets& uses, const LiveSets& defs);
         std::vector<FlatInstruction> Linearize(const Function& function);
         std::vector<Diagnostic> Verify(const Module& module);
         void ConstantFold(Module& module);
         void CopyPropagate(Module& module);
+        void RemoveUnreachableBlocks(Module& module);
         void EliminateDeadCode(Module& module);
         void Optimize(Module& module);
         void Print(const Module& module, std::ostream& output);

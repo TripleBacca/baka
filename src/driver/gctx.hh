@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include "types/driver/defs.hh"
 #include "base/line_index.hh"
 #include "mmap_file.hh"
@@ -17,7 +18,9 @@ namespace baka {
 
         struct Gctx_t {
             bool DebugMode = true;
-            bool ShouldOptimize = true;
+            // Unset: --ir prints raw TAC and --codegen optimizes. --optimize and
+            // --no-optimize force either stage.
+            std::optional<bool> ShouldOptimize;
             bool VerboseMode = true;
             BuildType BuildType_v;
             std::string SourceFilePath;
@@ -74,6 +77,7 @@ namespace baka {
             static bool isVerbose();
             static bool isDebug();
             static Stage TillStage();
+            static bool shouldOptimize();
             static std::string_view GetSourceFilePath();
             static std::shared_ptr<base::LineIndex> GetLineIndex();
 

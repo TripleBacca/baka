@@ -218,12 +218,17 @@ rejects malformed structural type cycles, checks calls and stored values, compar
 CFG edges with terminators, and performs definite-assignment dataflow for temporaries.
 A small verifier test checks missing terminators and uses of undefined temporaries.
 
-Optimization repeats local constant folding and copy propagation, CFG-wide
-copy/constant propagation, conservative integer identities and local value numbering,
-branch simplification, jump threading, reachability removal and temporary-liveness
-dead-code elimination until stable. It preserves stores, bulk zeroing, calls,
+Optimization (`--ir --optimize`, and by default under `--codegen`) transforms each
+basic block locally; only analyses (CFG, reachability, liveness via `LiveOut`) are
+global: constant folding, copy propagation, integer identities and
+strength reduction, value numbering, redundant-load elimination, store-to-load
+forwarding, dead-store elimination on identical named addresses and next-use dead-code
+elimination, iterated until stable. Dead-code elimination is seeded with each block's global
+live-out set. Constant branch folding looks only at a block's
+own tail; unreachable blocks are then removed. It preserves calls, zeroing,
 destructor registration, control effects and potentially faulting loads/divisions.
-There is no alias-based dead-store removal or SSA optimizer.
+There is no CFG-wide dataflow, jump threading or SSA optimizer; see
+`IR_OPTIMIZATION_PLAN.md`.
 
 Source fixtures group related language features, following the lexer/parser suites.
 Each IR fixture checks deterministic TAC output and expected results using an

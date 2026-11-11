@@ -13,6 +13,7 @@
 #include "parser/parser.hh"
 #include "semantic/semantic_analyzer.hh"
 #include "ir/lowering.hh"
+#include "codegen/codegen.hh"
 #include "types/driver/defs.hh"
 #include "line_index.hh"
 #include "mmap_file.hh"
@@ -111,7 +112,7 @@ int baka::driver::run(int argc, char* argv[]) {
         if (isVerbose) {
             std::cout << "Lexer::LexerOutput: " << Lexed.Tokens.size() << " Tokens" << '\n';
         }
-        if (Gctx::TillStage() != Stage::IR || isVerbose) {
+        if (Gctx::TillStage() < Stage::IR || isVerbose) {
             PrintTokenTableHeader(std::cout);
             for (const auto& token : Lexed.Tokens) {
                 std::cout << token << '\n';
@@ -193,7 +194,7 @@ int baka::driver::run(int argc, char* argv[]) {
         } else {
             semantic::SemanticAnalyzer Analyzer;
             bool Analyzed = Analyzer.analyze(*Program);
-            if (Analyzed && (Gctx::TillStage() != Stage::IR || isVerbose)) {
+            if (Analyzed && (Gctx::TillStage() < Stage::IR || isVerbose)) {
                 std::cout << "Semantic::AST: " << '\n';
                 Program->Print();
                 std::cout << std::endl;
@@ -204,12 +205,21 @@ int baka::driver::run(int argc, char* argv[]) {
 
             // Lower while both the annotated tree and its semantic arenas are
             // alive. IR owns its copied types, identities and strings afterward.
-            if (Analyzed && Gctx::TillStage() == Stage::IR) {
+            if (Analyzed && Gctx::TillStage() >= Stage::IR) {
                 ir::Lowerer Lowerer(*Analyzer.checkedProgram());
-                if (Lowerer.lower(false)) {
+                const bool Optimize = Gctx::shouldOptimize();
+                std::vector<ir::Diagnostic> Failures;
+                if (!Lowerer.lower(Optimize)) {
+                    Failures = Lowerer.diagnostics();
+                } else if (Gctx::TillStage() == Stage::IR) {
                     ir::Print(Lowerer.module(), std::cout);
                 } else {
-                    for (const auto& Entry : Lowerer.diagnostics()) {
+                    codegen::Options Options;
+                    Options.optimize = Optimize;
+                    codegen::Generate(Lowerer.module(), Options, std::cout, Failures);
+                }
+                {
+                    for (const auto& Entry : Failures) {
                         size_t LineNo = Entry.source.line ? Entry.source.line : 1;
                         size_t ColNo = Entry.source.column ? Entry.source.column : 1;
                         base::LineCtx Context{LineNo - 1, Gctx::GetLineIndex().get()};

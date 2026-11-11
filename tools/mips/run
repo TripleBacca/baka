@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Assemble, link and run a MIPS64el assembly file under qemu in the baka-mips64el image.
+# usage: tools/mips/run [-c harness.c] file.s [args...]   (exit status = program's)
+set -e
+extra=""
+if [ "$1" = "-c" ]; then extra=$(realpath "$2"); shift 2; fi
+[ $# -ge 1 ] || { echo "usage: $0 [-c harness.c] file.s [args...]" >&2; exit 2; }
+src=$(realpath "$1"); shift
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+cp "$src" "$work/prog.s"
+inputs="prog.s"
+if [ -n "$extra" ]; then cp "$extra" "$work/harness.c"; inputs="prog.s harness.c"; fi
+set +e
+docker run --rm -v "$work":/work baka-mips64el sh -c \
+    'mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie '"$inputs"' -o prog.out || exit 125; qemu-mips64el ./prog.out "$@"' sh "$@"

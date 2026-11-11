@@ -1,0 +1,41 @@
+IR::TAC:
+FILE = opaque
+global g.18: i32 = zero
+initializer @.module_init.25
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @bump.19: fn()->void {
+  (load, %t1:i32, &g.18:ptr<i32>, _)
+  (add, %t2:i32, %t1:i32, 10:i32)
+  (store, _, &g.18:ptr<i32>, %t2:i32)
+  (ret, _, _, _)
+}
+function @main.21: fn(i32)->i32 {
+  parameter n.22: i32
+  local a.23: i32
+  local b.24: i32
+  (load, %t1:i32, &g.18:ptr<i32>, _)
+  (store, _, &a.23:ptr<i32>, %t1:i32)
+  (call, _, @bump.19, _)
+  (load, %t2:i32, &g.18:ptr<i32>, _)
+  (store, _, &b.24:ptr<i32>, %t2:i32)
+  (load, %t3:i32, &n.22:ptr<i32>, _)
+  (store, _, &g.18:ptr<i32>, %t3:i32)
+  (call, _, @bump.19, _)
+  (load, %t5:i32, &a.23:ptr<i32>, _)
+  (load, %t6:i32, &b.24:ptr<i32>, _)
+  (add, %t7:i32, %t5:i32, %t6:i32)
+  (load, %t8:i32, &g.18:ptr<i32>, _)
+  (add, %t9:i32, %t7:i32, %t8:i32)
+  (ret, _, %t9:i32, _)
+}
+function @.module_init.25: fn()->void internal {
+  (store, _, &g.18:ptr<i32>, 5:i32)
+  (ret, _, _, _)
+}

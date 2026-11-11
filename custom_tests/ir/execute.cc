@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "driver/gctx.hh"
 #include "interpreter.hh"
 #include "ir/lowering.hh"
@@ -280,8 +281,13 @@ namespace {
         Require(ir::Verify(module).empty(), "cross-block optimization input invalid");
         ir::Optimize(module);
         Require(ir::Verify(module).empty(), "cross-block optimization produced invalid IR");
-        Require(module.functions[0].blocks.back().instructions.back().left == one,
-                "constant did not propagate across blocks and integer identity");
+        // Optimization is block-local: the identity folds inside block 2, but the
+        // constant defined in block 1 must not be substituted across the edge.
+        Require(module.functions[0].blocks.back().instructions.back().left == t2,
+                "optimization propagated a value across blocks");
+        const auto& identity = module.functions[0].blocks[1].instructions.front();
+        Require(identity.opcode == ir::Opcode::Copy && identity.left == t1,
+                "integer identity was not simplified within its block");
 
         // A copy must keep the old value even when its source is reassigned.
         auto mutableCopy = module;
@@ -293,7 +299,11 @@ namespace {
         Require(ir::Verify(mutableCopy).empty(), "mutable copy input invalid");
         ir::Optimize(mutableCopy);
         Require(ir::Verify(mutableCopy).empty(), "mutable copy optimization invalid");
-        Require(mutableCopy.functions[0].blocks.back().instructions.back().left == one,
+        const auto& copied = mutableCopy.functions[0].blocks.front().instructions;
+        const auto definition = std::find_if(copied.begin(), copied.end(), [&](const ir::Instruction& in) {
+            return ir::DefinesTemporary(in) && in.result == t2;
+        });
+        Require(definition != copied.end() && definition->left == one,
                 "copy propagation used a redefined source");
 
         // Conflicting definitions at a join may not become a constant.

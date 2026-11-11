@@ -6,14 +6,18 @@ type/numeric rules. It does **not** mean it needs no correctness tests.
 
 ## Starting point
 
-`Optimize` now repeats block-local constant folding/copy propagation, CFG-wide
-copy/constant propagation, integer identities, local value numbering, branch
-simplification, jump threading, and dead-code elimination until stable. The last
-pass removes unreachable
-blocks and unused non-effectful temporary definitions using CFG liveness. It keeps
-loads, division/remainder, stores, zeroing, calls, destructor registration and
-control effects. The optimizer then rebuilds CFG edges. The normal `--ir` CLI
-prints unoptimized TAC; the IR test runner executes before and after optimization.
+Scope rule: analyses may be global (CFG, reachability, liveness), but **every
+transformation is local to one basic block.** `Optimize`
+repeats, until stable, block-local constant folding and copy propagation, integer
+identities and strength reduction, local value numbering (commutative, casts,
+comparisons, address offsets), redundant-load elimination, store-to-load forwarding,
+dead-store elimination and next-use dead-code elimination. Between them it folds
+constant branches (looking only at one block's `if_goto`/`goto` tail) and removes
+blocks that became unreachable, a cleanup that never moves or merges instructions.
+CFG-wide propagation and jump threading were removed. Dead-code elimination starts each block's
+backward scan from its global live-out set (`ir::LiveOut`). The normal `--ir` CLI prints
+unoptimized TAC; `--ir --optimize` prints the result. `custom_tests/ir` executes
+before and after optimization; `custom_tests/ir_opt` pins the optimized shapes.
 
 The IR has explicit blocks and jumps, typed scalar and whole-record values,
 byte-offset addresses, explicit loads/stores and bulk zeroing. It has **mutable**
@@ -27,21 +31,21 @@ must end in a terminator and CFG lists must match it.
 | --- | --- | --- | --- |
 | Repeated constant folding | Reuse `FoldConstant` and `numeric::evaluate`; rerun after substitutions and CFG simplification until stable. | Implemented | **Low.** Only fold when numeric evaluation returns a value. Preserve widths, signedness and float rounding. |
 | Repeated copy propagation | Reuse local temporary copy maps, then rerun folding and dead-code elimination. | Implemented | **Low.** Kill a mapping on every definition of its destination or temporary source; never substitute mutable object memory as a value. |
-| Algebraic and bitwise identities | Implemented: `x+0`, `x-0`, `x*1`, `x&all_ones`, `x|0`, `x^0` and shifts by zero for integers. Further rules include `!!x` only for canonical boolean values. | Partial | **Low to medium.** Do not delete an earlier computation that may fault merely because `x*0` or `x-x` has a known result. Avoid floating `x+0`, `x*0` and reassociation because of signed zero, NaNs and rounding. |
-| Constant branch folding | Fold literal conditions and identical true/false targets after propagating known temporary conditions. | Implemented | **Low.** Rewrite both tail instructions as one `Jump`, then rebuild CFG and remove newly unreachable blocks. |
-| Unreachable block elimination | Already implemented using CFG reachability. Repeat after branch changes and remove unreachable effectful instructions with their blocks. | Yes | **Low.** Entry is `blocks.front()`; preserve valid jump destinations and CFG metadata. |
-| Jump threading and empty-block removal | Redirect a jump through a block containing only `Jump`, or collapse a branch whose arms have the same destination. | Implemented | **Low to medium.** Update every target, retain a valid entry block and rebuild CFG. Do not move instructions across cleanup blocks. |
-| Dead temporary elimination | Already implemented with interblock liveness. Run to a fixed point after other passes so chains and cross-block opportunities disappear. | Yes | **Low.** Preserve all instructions with observable effects or possible faults. |
-| Local common subexpression elimination / value numbering | Within one block, reuse a prior integer arithmetic/bitwise result until an input or that result is redefined. | Implemented, restricted | **Medium.** Excludes loads, calls, division/remainder and floating operations. Does not move evaluation. |
-| Local constant/copy propagation through the CFG | Compute per-block IN/OUT facts to a fixed point; meet facts by intersection at joins; rewrite uses. | Implemented | **Medium.** Uses instruction order and kills on every temporary definition. Unknown/conflicting incoming values become unknown. Constants in object memory require separate alias analysis. |
+| Algebraic and bitwise identities | Implemented: `x+0`, `x-0`, `x*1`, `x/1`, `x&all_ones`, `x|0`, `x^0`, shifts by zero, plus `x*0`, `x&0`, `x%1`, `x-x`, `x^x` to 0 and `x|all_ones` to all ones, integers only. | Implemented | **Low.** Constants compared at the result width. Dropping a temporary operand cannot hide a fault. Never floating (signed zero, NaN). |
+| Constant branch folding | Fold a literal condition, or identical true/false targets, in a block's own `if_goto`/`goto` tail. | Implemented | **Low.** Rewrites both tail instructions as one `Jump`; unreachable blocks are then dropped. |
+| Unreachable block elimination | Separate cleanup after branch folding, using CFG reachability from the entry. | Implemented | **Low.** Only deletes whole blocks; no instruction moves across blocks. |
+| Jump threading and empty-block removal | Redirect a jump through a block containing only `Jump`. | Removed | Crosses block boundaries; not allowed by the block-local rule. |
+| Dead temporary elimination | Backward next-use scan per block, seeded with the block's live-out temporaries from global liveness. | Implemented | **Low.** Liveness is an analysis; deletion stays inside the block. Every definition of a mutable temporary kills it. Loads, division/remainder, stores, calls, params, zeroing, destructor registration and control flow stay. |
+| Local common subexpression elimination / value numbering | Reuse a prior pure result in the same block: integer/floating arithmetic, comparisons, casts, address offsets. Commutative integer operands match in either order. | Implemented | **Medium.** Entries die when an operand or result temporary is redefined. Floating only for the exact same operands. An earlier identical division is reusable because it already executed. |
+| Local constant/copy propagation | Per-block constant and copy maps, rerun with folding. | Implemented (CFG-wide version removed) | **Low.** Kill a mapping on every definition of its destination or temporary source. |
 | Sparse conditional constant propagation (SCCP) | Track executable CFG edges plus a constant/unknown lattice for temporaries, folding branches and unreachable paths together. | Yes, with adaptation | **Medium to high.** Standard SSA SCCP cannot be applied directly; use reaching definitions or convert temporaries to SSA first. A dense CFG dataflow pass is simpler initially. |
 | Global value numbering / global CSE | Carry equivalence classes over CFG joins, or convert mutable temporaries to SSA first. | Later | **High.** Must establish dominance and distinguish definitions on different paths. Memory reads need alias/effect tracking. |
-| Dead store elimination | For a known private, non-escaping object, remove an overwritten store when no intervening read, call, alias or destructor can observe it. Start with exact object plus exact byte range. | Restricted | **Medium to high.** `AddressOffset`, overlapping records/unions, `ZeroMemory`, pointer casts, calls and record snapshots complicate byte-level observability. Do not delete user/global/runtime-initialization writes by default. |
-| Store-to-load forwarding | Forward a stored value into a later `Load` from the same proven address and type, with no intervening possibly aliasing write/call. | Restricted | **Medium.** Start within one block on direct `Object` addresses with exact type and no escape; widen only with byte-range alias facts. Whole-record values are snapshots. |
-| Redundant load elimination | Reuse a previous `Load` if the address and contents cannot change before the next load. | Restricted | **Medium to high.** Calls, indirect stores, zeroing, destructor actions and globals require conservative invalidation. Do not assume a source `const` object is immutable during runtime initialization. |
+| Dead store elimination | Remove `store A, v1` when the identical named-object address is stored again later in the block with no possible read between. | Implemented, restricted | **Medium.** Only `Object` addresses. A load of another object does not block it; a load through a temporary, call, param, zeroing or destructor registration does. |
+| Store-to-load forwarding | Within a block, `load A` after `store A, v` of the same type becomes `copy v`. | Implemented, restricted | **Medium.** A store to an object only forgets facts for that object and temporary-addressed facts; a store through a temporary, call, zeroing or destructor registration forgets all. Redefining the address or value temporary forgets the fact. |
+| Redundant load elimination | A second `load` of the identical address and type becomes `copy` of the first result. | Implemented, restricted | **Medium.** Same invalidation as forwarding. Record loads are snapshots, so `copy` is exact. |
 | Alias/escape analysis | Identify local objects whose addresses never escape via calls, returns, stores, globals or unknown pointer operations; derive exact/overlapping byte ranges for fixed offsets. | Yes, as an analysis | **High.** This is the enabling proof for memory optimizations. Union fields, pointer casts, `AddressOffset` and array indices require overlap conservatism. |
 | Scalar replacement of aggregates | Replace eligible local record/array storage with scalar temporaries and field-wise operations. | Later | **High.** Must model overlapping union fields, byte writes/zeroing, whole-record snapshots, address escape, construction and destruction. |
-| Strength reduction | Replace expensive integer operations with cheaper equivalent ones, e.g. multiply by power of two to shift, after matching width and signed behavior. | Yes, restricted | **Medium.** Check the exact `numeric` contract, especially signed division/remainder, overflow and shifts. Real benefit requires a backend cost model; there is no native codegen yet. |
+| Strength reduction | `x*2^k` to `x<<k`; unsigned `x/2^k` to `x>>k`; unsigned `x%2^k` to `x&(2^k-1)`. | Implemented | **Low to medium.** Integers only; multiplication is exact under wrapping for both signednesses. Signed division is untouched (rounding). |
 | Reassociation and expression balancing | Reorder arithmetic trees to expose constants or reduce depth. | Restricted | **Medium to high.** Integer wrapping permits some same-width rules; division, conversions and floating-point operations generally prohibit them. Benefit depends on backend scheduling. |
 | Loop-invariant code motion | Find natural loops/dominators; hoist pure expressions whose inputs are unchanged and whose execution is safe on paths where the expression was previously skipped. | Restricted | **High.** Must avoid hoisting faults, calls, loads, cleanup/constructor effects or conditional work. A preheader and valid CFG rewrites are needed. |
 | Induction-variable simplification | Recognize loop counters in mutable temporaries, replace derived arithmetic, and simplify exit checks. | Later | **High.** Needs loop analysis, width/overflow proof, and careful handling of `goto`, named break/continue and cleanup edges. |
@@ -54,6 +58,9 @@ must end in a terminator and CFG lists must match it.
 | Register allocation / instruction scheduling | Use liveness and dependencies when lowering TAC to machine code. | Later | **High / backend dependent.** These are backend passes; IR has no physical registers or machine latency/cost model. |
 
 ## Recommended sequence
+
+Under the block-local rule, steps 1, 2 and the local part of 4 are done; CFG-wide
+dataflow (step 3, SCCP, global value numbering, loop passes) is out of scope.
 
 1. Make the existing local pipeline iterate to a stable result, with an iteration
    guard. Rebuild CFG after branch changes, then rerun reachability and liveness.

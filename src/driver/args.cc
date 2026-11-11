@@ -8,6 +8,7 @@
 // --lex
 // --parse
 // --codegen
+// --optimize / --no-optimize
 //
 // --build_type
 // --verbose
@@ -26,6 +27,7 @@ namespace baka {
             baka::driver::BuildType BuildType = BuildType::DEBUG;
             std::string SourceFile;
             bool VerboseMode = false;
+            std::optional<bool> ShouldOptimize;
             bool SourceFound = false;
 
             while (idx < argc) {
@@ -65,6 +67,12 @@ namespace baka {
                         throw baka::exceptions::DriverError("no built type specified for --build_type");
                     }
                 }
+                else if (curr == "--optimize") {
+                    ShouldOptimize = true;
+                }
+                else if (curr == "--no-optimize") {
+                    ShouldOptimize = false;
+                }
                 else if (curr == "--verbose") {
                     VerboseMode = true;
                 }
@@ -91,6 +99,7 @@ namespace baka {
                 gctx.BuildType_v = BuildType;
                 gctx.TillStage = UptoStage;
                 gctx.VerboseMode = VerboseMode;
+                gctx.ShouldOptimize = ShouldOptimize;
             });
 
             if (Gctx::isVerbose()) {

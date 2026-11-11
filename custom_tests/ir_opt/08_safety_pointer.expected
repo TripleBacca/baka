@@ -1,0 +1,40 @@
+IR::TAC:
+FILE = opaque
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.13: fn(ptr<FILE>)->i32
+declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.16: fn(i32, ptr<void>, u64)->i64
+declare @write.17: fn(i32, ptr<void>, u64)->i64
+function @main.19: fn(i32)->i32 {
+  parameter n.20: i32
+  local x.21: i32
+  local y.22: i32
+  local p.23: ptr<i32>
+  local a.24: i32
+  local b.25: i32
+  (load, %t1:i32, &n.20:ptr<i32>, _)
+  (store, _, &x.21:ptr<i32>, %t1:i32)
+  (store, _, &y.22:ptr<i32>, 0:i32)
+  (cast, %t3:u1, %t1:i32, _)
+  (if_goto, _, %t3:u1, L2)
+  (goto, _, L3, _)
+L2:
+  (copy, %t4:ptr<i32>, &x.21:ptr<i32>, _)
+  (goto, _, L4, _)
+L3:
+  (copy, %t4:ptr<i32>, &y.22:ptr<i32>, _)
+  (goto, _, L4, _)
+L4:
+  (store, _, &p.23:ptr<ptr<i32>>, %t4:ptr<i32>)
+  (load, %t5:i32, &x.21:ptr<i32>, _)
+  (store, _, &a.24:ptr<i32>, %t5:i32)
+  (store, _, %t4:ptr<i32>, 9:i32)
+  (load, %t8:i32, &x.21:ptr<i32>, _)
+  (store, _, &b.25:ptr<i32>, %t8:i32)
+  (load, %t9:i32, &a.24:ptr<i32>, _)
+  (add, %t11:i32, %t9:i32, %t8:i32)
+  (ret, _, %t11:i32, _)
+}
