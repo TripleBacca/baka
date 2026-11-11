@@ -7,6 +7,9 @@ help:
 	@printf "make lex file=path/to/file \t\t run the compiler till the lexer stage\n"
 	@printf "make parse file=path/to/file \t\t run the compiler till the parser stage\n"
 	@printf "make parse-folder dir=path/to/dir \t run parser on all files in dir recursively, output to .out files\n"
+	@printf "make codegen file=path/to/file \t\t print MIPS64 assembly\n"
+	@printf "make run-mips file=path/to/file n=N \t compile and run under qemu (Docker)\n"
+	@printf "make test-codegen \t\t\t run the MIPS64 execution suite (Docker)\n"
 
 test: build
 	./custom_test_hook $(STAGE_ARGS)
@@ -43,6 +46,22 @@ test-ir: build
 test-semantic: build
 	./custom_test_hook semantic
 
+test-ir-opt: build
+	./custom_test_hook ir_opt
+
+# Needs Docker: builds the mips64el toolchain image on first use.
+mips-image:
+	docker build -t baka-mips64el tools/mips
+
+test-codegen: build mips-image
+	./custom_test_hook codegen
+
+codegen:
+	./build/baka --codegen $(file)
+
+run-mips: build
+	./build/baka --codegen $(file) > build/out.s && tools/mips/run build/out.s $(n)
+
 parse-folder: build
 	@found=0; failed=0; \
 	for f in $$(find $(dir) -type f ! -name '*.out'); do \
@@ -60,4 +79,4 @@ clean:
 	rm -rf build/*
 
 
-.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir
+.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir test-ir-opt mips-image test-codegen codegen run-mips

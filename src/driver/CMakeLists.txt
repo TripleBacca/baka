@@ -15,6 +15,7 @@ target_link_libraries(driver PUBLIC
     parser
     semantic
     ir
+    mips_codegen
 )
 
 target_include_directories(driver PUBLIC

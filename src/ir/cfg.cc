@@ -55,5 +55,36 @@ namespace baka {
             }
             return result;
         }
+    
+        LiveSets LiveOut(const Function& function, const LiveSets& uses, const LiveSets& defs) {
+            static const std::set<uint64_t> none;
+            auto lookup = [](const LiveSets& sets, BlockId id) -> const std::set<uint64_t>& {
+                auto found = sets.find(id);
+                return found == sets.end() ? none : found->second;
+            };
+            LiveSets in, out;
+            bool changed = true;
+            while (changed) {
+                changed = false;
+                // Reverse block order converges quickly for this backward problem.
+                for (auto block = function.blocks.rbegin(); block != function.blocks.rend(); ++block) {
+                    std::set<uint64_t> live;
+                    for (auto successor : block->successors) {
+                        const auto& next = lookup(in, successor);
+                        live.insert(next.begin(), next.end());
+                    }
+                    auto entry = live;
+                    for (auto name : lookup(defs, block->id)) entry.erase(name);
+                    const auto& read = lookup(uses, block->id);
+                    entry.insert(read.begin(), read.end());
+                    if (entry != lookup(in, block->id) || live != lookup(out, block->id)) {
+                        in[block->id] = std::move(entry);
+                        out[block->id] = std::move(live);
+                        changed = true;
+                    }
+                }
+            }
+            return out;
+        }
     }
 }

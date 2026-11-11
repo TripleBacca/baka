@@ -1,16 +1,14 @@
 #include "constant_folding.hh"
 #include "base/numeric.hh"
 #include <algorithm>
+#include <bit>
 #include <cmath>
 #include <map>
-#include <set>
 #include <stdexcept>
 
 namespace baka {
     namespace ir {
         namespace {
-            using Facts = std::map<uint32_t, Operand>;
-
             bool SameOperand(const Operand& a, const Operand& b) {
                 if (a.kind != b.kind || a.type != b.type || a.id != b.id || a.integer != b.integer) return false;
                 if (a.kind != OperandKind::Floating) return true;
@@ -38,170 +36,215 @@ namespace baka {
                 SubstituteOperand(instruction.right, values);
             }
 
-            void Kill(Facts& facts, uint32_t id) {
-                for (auto it = facts.begin(); it != facts.end();) {
-                    if (it->first == id || (it->second.kind == OperandKind::Temporary && it->second.id == id)) {
-                        it = facts.erase(it);
-                    } else {
-                        ++it;
-                    }
-                }
-            }
-
-            void Transfer(Instruction instruction, Facts& facts) {
-                SubstituteUses(instruction, facts);
-                if (!DefinesTemporary(instruction)) {
-                    return;
-                }
-                const auto id = instruction.result.id;
-                Kill(facts, id);
-                if (instruction.opcode == Opcode::Copy && instruction.left.kind != OperandKind::None &&
-                    !(instruction.left.kind == OperandKind::Floating && !std::isfinite(instruction.left.floating)) &&
-                    !(instruction.left.kind == OperandKind::Temporary && instruction.left.id == id)) {
-                    facts[id] = instruction.left;
-                }
-            }
-
-            void PropagateAcrossBlocks(Function& function) {
-                if (!function.defined || function.blocks.empty()) {
-                    return;
-                }
-                BuildCFG(function);
-                std::map<BlockId, Facts> incoming, outgoing;
-                const auto entry = function.blocks.front().id;
-                bool changed;
-                do {
-                    changed = false;
-                    for (const auto& block : function.blocks) {
-                        Facts in;
-                        bool first = true;
-                        if (block.id == entry) {
-                            first = false;
-                        } else {
-                            for (auto predecessor : block.predecessors) {
-                                if (first) {
-                                    in = outgoing[predecessor];
-                                    first = false;
-                                } else {
-                                    for (auto it = in.begin(); it != in.end();) {
-                                        const auto found = outgoing[predecessor].find(it->first);
-                                        if (found == outgoing[predecessor].end() ||
-                                            !SameOperand(found->second, it->second)) {
-                                            it = in.erase(it);
-                                        } else {
-                                            ++it;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (first) {
-                            in.clear();
-                        }
-                        auto out = in;
-                        for (const auto& instruction : block.instructions) {
-                            Transfer(instruction, out);
-                        }
-                        auto sameFacts = [](const Facts& a, const Facts& b) {
-                            if (a.size() != b.size()) return false;
-                            for (const auto& [id, value] : a) {
-                                auto found = b.find(id);
-                                if (found == b.end() || !SameOperand(value, found->second)) return false;
-                            }
-                            return true;
-                        };
-                        if (!sameFacts(incoming[block.id], in) || !sameFacts(outgoing[block.id], out)) {
-                            incoming[block.id] = std::move(in);
-                            outgoing[block.id] = std::move(out);
-                            changed = true;
-                        }
-                    }
-                } while (changed);
-                for (auto& block : function.blocks) {
-                    auto facts = incoming[block.id];
-                    for (auto& instruction : block.instructions) {
-                        const auto original = instruction;
-                        SubstituteUses(instruction, facts);
-                        Transfer(original, facts);
-                    }
-                }
-            }
-
             bool IsIntegerZero(const Operand& value) {
                 return value.kind == OperandKind::Integer && value.integer == 0;
             }
 
-            bool IsIntegerOne(const Operand& value) {
-                return value.kind == OperandKind::Integer && value.integer == 1;
-            }
-
+            // Integer-only rewrites. All constants are compared at the result width, and every
+            // rewrite is exact under wrapping arithmetic. Temporaries cannot fault, so dropping
+            // an operand (x*0, x-x) never hides a trap. Floating point is excluded entirely.
             void SimplifyIdentity(const Module& module, Instruction& instruction) {
                 if (!DefinesTemporary(instruction) || module.type(instruction.result.type).kind != TypeKind::Integer) {
                     return;
                 }
+                const auto& type = module.type(instruction.result.type);
+                const auto all = numeric::mask({type.bits, type.isSigned, false});
+                const auto resultType = instruction.result.type;
+                const auto& l = instruction.left;
+                const auto& r = instruction.right;
+                auto constant = [&](uint64_t value) { return Operand{OperandKind::Integer, resultType, 0, value}; };
+                auto is = [&](const Operand& v, uint64_t value) {
+                    return v.kind == OperandKind::Integer && (v.integer & all) == value;
+                };
+                auto exponent = [&](const Operand& v) {
+                    const auto bits = v.kind == OperandKind::Integer ? v.integer & all : 0;
+                    return bits && !(bits & (bits - 1)) ? std::countr_zero(bits) : -1;
+                };
+                const bool same = l.kind == OperandKind::Temporary && r.kind == OperandKind::Temporary && l.id == r.id;
                 Operand replacement;
                 switch (instruction.opcode) {
                 case Opcode::Add:
-                case Opcode::BitOr:
+                    if (is(r, 0)) replacement = l;
+                    else if (is(l, 0)) replacement = r;
+                    break;
                 case Opcode::BitXor:
-                    if (IsIntegerZero(instruction.right)) replacement = instruction.left;
-                    else if (IsIntegerZero(instruction.left)) replacement = instruction.right;
+                    if (is(r, 0)) replacement = l;
+                    else if (is(l, 0)) replacement = r;
+                    else if (same) replacement = constant(0);
+                    break;
+                case Opcode::BitOr:
+                    if (is(r, 0)) replacement = l;
+                    else if (is(l, 0)) replacement = r;
+                    else if (is(r, all) || is(l, all)) replacement = constant(all);
                     break;
                 case Opcode::Subtract:
+                    if (IsIntegerZero(r)) replacement = l;
+                    else if (same) replacement = constant(0);
+                    break;
                 case Opcode::ShiftLeft:
                 case Opcode::ShiftRight:
-                    if (IsIntegerZero(instruction.right)) replacement = instruction.left;
+                    if (IsIntegerZero(r)) replacement = l;
                     break;
-                case Opcode::Multiply:
-                    if (IsIntegerOne(instruction.right)) replacement = instruction.left;
-                    else if (IsIntegerOne(instruction.left)) replacement = instruction.right;
-                    break;
-                case Opcode::BitAnd: {
-                    const auto& type = module.type(instruction.result.type);
-                    const auto all = numeric::mask({type.bits, type.isSigned, false});
-                    if (instruction.right.kind == OperandKind::Integer && instruction.right.integer == all)
-                        replacement = instruction.left;
-                    else if (instruction.left.kind == OperandKind::Integer && instruction.left.integer == all)
-                        replacement = instruction.right;
+                case Opcode::Multiply: {
+                    // x * 2^k == x << k modulo 2^width for signed and unsigned alike.
+                    const auto k = exponent(r) > 0 ? exponent(r) : exponent(l);
+                    if (is(r, 1)) replacement = l;
+                    else if (is(l, 1)) replacement = r;
+                    else if (is(r, 0) || is(l, 0)) replacement = constant(0);
+                    else if (k > 0) {
+                        const auto x = exponent(r) > 0 ? l : r;
+                        instruction.opcode = Opcode::ShiftLeft;
+                        instruction.left = x;
+                        instruction.right = constant(k);
+                    }
                     break;
                 }
+                case Opcode::Divide:
+                    // Only unsigned: signed division rounds toward zero, a shift toward minus infinity.
+                    if (is(r, 1)) replacement = l;
+                    else if (!type.isSigned && exponent(r) > 0) {
+                        instruction.opcode = Opcode::ShiftRight;
+                        instruction.right = constant(exponent(r));
+                    }
+                    break;
+                case Opcode::Remainder:
+                    if (is(r, 1)) replacement = constant(0);
+                    else if (!type.isSigned && exponent(r) > 0) {
+                        instruction.opcode = Opcode::BitAnd;
+                        instruction.right = constant((r.integer & all) - 1);
+                    }
+                    break;
+                case Opcode::BitAnd:
+                    if (is(r, all)) replacement = l;
+                    else if (is(l, all)) replacement = r;
+                    else if (is(r, 0) || is(l, 0)) replacement = constant(0);
+                    break;
                 default:
                     break;
                 }
-                if (replacement && replacement.type == instruction.result.type) {
+                if (replacement && replacement.type == resultType) {
                     instruction.opcode = Opcode::Copy;
                     instruction.left = replacement;
                     instruction.right = {};
                 }
             }
 
+            bool Commutative(Opcode opcode) {
+                return opcode == Opcode::Add || opcode == Opcode::Multiply || opcode == Opcode::BitAnd ||
+                       opcode == Opcode::BitOr || opcode == Opcode::BitXor || opcode == Opcode::Equal ||
+                       opcode == Opcode::NotEqual;
+            }
+
+            // Local value numbering. Pure operations are matched on opcode and operand identity
+            // (commutative operands in either order, except for floating point). Reusing an earlier
+            // division/remainder is safe: if it faulted, the later copy is never reached.
             void ValueNumber(const Module& module, Block& block) {
                 std::vector<Instruction> available;
                 for (auto& instruction : block.instructions) {
-                    if (DefinesTemporary(instruction)) {
-                        const auto id = instruction.result.id;
-                        std::erase_if(available, [&](const Instruction& prior) {
-                            return prior.result.id == id ||
-                                   (prior.left.kind == OperandKind::Temporary && prior.left.id == id) ||
-                                   (prior.right.kind == OperandKind::Temporary && prior.right.id == id);
-                        });
-                    }
-                    if (!DefinesTemporary(instruction) || instruction.opcode < Opcode::Add ||
-                        instruction.opcode > Opcode::BitXor || instruction.opcode == Opcode::Divide ||
-                        instruction.opcode == Opcode::Remainder ||
-                        module.type(instruction.result.type).kind != TypeKind::Integer) continue;
+                    if (!DefinesTemporary(instruction)) continue;
+                    const auto id = instruction.result.id;
+                    std::erase_if(available, [&](const Instruction& prior) {
+                        return prior.result.id == id ||
+                               (prior.left.kind == OperandKind::Temporary && prior.left.id == id) ||
+                               (prior.right.kind == OperandKind::Temporary && prior.right.id == id);
+                    });
+                    const auto opcode = instruction.opcode;
+                    if (opcode != Opcode::Cast && opcode != Opcode::AddressOffset &&
+                        (opcode < Opcode::Add || opcode > Opcode::LogicalNot)) continue;
+                    const bool swap = Commutative(opcode) && module.type(instruction.left.type).kind != TypeKind::Floating;
                     const auto found = std::find_if(available.begin(), available.end(), [&](const Instruction& prior) {
-                        return prior.opcode == instruction.opcode && prior.result.type == instruction.result.type &&
-                               SameOperand(prior.left, instruction.left) && SameOperand(prior.right, instruction.right);
+                        return prior.opcode == opcode && prior.result.type == instruction.result.type &&
+                               ((SameOperand(prior.left, instruction.left) && SameOperand(prior.right, instruction.right)) ||
+                                (swap && SameOperand(prior.left, instruction.right) &&
+                                 SameOperand(prior.right, instruction.left)));
                     });
                     if (found != available.end()) {
                         instruction.opcode = Opcode::Copy;
                         instruction.left = found->result;
                         instruction.right = {};
-                    } else {
+                    } else if (!(instruction.left.kind == OperandKind::Temporary && instruction.left.id == id) &&
+                               !(instruction.right.kind == OperandKind::Temporary && instruction.right.id == id)) {
                         available.push_back(instruction);
                     }
                 }
+            }
+
+            // Tracks which operand currently holds the contents of an address operand. Distinct
+            // objects never overlap, so a store to one object only forgets that object's facts and
+            // those reached through temporaries; a store through a temporary, a call, bulk zero or
+            // destructor registration forgets everything. Redefining a temporary forgets facts
+            // naming it as address or value.
+            // Records are snapshots, so forwarding a record value through Copy is exact.
+            void ForwardMemory(Block& block) {
+                std::vector<std::pair<Operand, Operand>> known;
+                for (auto& instruction : block.instructions) {
+                    // Captured before a load may be rewritten into a copy of the forwarded value.
+                    const auto opcode = instruction.opcode;
+                    const auto address = instruction.left;
+                    if (opcode == Opcode::Call || opcode == Opcode::ZeroMemory || opcode == Opcode::RegisterDestructor) {
+                        known.clear();
+                    } else if (opcode == Opcode::Store) {
+                        const auto target = instruction.left;
+                        std::erase_if(known, [&](const auto& fact) {
+                            return target.kind != OperandKind::Object || fact.first.kind != OperandKind::Object ||
+                                   fact.first.id == target.id;
+                        });
+                        known.emplace_back(instruction.left, instruction.right);
+                    } else if (opcode == Opcode::Load) {
+                        const auto found = std::find_if(known.begin(), known.end(), [&](const auto& fact) {
+                            return SameOperand(fact.first, address) && fact.second.type == instruction.result.type;
+                        });
+                        if (found != known.end()) {
+                            instruction.opcode = Opcode::Copy;
+                            instruction.left = found->second;
+                            instruction.right = {};
+                        }
+                    }
+                    if (!DefinesTemporary(instruction) || opcode == Opcode::Call) continue;
+                    const auto id = instruction.result.id;
+                    std::erase_if(known, [&](const auto& fact) {
+                        return (fact.first.kind == OperandKind::Temporary && fact.first.id == id) ||
+                               (fact.second.kind == OperandKind::Temporary && fact.second.id == id);
+                    });
+                    if (opcode == Opcode::Load && !(address.kind == OperandKind::Temporary && address.id == id))
+                        known.emplace_back(address, instruction.result);
+                }
+            }
+
+            // Backward scan: a store to a named object is dead when the identical address is stored
+            // again before anything could read it. A load of another named object cannot read it;
+            // a load through a temporary might. Stores through temporaries are never removed.
+            void EliminateDeadStores(Block& block) {
+                std::vector<Operand> overwritten;
+                std::vector<bool> dead(block.instructions.size());
+                for (size_t i = block.instructions.size(); i-- > 0;) {
+                    const auto& instruction = block.instructions[i];
+                    switch (instruction.opcode) {
+                    case Opcode::Load:
+                        std::erase_if(overwritten, [&](const Operand& later) {
+                            return instruction.left.kind != OperandKind::Object || later.id == instruction.left.id;
+                        });
+                        break;
+                    case Opcode::Call:
+                    case Opcode::Param:
+                    case Opcode::ZeroMemory:
+                    case Opcode::RegisterDestructor:
+                        overwritten.clear();
+                        break;
+                    case Opcode::Store:
+                        if (instruction.left.kind != OperandKind::Object) break;
+                        if (std::any_of(overwritten.begin(), overwritten.end(),
+                                        [&](const Operand& later) { return SameOperand(later, instruction.left); }))
+                            dead[i] = true;
+                        else
+                            overwritten.push_back(instruction.left);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                size_t index = 0;
+                std::erase_if(block.instructions, [&](const Instruction&) { return dead[index++]; });
             }
 
             void SimplifyBranches(Function& function) {
@@ -223,31 +266,6 @@ namespace baka {
                     }
                 }
             }
-
-            void ThreadJumps(Function& function) {
-                std::map<BlockId, BlockId> redirects;
-                for (const auto& block : function.blocks) {
-                    if (block.instructions.size() == 1 && block.instructions.front().opcode == Opcode::Jump) {
-                        redirects[block.id] = block.instructions.front().left.id;
-                    }
-                }
-                auto resolve = [&](Operand& target) {
-                    if (target.kind != OperandKind::Block) return;
-                    std::set<BlockId> seen;
-                    auto id = target.id;
-                    while (redirects.count(id) && seen.insert(id).second && !seen.count(redirects.at(id))) {
-                        id = redirects.at(id);
-                    }
-                    target.id = id;
-                };
-                for (auto& block : function.blocks) {
-                    for (auto& instruction : block.instructions) {
-                        if (instruction.opcode == Opcode::Jump) resolve(instruction.left);
-                        else if (instruction.opcode == Opcode::JumpIf) resolve(instruction.right);
-                    }
-                }
-            }
-
         }
 
         void ConstantFold(Module& module) {
@@ -322,17 +340,17 @@ namespace baka {
                     for (const auto& block : function.blocks) before.emplace_back(block.id, block.instructions);
                 ConstantFold(module);
                 CopyPropagate(module);
-                EliminateDeadCode(module);
+                // Every remaining pass looks at one basic block at a time.
                 for (auto& function : module.functions) {
-                    PropagateAcrossBlocks(function);
                     for (auto& block : function.blocks) {
                         for (auto& instruction : block.instructions) SimplifyIdentity(module, instruction);
                         ValueNumber(module, block);
+                        ForwardMemory(block);
+                        EliminateDeadStores(block);
                     }
                     SimplifyBranches(function);
-                    ThreadJumps(function);
-                    BuildCFG(function);
                 }
+                RemoveUnreachableBlocks(module);
                 EliminateDeadCode(module);
                 std::vector<std::pair<BlockId, std::vector<Instruction>>> after;
                 for (const auto& function : module.functions)

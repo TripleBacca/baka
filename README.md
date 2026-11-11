@@ -33,6 +33,9 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 - `--lex` - run only the lexer and print/output tokens
 - `--parse` - run up through parsing and output the AST
 - `--semantic` - run declaration registration, resolution/renaming, type annotation, and read-only semantic checks
+- `--ir` - print the typed three-address code (unoptimized unless `--optimize`)
+- `--codegen` - print MIPS64 (n64, little-endian) assembly (optimized unless `--no-optimize`)
+- `--optimize` / `--no-optimize` - force the block-local IR and MIPS peephole optimizations on or off
 - `--build_type` - set the build type (e.g. `debug` / `release`)
 - `--verbose` - print detailed logs during compilation
 
@@ -154,8 +157,8 @@ There are certain features we are not supporting:
 - [x] Lexer
 - [x] Parser
 - [x] Semantic Analysis for the supported subset ([passes and policies](src/semantic/README.md), [remaining TODOs](src/semantic/TODO.md))
-- [ ] Optimization Passes
-- [ ] Codegen
+- [x] Optimization Passes (block-local TAC passes and MIPS peephole; [IR_OPTIMIZATION_PLAN.md](IR_OPTIMIZATION_PLAN.md))
+- [x] Codegen: MIPS64 n64 little-endian, run under QEMU ([design decisions](src/codegen/README.md))
 
 
 #### Made By:
@@ -173,6 +176,20 @@ AST and `./build/baka --ir source.cpp` to print checked typed TAC. Run
 `make test-semantic` / `make test-ir` to run either suite separately.
 
 The current architecture and language policies are documented in
-[src/semantic/README.md](src/semantic/README.md), with the lowering contract in
-[src/semantic/IR_READINESS.md](src/semantic/IR_READINESS.md) and the TAC model in
-[ir_context.md](ir_context.md).
+[src/semantic/README.md](src/semantic/README.md)
+
+## MIPS64 code generation
+
+`./build/baka --codegen file.cpp > file.s` emits GNU assembly for MIPS64r2 (n64 ABI,
+little-endian), linked statically against glibc. The cross toolchain and `qemu-mips64el`
+live in a Docker image, so nothing is installed on the host:
+
+```bash
+make mips-image                       # docker build -t baka-mips64el tools/mips
+make run-mips file=prog.cpp n=5       # compile, assemble, link and run main(5)
+make test-codegen                     # every fixture, optimized and unoptimized
+```
+
+The exit status is the low 8 bits of `main`'s result. Design decisions and their
+justifications are in [src/codegen/README.md](src/codegen/README.md).
+

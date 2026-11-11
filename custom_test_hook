@@ -19,6 +19,7 @@ SUITES = {
     "codegen": (custom_tests / "codegen", ["--codegen"]),
     "semantic": (custom_tests / "semantic", ["--semantic"]),
     "ir": (custom_tests / "ir", ["--ir"]),
+    "ir_opt": (custom_tests / "ir_opt", ["--ir", "--optimize"]),
 }
 
 
@@ -92,6 +93,11 @@ def main():
     for name in suites:
         if name == "ir":
             failures += subprocess.run([sys.executable, "-B", str(custom_tests / "ir" / "run.py"),
+                                        "--compiler", str(COMPILER)]).returncode
+            continue
+        if name in ("ir_opt", "codegen"):
+            # Optimized TAC shape, and native MIPS64 execution under QEMU (Docker).
+            failures += subprocess.run([sys.executable, "-B", str(custom_tests / name / "run.py"),
                                         "--compiler", str(COMPILER)]).returncode
             continue
         if name == "semantic":

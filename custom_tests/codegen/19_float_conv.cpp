@@ -1,0 +1,65 @@
+double id(double v) { return v; }
+float fid(float v) { return v; }
+
+int main(int n) {
+    unsigned long big = 18446744073709551615UL - n;
+    unsigned long half = 9223372036854775808UL + n;
+    unsigned long small = 12345UL + n;
+    double d1 = (double)big;
+    double d2 = (double)half;
+    double d3 = (double)small;
+    float f1 = (float)big;
+    float f2 = (float)half;
+    printf("%f %f %f %f %f\n", d1, d2, d3, (double)f1, (double)f2);
+    double hb = 18446744073709549568.0 + n;
+    double hh = 9223372036854775808.0 + n * 1024.0;
+    double hs = 4611686018427387904.0;
+    unsigned long u1 = (unsigned long)hb;
+    unsigned long u2 = (unsigned long)hh;
+    unsigned long u3 = (unsigned long)hs;
+    unsigned long u4 = (unsigned long)id(3.75 + n);
+    printf("%lu %lu %lu %lu\n", u1, u2, u3, u4);
+    float ff = 3000000000.0f + n * 1000000.0f;
+    unsigned int ui = (unsigned int)ff;
+    unsigned int ui2 = (unsigned int)fid(4294967040.0f);
+    unsigned int ui3 = (unsigned int)(double)(4294967295UL - n);
+    printf("%u %u %u\n", ui, ui2, ui3);
+    double neg = -123456.789 - n;
+    long ln = (long)neg;
+    int in = (int)(-2147483648.0 + n);
+    long lm = (long)(-9223372036854775808.0);
+    printf("%ld %d %ld\n", ln, in, lm);
+    double dc = 100.9 + n;
+    double dn = -100.9 - n;
+    char c1 = (char)(int)dc;
+    short s1 = (short)(int)(dn * 100.0);
+    unsigned char c2 = (unsigned char)(int)(200.5 + n);
+    unsigned short s2 = (unsigned short)(int)(60000.5 + n);
+    printf("%d %d %d %d\n", c1, s1, c2, s2);
+    double zero = 0.0 * n;
+    double dz = id(0.0);
+    double nz = -dz;
+    int p = n;
+    bool b1 = dz;
+    bool b2 = nz;
+    bool b3 = dc;
+    bool b4 = (double)n;
+    bool b5 = (bool)&p;
+    int* np = 0;
+    bool b6 = (bool)np;
+    bool b7 = (float)n * 0.5f;
+    printf("%d %d %d %d %d %d %d\n", b1, b2, b3, b4, b5, b6, b7);
+    printf("%f %f %d %d\n", nz, 1.0 / nz, nz == dz, nz < dz);
+    long z64 = 1L << (40 + n);
+    float fz = (float)z64;
+    double dz64 = (double)z64;
+    printf("%f %f\n", (double)fz, dz64);
+    int ii = -7 - n;
+    float fi = (float)ii;
+    double di = (double)ii;
+    unsigned int big32 = 4000000000U + n;
+    double dbig32 = (double)big32;
+    float fbig32 = (float)big32;
+    printf("%f %f %f %f\n", (double)fi, di, dbig32, (double)fbig32);
+    return (int)(u1 % 1000) + (int)(u2 % 1000) + (int)(ui % 1000) + (int)ln % 1000 + c1 + s1 + c2 + s2;
+}

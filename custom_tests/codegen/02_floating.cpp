@@ -1,0 +1,55 @@
+int main(int n) {
+    double a = 1.5 + n;
+    double b = 0.25;
+    float f = 3.5f;
+    float g = 0.1f;
+    double sum = a + b;
+    double diff = a - b;
+    double prod = a * b;
+    double quot = a / b;
+    double mixed = f * 2 + n;
+    float fdiv = f / 3.0f;
+    printf("%f %f %f %f\n", sum, diff, prod, quot);
+    printf("%f %f\n", mixed, (double)fdiv);
+    printf("%.10f\n", (double)g);
+    int i = (int)(a * 10.0);
+    int neg = (int)(-2.75);
+    long big = (long)1.0e12;
+    unsigned int u = (unsigned int)3000000000.0;
+    double from_int = i;
+    double from_long = big + 1;
+    double from_uint = 4000000000u;
+    float narrow = (float)16777217.0;
+    printf("%d %d %ld %u\n", i, neg, big, u);
+    printf("%f %f %f %f\n", from_int, from_long, from_uint, (double)narrow);
+    double nan = 0.0 / 0.0;
+    double zero = 0.0;
+    double inf = 1.0 / zero;
+    int c = 0;
+    if (nan == nan) c += 1;
+    if (nan != nan) c += 2;
+    if (nan < 1.0) c += 4;
+    if (nan > 1.0) c += 8;
+    if (nan <= nan) c += 16;
+    if (nan >= nan) c += 32;
+    if (a < b) c += 64;
+    if (a > b) c += 128;
+    if (a >= a) c += 256;
+    if (b <= a) c += 512;
+    if (inf > 1.0e300) c += 1024;
+    if (-inf < -1.0e300) c += 2048;
+    if (f > 3.0f) c += 4096;
+    if (g < f) c += 8192;
+    if (g == 0.1f) c += 16384;
+    if ((double)g == 0.1) c += 32768;
+    printf("%f %f\n", inf, -inf);
+    double acc = 0.0;
+    for (int k = 1; k <= 10; k++) {
+        acc += 1.0 / k;
+    }
+    printf("%.6f\n", acc);
+    double negz = -zero;
+    float fneg = -f;
+    printf("%f %f\n", negz, (double)fneg);
+    return c + i;
+}

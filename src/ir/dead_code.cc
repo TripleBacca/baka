@@ -12,9 +12,29 @@ namespace baka {
                        (opcode >= Opcode::Add && opcode <= Opcode::LogicalNot && opcode != Opcode::Divide &&
                         opcode != Opcode::Remainder);
             }
+
+            // Temporaries live on exit from each block (global analysis). Temporaries
+            // are mutable, so any definition kills and any earlier read is exposed.
+            LiveSets TemporariesLiveOut(Function& function) {
+                BuildCFG(function);
+                LiveSets uses, defs;
+                for (const auto& block : function.blocks) {
+                    auto& read = uses[block.id];
+                    auto& written = defs[block.id];
+                    for (const auto& instruction : block.instructions) {
+                        for (const auto& operand : Uses(instruction)) {
+                            if (operand.kind == OperandKind::Temporary && !written.count(operand.id)) {
+                                read.insert(operand.id);
+                            }
+                        }
+                        if (DefinesTemporary(instruction)) written.insert(instruction.result.id);
+                    }
+                }
+                return LiveOut(function, uses, defs);
+            }
         }
 
-        void EliminateDeadCode(Module& module) {
+        void RemoveUnreachableBlocks(Module& module) {
             for (auto& function : module.functions) {
                 if (!function.defined || function.blocks.empty()) {
                     continue;
@@ -30,53 +50,34 @@ namespace baka {
                     }
                     for (const auto& block : function.blocks) {
                         if (block.id == id) {
-                            for (auto successor : block.successors) {
-                                pending.push_back(successor);
-                            }
+                            pending.insert(pending.end(), block.successors.begin(), block.successors.end());
                         }
                     }
                 }
                 std::erase_if(function.blocks, [&](const Block& block) { return !reachable.count(block.id); });
                 BuildCFG(function);
-                std::map<BlockId, std::set<uint32_t>> liveIn, liveOut;
-                bool changed = true;
-                while (changed) {
-                    changed = false;
-                    for (auto it = function.blocks.rbegin(); it != function.blocks.rend(); ++it) {
-                        std::set<uint32_t> out;
-                        for (auto successor : it->successors) {
-                            out.insert(liveIn[successor].begin(), liveIn[successor].end());
-                        }
-                        auto in = out;
-                        for (auto instruction = it->instructions.rbegin(); instruction != it->instructions.rend();
-                             ++instruction) {
-                            if (DefinesTemporary(*instruction)) {
-                                in.erase(instruction->result.id);
-                            }
-                            for (auto operand : Uses(*instruction)) {
-                                if (operand.kind == OperandKind::Temporary) {
-                                    in.insert(operand.id);
-                                }
-                            }
-                        }
-                        if (liveIn[it->id] != in || liveOut[it->id] != out) {
-                            changed = true;
-                        }
-                        liveIn[it->id] = std::move(in);
-                        liveOut[it->id] = std::move(out);
-                    }
+            }
+        }
+
+        void EliminateDeadCode(Module& module) {
+            for (auto& function : module.functions) {
+                if (!function.defined || function.blocks.empty()) {
+                    continue;
                 }
-                // Repeat local deletion to remove newly dead chains, using interblock
-                // liveness each time through Optimize. Stores are never guessed dead.
+                auto exits = TemporariesLiveOut(function);
                 for (auto& block : function.blocks) {
-                    auto live = liveOut[block.id];
+                    // Backward next-use scan from the block's global live-out set; the
+                    // deletion itself is local to this block.
+                    const auto& exit = exits[block.id];
+                    std::set<uint32_t> live(exit.begin(), exit.end());
                     std::vector<Instruction> kept;
                     for (auto it = block.instructions.rbegin(); it != block.instructions.rend(); ++it) {
-                        if (DefinesTemporary(*it) && !live.count(it->result.id) && Removable(it->opcode)) {
-                            continue;
-                        }
                         if (DefinesTemporary(*it)) {
-                            live.erase(it->result.id);
+                            const auto id = it->result.id;
+                            if (!live.count(id) && Removable(it->opcode)) {
+                                continue;
+                            }
+                            live.erase(id);
                         }
                         for (auto operand : Uses(*it)) {
                             if (operand.kind == OperandKind::Temporary) {

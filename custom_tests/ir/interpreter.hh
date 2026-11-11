@@ -470,7 +470,13 @@ namespace ir_test {
             }
             for (const auto& function : ModuleValue.functions) {
                 if (function.name == "main") {
-                    auto value = invoke(function.id, {{static_cast<uint32_t>(n)}});
+                    // The input is the first argument; further parameters (an argv
+                    // pointer for `main(int argc, char** argv)`) receive zero/null.
+                    std::vector<Value> arguments(ModuleValue.type(function.signature).parameters.size());
+                    if (!arguments.empty()) {
+                        arguments.front() = {static_cast<uint32_t>(n)};
+                    }
+                    auto value = invoke(function.id, arguments);
                     while (!ExitActions.empty()) {
                         auto action = ExitActions.back();
                         ExitActions.pop_back();
