@@ -49,8 +49,10 @@ returning an integer type or `void`.
 - A method that modifies an object can be called on a `const` object.
 - Implicit pointer-to-`bool` is rejected in assignments and arguments but accepted in
   conditions.
-- Unsupported syntax includes bare `unsigned`, `signed char`, references, `const` methods,
-  access specifiers and direct initialization `C c(4)`.
+- Unsupported syntax includes bare `unsigned`, `signed char`, `const` methods, rvalue
+  references, lambda captures, virtual functions (planned, see page 18) and direct
+  initialization `C c(4)`. Access specifiers, lvalue references and captureless lambdas are
+  supported (pages 15–17).
 
 ### Not bugs, but different from `g++`
 
