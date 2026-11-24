@@ -196,7 +196,7 @@ next                      IDENTIFIER
 class                     K_CLASS               
 TokenDemonstrator         IDENTIFIER            
 {                         LPAREN_CURLY          
-private                   IDENTIFIER            
+private                   K_PRIVATE             
 :                         OP_COLON              
 signed                    K_SIGNED              
 short                     K_SHORT               
@@ -214,7 +214,7 @@ char_val                  IDENTIFIER
 bool                      K_BOOL                
 bool_val                  IDENTIFIER            
 ;                         SEMICOLON             
-public                    IDENTIFIER            
+public                    K_PUBLIC              
 :                         OP_COLON              
 static                    K_STATIC              
 const                     K_CONST               

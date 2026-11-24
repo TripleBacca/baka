@@ -93,9 +93,68 @@ namespace baka {
             return unsignedType;
         }
 
+        bool ExpressionChecker::hasDestruction(TypeId type) const {
+            type = TypeSystem.unConst(type);
+            while (TypeSystem.get(type).kind == TypeKind::Array) {
+                type = TypeSystem.unConst(TypeSystem.get(type).element);
+            }
+            if (!TypeSystem.isAggregate(type) || TypeSystem.get(type).completion != Completion::Complete) {
+                return false;
+            }
+            if (DeclarationChecker.specialMembers(type).destructor) {
+                return true;
+            }
+            for (const auto& subobject : TypeSystem.subobjects(type)) {
+                if (hasDestruction(subobject.type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool ExpressionChecker::bindsDirectly(const ExprResult& value, TypeId reference) const {
+            const auto referent = TypeSystem.get(reference).element;
+            const auto source = value.sourceType.value ? value.sourceType : value.type;
+            if (value.error || !value.sourceLValue || !source.value) {
+                return false;
+            }
+            const auto from = TypeSystem.unConst(source), to = TypeSystem.unConst(referent);
+            if (from != to && !TypeSystem.derivesFrom(from, to)) {
+                return false;
+            }
+            // T& cannot drop the const of a const object.
+            const bool sourceConst = TypeSystem.isConst(source) ||
+                                     (TypeSystem.get(from).kind == TypeKind::Array &&
+                                      TypeSystem.isConst(TypeSystem.get(from).element));
+            const bool targetConst = TypeSystem.isConst(referent) ||
+                                     (TypeSystem.get(to).kind == TypeKind::Array &&
+                                      TypeSystem.isConst(TypeSystem.get(to).element));
+            return !sourceConst || targetConst;
+        }
+
+        bool ExpressionChecker::bindsReference(const ExprResult& value, TypeId reference, bool exactly) const {
+            if (value.error || !TypeSystem.isReference(reference)) {
+                return false;
+            }
+            const auto referent = TypeSystem.get(reference).element;
+            if (bindsDirectly(value, reference)) {
+                const auto source = value.sourceType.value ? value.sourceType : value.type;
+                return !exactly || TypeSystem.unConst(source) == TypeSystem.unConst(referent);
+            }
+            // Only const T& binds a temporary holding the converted value. Temporaries
+            // that need destruction would need lifetime extension, which is not modelled.
+            if (exactly || !TypeSystem.isConst(referent) || hasDestruction(referent)) {
+                return false;
+            }
+            return isAssignable(value.type, TypeSystem.unConst(referent), value);
+        }
+
         bool ExpressionChecker::isAssignable(TypeId from, TypeId to, const ExprResult& value) const {
             if (!from.value || !to.value) {
                 return false;
+            }
+            if (TypeSystem.isReference(to)) {
+                return bindsReference(value, to);
             }
             if (isNullPointerConstant(value) && isPointer(to)) {
                 return true;

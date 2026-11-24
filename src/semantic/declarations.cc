@@ -176,6 +176,20 @@ namespace baka {
                 SymbolTable.diagnose("static-method", "static methods have no const-qualified receiver", member.source);
                 return false;
             }
+            if (!member.isType && TypeInfo.kind == TypeKind::Reference) {
+                // There are no constructor member-initializer lists to bind them.
+                SymbolTable.diagnose("reference", "reference members are not supported", member.source);
+                return false;
+            }
+            if (member.isConstructor && TypeInfo.kind == TypeKind::Function && !TypeInfo.parameters.empty() &&
+                member.minimumArity <= 1 && TypeSystem.isReference(TypeInfo.parameters.front()) &&
+                TypeSystem.unConst(TypeSystem.referenced(TypeInfo.parameters.front())) == TypeSystem.unConst(owner)) {
+                // Record copies are memberwise IR copies; a user copy constructor would
+                // be silently bypassed by them.
+                SymbolTable.diagnose("copy-constructor", "user-defined copy constructors are not supported",
+                                     member.source);
+                return false;
+            }
             bool field = !member.isType && !member.isStatic && TypeInfo.kind != TypeKind::Function;
             if (field && !validate(type, {false, true, false, true}, member.source)) {
                 return false;
@@ -216,8 +230,8 @@ namespace baka {
             return true;
         }
 
-        bool Declarations::base(TypeId owner, TypeId base, const types::ASTNode* source) {
-            if (TypeSystem.setBase(owner, base)) {
+        bool Declarations::base(TypeId owner, TypeId base, semantic::Access access, const types::ASTNode* source) {
+            if (TypeSystem.setBase(owner, base, access)) {
                 return true;
             }
             SymbolTable.diagnose("base", "invalid, incomplete, duplicate, or cyclic base", source);
@@ -308,8 +322,81 @@ namespace baka {
             return result;
         }
 
+        bool Declarations::accessible(TypeId naming, TypeId owner, size_t index, TypeId context) const {
+            naming = TypeSystem.unConst(naming);
+            owner = TypeSystem.unConst(owner);
+            context = context.value ? TypeSystem.unConst(context) : TypeId{};
+            // Inheritance path from the naming class down to the declaring class.
+            std::vector<TypeId> path;
+            for (auto current = naming; current.value; current = TypeSystem.get(current).base) {
+                path.push_back(current);
+                if (current == owner) {
+                    break;
+                }
+            }
+            if (path.empty() || path.back() != owner) {
+                return false;
+            }
+            const auto related = [&](TypeId derived, TypeId base) {
+                return derived == base || TypeSystem.derivesFrom(derived, base);
+            };
+            // Effective access of the member as a member of each class on the path,
+            // computed outward from the declaring class. A private member of a base is
+            // inaccessible (nullopt) in every class derived from it.
+            std::vector<std::optional<semantic::Access>> levels(path.size());
+            levels.back() = TypeSystem.get(owner).members.at(index).access;
+            for (size_t i = path.size() - 1; i-- > 0;) {
+                const auto inner = levels[i + 1];
+                if (inner && *inner != semantic::Access::Private) {
+                    levels[i] = std::max(*inner, TypeSystem.get(path[i]).baseAccess);
+                }
+            }
+            // [class.access.base]: m named in N is accessible if its access as a member
+            // of N permits the context, or if N's base B is accessible from the context
+            // and m is accessible when named in B.
+            const auto permits = [&](semantic::Access access, TypeId at) {
+                switch (access) {
+                case semantic::Access::Public:
+                    return true;
+                case semantic::Access::Private:
+                    return context.value && context == at;
+                case semantic::Access::Protected:
+                    // Derived members may use protected members only through objects of
+                    // their own class (or classes derived from it).
+                    return context.value &&
+                           (context == at || (TypeSystem.derivesFrom(context, at) && related(naming, context)));
+                }
+                return false;
+            };
+            for (size_t i = 0; i < path.size(); ++i) {
+                if (levels[i] && permits(*levels[i], path[i])) {
+                    return true;
+                }
+                if (i + 1 < path.size() && !permits(TypeSystem.get(path[i]).baseAccess, path[i])) {
+                    return false; // the base subobject itself is not accessible here
+                }
+            }
+            return false;
+        }
+
+        bool Declarations::checkAccess(TypeId naming, TypeId owner, size_t index, TypeId context,
+                                       const types::ASTNode* source) {
+            if (accessible(naming, owner, index, context)) {
+                return true;
+            }
+            const auto& member = TypeSystem.get(TypeSystem.unConst(owner)).members.at(index);
+            const char* level = member.access == semantic::Access::Private     ? "private"
+                                : member.access == semantic::Access::Protected ? "protected"
+                                                                     : "inaccessible";
+            auto name = member.isConstructor ? "constructor of '" + TypeSystem.get(TypeSystem.unConst(owner)).name + "'"
+                                             : "'" + member.name + "'";
+            SymbolTable.diagnose("access", name + " is " + level + " within this context", source);
+            return false;
+        }
+
         Declarations::Access Declarations::memberAccess(TypeId receiver, const std::string& name, bool arrow,
-                                                        bool staticContext, const types::ASTNode* source) {
+                                                        bool staticContext, const types::ASTNode* source,
+                                                        std::optional<TypeId> accessContext) {
             if (arrow) {
                 auto TypeInfo = TypeSystem.get(TypeSystem.unConst(receiver));
                 if (TypeInfo.kind != TypeKind::Pointer) {
@@ -337,6 +424,9 @@ namespace baka {
             }
             if (found.indices.size() != 1) {
                 return {{}, found.owner, found.indices, false};
+            }
+            if (accessContext && !checkAccess(receiver, found.owner, found.indices[0], *accessContext, source)) {
+                return {};
             }
             const auto& MemberInfo = TypeSystem.get(found.owner).members[found.indices[0]];
             bool function = TypeSystem.get(TypeSystem.unConst(MemberInfo.type)).kind == TypeKind::Function;

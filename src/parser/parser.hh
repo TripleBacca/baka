@@ -62,6 +62,10 @@ namespace parser {
 
     class Parser {
         size_t current = 0;
+        // Lambda bodies parsed inside the current top-level declaration; the program
+        // loop appends them right after that declaration (see ParseLambda).
+        std::vector<types::FunctionNode*> PendingLambdas;
+        size_t LambdaCount = 0;
         std::span<types::Token> Tokens;
         base::ParserSymbolTable<ParserSTE> TypeLookup;
         std::span<types::TokenSourceLocation> TokenSourceLocations;
@@ -142,6 +146,7 @@ namespace parser {
         std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> ParseStruct();
         std::variant<types::ClassDefinitionNode*, types::ClassDeclarationNode*> ParseClass();
         types::StructBodyNode* ParseStructBody(types::IdentifierNode* ParentName);
+        std::optional<types::AccessSpecifier> MatchAccessSpecifier();
 
         types::UnionNode* ParseUnion();
         types::UnionBodyNode* ParseUnionBody(types::IdentifierNode* ParentName);
@@ -207,6 +212,8 @@ namespace parser {
         types::SingleDeclarationNode* ParseSingleDeclaration();
         types::DeclarationIdentifierNode* ParseDeclarationIdentifier();
         types::DeclarationIdentifierNode* ParseAbstractDeclarator();
+        void MatchReferenceDeclarator(types::DeclarationIdentifierNode* Variable);
+        types::ExpressionNode* ParseLambda();
         types::InitializerNode* ParseInitializer(); // { intializer , intializer .... } or just 'assingmentexpr'
     };
 

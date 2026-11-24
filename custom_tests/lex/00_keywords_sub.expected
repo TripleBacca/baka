@@ -133,7 +133,7 @@ BLUE                      IDENTIFIER
 class                     K_CLASS               
 BaseClass                 IDENTIFIER            
 {                         LPAREN_CURLY          
-public                    IDENTIFIER            
+public                    K_PUBLIC              
 :                         OP_COLON              
 static                    K_STATIC              
 const                     K_CONST               

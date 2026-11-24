@@ -1,13 +1,16 @@
 class Base {
+public:
     int a;
     int b;
 };
 
-class Derived : Base {
+class Derived : public Base {
+public:
     int extra;
 };
 
 class Holder {
+public:
     Base base;
     int last;
 };

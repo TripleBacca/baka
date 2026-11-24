@@ -14,21 +14,36 @@ namespace baka {
             return DeclarationChecker.aggregate(std::string(name->GetName()), kind, source);
         }
 
+        namespace {
+            // Written access, or the default of the class-key used by the definition.
+            Access Resolve(types::AccessSpecifier written, TypeKind kind) {
+                switch (written) {
+                case types::AccessSpecifier::Public: return Access::Public;
+                case types::AccessSpecifier::Protected: return Access::Protected;
+                case types::AccessSpecifier::Private: return Access::Private;
+                default: return kind == TypeKind::Class ? Access::Private : Access::Public;
+                }
+            }
+        }
+
         TypeId ASTAggregates::definition(types::IdentifierNode* name, types::IdentifierNode* parent,
-                                         types::StructBodyNode& body, TypeKind kind, MemberSignature signature,
-                                         types::ASTNode* source) {
+                                         types::AccessSpecifier baseAccess, types::StructBodyNode& body,
+                                         TypeKind kind, MemberSignature signature, types::ASTNode* source) {
             auto id = DeclarationChecker.aggregate(name ? std::string(name->GetName()) : std::string{}, kind, source);
             if (!DeclarationChecker.beginAggregate(id, source)) {
                 return {};
             }
             bool valid = true;
             if (parent) {
-                valid =
-                    DeclarationChecker.base(id, SymbolTable.lookupType(std::string(parent->GetName()), parent), parent);
+                valid = DeclarationChecker.base(id, SymbolTable.lookupType(std::string(parent->GetName()), parent),
+                                                Resolve(baseAccess, kind), parent);
             }
             auto aggregateScope = SymbolTable.enter(ScopeKind::Aggregate);
             body.semanticInfo().Scope = aggregateScope.value;
-            for (auto* member : body.getMembers()) {
+            const auto& members = body.getMembers();
+            for (size_t memberIndex = 0; memberIndex < members.size(); ++memberIndex) {
+                auto* member = members[memberIndex];
+                const auto access = Resolve(body.getMemberAccess(memberIndex), kind);
                 if (auto* list = dynamic_cast<types::DeclarationList*>(member)) {
                     auto base =
                         ASTResolver.specifier(list->getTypeName(), list->getModifier(), list->getIsConst(), list);
@@ -42,6 +57,7 @@ namespace baka {
                             std::string(item->getDeclarator()->getVariableName()), type, {}, list->getIsStatic()};
                         MemberInfo.source = item;
                         MemberInfo.initializer = item->getInitializer();
+                        MemberInfo.access = access;
                         bool accepted = DeclarationChecker.member(id, MemberInfo);
                         if (accepted) {
                             bool function = TypeSystem.get(TypeSystem.unConst(type)).kind == TypeKind::Function;
@@ -74,6 +90,7 @@ namespace baka {
                         Member MemberInfo{entry.name, entry.type, symbol};
                         MemberInfo.isType = true;
                         MemberInfo.source = alias;
+                        MemberInfo.access = access;
                         valid = DeclarationChecker.member(id, MemberInfo) && valid;
                     }
                 } else {
@@ -84,6 +101,7 @@ namespace baka {
                         continue;
                     }
                     MemberInfo->source = member;
+                    MemberInfo->access = access;
                     bool accepted = DeclarationChecker.member(id, *MemberInfo);
                     SymbolId symbol;
                     if (accepted && !MemberInfo->isConstructor && !MemberInfo->isDestructor) {
@@ -108,12 +126,12 @@ namespace baka {
         }
 
         TypeId ASTAggregates::definition(types::StructDefinitionNode& node, MemberSignature signature) {
-            return definition(node.getName(), node.getBaseName(), *node.getBody(), TypeKind::Struct,
+            return definition(node.getName(), node.getBaseName(), node.getBaseAccess(), *node.getBody(), TypeKind::Struct,
                               std::move(signature), &node);
         }
 
         TypeId ASTAggregates::definition(types::ClassDefinitionNode& node, MemberSignature signature) {
-            return definition(node.getName(), node.getBaseName(), *node.getBody(), TypeKind::Class,
+            return definition(node.getName(), node.getBaseName(), node.getBaseAccess(), *node.getBody(), TypeKind::Class,
                               std::move(signature), &node);
         }
 
@@ -121,7 +139,8 @@ namespace baka {
             if (!node.getBody()) {
                 return forward(node.getName(), TypeKind::Union, &node);
             }
-            return definition(node.getName(), nullptr, *node.getBody(), TypeKind::Union, std::move(signature), &node);
+            return definition(node.getName(), nullptr, types::AccessSpecifier::Unspecified, *node.getBody(),
+                              TypeKind::Union, std::move(signature), &node);
         }
     }
 }

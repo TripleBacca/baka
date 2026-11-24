@@ -9,6 +9,7 @@ int* alias = &seeds[2];
 int (*ops[2])(int v);
 
 class Config {
+public:
     int id;
     double factor;
     const char* name;

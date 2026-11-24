@@ -13,7 +13,8 @@ namespace baka {
                 base.type = decay(base.type);
             }
             auto access =
-                DeclarationChecker.memberAccess(base.type, std::string(member->GetName()), arrow, false, source);
+                DeclarationChecker.memberAccess(base.type, std::string(member->GetName()), arrow, false, source,
+                                                CurrentClass);
             if (!access.type.value) {
                 return makeError();
             }

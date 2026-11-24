@@ -48,7 +48,8 @@ namespace baka {
                 }
                 break;
             }
-            case K::Pointer: {
+            case K::Pointer:
+            case K::Reference: { // a reference is represented by its referent's address
                 auto result = Result.pointer(importType(source.element));
                 TypeMap[id.value] = result;
                 return result;

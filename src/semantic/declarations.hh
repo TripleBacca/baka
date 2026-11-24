@@ -56,7 +56,7 @@ namespace baka {
 
             bool member(TypeId owner, Member member);
 
-            bool base(TypeId owner, TypeId base, const types::ASTNode* source = nullptr);
+            bool base(TypeId owner, TypeId base, semantic::Access access, const types::ASTNode* source = nullptr);
 
             bool finishAggregate(TypeId type, const types::ASTNode* source = nullptr);
 
@@ -74,8 +74,19 @@ namespace baka {
                 bool lvalue = false;
             };
 
+            // accessContext: the class whose member is being checked (empty TypeId at
+            // namespace scope). Without it access is checked later by the caller (calls).
             Access memberAccess(TypeId receiver, const std::string& name, bool arrow = false,
-                                bool staticContext = false, const types::ASTNode* source = nullptr);
+                                bool staticContext = false, const types::ASTNode* source = nullptr,
+                                std::optional<TypeId> accessContext = std::nullopt);
+
+            // Whether member `index` of `owner`, named through class `naming`, is accessible
+            // from member functions of `context` (no context: namespace scope).
+            bool accessible(TypeId naming, TypeId owner, size_t index, TypeId context) const;
+
+            // accessible(), diagnosing "'m' is private within this context" when not.
+            bool checkAccess(TypeId naming, TypeId owner, size_t index, TypeId context,
+                             const types::ASTNode* source);
 
             TypeId thisType(TypeId currentClass, bool staticContext, bool constMethod,
                             const types::ASTNode* source = nullptr);

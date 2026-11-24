@@ -7,6 +7,7 @@ int argument(int value) {
 }
 
 class Item {
+public:
     int id;
 
     Item() {

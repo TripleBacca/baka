@@ -45,6 +45,13 @@ namespace baka {
 
         void Symbols::diagnose(std::string code, std::string message, const types::ASTNode* source,
                                const types::ASTNode* previous) {
+            // Expressions may be typed more than once (declaration-time evaluation and
+            // annotation); report each distinct finding at a location once.
+            for (const auto& existing : Diagnostics) {
+                if (existing.source == source && existing.code == code && existing.message == message) {
+                    return;
+                }
+            }
             Diagnostics.push_back({std::move(code), std::move(message), source, previous});
         }
 
@@ -214,6 +221,21 @@ namespace baka {
             SymbolId id{static_cast<uint32_t>(SymbolEntries.size() - 1)};
             ScopeArena.at(CurrentScope.value).names[NewDeclaration.name].push_back(id);
             return id;
+        }
+
+        bool Symbols::deduceFunctionResult(SymbolId id, TypeId signature) {
+            if (!id.value || !signature.value) {
+                return false;
+            }
+            auto& symbol = SymbolEntries.at(id.value);
+            const auto& old = TypeSystem.get(symbol.type);
+            const auto& next = TypeSystem.get(signature);
+            if (symbol.kind != SymbolKind::Function || old.kind != TypeKind::Function ||
+                next.kind != TypeKind::Function || old.parameters != next.parameters || old.variadic != next.variadic) {
+                return false;
+            }
+            symbol.type = signature;
+            return true;
         }
 
         bool Symbols::completeObject(SymbolId id, TypeId completed) {

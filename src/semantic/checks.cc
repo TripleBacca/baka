@@ -51,6 +51,10 @@ namespace baka {
                         if (!work.expression && TypeSystem.isConst(type)) {
                             report("initializer", "const object requires an initializer", work.source);
                         }
+                        if (!work.expression && TypeSystem.isReference(type) &&
+                            SymbolTable.get(work.symbol).kind == SymbolKind::Object) {
+                            report("initializer", "reference requires an initializer", work.source);
+                        }
                         if (!TypeSystem.layout(type)) {
                             report("complete", "object requires a complete storage type", work.source);
                         }

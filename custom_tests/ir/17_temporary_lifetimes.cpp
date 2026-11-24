@@ -1,6 +1,7 @@
 long trace;
 
 class A {
+public:
     int id;
 
     A(int n) {

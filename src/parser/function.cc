@@ -104,6 +104,7 @@ namespace baka
 			const size_t SourceStart = current;
 			size_t prev = current;
 			size_t ErrorsOnEntry = ReportedErrorCount;
+			const size_t LambdasOnEntry = PendingLambdas.size();
 
 			types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
 
@@ -178,6 +179,7 @@ namespace baka
 					return std::nullopt;
 				}
 				current = prev;
+				PendingLambdas.resize(LambdasOnEntry); // re-parsed by the declaration path
 				return std::nullopt;
 			}
 

@@ -141,6 +141,30 @@ namespace baka {
             return wrapConversion(expression, target, conversion);
         }
 
+        // Reference destinations: an lvalue of the referenced type (or a derived class)
+        // is bound by address; otherwise (const T& only, checked earlier) the value is
+        // converted to T and materialized in a temporary whose address is bound.
+        types::ExpressionNode* ExpressionChecker::bindReference(types::ExpressionNode* expression, TypeId reference) {
+            using K = types::ImplicitConversionKind;
+            const auto referent = TypeSystem.get(reference).element;
+            ConversionTargets.erase(expression); // consumed here; the operand has its own context
+            ExprResult source;
+            source.type = {expression->semanticInfo().Type};
+            source.sourceType = source.type;
+            source.sourceLValue = expression->semanticInfo().LValue;
+            types::ExpressionNode* bound = nullptr;
+            if (bindsDirectly(source, reference)) {
+                bound = wrapConversion(materializeImpl(expression, false), reference, K::BindReference);
+            } else {
+                bound = wrapConversion(materializeImpl(expression, true, TypeSystem.unConst(referent)), reference,
+                                       K::MaterializeTemporary);
+            }
+            // An address is never a constant expression.
+            auto& info = bound->semanticInfo();
+            info.ConstantExpression = info.HasConstant = info.HasFloatingConstant = info.NullPointerConstant = false;
+            return bound;
+        }
+
         // Materialize only after successful typing. This walk is over collected
         // expression work, never another declaration/name-resolution traversal. Each
         // parent chooses value/address/unevaluated context for its children.
@@ -148,6 +172,17 @@ namespace baka {
                                                                   TypeId target) {
             if (!expression || expression->semanticInfo().Error) {
                 return expression;
+            }
+            if (!target.value) {
+                if (auto it = ConversionTargets.find(expression); it != ConversionTargets.end()) {
+                    if (TypeSystem.isReference(it->second)) {
+                        target = it->second;
+                    }
+                }
+            }
+            if (target.value && TypeSystem.isReference(target) &&
+                !dynamic_cast<types::InitializerNode*>(expression)) {
+                return bindReference(expression, target);
             }
             if (dynamic_cast<types::ImplicitCastNode*>(expression) ||
                 dynamic_cast<types::CompoundAssignmentNode*>(expression)) {

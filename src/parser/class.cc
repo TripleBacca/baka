@@ -1,3 +1,4 @@
+#include <optional>
 #include "parser.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/token/token.hh"
@@ -49,7 +50,9 @@ namespace baka {
             }
 
             types::IdentifierNode *ParentStructIdentifier = nullptr;
+            std::optional<types::AccessSpecifier> BaseAccess;
             if (this->Match(types::TokenType::OP_COLON)) {
+                BaseAccess = MatchAccessSpecifier();
                 if (!this->Check(types::TokenType::IDENTIFIER)) {
                     ReportError("expected identifier after ':'");
                 } else {
@@ -88,6 +91,9 @@ namespace baka {
                 Node = AllocNodeAt<types::ClassDefinitionNode>(SourceStart, ClassIdentifier, Body);
             }
 
+            if (BaseAccess) {
+                Node->setBaseAccess(*BaseAccess);
+            }
             ExitScope();
 
             return Node;

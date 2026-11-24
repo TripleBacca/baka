@@ -7,6 +7,11 @@ namespace baka {
                 fail(expression, "missing lvalue in IR lowering");
             }
             const auto& info = expression->semanticInfo();
+            // A call returning T& yields the address of the object it designates.
+            if (auto* callNode = dynamic_cast<const types::FunctionCallPostfixExpr*>(expression);
+                callNode && info.LValue) {
+                return call(callNode);
+            }
             if (!info.LValue && Result.type(type(expression)).kind == TypeKind::Record) {
                 // Member access on a returned record needs addressable storage. This
                 // materialization is local IR storage, never a hidden call argument.
@@ -109,6 +114,10 @@ namespace baka {
                 if (selected.kind == semantic::SymbolKind::Function ||
                     selected.kind == semantic::SymbolKind::BuiltinFunction) {
                     return callable(symbol);
+                }
+                if (Analyzer.types().isReference(selected.type)) {
+                    // The reference's storage holds the bound object's address.
+                    return load(object(symbol), importType(selected.type));
                 }
                 return object(symbol);
             }

@@ -107,6 +107,7 @@ namespace baka {
             Operand conditionalValue(const types::TernaryOpNode* expression);
             Operand implicitValue(const types::ImplicitCastNode* expression);
             Operand castValue(const types::CastFactorNode* expression);
+            Operand referenceAddress(const types::ImplicitCastNode* castNode);
             Operand compoundAssignment(const types::CompoundAssignmentNode* expression, bool returnAddress);
             Operand address(const types::ExpressionNode* expression);
             Operand primaryAddress(const types::PrimaryExpressionNode* expression);

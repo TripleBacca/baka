@@ -1,3 +1,5 @@
+#include <deque>
+#include <string>
 
 #include "parser.hh"
 #include "types/parser/ast/expression.hh"
@@ -40,10 +42,86 @@ namespace parser {
 //         -> try_parse_typename (on finding "(")
 
 
+    // [] (params) -> R { body }   |   [] (params) { body }   |   [] { body }
+    // A captureless lambda has no state, so its body becomes an internal function
+    // `__lambda_N` hoisted after the enclosing top-level declaration, and the
+    // expression names that function (it decays to the lambda's function pointer).
+    types::ExpressionNode* Parser::ParseLambda() {
+        static std::deque<std::string> Names; // identifiers outlive the parser
+        const size_t SourceStart = current;
+        Advance(); // '['
+        if (!Check(types::TokenType::RPAREN_SQUARE)) {
+            ReportError("lambda captures are not supported; only captureless lambdas '[]' are allowed");
+            SkipTo({types::TokenType::RPAREN_SQUARE, types::TokenType::LPAREN_CURLY, types::TokenType::SEMICOLON});
+        }
+        if (!Match(types::TokenType::RPAREN_SQUARE)) {
+            ReportError("expected ']' after lambda capture list");
+            return nullptr;
+        }
+        types::FunctionParameterList* Parameters = nullptr;
+        if (Match(types::TokenType::LPAREN_ROUND)) {
+            Parameters = ParseFunctionParameterList();
+            if (!Match(types::TokenType::RPAREN_ROUND)) {
+                ReportError("expected ')' after lambda parameters");
+                SkipTo({types::TokenType::RPAREN_ROUND, types::TokenType::LPAREN_CURLY});
+                Match(types::TokenType::RPAREN_ROUND);
+            }
+        } else {
+            Parameters = AllocNodeAt<types::FunctionParameterList>(SourceStart, std::vector<types::FunctionParameter*>{},
+                                                                  false);
+        }
+        Names.push_back("__lambda_" + std::to_string(LambdaCount++));
+        const std::string_view Name = Names.back();
+        auto* Declarator = AllocNodeAt<types::DeclarationIdentifierNode>(SourceStart);
+        Declarator->setInnerDeclaration(AllocNodeAt<types::IdentifierNode>(SourceStart, Name));
+        Declarator->setFunctionParameters(Parameters);
+
+        types::IdentifierNode* ReturnType = nullptr;
+        bool IsConst = false;
+        bool Deduced = false;
+        types::TypeSpecifierModifier Modifier = types::TypeSpecifierModifier::NONE;
+        if (Match(types::TokenType::OP_ARROW)) {
+            IsConst = Match(types::TokenType::K_CONST);
+            Modifier = DetermineTypeSpecifierModifier();
+            if (Modifier != types::TypeSpecifierModifier::NONE) {
+                Advance();
+            }
+            if (!isTypeName(Peek())) {
+                ReportError("expected a type after '->' in lambda");
+                ReturnType = AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("void"));
+                ReturnType->setHasError();
+            } else {
+                ReturnType = ParseTypeIdentifier();
+            }
+            while (Match(types::TokenType::OP_MUL)) {
+                Declarator->appendPointer();
+            }
+            MatchReferenceDeclarator(Declarator);
+        } else {
+            ReturnType = AllocNodeAt<types::IdentifierNode>(SourceStart, std::string_view("void"));
+            Deduced = true;
+        }
+        if (!Check(types::TokenType::LPAREN_CURLY)) {
+            ReportError("expected '{' to begin the lambda body");
+            return nullptr;
+        }
+        types::StatementNode* Body = CompoundStatement();
+        auto* Function = AllocNodeAt<types::FunctionNode>(SourceStart, ReturnType, Declarator, Body, true, IsConst,
+                                                          Modifier);
+        Function->setLambda(Deduced);
+        PendingLambdas.push_back(Function);
+        auto* Reference = AllocNodeAt<types::IdentifierNode>(SourceStart, Name);
+        return AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, Reference);
+    }
+
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
         const size_t SourceStart = current;
         auto& ConstantOrIdentifierOrThis = Peek();
 
+
+        if (Check(types::TokenType::LPAREN_SQUARE)) {
+            return ParseLambda();
+        }
 
         if(Match(types::TokenType::LPAREN_ROUND)) {
             types::ExpressionNode* Node = ParseCommaExpression();

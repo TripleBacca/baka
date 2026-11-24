@@ -85,9 +85,43 @@ namespace baka {
                 return cast(address(castNode->getOperand()), resultType);
             case C::FunctionToPointer:
                 return cast(value(castNode->getOperand()), resultType);
+            case C::BindReference:
+                return referenceAddress(castNode);
+            case C::MaterializeTemporary: {
+                // const T& bound to a converted value: the value lives in function
+                // storage for the rest of the call (see README: references).
+                auto captured = value(castNode->getOperand());
+                auto location = storage(captured.type, ".reference");
+                store(location, captured);
+                return cast(location, resultType);
+            }
             default:
                 return cast(value(castNode->getOperand()), resultType);
             }
+        }
+
+        // Address of the object a reference binds to, adjusted to a base subobject when a
+        // derived object is bound to a base-class reference.
+        Operand Lowerer::referenceAddress(const types::ImplicitCastNode* castNode) {
+            const auto resultType = type(castNode);
+            auto location = address(castNode->getOperand());
+            auto& types = Analyzer.types();
+            auto source = types.unConst({castNode->getOperand()->semanticInfo().Type});
+            const auto target = types.unConst(types.get({castNode->semanticInfo().Type}).element);
+            uint64_t offset = 0;
+            while (types.isAggregate(source) && source != target) {
+                auto baseOffset = Result.type(importType(source)).baseOffset;
+                const auto& current = types.get(source);
+                if (!current.base.value || !baseOffset) {
+                    fail(castNode, "cannot bind a reference to an unrelated record");
+                }
+                offset += *baseOffset;
+                source = types.unConst(current.base);
+            }
+            if (offset) {
+                return emitValue(Opcode::AddressOffset, resultType, location, integer(integerType(), offset));
+            }
+            return cast(location, resultType);
         }
 
         Operand Lowerer::castValue(const types::CastFactorNode* explicitCast) {

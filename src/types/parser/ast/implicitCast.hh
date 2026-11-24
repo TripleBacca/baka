@@ -7,7 +7,9 @@ namespace baka::types {
     enum class ImplicitConversionKind {
         LValueToRValue, ArrayToPointer, FunctionToPointer,
         IntegralPromotion, NumericConversion, BooleanConversion,
-        NullToPointer, PointerConversion, QualificationConversion, ConstructorConversion
+        NullToPointer, PointerConversion, QualificationConversion, ConstructorConversion,
+        // Destination is a reference: the result is the bound object's address.
+        BindReference, MaterializeTemporary
     };
 
     inline const char* ImplicitConversionName(ImplicitConversionKind kind) {
@@ -22,6 +24,8 @@ namespace baka::types {
         case ImplicitConversionKind::PointerConversion: return "PointerConversion";
         case ImplicitConversionKind::QualificationConversion: return "QualificationConversion";
         case ImplicitConversionKind::ConstructorConversion: return "ConstructorConversion";
+        case ImplicitConversionKind::BindReference: return "BindReference";
+        case ImplicitConversionKind::MaterializeTemporary: return "MaterializeTemporary";
         }
         return "Unknown";
     }

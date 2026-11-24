@@ -30,6 +30,7 @@ int fold(int (*table[3])(int v), int x) {
 }
 
 class Handler {
+public:
     int (*callback)(int v);
     int base;
 };

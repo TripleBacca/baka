@@ -25,6 +25,9 @@ namespace types {
         StatementNode* Body;
 
         bool IsStatic = false, IsConst = false;
+        // A captureless lambda body hoisted to namespace scope by the parser. Without a
+        // trailing return type its result is deduced from its return statements.
+        bool IsLambda = false, DeducedReturn = false;
         TypeSpecifierModifier Modifier = TypeSpecifierModifier::NONE;
 
     public:
@@ -41,6 +44,12 @@ namespace types {
         bool getIsStatic() const { return IsStatic; }
         bool getIsConst() const { return IsConst; }
         TypeSpecifierModifier getModifier() const { return Modifier; }
+        bool isLambda() const { return IsLambda; }
+        bool hasDeducedReturn() const { return DeducedReturn; }
+        void setLambda(bool deducedReturn) {
+            IsLambda = true;
+            DeducedReturn = deducedReturn;
+        }
 
         void Print(size_t Tabs) const override {
             INDENT(Tabs);
@@ -48,6 +57,10 @@ namespace types {
 
             INDENT(Tabs + 1);
             std::cout << "IsStatic: " << IsStatic << ", IsConst: " << IsConst << '\n';
+            if (IsLambda) {
+                INDENT(Tabs + 1);
+                std::cout << "Lambda: " << (DeducedReturn ? "deduced result" : "declared result") << '\n';
+            }
 
             INDENT(Tabs+1);
             std::cout << "TypeSpecifierModifier: "<< TypeSpecifierModifierToStr[Modifier] << "\n";

@@ -27,6 +27,7 @@ struct Opaque;
 Opaque* raw;
 
 class Metadata {
+public:
     typedef int Count;
     static int count;
     int value;

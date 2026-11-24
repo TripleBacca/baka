@@ -162,6 +162,8 @@ namespace baka {
             context.result = TypeSystem.get(type).element;
             context.isStatic = node->getIsStatic();
             context.isConst = false; // leading const qualifies return type
+            context.lambda = node->isLambda();
+            context.deduced = node->hasDeducedReturn() ? symbol : SymbolId{};
             auto* parameters = Parameters(node->getDeclarator());
             registerDefaults(parameters, type, symbol, node);
             Bodies.push_back({node, node->getBody(), parameters, context, type, symbol});

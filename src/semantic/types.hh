@@ -34,11 +34,14 @@ namespace baka {
             bool operator==(const ScopeId&) const = default;
         };
 
-        enum class TypeKind { TypeError, Builtin, Pointer, Array, Function, Const, Enum, Struct, Class, Union };
+        enum class TypeKind { TypeError, Builtin, Pointer, Array, Function, Const, Enum, Struct, Class, Union, Reference };
 
         enum class Builtin { Void, Bool, Char, UChar, Short, UShort, Int, UInt, Long, ULong, Float, Double };
 
         enum class Completion { Forward, Defining, Complete };
+
+        // Member and inheritance access, ordered from least to most restrictive.
+        enum class Access { Public, Protected, Private };
 
         enum class BoundKind { Unspecified, Constant };
 
@@ -57,6 +60,7 @@ namespace baka {
             bool isConstructor = false;
             bool isDestructor = false;
             bool isConstMethod = false;
+            Access access = Access::Public;
             const types::ASTNode* source = nullptr;
             size_t minimumArity = static_cast<size_t>(-1);
             const types::ExpressionNode* initializer = nullptr;
@@ -80,6 +84,7 @@ namespace baka {
             std::string name;
             Completion completion = Completion::Forward;
             TypeId base;
+            Access baseAccess = Access::Public;
             std::vector<Member> members; // source order, includes static/type/special members
             // Published once by successful finishDefinition. Forward/failed
             // definitions have no layout. Completed nominal types cannot change
@@ -176,6 +181,11 @@ namespace baka {
 
             TypeId constant(TypeId id, bool constantValue = true);
             TypeId pointer(TypeId pointee);
+            // Lvalue reference; {} for references to references, void or functions.
+            TypeId reference(TypeId referent);
+            bool isReference(TypeId id) const;
+            // The referred-to type of a reference, else the type itself.
+            TypeId referenced(TypeId id) const;
             TypeId array(TypeId element, Bound bound = {});
             TypeId parameterObject(TypeId id);
             TypeId adjustParameter(TypeId id);
@@ -185,7 +195,7 @@ namespace baka {
             TypeId nominal(TypeKind kind, std::string name = {});
 
             bool beginDefinition(TypeId id);
-            bool setBase(TypeId id, TypeId base);
+            bool setBase(TypeId id, TypeId base, Access access = Access::Public);
             bool addMember(TypeId id, Member member);
             bool bindMemberSymbol(TypeId owner, size_t index, SymbolId symbol);
             LayoutResult finishDefinition(TypeId id);

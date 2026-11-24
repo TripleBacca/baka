@@ -144,6 +144,18 @@ namespace baka
 		}
 
 
+		// `T& name` (lvalue reference). `&&` would be an rvalue reference, which the
+		// language does not have.
+		void Parser::MatchReferenceDeclarator(types::DeclarationIdentifierNode* Variable)
+		{
+			if (Match(types::TokenType::OP_BIT_AND)) {
+				Variable->setReference();
+			} else if (Match(types::TokenType::OP_LOGICAL_AND)) {
+				ReportError("rvalue references are not supported");
+				Variable->setReference();
+			}
+		}
+
 		// TODO : write function declaration parser
 		// AllowRedefine : if true allows redefining the same identifier (useful for typedef that lets u redefine the same name)
 		// false by default
@@ -155,6 +167,7 @@ namespace baka
 			{
 			    Variable->appendPointer();
 			}
+			MatchReferenceDeclarator(Variable);
 
 			// not supporting const pointer
 			// int* const ptr - not supported
@@ -251,6 +264,7 @@ namespace baka
 			{
 			    Variable->appendPointer();
 			}
+			MatchReferenceDeclarator(Variable);
 			// not supporting const pointer
 			// int* const ptr - not supported
 

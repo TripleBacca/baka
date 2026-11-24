@@ -1,6 +1,7 @@
 int trace;
 
 class B {
+public:
     int b;
 
     B(int x) {
@@ -13,6 +14,7 @@ class B {
 };
 
 class A {
+public:
     B b = B(3);
     A() {}
 };

@@ -2,6 +2,7 @@ int live;
 int destroyed;
 
 class Guard {
+public:
     Guard() {
         live++;
     }

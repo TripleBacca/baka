@@ -2,6 +2,7 @@ int next = 1;
 int trace;
 
 class Item {
+public:
     int id;
 
     Item() {
@@ -15,6 +16,7 @@ class Item {
 };
 
 class Owner {
+public:
     Item items[2];
 };
 

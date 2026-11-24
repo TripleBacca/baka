@@ -53,7 +53,7 @@ compiler_core_v2          IDENTIFIER
 class                     K_CLASS               
 LexicalAnalyzerEngine     IDENTIFIER            
 {                         LPAREN_CURLY          
-private                   IDENTIFIER            
+private                   K_PRIVATE             
 :                         OP_COLON              
 int                       K_INT                 
 tokenCount                IDENTIFIER            
@@ -64,7 +64,7 @@ _internal_state_flag      IDENTIFIER
 int                       K_INT                 
 max_lookahead_limit_99    IDENTIFIER            
 ;                         SEMICOLON             
-public                    IDENTIFIER            
+public                    K_PUBLIC              
 :                         OP_COLON              
 void                      K_VOID                
 initialize_pipeline       IDENTIFIER            

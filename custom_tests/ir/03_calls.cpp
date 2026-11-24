@@ -3,6 +3,7 @@ int inc(int x) {
 }
 
 class A {
+public:
     int x;
 
     int get(int y) {

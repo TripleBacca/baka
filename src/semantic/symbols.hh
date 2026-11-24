@@ -126,6 +126,8 @@ namespace baka {
 
             SymbolId bind(const std::string& name, const types::ASTNode* source = nullptr);
             SymbolId declare(Declaration NewDeclaration);
+            // A lambda with a deduced result gets its final signature (same parameters).
+            bool deduceFunctionResult(SymbolId id, TypeId signature);
             bool completeObject(SymbolId id, TypeId completed);
             bool setConstant(SymbolId id, int64_t value);
 

@@ -1,10 +1,12 @@
 class Vec {
+public:
     int x;
     int y;
     double w;
 };
 
 class Big {
+public:
     long a;
     char tag;
     int values[5];

@@ -16,6 +16,7 @@ int proto(int x) {
 }
 
 class A {
+public:
     int x;
 
     int m(int y = bump()) {

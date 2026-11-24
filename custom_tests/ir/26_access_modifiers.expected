@@ -1,0 +1,259 @@
+IR::TAC:
+FILE = opaque
+Account = record(i32) size 4 align 4
+Shape = record(i32) size 4 align 4
+Square = record(Shape) size 4 align 4
+Stack = record(Shape, [4 x i32], i32) size 24 align 4
+Pair = record(i32, i32) size 8 align 4
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @atoi.11: fn(ptr<i8>)->i32
+declare @fopen.13: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.14: fn(ptr<FILE>)->i32
+declare @fread.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.16: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.17: fn(i32, ptr<void>, u64)->i64
+declare @write.18: fn(i32, ptr<void>, u64)->i64
+function @Account.fee.21: fn(ptr<Account>)->i32 {
+  parameter this.47: ptr<Account>
+  (ret, _, 1:i32, _)
+}
+function @Account.deposit.23: fn(ptr<Account>, i32)->void {
+  parameter this.50: ptr<Account>
+  parameter amount.51: i32
+  (load, %t1:ptr<Account>, &this.50:ptr<ptr<Account>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Account>, 0:i64)
+  (load, %t3:ptr<Account>, &this.50:ptr<ptr<Account>>, _)
+  (offset, %t4:ptr<i32>, %t3:ptr<Account>, 0:i64)
+  (load, %t5:i32, %t4:ptr<i32>, _)
+  (load, %t6:i32, &amount.51:ptr<i32>, _)
+  (add, %t7:i32, %t5:i32, %t6:i32)
+  (load, %t8:ptr<Account>, &this.50:ptr<ptr<Account>>, _)
+  (param, _, %t8:ptr<Account>, _)
+  (call, %t9:i32, @Account.fee.21, _)
+  (sub, %t10:i32, %t7:i32, %t9:i32)
+  (store, _, %t2:ptr<i32>, %t10:i32)
+  (load, %t11:i32, %t2:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Account.get.24: fn(ptr<Account>)->i32 {
+  parameter this.52: ptr<Account>
+  (load, %t1:ptr<Account>, &this.52:ptr<ptr<Account>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Account>, 0:i64)
+  (load, %t3:i32, %t2:ptr<i32>, _)
+  (ret, _, %t3:i32, _)
+}
+function @Shape.scaled.28: fn(ptr<Shape>, i32)->i32 {
+  parameter this.53: ptr<Shape>
+  parameter k.54: i32
+  (load, %t1:ptr<Shape>, &this.53:ptr<ptr<Shape>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Shape>, 0:i64)
+  (load, %t3:i32, %t2:ptr<i32>, _)
+  (load, %t4:i32, &k.54:ptr<i32>, _)
+  (mul, %t5:i32, %t3:i32, %t4:i32)
+  (ret, _, %t5:i32, _)
+}
+function @Square.perimeterFactor.31: fn(ptr<Square>, i32)->i32 {
+  parameter this.57: ptr<Square>
+  parameter k.58: i32
+  (load, %t1:ptr<Square>, &this.57:ptr<ptr<Square>>, _)
+  (cast, %t2:ptr<Shape>, %t1:ptr<Square>, _)
+  (load, %t3:i32, &k.58:ptr<i32>, _)
+  (param, _, %t2:ptr<Shape>, _)
+  (param, _, %t3:i32, _)
+  (call, %t4:i32, @Shape.scaled.28, _)
+  (ret, _, %t4:i32, _)
+}
+function @Stack.push.36: fn(ptr<Stack>, i32)->void {
+  parameter this.60: ptr<Stack>
+  parameter v.61: i32
+  (load, %t1:ptr<Stack>, &this.60:ptr<ptr<Stack>>, _)
+  (offset, %t2:ptr<[4 x i32]>, %t1:ptr<Stack>, 4:i64)
+  (cast, %t3:ptr<i32>, %t2:ptr<[4 x i32]>, _)
+  (load, %t4:ptr<Stack>, &this.60:ptr<ptr<Stack>>, _)
+  (offset, %t5:ptr<i32>, %t4:ptr<Stack>, 20:i64)
+  (load, %t6:i32, %t5:ptr<i32>, _)
+  (cast, %t7:i64, %t6:i32, _)
+  (mul, %t8:i64, %t7:i64, 4:i64)
+  (offset, %t9:ptr<i32>, %t3:ptr<i32>, %t8:i64)
+  (load, %t10:i32, &v.61:ptr<i32>, _)
+  (store, _, %t9:ptr<i32>, %t10:i32)
+  (load, %t11:i32, %t9:ptr<i32>, _)
+  (load, %t12:ptr<Stack>, &this.60:ptr<ptr<Stack>>, _)
+  (offset, %t13:ptr<i32>, %t12:ptr<Stack>, 20:i64)
+  (load, %t14:ptr<Stack>, &this.60:ptr<ptr<Stack>>, _)
+  (offset, %t15:ptr<i32>, %t14:ptr<Stack>, 20:i64)
+  (load, %t16:i32, %t15:ptr<i32>, _)
+  (add, %t17:i32, %t16:i32, 1:i32)
+  (store, _, %t13:ptr<i32>, %t17:i32)
+  (load, %t18:i32, %t13:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Stack.top.37: fn(ptr<Stack>)->i32 {
+  parameter this.62: ptr<Stack>
+  (load, %t1:ptr<Stack>, &this.62:ptr<ptr<Stack>>, _)
+  (offset, %t2:ptr<[4 x i32]>, %t1:ptr<Stack>, 4:i64)
+  (cast, %t3:ptr<i32>, %t2:ptr<[4 x i32]>, _)
+  (load, %t4:ptr<Stack>, &this.62:ptr<ptr<Stack>>, _)
+  (offset, %t5:ptr<i32>, %t4:ptr<Stack>, 20:i64)
+  (load, %t6:i32, %t5:ptr<i32>, _)
+  (sub, %t7:i32, %t6:i32, 1:i32)
+  (cast, %t8:i64, %t7:i32, _)
+  (mul, %t9:i64, %t8:i64, 4:i64)
+  (offset, %t10:ptr<i32>, %t3:ptr<i32>, %t9:i64)
+  (load, %t11:i32, %t10:ptr<i32>, _)
+  (load, %t12:ptr<Stack>, &this.62:ptr<ptr<Stack>>, _)
+  (offset, %t13:ptr<i32>, %t12:ptr<Stack>, 0:i64)
+  (load, %t14:i32, %t13:ptr<i32>, _)
+  (add, %t15:i32, %t11:i32, %t14:i32)
+  (ret, _, %t15:i32, _)
+}
+function @Pair.setHidden.42: fn(ptr<Pair>, i32)->void {
+  parameter this.63: ptr<Pair>
+  parameter v.64: i32
+  (load, %t1:ptr<Pair>, &this.63:ptr<ptr<Pair>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Pair>, 4:i64)
+  (load, %t3:i32, &v.64:ptr<i32>, _)
+  (store, _, %t2:ptr<i32>, %t3:i32)
+  (load, %t4:i32, %t2:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Pair.sum.43: fn(ptr<Pair>)->i32 {
+  parameter this.65: ptr<Pair>
+  (load, %t1:ptr<Pair>, &this.65:ptr<ptr<Pair>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Pair>, 0:i64)
+  (load, %t3:i32, %t2:ptr<i32>, _)
+  (load, %t4:ptr<Pair>, &this.65:ptr<ptr<Pair>>, _)
+  (offset, %t5:ptr<i32>, %t4:ptr<Pair>, 4:i64)
+  (load, %t6:i32, %t5:ptr<i32>, _)
+  (add, %t7:i32, %t3:i32, %t6:i32)
+  (ret, _, %t7:i32, _)
+}
+function @main.46: fn(i32, ptr<ptr<i8>>)->i32 {
+  parameter argc.66: i32
+  parameter argv.67: ptr<ptr<i8>>
+  local n.68: i32
+  local account.69: Account
+  local square.70: Square
+  local stack.71: Stack
+  local pair.72: Pair
+  (copy, %t3:u1, 0:u1, _)
+  (copy, %t2:u1, 0:u1, _)
+  (copy, %t1:u1, 0:u1, _)
+  (load, %t4:ptr<ptr<i8>>, &argv.67:ptr<ptr<ptr<i8>>>, _)
+  (cast, %t5:i64, 1:i32, _)
+  (mul, %t6:i64, %t5:i64, 8:i64)
+  (offset, %t7:ptr<ptr<i8>>, %t4:ptr<ptr<i8>>, %t6:i64)
+  (load, %t8:ptr<i8>, %t7:ptr<ptr<i8>>, _)
+  (param, _, %t8:ptr<i8>, _)
+  (call, %t9:i32, @atoi.11, _)
+  (store, _, &n.68:ptr<i32>, %t9:i32)
+  (load, %t10:i32, &n.68:ptr<i32>, _)
+  (param, _, &account.69:ptr<Account>, _)
+  (param, _, %t10:i32, _)
+  (call, _, @Account.ctor.3.73, _)
+  (load, %t11:Account, &account.69:ptr<Account>, _)
+  (store, _, &account.69:ptr<Account>, %t11:Account)
+  (copy, %t1:u1, 1:u1, _)
+  (param, _, &account.69:ptr<Account>, _)
+  (param, _, 10:i32, _)
+  (call, _, @Account.deposit.23, _)
+  (param, _, &square.70:ptr<Square>, _)
+  (call, _, @Square.ctor.1.75, _)
+  (load, %t12:Square, &square.70:ptr<Square>, _)
+  (store, _, &square.70:ptr<Square>, %t12:Square)
+  (copy, %t2:u1, 1:u1, _)
+  (param, _, &stack.71:ptr<Stack>, _)
+  (call, _, @Stack.ctor.3.76, _)
+  (load, %t13:Stack, &stack.71:ptr<Stack>, _)
+  (store, _, &stack.71:ptr<Stack>, %t13:Stack)
+  (copy, %t3:u1, 1:u1, _)
+  (load, %t14:i32, &n.68:ptr<i32>, _)
+  (param, _, &stack.71:ptr<Stack>, _)
+  (param, _, %t14:i32, _)
+  (call, _, @Stack.push.36, _)
+  (load, %t15:i32, &n.68:ptr<i32>, _)
+  (mul, %t16:i32, %t15:i32, 2:i32)
+  (param, _, &stack.71:ptr<Stack>, _)
+  (param, _, %t16:i32, _)
+  (call, _, @Stack.push.36, _)
+  (offset, %t17:ptr<i32>, &pair.72:ptr<Pair>, 0:i64)
+  (store, _, %t17:ptr<i32>, 3:i32)
+  (load, %t18:i32, %t17:ptr<i32>, _)
+  (load, %t19:i32, &n.68:ptr<i32>, _)
+  (param, _, &pair.72:ptr<Pair>, _)
+  (param, _, %t19:i32, _)
+  (call, _, @Pair.setHidden.42, _)
+  (param, _, &account.69:ptr<Account>, _)
+  (call, %t20:i32, @Account.get.24, _)
+  (load, %t21:i32, &n.68:ptr<i32>, _)
+  (param, _, &square.70:ptr<Square>, _)
+  (param, _, %t21:i32, _)
+  (call, %t22:i32, @Square.perimeterFactor.31, _)
+  (add, %t23:i32, %t20:i32, %t22:i32)
+  (param, _, &stack.71:ptr<Stack>, _)
+  (call, %t24:i32, @Stack.top.37, _)
+  (add, %t25:i32, %t23:i32, %t24:i32)
+  (offset, %t26:ptr<i32>, &stack.71:ptr<Stack>, 20:i64)
+  (load, %t27:i32, %t26:ptr<i32>, _)
+  (add, %t28:i32, %t25:i32, %t27:i32)
+  (param, _, &pair.72:ptr<Pair>, _)
+  (call, %t29:i32, @Pair.sum.43, _)
+  (add, %t30:i32, %t28:i32, %t29:i32)
+  (copy, %t3:u1, 0:u1, _)
+  (copy, %t2:u1, 0:u1, _)
+  (copy, %t1:u1, 0:u1, _)
+  (ret, _, %t30:i32, _)
+}
+function @Account.ctor.3.73: fn(ptr<Account>, i32)->void internal {
+  parameter this.48: ptr<Account>
+  parameter initial.49: i32
+  (load, %t1:ptr<Account>, &this.48:ptr<ptr<Account>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Account>, 0:i64)
+  (load, %t3:ptr<Account>, &this.48:ptr<ptr<Account>>, _)
+  (offset, %t4:ptr<i32>, %t3:ptr<Account>, 0:i64)
+  (load, %t5:i32, &initial.49:ptr<i32>, _)
+  (store, _, %t4:ptr<i32>, %t5:i32)
+  (load, %t6:i32, %t4:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Shape.ctor.3.74: fn(ptr<Shape>)->void internal {
+  parameter this.55: ptr<Shape>
+  (load, %t1:ptr<Shape>, &this.55:ptr<ptr<Shape>>, _)
+  (offset, %t2:ptr<i32>, %t1:ptr<Shape>, 0:i64)
+  (load, %t3:ptr<Shape>, &this.55:ptr<ptr<Shape>>, _)
+  (offset, %t4:ptr<i32>, %t3:ptr<Shape>, 0:i64)
+  (store, _, %t4:ptr<i32>, 0:i32)
+  (load, %t5:i32, %t4:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Square.ctor.1.75: fn(ptr<Square>)->void internal {
+  parameter this.56: ptr<Square>
+  (load, %t1:ptr<Square>, &this.56:ptr<ptr<Square>>, _)
+  (offset, %t2:ptr<Shape>, %t1:ptr<Square>, 0:i64)
+  (param, _, %t2:ptr<Shape>, _)
+  (call, _, @Shape.ctor.3.74, _)
+  (load, %t3:ptr<Square>, &this.56:ptr<ptr<Square>>, _)
+  (offset, %t4:ptr<i32>, %t3:ptr<Square>, 0:i64)
+  (store, _, %t4:ptr<i32>, 4:i32)
+  (load, %t5:i32, %t4:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Stack.ctor.3.76: fn(ptr<Stack>)->void internal {
+  parameter this.59: ptr<Stack>
+  (load, %t1:ptr<Stack>, &this.59:ptr<ptr<Stack>>, _)
+  (offset, %t2:ptr<Shape>, %t1:ptr<Stack>, 0:i64)
+  (param, _, %t2:ptr<Shape>, _)
+  (call, _, @Shape.ctor.3.74, _)
+  (offset, %t3:ptr<[4 x i32]>, %t1:ptr<Stack>, 4:i64)
+  (offset, %t4:ptr<i32>, %t1:ptr<Stack>, 20:i64)
+  (load, %t5:ptr<Stack>, &this.59:ptr<ptr<Stack>>, _)
+  (offset, %t6:ptr<i32>, %t5:ptr<Stack>, 20:i64)
+  (store, _, %t6:ptr<i32>, 0:i32)
+  (load, %t7:i32, %t6:ptr<i32>, _)
+  (load, %t8:ptr<Stack>, &this.59:ptr<ptr<Stack>>, _)
+  (offset, %t9:ptr<i32>, %t8:ptr<Stack>, 0:i64)
+  (store, _, %t9:ptr<i32>, 9:i32)
+  (load, %t10:i32, %t9:ptr<i32>, _)
+  (ret, _, _, _)
+}

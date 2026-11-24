@@ -23,8 +23,9 @@ namespace baka {
 
             TypeId forward(types::IdentifierNode* name, TypeKind kind, types::ASTNode* source = nullptr);
 
-            TypeId definition(types::IdentifierNode* name, types::IdentifierNode* parent, types::StructBodyNode& body,
-                              TypeKind kind, MemberSignature signature = {}, types::ASTNode* source = nullptr);
+            TypeId definition(types::IdentifierNode* name, types::IdentifierNode* parent,
+                              types::AccessSpecifier baseAccess, types::StructBodyNode& body, TypeKind kind,
+                              MemberSignature signature = {}, types::ASTNode* source = nullptr);
 
             TypeId definition(types::StructDefinitionNode& node, MemberSignature signature = {});
 

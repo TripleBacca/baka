@@ -323,7 +323,11 @@ namespace baka {
                            comma && comma->getExpressions().size() == 1) {
                     expression = comma->getExpressions().front();
                 } else if (auto* cast = dynamic_cast<const types::ImplicitCastNode*>(expression)) {
-                    if (cast->getConversionKind() == types::ImplicitConversionKind::ConstructorConversion) {
+                    const auto kind = cast->getConversionKind();
+                    // A reference binding produces an address, not the record value.
+                    if (kind == types::ImplicitConversionKind::ConstructorConversion ||
+                        kind == types::ImplicitConversionKind::BindReference ||
+                        kind == types::ImplicitConversionKind::MaterializeTemporary) {
                         return expression;
                     }
                     expression = cast->getOperand();

@@ -1,3 +1,4 @@
+#include <optional>
 #include "parser.hh"
 #include "types/parser/ast/identifier.hh"
 #include "types/token/token.hh"
@@ -52,8 +53,10 @@ namespace parser {
         }
 
         types::IdentifierNode* ParentStructIdentifier = nullptr;
+        std::optional<types::AccessSpecifier> BaseAccess;
         if (this->Match(types::TokenType::OP_COLON))
         {
+            BaseAccess = MatchAccessSpecifier();
             if (!this->Check(types::TokenType::IDENTIFIER)) {
                 ReportError("expected identifier after ':'");
             } else {
@@ -93,6 +96,9 @@ namespace parser {
             Node = AllocNodeAt<types::StructDefinitionNode>(SourceStart, StructIdentifier, Body);
         }
 
+        if (BaseAccess) {
+            Node->setBaseAccess(*BaseAccess);
+        }
         ExitScope();
 
         return Node;

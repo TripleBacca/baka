@@ -127,6 +127,12 @@ namespace baka {
                         }
                     }
                 }
+                // Hoisted lambda bodies follow the declaration that contains them, so
+                // every type and function visible there is visible in the lambda too.
+                for (auto* Lambda : PendingLambdas) {
+                    ProgramNode->addNode(Lambda);
+                }
+                PendingLambdas.clear();
             }
 
             return ProgramNode;
