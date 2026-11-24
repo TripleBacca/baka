@@ -27,9 +27,10 @@ more depth.
 - **Identifiers and keywords:** scan the longest run of identifier characters, then look
   it up in a hash map from keyword text to token type. If it isn't found, it's an
   identifier.
-- **Operators:** **maximal munch.** Start with one operator character and keep extending
-  while the longer text is still a known operator in the operator hash map. That way `>>=`
-  beats `>>`, which beats `>`.
+- **Operators:** **maximal munch by longest match.** Try the longest spelling the operator
+  hash map can hold (4 characters) and fall back one character at a time until the text
+  is a known operator. That way `>>=` beats `>>`, which beats `>`, and `====` / `!===` are
+  found even though `===` and `!==` are not operators. `...` is matched separately.
 - **Numbers:** decimal, hex and octal integers, floats, and suffixes (`L`, `U`, `UL`).
   `std::from_chars` parses the value and checks it fits the literal's type: an unsuffixed
   literal too large for `int` is an error, so large constants need `L` or `UL`.
@@ -187,7 +188,8 @@ semantic logic:
 - **Verification:** the verifier checks every type, operand, instruction shape, CFG edge
   and terminator. It also runs a **definite-assignment** analysis, which forward-iterates
   the set of temporaries certainly assigned on entry to each block until nothing changes.
-  It is the slowest part of the compiler on large functions; see page 12.
+  Each set is a bit vector indexed by temporary, so large (for example heavily inlined)
+  functions still verify quickly.
 
 ## A6. IR analyses and optimization
 
@@ -206,6 +208,10 @@ semantic logic:
   - **Dead code:** a backward scan starting from the block's live-out set.
   - **Unreachable blocks:** a worklist search from the entry block; anything not reached
     is deleted.
+- **Loop unrolling** fully unrolls small counted loops before the local passes (page 4).
+- **Function inlining** copies a callee into its caller when the callee's peak register
+  pressure (values live at the same time, from the liveness sets above) is at most 6. The
+  caller's block is split at the call; the local passes then clean up (page 4).
 
 ## A7. Code generation
 
@@ -429,6 +435,38 @@ Pages 5–10 cover this in depth. In brief:
 - Laid out with every member at offset 0, and size equal to the largest member, rounded
   to alignment.
 - Members with non-trivial constructors or destructors are rejected.
+
+### …`==` on structs and classes?
+
+- **One generated function per type:** `.eq.<T>(T*, T*) -> bool` compares the base
+  subobject, then each field in order (nested records call their own `.eq`, arrays loop),
+  and returns `false` at the first difference. Fields are compared by value, never with
+  `memcmp`, because of padding, IEEE floats and the vptr.
+- **Structs** call `.eq.<T>` directly and must have the same type.
+- **Classes** first require the same dynamic class: decided at compile time for named
+  objects, otherwise by comparing vptrs. When the class is only known at run time, the call
+  goes through vtable slot 1, which holds each class's `.eq`.
+- Details: page 19.
+
+### …`====` and `!===`?
+
+- **Lexing:** longest match, because `===` and `!==` are not operators.
+- **Parsing:** precedence 9, between `==` and `<`.
+- **Lowering:** each operand gives an object address (an lvalue in place, or a pointer's
+  value). Exact operands contribute their vtable address as a constant; the others load
+  their vptr. The result is one `eq`/`ne`, or a constant when both classes are known.
+- Details: page 20.
+
+### …function inlining?
+
+- **When:** with optimization on, after one round of local simplification, for direct
+  calls to defined, non-recursive, fixed-arity functions whose peak register pressure is
+  at most 6 values.
+- **How:** split the caller's block at the call, store each argument into a copy of the
+  parameter object, copy the callee's blocks, objects and temporaries under fresh ids, turn
+  each `ret v` into `copy result, v; goto continuation`, and simplify again. Up to three
+  rounds expand nested helpers.
+- Details: page 4.
 
 ### …structs and classes passed or returned by value?
 

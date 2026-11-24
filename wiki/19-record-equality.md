@@ -1,7 +1,8 @@
 # 19. Record equality
 
 `a == b` and `a != b` work on structs and classes. They compare **values, field by field**.
-Pointers are unchanged: `p == q` still compares addresses.
+Pointers are unchanged: `p == q` still compares addresses. To ask only whether two objects
+have the same class, without comparing fields, use `====` (page 20).
 
 ## Using it
 

@@ -199,5 +199,11 @@
       [0, 0, "lines 1 0\nchanged 0 1\nsquares 0\nsquare-rect 0 9\nrepointed 1\n"],
       [1, 10, "lines 1 0\nchanged 0 1\nsquares 1\nsquare-rect 0 9\nrepointed 1\n"]
     ]
+  },
+  "34_strict_equality.cpp": {
+    "runs": [
+      [0, 0, "ctor 1 1\nheap 1 1\npick 0 1\nprobe 0 1\nmoving 1 0 0\n"],
+      [1, 10, "ctor 1 1\nheap 1 1\npick 1 0\nprobe 0 1\nmoving 1 0 0\n"]
+    ]
   }
 }

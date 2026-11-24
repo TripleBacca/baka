@@ -191,5 +191,27 @@
   "invalid_record_ordering.cpp": [
     "incompatible comparison operands"
   ],
-  "valid_record_equality.cpp": []
+  "valid_record_equality.cpp": [],
+  "invalid_strict_eq_struct.cpp": [
+    "operands of '====' must be class objects or pointers to them"
+  ],
+  "invalid_strict_eq_pointer.cpp": [
+    "operands of '====' must be class objects or pointers to them"
+  ],
+  "invalid_strict_eq_void_pointer.cpp": [
+    "operands of '====' must be class objects or pointers to them"
+  ],
+  "invalid_strict_eq_double_pointer.cpp": [
+    "operands of '====' must be class objects or pointers to them"
+  ],
+  "invalid_strict_eq_rvalue.cpp": [
+    "operands of '!===' must be lvalues"
+  ],
+  "invalid_strict_eq_array.cpp": [
+    "operands of '====' cannot be arrays; compare an element"
+  ],
+  "invalid_strict_eq_null.cpp": [
+    "cannot compare the class of a null pointer"
+  ],
+  "valid_strict_equality.cpp": []
 }

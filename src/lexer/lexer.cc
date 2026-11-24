@@ -4,6 +4,7 @@
 #include <string_view>
 #include <charconv>
 #include <climits>
+#include <algorithm>
 #include "base/base.hh"
 #include "line_index.hh"
 #include "memory/custom_strings.hh"
@@ -628,15 +629,15 @@ namespace baka {
                     }
                     else {
                         size_t startIdx = lh;
-                        size_t endIdx = startIdx;
-
-                        size_t peek = lh + 1;
-                        while (peek < SourceCode.size() && base::isValidOperatorChar(SourceCode[peek]) &&
-                            lexeme_to_operator.contains(SourceCode.substr(startIdx, peek - startIdx + 1))) {
-                            endIdx = peek;
-                            peek++;
+                        // Longest match: try the longest operator spelling first. Growing one
+                        // character at a time would stop early when a prefix is not itself an
+                        // operator (`!==` before `!===`, `===` before `====`).
+                        size_t length = std::min(MaxOperatorLength, SourceCode.size() - startIdx);
+                        while (length > 1 && !lexeme_to_operator.contains(SourceCode.substr(startIdx, length))) {
+                            --length;
                         }
-                        std::string_view lexeme = SourceCode.substr(startIdx, endIdx - startIdx + 1);
+                        size_t endIdx = startIdx + length - 1;
+                        std::string_view lexeme = SourceCode.substr(startIdx, length);
                         EMIT_TOKEN(lexeme_to_operator.at(lexeme), lexeme);
                         lh = endIdx + 1;
                         ColNo += endIdx - startIdx + 1;

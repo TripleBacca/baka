@@ -12,6 +12,15 @@
   would not be ABI-compatible. The language never declares such functions.
 - **Non-PIC, static only.** The output cannot become a shared library or a PIE.
 - **Record copies** are unrolled up to 256 bytes and looped above that.
+- **Struct `==` needs identical types.** A struct has no runtime type, so `SD == SB` (even
+  through `SB&` naming the same object) is an error, while the same comparison on classes
+  works through the vptr. See page 19.
+- **Unions cannot be compared** with `==`, even as a nested field, because the active
+  member is unknown.
+- **`====` folding trusts named objects.** A named object is treated as having exactly its
+  declared class even while a base constructor runs on it, so `d ==== other` can fold to
+  `true` from code reached during `d`'s construction. Call devirtualization has the same
+  blind spot. See page 20.
 
 ## Findings from the edge-case audit
 
@@ -19,12 +28,12 @@ About 350 test programs were run across the front end, IR and codegen, each opti
 unoptimized, against `g++` and the IR interpreter. No miscompiles were found. The full
 report is in `EDGE_CASE_AUDIT.md` at the repository root; the highlights are below.
 
-### Compile time
+### Compile time (fixed)
 
-Compile time grows steeply with function size: about 17 seconds for a function with 100
-`if` statements. The cause is the IR verifier's definite-assignment check, which copies
-whole sets on every pass and iterates without a worklist. It also runs a second time after
-optimization.
+Compile time used to grow steeply with function size: about 17 seconds for a function
+with 100 `if` statements. The cause was the IR verifier's definite-assignment check, which
+copied whole `std::set`s on every pass. It now uses one bit vector per block, and the same
+function compiles in about 0.15 seconds (fixed).
 
 ### Unusual `main` signatures (fixed)
 

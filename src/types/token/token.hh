@@ -70,6 +70,8 @@ namespace types {
         OP_LOGICAL_OR,
         OP_EQ,
         OP_NEQ,
+        OP_STRICT_EQ,  // ==== : same dynamic class (equal vptrs)
+        OP_STRICT_NEQ, // !=== : different dynamic classes
         OP_LT,
         OP_GT,
         OP_LE,
