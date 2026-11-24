@@ -25,10 +25,51 @@ simplify instructions within each block, using global liveness for dead code.
 | Dead-code elimination | Drops instructions whose results are never used | Seeded with the block's live-out set |
 | Constant branch folding | `if_goto` on a constant becomes `goto` | Unreachable blocks are deleted afterwards |
 
+## Function inlining
+
+`ir::Inline` (`src/ir/inlining.cc`) replaces a direct call with a copy of the callee when
+the callee needs **at most 6 registers**, measured as its *peak register pressure*: the
+largest number of values live at the same time. Values are temporaries plus the scalar
+locals and parameters that the backend keeps in registers (those whose address is only
+used by whole-value loads and stores). Records, arrays and address-taken objects live in
+stack memory and cost no register. The count comes from a backward walk of each block
+starting at its global live-out set (`ir::LiveOut`).
+
+```cpp
+int sq(int x) { return x * x; }     // peak 2  → inlined
+int wide(int a, int b, int c, int d) {
+    int p = a * b; int q = c * d; int r = a + c;
+    return p + q + r + (b ^ d) + (a - d) + (b - c);
+}                                    // peak 7  → stays a call
+```
+
+How a call is expanded:
+
+1. The caller's block is split at the call. The head stores each argument into a copy of
+   the matching parameter object, then jumps to the copied entry block.
+2. The callee's blocks, objects and temporaries are copied into the caller under fresh
+   ids. Each `ret v` becomes `copy result, v; goto continuation`.
+3. The instructions after the call move to the new continuation block.
+
+| Rule | Why |
+|---|---|
+| Measured after a first round of simplification | Unoptimized IR reloads every variable, which overstates pressure. |
+| Only direct calls to defined, fixed-arity functions | Indirect and virtual calls have no known target; declarations have no body. |
+| Never directly recursive functions, the module initializer, or anything registering a static destructor | Recursion cannot be expanded finitely, and the other two run once at startup. |
+| Up to 3 rounds, with callee bodies snapshotted per round | A helper that calls another small helper is fully expanded by the next round. Copied bodies are not rescanned in the same round, so two small mutually recursive functions stop once each becomes directly recursive. |
+| Callees stay defined | Their address may still be taken (function pointers, vtables). |
+| Simplification runs again afterwards | Arguments and results now flow through ordinary locals and copies that the block-local passes clean up. Jumps between the copied blocks remain, because merging blocks would be a cross-block transformation. |
+
+`custom_tests/ir_opt/12_inline.cpp` pins the result: small leaves, a multi-block callee,
+a void callee that writes a global, a nested helper, records by value, a too-wide
+function, direct and mutual recursion, and a function pointer to an inlined function.
+
 ## Verification
 
 The verifier runs again on the optimized IR, so an optimizer bug that produces malformed
-IR is caught before code generation.
+IR is caught before code generation. Its definite-assignment check keeps one bit vector of
+written temporaries per block, so large inlined functions verify quickly. (It previously
+used `std::set` copies, and a heavily inlined function took over 20 seconds.)
 
 ## Effect
 

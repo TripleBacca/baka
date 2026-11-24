@@ -224,6 +224,10 @@ namespace baka {
         void RemoveUnreachableBlocks(Module& module);
         void EliminateDeadCode(Module& module);
         void UnrollSmallLoops(Module& module);
+        // Inlines direct calls to functions whose peak register pressure is at most 6
+        // live values (temporaries plus register-resident scalar objects). Callees stay
+        // defined. Returns whether any call was expanded. Run by Optimize.
+        bool Inline(Module& module);
         void Optimize(Module& module);
         void Print(const Module& module, std::ostream& output);
     }

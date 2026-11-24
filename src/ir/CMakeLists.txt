@@ -22,6 +22,7 @@ add_library(ir
     loop_unrolling.cc
     verifier.cc
     optimization.cc
+    inlining.cc
     constant_folding.cc
     dead_code.cc
     printer.cc

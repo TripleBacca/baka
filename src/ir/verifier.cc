@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include <unordered_map>
 
 namespace baka {
     namespace ir {
@@ -660,60 +661,79 @@ namespace baka {
                         pending.push_back(successor);
                     }
                 }
-                std::map<BlockId, std::set<uint32_t>> incoming, outgoing;
-                for (auto id : reachable) {
-                    incoming[id] = outgoing[id] = universe;
+                // Sets of temporaries are bit vectors indexed by temporary id: the
+                // fixed point touches every block on each sweep, so set copies and
+                // intersections must be cheap for large (e.g. heavily inlined) functions.
+                using Bits = std::vector<uint64_t>;
+                const size_t limit = function.temporaries.size();
+                const size_t words = (limit + 63) / 64;
+                auto has = [](const Bits& bits, uint32_t id) { return (bits[id / 64] >> (id % 64)) & 1; };
+                auto add = [](Bits& bits, uint32_t id) { bits[id / 64] |= uint64_t{1} << (id % 64); };
+                Bits all(words, 0);
+                for (auto id : universe) {
+                    add(all, id);
                 }
-                incoming[function.blocks.front().id] = {};
+                std::unordered_map<BlockId, size_t> index;
+                std::vector<Bits> written(function.blocks.size(), Bits(words, 0));
+                for (size_t bi = 0; bi < function.blocks.size(); ++bi) {
+                    index.emplace(function.blocks[bi].id, bi);
+                    for (const auto& instruction : function.blocks[bi].instructions) {
+                        if (DefinesTemporary(instruction) && instruction.result.id < limit) {
+                            add(written[bi], instruction.result.id);
+                        }
+                    }
+                }
+                std::vector<Bits> incoming(function.blocks.size(), all), outgoing(function.blocks.size(), all);
+                incoming[0].assign(words, 0);
                 bool changed = true;
                 while (changed) {
                     changed = false;
-                    for (const auto& block : function.blocks) {
+                    for (size_t bi = 0; bi < function.blocks.size(); ++bi) {
+                        const auto& block = function.blocks[bi];
                         if (!reachable.count(block.id)) {
                             continue;
                         }
-                        std::set<uint32_t> in;
-                        if (block.id != function.blocks.front().id) {
-                            in = universe;
+                        Bits in(words, 0);
+                        if (bi != 0) {
+                            in = all;
                             for (auto predecessor : block.predecessors) {
                                 if (!reachable.count(predecessor)) {
                                     continue;
                                 }
-                                std::set<uint32_t> intersection;
-                                std::set_intersection(in.begin(), in.end(), outgoing[predecessor].begin(),
-                                                      outgoing[predecessor].end(),
-                                                      std::inserter(intersection, intersection.begin()));
-                                in = std::move(intersection);
+                                auto found = index.find(predecessor);
+                                if (found == index.end()) { // malformed edge: nothing is known to be written
+                                    in.assign(words, 0);
+                                    continue;
+                                }
+                                const auto& from = outgoing[found->second];
+                                for (size_t w = 0; w < words; ++w) in[w] &= from[w];
                             }
                         }
                         auto out = in;
-                        for (const auto& instruction : block.instructions) {
-                            if (DefinesTemporary(instruction)) {
-                                out.insert(instruction.result.id);
-                            }
-                        }
-                        if (incoming[block.id] != in || outgoing[block.id] != out) {
+                        for (size_t w = 0; w < words; ++w) out[w] |= written[bi][w];
+                        if (incoming[bi] != in || outgoing[bi] != out) {
                             changed = true;
                         }
-                        incoming[block.id] = std::move(in);
-                        outgoing[block.id] = std::move(out);
+                        incoming[bi] = std::move(in);
+                        outgoing[bi] = std::move(out);
                     }
                 }
-                for (const auto& block : function.blocks) {
+                for (size_t bi = 0; bi < function.blocks.size(); ++bi) {
+                    const auto& block = function.blocks[bi];
                     if (!reachable.count(block.id)) {
                         continue;
                     }
-                    auto assigned = incoming[block.id];
+                    auto assigned = incoming[bi];
                     for (const auto& instruction : block.instructions) {
                         for (auto operand : Uses(instruction)) {
-                            if (operand.kind == OperandKind::Temporary && !assigned.count(operand.id)) {
+                            if (operand.kind == OperandKind::Temporary &&
+                                (operand.id >= limit || !has(assigned, operand.id))) {
                                 error("temporary used before definition", instruction.source);
                             }
                         }
-                        if (DefinesTemporary(instruction)) {
-                            assigned.insert(instruction.result.id);
-                        }
-                    }
+                        if (DefinesTemporary(instruction) && instruction.result.id < limit) {
+                            add(assigned, instruction.result.id);
+                        }                    }
                 }
             }
         }
