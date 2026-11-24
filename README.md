@@ -90,6 +90,9 @@ We are hoping we can support the following featureset:
 **Advanced Features**
 - Recursive function calls
 - Classes and objects
+- Access modifiers
+- Lambdas
+- References
 - Inheritance
 - Function calls with variable arguments
 - Function pointers
@@ -102,6 +105,7 @@ We are hoping we can support the following featureset:
 - Access specifiers, lvalue references, and captureless lambdas
 
 **Extra Non C++ Features**
+- Quad Equals
 - Loop Labels:
     Allows programmers to break or continue out until a specific loop. This feature lets you annotate loops with labels and write cleaner and more readable nested loop control flow.
 
@@ -156,12 +160,60 @@ There are certain features we are not supporting:
 - `namespace` and scope resolution(`::`)
 - `enum class`
 
+**Optimisations**
+- **Semantic analysis**
+-     Constant expression folding
+
+- **IR lowering**
+-     Devirtualization
+-     `====` / `!===` compile-time folding
+-     Record `==` class-check folding
+-     On-demand equality functions
+-     Trivial destructor skipping
+
+- **IR optimizer**
+-     Unreachable-block removal
+-     Loop unrolling
+-     Constant folding
+-     Copy and constant propagation
+-     Algebraic identity simplification
+-     Strength reduction
+-     Value numbering (common subexpression elimination)
+-     Redundant-load removal and store-to-load forwarding
+-     Dead-store elimination
+-     Constant branch folding
+-     Dead-code elimination
+-     Tail-recursion elimination
+-     Function inlining
+
+- **Instruction selection and register allocation**
+-     Keeping scalars in registers
+-     `getReg` register allocation
+-     Callee-saved register preference
+-     Liveness-based spill avoidance
+-     Fused compare-and-branch
+-     Zero-register reuse
+-     Unrolled record copies and zero-fill
+
+- **Peephole optimiser**
+-     Redundant reload removal
+-     Dead stack-store removal
+-     Result retargeting
+-     Dead-instruction removal
+-     No-op removal
+-     Copy propagation
+-     Address folding
+-     Immediate-form selection
+-     Multiply-to-shift reduction
+-     Control-flow cleanup
+-     Delay-slot filling
+
 ### Stages Status
 - [x] Lexer
 - [x] Parser
 - [x] Semantic Analysis for the supported subset ([passes and policies](src/semantic/README.md), [remaining TODOs](src/semantic/TODO.md))
 - [x] Optimization Passes (block-local TAC passes and MIPS peephole; [IR_OPTIMIZATION_PLAN.md](IR_OPTIMIZATION_PLAN.md))
-- [x] Codegen: MIPS64 n64 little-endian, run under QEMU ([design decisions](src/codegen/README.md))
+- [x] Codegen: MIPS64 n64
 
 
 #### Made By:
