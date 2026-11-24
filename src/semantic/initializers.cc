@@ -288,6 +288,28 @@ namespace baka {
             return result;
         }
 
+        // An object declared without an initializer is default-constructed; the selected
+        // constructor must be accessible where the object is declared. Parameters are
+        // initialized by their callers.
+        bool ExpressionChecker::checkDefaultConstructionAccess(SymbolId symbol) {
+            const auto& entry = SymbolTable.get(symbol);
+            if (entry.kind != SymbolKind::Object) {
+                return true;
+            }
+            auto element = TypeSystem.unConst(entry.type);
+            while (TypeSystem.get(element).kind == TypeKind::Array) {
+                element = TypeSystem.unConst(TypeSystem.get(element).element);
+            }
+            if (!TypeSystem.isAggregate(element) || TypeSystem.get(element).completion != Completion::Complete) {
+                return true;
+            }
+            auto selected = defaultConstructor(element);
+            if (!selected.available || !selected.member) {
+                return true; // unavailable constructors are diagnosed by execution planning
+            }
+            return DeclarationChecker.checkAccess(element, element, selected.member - 1, CurrentClass, entry.source);
+        }
+
         bool ExpressionChecker::initialize(SymbolId symbol, const types::ExpressionNode* initializerNode) {
             if (!symbol.value) {
                 return false;
@@ -295,7 +317,7 @@ namespace baka {
             auto* initializer = dynamic_cast<const types::InitializerNode*>(initializerNode);
             if (!initializer) {
                 if (!initializerNode) {
-                    return true;
+                    return checkDefaultConstructionAccess(symbol);
                 }
                 SymbolTable.diagnose("initializer", "invalid initializer AST", initializerNode);
                 return false;

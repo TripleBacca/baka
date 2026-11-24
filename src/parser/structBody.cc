@@ -7,10 +7,24 @@
 #include "types/parser/ast/identifier.hh"
 #include "types/token/token.hh"
 #include "utils.hh"
+#include <optional>
 #include <string_view>
 
 namespace baka {
 namespace parser {
+
+    std::optional<types::AccessSpecifier> Parser::MatchAccessSpecifier() {
+        if (Match(types::TokenType::K_PUBLIC)) {
+            return types::AccessSpecifier::Public;
+        }
+        if (Match(types::TokenType::K_PROTECTED)) {
+            return types::AccessSpecifier::Protected;
+        }
+        if (Match(types::TokenType::K_PRIVATE)) {
+            return types::AccessSpecifier::Private;
+        }
+        return std::nullopt;
+    }
 
     types::StructBodyNode* Parser::ParseStructBody(types::IdentifierNode* ParentName) {
         const size_t SourceStart = current;
@@ -21,6 +35,13 @@ namespace parser {
         }
 
         while(!Match(types::TokenType::RPAREN_CURLY) && !Check(types::TokenType::EOF_TOKEN)) {
+            if (auto Access = MatchAccessSpecifier()) {
+                if (!Match(types::TokenType::OP_COLON)) {
+                    ReportError("expected ':' after access specifier");
+                }
+                Node->setCurrentAccess(*Access);
+                continue;
+            }
 
             auto isCtor = [&]() -> bool {
                 if(Peek().TokenType_v == types::TokenType::IDENTIFIER && Check2(types::TokenType::LPAREN_ROUND)) {

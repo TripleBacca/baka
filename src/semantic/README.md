@@ -152,8 +152,27 @@ Other intentional subset rules:
   introduce the same conversion policy into assignment and return checking.
 - Nonempty braced construction of a class with user constructors is diagnosed;
   use `Type(arguments)`. Nontrivial union members, including arrays, are rejected.
-- Parameters require names. Local aggregate definitions, `main(void)`, `long long`
-  declarations and references remain outside the implemented syntax.
+- Parameters require names. Local aggregate definitions, `main(void)` and `long long`
+  declarations remain outside the implemented syntax.
+- Access control: `public:`, `protected:` and `private:` labels and base specifiers
+  (`class D : public B`). `class` defaults to private, `struct`/`union` to public.
+  Accesses through `.`/`->`, unqualified member names in methods, selected overloads
+  and selected constructors (including default construction and `new`) are checked
+  against the enclosing class; inherited access is the more restrictive of member and
+  base access, and protected members are usable from derived members only through
+  their own class. There are no friends. See `wiki/15-access-modifiers.md`.
+- Lvalue references `T&` (locals, globals, statics, parameters, results). Naming a
+  reference or calling a function returning one yields an lvalue of `T`. `T&` binds
+  lvalues of `T` or a derived class without dropping `const`; `const T&` also binds a
+  converted temporary (not of a type with a destructor). Binding is written on the AST
+  as `BindReference`/`MaterializeTemporary` conversions and references are pointers in
+  the IR. Reference members, arrays of/pointers to references, rvalue references and
+  user-defined copy constructors are rejected. See `wiki/16-references.md`.
+- Captureless lambdas `[](params) -> R { ... }` (result deduced when `-> R` is
+  omitted). The parser hoists each body to an internal function `__lambda_N` after the
+  enclosing top-level declaration; the expression names that function, so it is used
+  as a function pointer. Lambdas cannot use the enclosing function's locals. See
+  `wiki/17-captureless-lambdas.md`.
 - `new(p, args...)` takes a pointer variable as a type witness. Its value is not
   read: `T* p = new(p, args...)` allocates and constructs one `T`. For a fixed
   array pointer `T (*p)[N]`, it constructs `N` elements and evaluates the

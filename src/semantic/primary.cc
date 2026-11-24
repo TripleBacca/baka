@@ -113,7 +113,7 @@ namespace baka {
                 // Unqualified member names in methods resolve against the enclosing class.
                 if (CurrentClass.value) {
                     auto access = DeclarationChecker.memberAccess(CurrentClass, std::string(identifier->GetName()),
-                                                                  false, InStaticContext, identifier);
+                                                                  false, InStaticContext, identifier, CurrentClass);
                     if (access.type.value) {
                         if (access.candidates.size() > 1) {
                             SymbolTable.diagnose("overload", "overload set requires a call", identifier);
@@ -145,6 +145,10 @@ namespace baka {
                         auto& metadata = const_cast<types::PrimaryExpressionNode*>(node)->semanticInfo();
                         metadata.MemberOwner = member.owner.value;
                         metadata.MemberIndex = static_cast<uint32_t>(index + 1);
+                        if (!DeclarationChecker.checkAccess(CurrentClass, member.owner, index, CurrentClass,
+                                                            identifier)) {
+                            return makeError();
+                        }
                     }
                 }
             }
@@ -181,7 +185,8 @@ namespace baka {
                 result.constant = {ConstantState::Value, constantObject->second};
                 return result;
             }
-            return makeValue(symbol.type, ValueCategory::LValue);
+            // Naming a reference denotes the object it is bound to.
+            return makeValue(TypeSystem.referenced(symbol.type), ValueCategory::LValue);
         }
 
         ExprResult ExpressionChecker::checkIndex(const types::IndexPostfixExpr* node) {

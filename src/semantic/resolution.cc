@@ -70,7 +70,10 @@ namespace baka {
                         }
                     }
                     if (found.empty()) {
-                        error("undeclared", "undeclared name '" + std::string(identifier->GetName()) + "'", identifier);
+                        error("undeclared",
+                              "undeclared name '" + std::string(identifier->GetName()) + "'" +
+                                  (Current.lambda ? " (a lambda cannot capture local variables)" : ""),
+                              identifier);
                         metadata.Error = true;
                         identifier->resolve({}, {});
                     } else {

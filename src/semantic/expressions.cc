@@ -110,6 +110,8 @@ namespace baka {
                 raw = cached->second;
             } else {
                 raw = checkImpl(expression);
+                raw.sourceLValue = raw.category == ValueCategory::LValue;
+                raw.sourceType = raw.type;
             }
             if (Annotating) {
                 RawResults[expression] = raw;

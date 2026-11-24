@@ -93,7 +93,8 @@ namespace baka {
                 }
                 return {QueryState::Ready, {Size, Size, {}, {}}, {}};
             }
-            if (TypeInfo.kind == TypeKind::Pointer) {
+            // A reference object (variable, parameter) stores the referent's address.
+            if (TypeInfo.kind == TypeKind::Pointer || TypeInfo.kind == TypeKind::Reference) {
                 return {QueryState::Ready, {target::PointerBytes, target::PointerBytes, {}, {}}, {}};
             }
             if (TypeInfo.kind == TypeKind::Enum) {
@@ -260,7 +261,9 @@ namespace baka {
         }
 
         TypeId Types::constant(TypeId id, bool constantValue) {
-            if (!constantValue || !id.value || isConst(id)) {
+            // References are never cv-qualified themselves (a qualifier applied through
+            // a typedef is ignored); `const T&` qualifies T.
+            if (!constantValue || !id.value || isConst(id) || get(id).kind == TypeKind::Reference) {
                 return id;
             }
             // Const of an array consts its element (including typedef arrays).
@@ -274,8 +277,30 @@ namespace baka {
             return InternType(std::move(TypeInfo));
         }
 
+        TypeId Types::reference(TypeId referent) {
+            if (!referent.value) {
+                return {};
+            }
+            const auto kind = get(unConst(referent)).kind;
+            if (kind == TypeKind::Reference || kind == TypeKind::Function || isVoid(referent)) {
+                return {};
+            }
+            Type TypeInfo;
+            TypeInfo.kind = TypeKind::Reference;
+            TypeInfo.element = referent;
+            return InternType(std::move(TypeInfo));
+        }
+
+        bool Types::isReference(TypeId id) const {
+            return id.value && get(id).kind == TypeKind::Reference;
+        }
+
+        TypeId Types::referenced(TypeId id) const {
+            return isReference(id) ? get(id).element : id;
+        }
+
         TypeId Types::pointer(TypeId pointee) {
-            if (!pointee.value) {
+            if (!pointee.value || get(pointee).kind == TypeKind::Reference) {
                 return {};
             }
             Type TypeInfo;
@@ -286,7 +311,7 @@ namespace baka {
 
         TypeId Types::array(TypeId element, Bound bound) {
             auto Kind = get(unConst(element)).kind;
-            if (!element.value || isVoid(element) || Kind == TypeKind::Function ||
+            if (!element.value || isVoid(element) || Kind == TypeKind::Function || Kind == TypeKind::Reference ||
                 (bound.kind == BoundKind::Constant && !bound.count)) {
                 return {};
             }
@@ -354,7 +379,7 @@ namespace baka {
             return true;
         }
 
-        bool Types::setBase(TypeId id, TypeId base) {
+        bool Types::setBase(TypeId id, TypeId base, Access access) {
             if (!isAggregate(id) || !isAggregate(base) || get(id).completion != Completion::Defining ||
                 get(id).base.value || get(base).completion != Completion::Complete || get(id).kind == TypeKind::Union ||
                 get(base).kind == TypeKind::Union) {
@@ -366,6 +391,7 @@ namespace baka {
                 }
             }
             TypeArena.at(id.value).base = base;
+            TypeArena.at(id.value).baseAccess = access;
             return true;
         }
 
@@ -436,7 +462,7 @@ namespace baka {
                 }
                 return TypeInfo.bound.kind != BoundKind::Constant || static_cast<bool>(layout(id));
             }
-            if (TypeInfo.kind == TypeKind::Pointer) {
+            if (TypeInfo.kind == TypeKind::Pointer || TypeInfo.kind == TypeKind::Reference) {
                 return validDerived(TypeInfo.element);
             }
             if (TypeInfo.kind == TypeKind::Function) {

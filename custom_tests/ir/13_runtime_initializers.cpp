@@ -10,6 +10,7 @@ int constant = 3 + 4;
 int values[3] = {calc(20), 3 + 4, calc(30)};
 
 class Pair {
+public:
     int x;
     int y;
 };
@@ -19,6 +20,7 @@ Pair snapshot = seed;
 const int fixed = calc(50);
 
 class Holder {
+public:
     static int value = calc(60);
 };
 

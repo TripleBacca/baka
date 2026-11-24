@@ -1,0 +1,403 @@
+IR::TAC:
+FILE = opaque
+Operation = record(ptr<fn(i32, i32)->i32>) size 8 align 8
+Scaler = record(i32) size 4 align 4
+global last.19: i32 = zero
+global square.21: ptr<fn(i32)->i32> = zero
+initializer @.module_init.123
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @atoi.11: fn(ptr<i8>)->i32
+declare @fopen.13: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.14: fn(ptr<FILE>)->i32
+declare @fread.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.16: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.17: fn(i32, ptr<void>, u64)->i64
+declare @write.18: fn(i32, ptr<void>, u64)->i64
+function @__lambda_0.23: fn(i32)->i32 internal {
+  parameter v.74: i32
+  (load, %t1:i32, &v.74:ptr<i32>, _)
+  (load, %t2:i32, &v.74:ptr<i32>, _)
+  (mul, %t3:i32, %t1:i32, %t2:i32)
+  (ret, _, %t3:i32, _)
+}
+function @sortWith.33: fn(ptr<i32>, i32, ptr<fn(i32, i32)->u1>)->void {
+  parameter values.75: ptr<i32>
+  parameter count.76: i32
+  parameter before.79: ptr<fn(i32, i32)->u1>
+  local i.80: i32
+  local v.81: i32
+  local j.82: i32
+  (store, _, &i.80:ptr<i32>, 1:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t1:i32, &i.80:ptr<i32>, _)
+  (load, %t2:i32, &count.76:ptr<i32>, _)
+  (lt, %t3:u1, %t1:i32, %t2:i32)
+  (if_goto, _, %t3:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t4:ptr<i32>, &values.75:ptr<ptr<i32>>, _)
+  (load, %t5:i32, &i.80:ptr<i32>, _)
+  (cast, %t6:i64, %t5:i32, _)
+  (mul, %t7:i64, %t6:i64, 4:i64)
+  (offset, %t8:ptr<i32>, %t4:ptr<i32>, %t7:i64)
+  (load, %t9:i32, %t8:ptr<i32>, _)
+  (store, _, &v.81:ptr<i32>, %t9:i32)
+  (load, %t10:i32, &i.80:ptr<i32>, _)
+  (sub, %t11:i32, %t10:i32, 1:i32)
+  (store, _, &j.82:ptr<i32>, %t11:i32)
+  (goto, _, L6, _)
+L4:
+  (load, %t47:i32, &i.80:ptr<i32>, _)
+  (add, %t48:i32, %t47:i32, 1:i32)
+  (store, _, &i.80:ptr<i32>, %t48:i32)
+  (goto, _, L2, _)
+L5:
+  (ret, _, _, _)
+L6:
+  (load, %t12:i32, &j.82:ptr<i32>, _)
+  (ge, %t13:u1, %t12:i32, 0:i32)
+  (if_goto, _, %t13:u1, L9)
+  (goto, _, L10, _)
+L7:
+  (load, %t24:ptr<i32>, &values.75:ptr<ptr<i32>>, _)
+  (load, %t25:i32, &j.82:ptr<i32>, _)
+  (add, %t26:i32, %t25:i32, 1:i32)
+  (cast, %t27:i64, %t26:i32, _)
+  (mul, %t28:i64, %t27:i64, 4:i64)
+  (offset, %t29:ptr<i32>, %t24:ptr<i32>, %t28:i64)
+  (load, %t30:ptr<i32>, &values.75:ptr<ptr<i32>>, _)
+  (load, %t31:i32, &j.82:ptr<i32>, _)
+  (cast, %t32:i64, %t31:i32, _)
+  (mul, %t33:i64, %t32:i64, 4:i64)
+  (offset, %t34:ptr<i32>, %t30:ptr<i32>, %t33:i64)
+  (load, %t35:i32, %t34:ptr<i32>, _)
+  (store, _, %t29:ptr<i32>, %t35:i32)
+  (load, %t36:i32, %t29:ptr<i32>, _)
+  (load, %t37:i32, &j.82:ptr<i32>, _)
+  (sub, %t38:i32, %t37:i32, 1:i32)
+  (store, _, &j.82:ptr<i32>, %t38:i32)
+  (goto, _, L6, _)
+L8:
+  (load, %t39:ptr<i32>, &values.75:ptr<ptr<i32>>, _)
+  (load, %t40:i32, &j.82:ptr<i32>, _)
+  (add, %t41:i32, %t40:i32, 1:i32)
+  (cast, %t42:i64, %t41:i32, _)
+  (mul, %t43:i64, %t42:i64, 4:i64)
+  (offset, %t44:ptr<i32>, %t39:ptr<i32>, %t43:i64)
+  (load, %t45:i32, &v.81:ptr<i32>, _)
+  (store, _, %t44:ptr<i32>, %t45:i32)
+  (load, %t46:i32, %t44:ptr<i32>, _)
+  (goto, _, L4, _)
+L9:
+  (load, %t15:ptr<fn(i32, i32)->u1>, &before.79:ptr<ptr<fn(i32, i32)->u1>>, _)
+  (load, %t16:i32, &v.81:ptr<i32>, _)
+  (load, %t17:ptr<i32>, &values.75:ptr<ptr<i32>>, _)
+  (load, %t18:i32, &j.82:ptr<i32>, _)
+  (cast, %t19:i64, %t18:i32, _)
+  (mul, %t20:i64, %t19:i64, 4:i64)
+  (offset, %t21:ptr<i32>, %t17:ptr<i32>, %t20:i64)
+  (load, %t22:i32, %t21:ptr<i32>, _)
+  (param, _, %t16:i32, _)
+  (param, _, %t22:i32, _)
+  (call, %t23:u1, %t15, _)
+  (copy, %t14:u1, %t23:u1, _)
+  (goto, _, L11, _)
+L10:
+  (copy, %t14:u1, 0:u1, _)
+  (goto, _, L11, _)
+L11:
+  (if_goto, _, %t14:u1, L7)
+  (goto, _, L8, _)
+}
+function @apply.37: fn(ptr<fn(i32)->i32>, i32)->i32 {
+  parameter f.84: ptr<fn(i32)->i32>
+  parameter x.85: i32
+  (load, %t1:ptr<fn(i32)->i32>, &f.84:ptr<ptr<fn(i32)->i32>>, _)
+  (load, %t2:i32, &x.85:ptr<i32>, _)
+  (param, _, %t2:i32, _)
+  (call, %t3:i32, %t1, _)
+  (ret, _, %t3:i32, _)
+}
+function @Scaler.scale.41: fn(ptr<Scaler>, i32)->i32 {
+  parameter this.86: ptr<Scaler>
+  parameter v.87: i32
+  local bump.89: ptr<fn(i32)->i32>
+  (store, _, &bump.89:ptr<ptr<fn(i32)->i32>>, @__lambda_1.43:ptr<fn(i32)->i32>)
+  (load, %t1:ptr<fn(i32)->i32>, &bump.89:ptr<ptr<fn(i32)->i32>>, _)
+  (load, %t2:i32, &v.87:ptr<i32>, _)
+  (param, _, %t2:i32, _)
+  (call, %t3:i32, %t1, _)
+  (load, %t4:ptr<Scaler>, &this.86:ptr<ptr<Scaler>>, _)
+  (offset, %t5:ptr<i32>, %t4:ptr<Scaler>, 0:i64)
+  (load, %t6:i32, %t5:ptr<i32>, _)
+  (mul, %t7:i32, %t3:i32, %t6:i32)
+  (ret, _, %t7:i32, _)
+}
+function @__lambda_1.43: fn(i32)->i32 internal {
+  parameter w.90: i32
+  (load, %t1:i32, &w.90:ptr<i32>, _)
+  (add, %t2:i32, %t1:i32, 1:i32)
+  (ret, _, %t2:i32, _)
+}
+function @main.46: fn(i32, ptr<ptr<i8>>)->i32 {
+  parameter argc.91: i32
+  parameter argv.92: ptr<ptr<i8>>
+  local n.93: i32
+  local immediate.94: i32
+  local deduced.95: i32
+  local remember.97: ptr<fn(i32)->void>
+  local ops.98: [2 x Operation]
+  local values.99: [4 x i32]
+  local outer.101: ptr<fn(i32)->i32>
+  local counter.102: i32
+  local half.104: ptr<fn(i32)->f64>
+  local s.105: Scaler
+  (load, %t1:ptr<ptr<i8>>, &argv.92:ptr<ptr<ptr<i8>>>, _)
+  (cast, %t2:i64, 1:i32, _)
+  (mul, %t3:i64, %t2:i64, 8:i64)
+  (offset, %t4:ptr<ptr<i8>>, %t1:ptr<ptr<i8>>, %t3:i64)
+  (load, %t5:ptr<i8>, %t4:ptr<ptr<i8>>, _)
+  (param, _, %t5:ptr<i8>, _)
+  (call, %t6:i32, @atoi.11, _)
+  (store, _, &n.93:ptr<i32>, %t6:i32)
+  (load, %t7:i32, &n.93:ptr<i32>, _)
+  (param, _, %t7:i32, _)
+  (call, %t8:i32, @__lambda_2.48, _)
+  (store, _, &immediate.94:ptr<i32>, %t8:i32)
+  (load, %t9:i32, &n.93:ptr<i32>, _)
+  (param, _, %t9:i32, _)
+  (param, _, 10:i32, _)
+  (call, %t10:i32, @__lambda_3.51, _)
+  (store, _, &deduced.95:ptr<i32>, %t10:i32)
+  (store, _, &remember.97:ptr<ptr<fn(i32)->void>>, @__lambda_4.53:ptr<fn(i32)->void>)
+  (load, %t11:ptr<fn(i32)->void>, &remember.97:ptr<ptr<fn(i32)->void>>, _)
+  (load, %t12:i32, &n.93:ptr<i32>, _)
+  (add, %t13:i32, %t12:i32, 5:i32)
+  (param, _, %t13:i32, _)
+  (call, _, %t11, _)
+  (call, _, @__lambda_5.54, _)
+  (cast, %t14:ptr<Operation>, &ops.98:ptr<[2 x Operation]>, _)
+  (cast, %t15:i64, 0:i32, _)
+  (mul, %t16:i64, %t15:i64, 8:i64)
+  (offset, %t17:ptr<Operation>, %t14:ptr<Operation>, %t16:i64)
+  (offset, %t18:ptr<ptr<fn(i32, i32)->i32>>, %t17:ptr<Operation>, 0:i64)
+  (store, _, %t18:ptr<ptr<fn(i32, i32)->i32>>, @__lambda_6.57:ptr<fn(i32, i32)->i32>)
+  (load, %t19:ptr<fn(i32, i32)->i32>, %t18:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (cast, %t20:ptr<Operation>, &ops.98:ptr<[2 x Operation]>, _)
+  (cast, %t21:i64, 1:i32, _)
+  (mul, %t22:i64, %t21:i64, 8:i64)
+  (offset, %t23:ptr<Operation>, %t20:ptr<Operation>, %t22:i64)
+  (offset, %t24:ptr<ptr<fn(i32, i32)->i32>>, %t23:ptr<Operation>, 0:i64)
+  (store, _, %t24:ptr<ptr<fn(i32, i32)->i32>>, @__lambda_7.60:ptr<fn(i32, i32)->i32>)
+  (load, %t25:ptr<fn(i32, i32)->i32>, %t24:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (cast, %t26:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t27:i64, 0:i32, _)
+  (mul, %t28:i64, %t27:i64, 4:i64)
+  (offset, %t29:ptr<i32>, %t26:ptr<i32>, %t28:i64)
+  (load, %t30:i32, &n.93:ptr<i32>, _)
+  (store, _, %t29:ptr<i32>, %t30:i32)
+  (load, %t31:i32, %t29:ptr<i32>, _)
+  (cast, %t32:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t33:i64, 1:i32, _)
+  (mul, %t34:i64, %t33:i64, 4:i64)
+  (offset, %t35:ptr<i32>, %t32:ptr<i32>, %t34:i64)
+  (store, _, %t35:ptr<i32>, 4:i32)
+  (load, %t36:i32, %t35:ptr<i32>, _)
+  (cast, %t37:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t38:i64, 2:i32, _)
+  (mul, %t39:i64, %t38:i64, 4:i64)
+  (offset, %t40:ptr<i32>, %t37:ptr<i32>, %t39:i64)
+  (load, %t41:i32, &n.93:ptr<i32>, _)
+  (neg, %t42:i32, %t41:i32, _)
+  (store, _, %t40:ptr<i32>, %t42:i32)
+  (load, %t43:i32, %t40:ptr<i32>, _)
+  (cast, %t44:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t45:i64, 3:i32, _)
+  (mul, %t46:i64, %t45:i64, 4:i64)
+  (offset, %t47:ptr<i32>, %t44:ptr<i32>, %t46:i64)
+  (store, _, %t47:ptr<i32>, 2:i32)
+  (load, %t48:i32, %t47:ptr<i32>, _)
+  (cast, %t49:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (param, _, %t49:ptr<i32>, _)
+  (param, _, 4:i32, _)
+  (param, _, @__lambda_8.63:ptr<fn(i32, i32)->u1>, _)
+  (call, _, @sortWith.33, _)
+  (store, _, &outer.101:ptr<ptr<fn(i32)->i32>>, @__lambda_9.67:ptr<fn(i32)->i32>)
+  (load, %t50:i32, &n.93:ptr<i32>, _)
+  (store, _, &counter.102:ptr<i32>, %t50:i32)
+  (param, _, &counter.102:ptr<i32>, _)
+  (call, _, @__lambda_11.69, _)
+  (store, _, &half.104:ptr<ptr<fn(i32)->f64>>, @__lambda_12.71:ptr<fn(i32)->f64>)
+  (offset, %t51:ptr<i32>, &s.105:ptr<Scaler>, 0:i64)
+  (store, _, %t51:ptr<i32>, 3:i32)
+  (load, %t52:i32, %t51:ptr<i32>, _)
+  (load, %t53:i32, &immediate.94:ptr<i32>, _)
+  (load, %t54:i32, &deduced.95:ptr<i32>, _)
+  (add, %t55:i32, %t53:i32, %t54:i32)
+  (load, %t56:i32, &last.19:ptr<i32>, _)
+  (add, %t57:i32, %t55:i32, %t56:i32)
+  (cast, %t58:ptr<Operation>, &ops.98:ptr<[2 x Operation]>, _)
+  (cast, %t59:i64, 0:i32, _)
+  (mul, %t60:i64, %t59:i64, 8:i64)
+  (offset, %t61:ptr<Operation>, %t58:ptr<Operation>, %t60:i64)
+  (offset, %t62:ptr<ptr<fn(i32, i32)->i32>>, %t61:ptr<Operation>, 0:i64)
+  (load, %t63:ptr<fn(i32, i32)->i32>, %t62:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (load, %t64:i32, &n.93:ptr<i32>, _)
+  (param, _, %t64:i32, _)
+  (param, _, 1:i32, _)
+  (call, %t65:i32, %t63, _)
+  (add, %t66:i32, %t57:i32, %t65:i32)
+  (cast, %t67:ptr<Operation>, &ops.98:ptr<[2 x Operation]>, _)
+  (cast, %t68:i64, 1:i32, _)
+  (mul, %t69:i64, %t68:i64, 8:i64)
+  (offset, %t70:ptr<Operation>, %t67:ptr<Operation>, %t69:i64)
+  (offset, %t71:ptr<ptr<fn(i32, i32)->i32>>, %t70:ptr<Operation>, 0:i64)
+  (load, %t72:ptr<fn(i32, i32)->i32>, %t71:ptr<ptr<fn(i32, i32)->i32>>, _)
+  (load, %t73:i32, &n.93:ptr<i32>, _)
+  (param, _, %t73:i32, _)
+  (param, _, 3:i32, _)
+  (call, %t74:i32, %t72, _)
+  (add, %t75:i32, %t66:i32, %t74:i32)
+  (cast, %t76:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t77:i64, 0:i32, _)
+  (mul, %t78:i64, %t77:i64, 4:i64)
+  (offset, %t79:ptr<i32>, %t76:ptr<i32>, %t78:i64)
+  (load, %t80:i32, %t79:ptr<i32>, _)
+  (mul, %t81:i32, %t80:i32, 1000:i32)
+  (add, %t82:i32, %t75:i32, %t81:i32)
+  (cast, %t83:ptr<i32>, &values.99:ptr<[4 x i32]>, _)
+  (cast, %t84:i64, 3:i32, _)
+  (mul, %t85:i64, %t84:i64, 4:i64)
+  (offset, %t86:ptr<i32>, %t83:ptr<i32>, %t85:i64)
+  (load, %t87:i32, %t86:ptr<i32>, _)
+  (add, %t88:i32, %t82:i32, %t87:i32)
+  (load, %t89:ptr<fn(i32)->i32>, &square.21:ptr<ptr<fn(i32)->i32>>, _)
+  (load, %t90:i32, &n.93:ptr<i32>, _)
+  (param, _, %t89:ptr<fn(i32)->i32>, _)
+  (param, _, %t90:i32, _)
+  (call, %t91:i32, @apply.37, _)
+  (add, %t92:i32, %t88:i32, %t91:i32)
+  (load, %t93:i32, &n.93:ptr<i32>, _)
+  (param, _, @__lambda_13.73:ptr<fn(i32)->i32>, _)
+  (param, _, %t93:i32, _)
+  (call, %t94:i32, @apply.37, _)
+  (add, %t95:i32, %t92:i32, %t94:i32)
+  (load, %t96:ptr<fn(i32)->i32>, &outer.101:ptr<ptr<fn(i32)->i32>>, _)
+  (load, %t97:i32, &n.93:ptr<i32>, _)
+  (param, _, %t97:i32, _)
+  (call, %t98:i32, %t96, _)
+  (add, %t99:i32, %t95:i32, %t98:i32)
+  (load, %t100:i32, &counter.102:ptr<i32>, _)
+  (add, %t101:i32, %t99:i32, %t100:i32)
+  (load, %t102:ptr<fn(i32)->f64>, &half.104:ptr<ptr<fn(i32)->f64>>, _)
+  (load, %t103:i32, &n.93:ptr<i32>, _)
+  (param, _, %t103:i32, _)
+  (call, %t104:f64, %t102, _)
+  (mul, %t105:f64, %t104:f64, 4:f64)
+  (cast, %t106:i32, %t105:f64, _)
+  (add, %t107:i32, %t101:i32, %t106:i32)
+  (load, %t108:i32, &n.93:ptr<i32>, _)
+  (param, _, &s.105:ptr<Scaler>, _)
+  (param, _, %t108:i32, _)
+  (call, %t109:i32, @Scaler.scale.41, _)
+  (add, %t110:i32, %t107:i32, %t109:i32)
+  (ret, _, %t110:i32, _)
+}
+function @__lambda_2.48: fn(i32)->i32 internal {
+  parameter x.106: i32
+  (load, %t1:i32, &x.106:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 2:i32)
+  (ret, _, %t2:i32, _)
+}
+function @__lambda_3.51: fn(i32, i32)->i32 internal {
+  parameter a.107: i32
+  parameter b.108: i32
+  (load, %t1:i32, &a.107:ptr<i32>, _)
+  (load, %t2:i32, &b.108:ptr<i32>, _)
+  (add, %t3:i32, %t1:i32, %t2:i32)
+  (ret, _, %t3:i32, _)
+}
+function @__lambda_4.53: fn(i32)->void internal {
+  parameter v.109: i32
+  (load, %t1:i32, &v.109:ptr<i32>, _)
+  (store, _, &last.19:ptr<i32>, %t1:i32)
+  (load, %t2:i32, &last.19:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @__lambda_5.54: fn()->void internal {
+  (load, %t1:i32, &last.19:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 2:i32)
+  (store, _, &last.19:ptr<i32>, %t2:i32)
+  (load, %t3:i32, &last.19:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @__lambda_6.57: fn(i32, i32)->i32 internal {
+  parameter a.110: i32
+  parameter b.111: i32
+  (load, %t1:i32, &a.110:ptr<i32>, _)
+  (load, %t2:i32, &b.111:ptr<i32>, _)
+  (sub, %t3:i32, %t1:i32, %t2:i32)
+  (ret, _, %t3:i32, _)
+}
+function @__lambda_7.60: fn(i32, i32)->i32 internal {
+  parameter a.112: i32
+  parameter b.113: i32
+  (load, %t1:i32, &a.112:ptr<i32>, _)
+  (load, %t2:i32, &b.113:ptr<i32>, _)
+  (mul, %t3:i32, %t1:i32, %t2:i32)
+  (ret, _, %t3:i32, _)
+}
+function @__lambda_8.63: fn(i32, i32)->u1 internal {
+  parameter x.114: i32
+  parameter y.115: i32
+  (load, %t1:i32, &x.114:ptr<i32>, _)
+  (load, %t2:i32, &y.115:ptr<i32>, _)
+  (gt, %t3:u1, %t1:i32, %t2:i32)
+  (ret, _, %t3:u1, _)
+}
+function @__lambda_10.65: fn(i32)->i32 internal {
+  parameter w.116: i32
+  (load, %t1:i32, &w.116:ptr<i32>, _)
+  (mul, %t2:i32, %t1:i32, 10:i32)
+  (ret, _, %t2:i32, _)
+}
+function @__lambda_9.67: fn(i32)->i32 internal {
+  parameter v.117: i32
+  local inner.119: ptr<fn(i32)->i32>
+  (store, _, &inner.119:ptr<ptr<fn(i32)->i32>>, @__lambda_10.65:ptr<fn(i32)->i32>)
+  (load, %t1:ptr<fn(i32)->i32>, &inner.119:ptr<ptr<fn(i32)->i32>>, _)
+  (load, %t2:i32, &v.117:ptr<i32>, _)
+  (param, _, %t2:i32, _)
+  (call, %t3:i32, %t1, _)
+  (add, %t4:i32, %t3:i32, 1:i32)
+  (ret, _, %t4:i32, _)
+}
+function @__lambda_11.69: fn(ptr<i32>)->void internal {
+  parameter r.120: ptr<i32>
+  (load, %t1:ptr<i32>, &r.120:ptr<ptr<i32>>, _)
+  (load, %t2:ptr<i32>, &r.120:ptr<ptr<i32>>, _)
+  (load, %t3:i32, %t2:ptr<i32>, _)
+  (add, %t4:i32, %t3:i32, 100:i32)
+  (store, _, %t1:ptr<i32>, %t4:i32)
+  (load, %t5:i32, %t1:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @__lambda_12.71: fn(i32)->f64 internal {
+  parameter v.121: i32
+  (load, %t1:i32, &v.121:ptr<i32>, _)
+  (cast, %t2:f64, %t1:i32, _)
+  (div, %t3:f64, %t2:f64, 2:f64)
+  (ret, _, %t3:f64, _)
+}
+function @__lambda_13.73: fn(i32)->i32 internal {
+  parameter v.122: i32
+  (load, %t1:i32, &v.122:ptr<i32>, _)
+  (sub, %t2:i32, %t1:i32, 1:i32)
+  (ret, _, %t2:i32, _)
+}
+function @.module_init.123: fn()->void internal {
+  (store, _, &square.21:ptr<ptr<fn(i32)->i32>>, @__lambda_0.23:ptr<fn(i32)->i32>)
+  (ret, _, _, _)
+}

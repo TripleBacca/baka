@@ -90,9 +90,31 @@ namespace baka {
                 return {};
             }
             for (size_t Index = 0; Index < node->getPointerCount(); ++Index) {
+                if (TypeSystem.isReference(base)) {
+                    SymbolTable.diagnose("reference", "pointers to references are not allowed", node);
+                    return {};
+                }
                 base = TypeSystem.pointer(base);
             }
+            if (node->isReference() && TypeSystem.isReference(base)) {
+                // Reference collapsing: `R&` with `typedef int& R` is `int&`.
+            } else if (node->isReference()) {
+                auto referent = base;
+                base = TypeSystem.reference(base);
+                if (!base.value) {
+                    SymbolTable.diagnose("reference",
+                                         TypeSystem.isReference(referent) ? "references to references are not allowed"
+                                         : TypeSystem.isVoid(referent)    ? "references to void are not allowed"
+                                                                          : "references to functions are not supported",
+                                         node);
+                    return {};
+                }
+            }
             const auto& bounds = node->getArraySizes();
+            if (!bounds.empty() && TypeSystem.isReference(base)) {
+                SymbolTable.diagnose("reference", "arrays of references are not allowed", node);
+                return {};
+            }
             for (auto it = bounds.rbegin(); it != bounds.rend(); ++it) {
                 auto value = *it ? EvaluateInteger(*it, EvaluationContext::Purpose::ArrayBound) : IntegerResult{};
                 base = DeclarationChecker.boundArray(base, value, *it, !*it);
@@ -138,6 +160,10 @@ namespace baka {
             }
             const auto& inner = node->getInnerDeclaration();
             if (auto* nested = std::get_if<types::DeclarationIdentifierNode*>(&inner); nested && *nested) {
+                if (TypeSystem.isReference(base) && (*nested)->getArraySizes().size()) {
+                    SymbolTable.diagnose("reference", "arrays of references are not allowed", node);
+                    return {};
+                }
                 base = declarator(base, *nested);
             }
             Attach(node, base, {}, SymbolTable.currentScope());

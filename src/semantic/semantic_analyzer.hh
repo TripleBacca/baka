@@ -52,6 +52,8 @@ namespace baka {
                 TypeId owner, result;
                 uint64_t globalLimit = std::numeric_limits<uint64_t>::max();
                 bool isStatic = false, isConst = false;
+                bool lambda = false;  // body of a hoisted captureless lambda
+                SymbolId deduced;     // lambda whose result type is deduced from its returns
             };
 
             Context Current;
@@ -123,6 +125,8 @@ namespace baka {
             void refreshDiagnostics();
             void error(std::string code, std::string message, const types::ASTNode* source);
             void registerNode(types::ASTNode* node);
+            void deduceLambdaResult(ExpressionWork& work);
+            std::unordered_map<uint32_t, TypeId> DeducedResults;
             void registerFunction(types::FunctionNode* function, TypeId owner = {});
             void checkEntrySignature(TypeId type, const types::FunctionNode* node);
             void registerMembers(types::StructBodyNode* body, TypeId owner);

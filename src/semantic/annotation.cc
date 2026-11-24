@@ -7,8 +7,22 @@ namespace baka {
                 return false;
             }
             Checker.beginAnnotation();
-            for (auto& work : Expressions) {
-                annotateExpression(work);
+            // Deduced lambda results first: every use of a lambda is typed after its
+            // signature is final. Hoisted lambdas precede their enclosing lambdas in
+            // the program, so nested deductions resolve inner-first.
+            std::vector<bool> annotated(Expressions.size(), false);
+            for (size_t i = 0; i < Expressions.size(); ++i) {
+                auto& work = Expressions[i];
+                if (work.use == ExpressionUse::Return && work.context.deduced.value) {
+                    annotateExpression(work);
+                    deduceLambdaResult(work);
+                    annotated[i] = true;
+                }
+            }
+            for (size_t i = 0; i < Expressions.size(); ++i) {
+                if (!annotated[i]) {
+                    annotateExpression(Expressions[i]);
+                }
             }
             for (const auto& selection : Switches) {
                 const auto& condition = Expressions[selection.condition].value;
@@ -36,6 +50,60 @@ namespace baka {
             Phase = SemanticPhase::Annotated;
             refreshDiagnostics();
             return Diagnostics.empty();
+        }
+
+        // A lambda without a trailing return type returns the type of its returned
+        // expressions (after value decay, without top-level const); all must agree.
+        void SemanticAnalyzer::deduceLambdaResult(ExpressionWork& work) {
+            const auto symbol = work.context.deduced;
+            TypeId result = TypeSystem.builtin(Builtin::Void);
+            if (work.expression) {
+                if (work.value.error) {
+                    return;
+                }
+                result = TypeSystem.unConst(work.value.type);
+            }
+            auto [known, inserted] = DeducedResults.emplace(symbol.value, result);
+            if (!inserted) {
+                if (known->second != result) {
+                    error("lambda", "inconsistent deduced return types in lambda",
+                          work.expression ? static_cast<const types::ASTNode*>(work.expression) : work.source);
+                }
+                return;
+            }
+            if (TypeSystem.isVoid(result)) {
+                return; // the registered placeholder signature already returns void
+            }
+            if (TypeSystem.isAggregate(result) && TypeSystem.get(result).completion != Completion::Complete) {
+                error("lambda", "deduced lambda result type is incomplete", work.expression);
+                return;
+            }
+            const auto& old = TypeSystem.get(SymbolTable.get(symbol).type);
+            auto signature = TypeSystem.function(result, old.parameters, old.variadic);
+            if (!signature.value || !SymbolTable.deduceFunctionResult(symbol, signature)) {
+                error("lambda", "cannot deduce the lambda's result type", work.expression);
+                return;
+            }
+            for (auto& body : Bodies) {
+                if (body.symbol == symbol) {
+                    body.context.result = result;
+                    body.signature = signature;
+                    body.declaration->semanticInfo().Type = signature.value;
+                    if (auto* function = dynamic_cast<types::FunctionNode*>(body.declaration)) {
+                        if (auto* name = function->getDeclarator()->getIdentifier()) {
+                            name->semanticInfo().Type = signature.value;
+                        }
+                    }
+                }
+            }
+            for (auto& other : Expressions) {
+                if (other.context.deduced == symbol) {
+                    other.context.result = result;
+                    if (other.use == ExpressionUse::Return) {
+                        other.expected = result;
+                    }
+                }
+            }
         }
 
         void SemanticAnalyzer::annotateExpression(ExpressionWork& work) {

@@ -1,6 +1,7 @@
 int trace;
 
 class Base {
+public:
     int x = 1;
 
     Base() {
@@ -13,6 +14,7 @@ class Base {
 };
 
 class Member {
+public:
     int x = 2;
 
     Member() {
@@ -24,7 +26,8 @@ class Member {
     }
 };
 
-class Derived : Base {
+class Derived : public Base {
+public:
     Member member;
     int y = x + member.x;
 

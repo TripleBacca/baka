@@ -2,6 +2,24 @@
 
 namespace baka {
     namespace semantic {
+        bool ExpressionChecker::checkSelectedAccess(const OverloadSelection& selection, const types::ASTNode* source) {
+            bool valid = true;
+            if (const auto& selected = selection.candidate;
+                selected && selected->naming.value && selected->owner.value && selected->memberIndex) {
+                valid = DeclarationChecker.checkAccess(selected->naming, selected->owner, selected->memberIndex - 1,
+                                                       CurrentClass, source);
+            }
+            // Converting constructors chosen for individual arguments.
+            for (const auto& conversion : selection.conversions) {
+                if (conversion.owner.value && conversion.member) {
+                    valid = DeclarationChecker.checkAccess(conversion.owner, conversion.owner, conversion.member - 1,
+                                                           CurrentClass, source) &&
+                            valid;
+                }
+            }
+            return valid;
+        }
+
         size_t ExpressionChecker::requiredArguments(SymbolId symbol, TypeId type, uint64_t localPoint) const {
             size_t required = TypeSystem.get(type).parameters.size();
             if (!symbol.value) {
@@ -85,7 +103,7 @@ namespace baka {
                         }
                         candidates.push_back(
                             {type, symbolId, requiredArguments(symbolId, type, callee->semanticInfo().DeclarationPoint),
-                             owner, memberIndex});
+                             owner, memberIndex, owner.value ? CurrentClass : TypeId{}});
                         continue;
                     }
                     auto kind = TypeSystem.get(TypeSystem.unConst(type)).kind;
@@ -116,6 +134,7 @@ namespace baka {
                 }
                 auto access = DeclarationChecker.memberAccess(base.type, std::string(member->getMember()->GetName()),
                                                               false, false, source);
+                const auto naming = TypeSystem.unConst(base.type);
                 for (auto index : access.candidates) {
                     const auto& entry = TypeSystem.get(access.owner).members[index];
                     auto type = TypeSystem.unConst(entry.type);
@@ -126,7 +145,8 @@ namespace baka {
                                                   {},
                                                   TypeSystem.get(pointee).parameters.size(),
                                                   access.owner,
-                                                  static_cast<uint32_t>(index + 1)});
+                                                  static_cast<uint32_t>(index + 1),
+                                                  naming});
                         }
                     } else if (TypeSystem.get(type).kind == TypeKind::Function) {
                         candidates.push_back(
@@ -134,7 +154,7 @@ namespace baka {
                              entry.symbol.value
                                  ? requiredArguments(entry.symbol, type, callee->semanticInfo().DeclarationPoint)
                                  : entry.minimumArity,
-                             access.owner, static_cast<uint32_t>(index + 1)});
+                             access.owner, static_cast<uint32_t>(index + 1), naming});
                     }
                 }
                 return candidates;
@@ -146,6 +166,10 @@ namespace baka {
                 }
                 auto access = DeclarationChecker.memberAccess(base.type, std::string(arrow->getMember()->GetName()),
                                                               true, false, source);
+                const auto naming =
+                    TypeSystem.get(TypeSystem.unConst(base.type)).kind == TypeKind::Pointer
+                        ? TypeSystem.unConst(TypeSystem.get(TypeSystem.unConst(base.type)).element)
+                        : TypeId{};
                 for (auto index : access.candidates) {
                     const auto& entry = TypeSystem.get(access.owner).members[index];
                     auto type = TypeSystem.unConst(entry.type);
@@ -156,7 +180,8 @@ namespace baka {
                                                   {},
                                                   TypeSystem.get(pointee).parameters.size(),
                                                   access.owner,
-                                                  static_cast<uint32_t>(index + 1)});
+                                                  static_cast<uint32_t>(index + 1),
+                                                  naming});
                         }
                     } else if (TypeSystem.get(type).kind == TypeKind::Function) {
                         candidates.push_back(
@@ -164,7 +189,7 @@ namespace baka {
                              entry.symbol.value
                                  ? requiredArguments(entry.symbol, type, callee->semanticInfo().DeclarationPoint)
                                  : entry.minimumArity,
-                             access.owner, static_cast<uint32_t>(index + 1)});
+                             access.owner, static_cast<uint32_t>(index + 1), naming});
                     }
                 }
                 return candidates;
@@ -226,7 +251,8 @@ namespace baka {
                                                       {},
                                                       constructor.minimumArity,
                                                       TypeSystem.unConst(type),
-                                                      static_cast<uint32_t>(index + 1)});
+                                                      static_cast<uint32_t>(index + 1),
+                                                      TypeSystem.unConst(type)});
                             }
                             auto selection = selectOverload(candidates, arguments);
                             if (selection.ambiguous) {
@@ -236,6 +262,9 @@ namespace baka {
                             if (!selection.candidate) {
                                 SymbolTable.diagnose("constructor", "no viable overload for this constructor call",
                                                      node);
+                                return makeError();
+                            }
+                            if (!checkSelectedAccess(selection, node)) {
                                 return makeError();
                             }
                             retainConversions(node, selection);
@@ -269,6 +298,9 @@ namespace baka {
             }
             if (!selection.candidate) {
                 SymbolTable.diagnose("argument", "no viable overload for this call", node);
+                return makeError();
+            }
+            if (!checkSelectedAccess(selection, node)) {
                 return makeError();
             }
             retainConversions(node, selection);
@@ -329,6 +361,10 @@ namespace baka {
                 const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo().Symbol = bestSymbol.value;
             }
             auto resultType = TypeSystem.get(best).element;
+            if (TypeSystem.isReference(resultType)) {
+                // A call returning T& is an lvalue designating the returned object.
+                return makeValue(TypeSystem.referenced(resultType), ValueCategory::LValue);
+            }
             if (TypeSystem.isAggregate(resultType)) {
                 if (!isCompleteObject(resultType)) {
                     SymbolTable.diagnose("call", "call requires a complete result type", node);
@@ -390,7 +426,7 @@ namespace baka {
                     const auto& member = record.members[i];
                     if (member.isConstructor) {
                         candidates.push_back({member.type, {}, member.minimumArity, element,
-                                              static_cast<uint32_t>(i + 1)});
+                                              static_cast<uint32_t>(i + 1), element});
                     }
                 }
                 if (!candidates.empty()) {
@@ -398,6 +434,9 @@ namespace baka {
                     if (selection.ambiguous || !selection.candidate) {
                         SymbolTable.diagnose("constructor", selection.ambiguous ?
                             "ambiguous overload resolution" : "no viable overload for this constructor call", node);
+                        return makeError();
+                    }
+                    if (!checkSelectedAccess(selection, node)) {
                         return makeError();
                     }
                     if (Annotating) {

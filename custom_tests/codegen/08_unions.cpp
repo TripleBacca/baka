@@ -10,6 +10,7 @@ union Mixed {
 };
 
 class Tagged {
+public:
     int kind;
     Mixed m;
 };

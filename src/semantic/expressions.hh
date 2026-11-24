@@ -29,6 +29,10 @@ namespace baka {
             // An instance method designator is bound to an object, not an
             // ordinary function value that may decay to a plain function pointer.
             bool boundInstanceFunction = false;
+            // The expression's own category and undecayed type, kept when a value use
+            // decays it: reference binding needs to know whether it named an object.
+            bool sourceLValue = false;
+            TypeId sourceType;
 
             explicit operator bool() const {
                 return !error && type.value;
@@ -50,6 +54,9 @@ namespace baka {
                 size_t required;
                 TypeId owner{};
                 uint32_t memberIndex = 0;
+                // Class through which a member candidate was named; access is checked
+                // against it after overload selection.
+                TypeId naming{};
             };
             enum class ConversionMatch { None, Unique, Ambiguous };
 
@@ -99,6 +106,12 @@ namespace baka {
             TypeId promote(TypeId type) const;
             TypeId usualArithmetic(TypeId left, TypeId right, const types::ASTNode* source);
             bool isAssignable(TypeId from, TypeId to, const ExprResult& value) const;
+            // Reference binding (README: references). `exactly` requires binding an
+            // lvalue of the referenced type itself (an exact overload match).
+            bool bindsReference(const ExprResult& value, TypeId reference, bool exactly = false) const;
+            bool bindsDirectly(const ExprResult& value, TypeId reference) const;
+            bool hasDestruction(TypeId type) const;
+            types::ExpressionNode* bindReference(types::ExpressionNode* expression, TypeId reference);
             bool isModifiableLValue(const ExprResult& value) const;
             bool checkScalarCondition(const ExprResult& value, const types::ASTNode* source);
 
@@ -116,6 +129,7 @@ namespace baka {
             std::vector<SymbolId> lookupIdentifier(const types::IdentifierNode* identifier) const;
             size_t requiredArguments(SymbolId symbol, TypeId type, uint64_t localPoint) const;
             void retainConversions(const types::FunctionCallPostfixExpr* call, const OverloadSelection& selection);
+            bool checkSelectedAccess(const OverloadSelection& selection, const types::ASTNode* source);
             std::vector<SymbolId> resolveCallee(const types::ExpressionNode* callee, const types::ASTNode* source);
             std::vector<FunctionCandidate> functionCandidates(const types::ExpressionNode* callee,
                                                               const types::ASTNode* source);
@@ -187,6 +201,7 @@ namespace baka {
             // Called from ASTDeclarations::declarationList after insertion. Completes inferred
             // array bounds and validates scalar/aggregate/string initialization.
             bool initialize(SymbolId symbol, const types::ExpressionNode* initializer);
+            bool checkDefaultConstructionAccess(SymbolId symbol);
 
             // Classify aggregate functions as methods, constructors or destructors.
             std::optional<Member> memberSignature(types::ASTNode* node, TypeId owner);

@@ -1,4 +1,5 @@
 class Tracer {
+public:
     int id;
 
     Tracer(int n) {

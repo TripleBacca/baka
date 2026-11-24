@@ -17,6 +17,7 @@ namespace types {
     class DeclarationIdentifierNode : public ASTNode
     {
         size_t PointerCount = 0;
+        bool Reference = false; // `&` after the pointers: binds closest to the name
         std::variant<DeclarationIdentifierNode*, IdentifierNode*> VariableName;
         std::vector<ExpressionNode*> ArraySizes;
 
@@ -39,6 +40,10 @@ namespace types {
 
             INDENT(Tabs + 1);
             std::cout << "PointerCount: " << PointerCount << std::endl;
+            if (Reference) {
+                INDENT(Tabs + 1);
+                std::cout << "Reference: true" << std::endl;
+            }
 
             if(std::holds_alternative<DeclarationIdentifierNode*>(VariableName))
             {
@@ -127,6 +132,16 @@ namespace types {
         size_t getPointerCount() const
         {
             return PointerCount;
+        }
+
+        void setReference()
+        {
+            Reference = true;
+        }
+
+        bool isReference() const
+        {
+            return Reference;
         }
 
         // returns undelying variable name

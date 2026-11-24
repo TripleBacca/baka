@@ -74,5 +74,65 @@
   "independent_across_functions.cpp": [
     "undeclared name 'missing'",
     "bitwise operator requires integers"
+  ],
+  "valid_access_modifiers.cpp": [],
+  "invalid_access_private_field.cpp": [
+    "'x' is private within this context"
+  ],
+  "invalid_access_private_method.cpp": [
+    "'hidden' is private within this context"
+  ],
+  "invalid_access_private_constructor.cpp": [
+    "constructor of 'C' is private within this context"
+  ],
+  "invalid_access_protected_outside.cpp": [
+    "'p' is protected within this context"
+  ],
+  "invalid_access_base_private.cpp": [
+    "'secret' is private within this context"
+  ],
+  "invalid_access_private_inheritance.cpp": [
+    "'x' is inaccessible within this context"
+  ],
+  "invalid_access_protected_other_object.cpp": [
+    "'p' is protected within this context"
+  ],
+  "valid_references.cpp": [],
+  "invalid_reference_uninitialized.cpp": [
+    "reference requires an initializer"
+  ],
+  "invalid_reference_to_rvalue.cpp": [
+    "initializer is not convertible to the declared type"
+  ],
+  "invalid_reference_drops_const.cpp": [
+    "initializer is not convertible to the declared type"
+  ],
+  "invalid_reference_array.cpp": [
+    "arrays of references are not allowed"
+  ],
+  "invalid_reference_pointer.cpp": [
+    "pointers to references are not allowed"
+  ],
+  "invalid_reference_member.cpp": [
+    "reference members are not supported"
+  ],
+  "invalid_copy_constructor.cpp": [
+    "user-defined copy constructors are not supported"
+  ],
+  "invalid_reference_argument_temporary.cpp": [
+    "no viable overload for this call"
+  ],
+  "invalid_reference_const_assignment.cpp": [
+    "assignment target is not a modifiable lvalue"
+  ],
+  "invalid_reference_destructible_temporary.cpp": [
+    "initializer is not convertible to the declared type"
+  ],
+  "valid_lambdas.cpp": [],
+  "invalid_lambda_capture_use.cpp": [
+    "a lambda cannot capture local variables"
+  ],
+  "invalid_lambda_inconsistent_returns.cpp": [
+    "inconsistent deduced return types in lambda"
   ]
 }

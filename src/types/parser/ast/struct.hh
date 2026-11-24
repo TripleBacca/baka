@@ -11,6 +11,7 @@ namespace baka {
         class StructDefinitionNode : public ASTNode {
             IdentifierNode* StructName;
             IdentifierNode* ParentStructName = nullptr;
+            AccessSpecifier BaseAccess = AccessSpecifier::Unspecified;
             StructBodyNode* Body;
 
         public:
@@ -26,6 +27,14 @@ namespace baka {
 
             IdentifierNode* getName() const {
                 return StructName;
+            }
+
+            AccessSpecifier getBaseAccess() const {
+                return BaseAccess;
+            }
+
+            void setBaseAccess(AccessSpecifier access) {
+                BaseAccess = access;
             }
 
             IdentifierNode* getBaseName() const {
@@ -44,7 +53,11 @@ namespace baka {
                 StructName->Print(Tabs + 1);
                 if (ParentStructName) {
                     INDENT(Tabs+1);
-                    std::cout << "ParentStruct : " << std::endl;
+                    std::cout << "ParentStruct : ";
+                    if (BaseAccess != AccessSpecifier::Unspecified) {
+                        std::cout << AccessSpecifierName(BaseAccess);
+                    }
+                    std::cout << std::endl;
                     ParentStructName->Print(Tabs+2);
                 }
                 Body->Print(Tabs + 1);

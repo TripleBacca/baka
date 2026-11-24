@@ -2,6 +2,7 @@ int created;
 int destroyed;
 
 class Box {
+public:
     int value;
 
     Box(int n, int extra = 1) {
@@ -29,6 +30,7 @@ int exact(double n) {
 }
 
 class Host {
+public:
     int member(Box value) {
         return value.value * 2;
     }

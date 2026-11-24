@@ -137,11 +137,34 @@ namespace baka {
                 // Ellipsis operands have no declared parameter type to match exactly.
                 bool matches = arguments.size() <= signature.parameters.size();
                 for (size_t i = 0; matches && i < arguments.size(); ++i) {
-                    matches = !arguments[i].error && exactArgument(arguments[i].type, signature.parameters[i]);
+                    const auto parameter = signature.parameters[i];
+                    matches = !arguments[i].error && (TypeSystem.isReference(parameter)
+                                                          ? bindsReference(arguments[i], parameter, true)
+                                                          : exactArgument(arguments[i].type, parameter));
                 }
                 if (matches) {
                     exact.push_back(candidate);
                 }
+            }
+            if (exact.size() > 1) {
+                // f(T&) is preferred over f(const T&) for a non-const lvalue: keep the
+                // exact candidates whose reference parameters add the fewest qualifiers.
+                auto added = [&](const FunctionCandidate& candidate) {
+                    const auto& signature = TypeSystem.get(candidate.type);
+                    size_t count = 0;
+                    for (size_t i = 0; i < arguments.size(); ++i) {
+                        const auto parameter = signature.parameters[i];
+                        const auto source = arguments[i].sourceType.value ? arguments[i].sourceType : arguments[i].type;
+                        count += TypeSystem.isReference(parameter) &&
+                                 TypeSystem.isConst(TypeSystem.get(parameter).element) && !TypeSystem.isConst(source);
+                    }
+                    return count;
+                };
+                size_t fewest = static_cast<size_t>(-1);
+                for (const auto& candidate : exact) {
+                    fewest = std::min(fewest, added(candidate));
+                }
+                std::erase_if(exact, [&](const FunctionCandidate& candidate) { return added(candidate) != fewest; });
             }
             if (!exact.empty()) {
                 return {exact.size() == 1 ? std::optional{exact.front()} : std::nullopt, exact.size() > 1};
