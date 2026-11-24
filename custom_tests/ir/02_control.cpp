@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int x = 0;
     if (n < 0) {
         x = 1;

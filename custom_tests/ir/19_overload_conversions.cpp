@@ -44,7 +44,8 @@ class Host {
     int (*field)(Box value, int extra);
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Host host;
     host.field = take;
     int (*pointer)(Box value, int extra) = take;

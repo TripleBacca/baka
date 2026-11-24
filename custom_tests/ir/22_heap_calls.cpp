@@ -24,7 +24,8 @@ class Item {
     }
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Item* single = new(single, argument(n + 2));
     Item (*group)[2] = new(group, argument(n + 1));
     int (*many)[17] = new(many, n);

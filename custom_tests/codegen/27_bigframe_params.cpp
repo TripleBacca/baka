@@ -47,7 +47,8 @@ int deep(int n, int k) {
     return r + (int)pad[0] + (int)pad[4199] + (int)dv + (int)fv;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Small s = mksmall(n + 1);
     Dd dd = mkdd(n + 2);
     Blob bl = mkblob(n + 3);

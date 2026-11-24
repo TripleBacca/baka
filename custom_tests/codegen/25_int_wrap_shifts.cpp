@@ -2,7 +2,8 @@ unsigned int ug(unsigned int v) { return v; }
 long lg(long v) { return v; }
 unsigned long ulg(unsigned long v) { return v; }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     unsigned int a = 4294967295U - n;
     unsigned int b = 3U + n;
     unsigned int s1 = a + b;

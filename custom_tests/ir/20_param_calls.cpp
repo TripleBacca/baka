@@ -32,7 +32,8 @@ int second(int a, int b) {
     return 1000 + a + b;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int x = 1;
     int result = pack(x++, pack(step(2), x++, step(3)), n ? zero() : factorial(3));
     bump(&x);

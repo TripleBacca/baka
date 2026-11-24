@@ -47,7 +47,8 @@ Op choose(int which) {
     return which == 1 ? dbl : square;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int (*f)(int v) = inc;
     int (*table[3])(int v) = {inc, dbl, square};
     double (*h)(double v) = half;

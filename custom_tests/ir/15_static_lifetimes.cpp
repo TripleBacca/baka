@@ -23,7 +23,8 @@ int use() {
     return third.id;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     use();
     use();
     return trace;

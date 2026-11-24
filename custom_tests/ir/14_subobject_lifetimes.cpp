@@ -37,7 +37,8 @@ class Derived : Base {
     }
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     {
         Derived value;
         if (value.y != 3) {

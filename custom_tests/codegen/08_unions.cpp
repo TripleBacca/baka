@@ -18,7 +18,8 @@ long read_as_long(Mixed m) {
     return m.l;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Bits b;
     b.whole = 0x0102030405060708L;
     printf("%d %d %d %d\n", b.bytes[0], b.bytes[7], b.halves[0], b.halves[1]);

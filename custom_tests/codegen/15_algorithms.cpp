@@ -57,7 +57,8 @@ void matmul(double a[3][3], double b[3][3], double out[3][3]) {
     }
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int v[12] = {9, -3, 7, 1, 8, 2, 0, -5, 6, 4, 11, 10};
     v[0] = v[0] + n;
     bubble(v, 12);

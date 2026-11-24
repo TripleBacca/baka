@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     char c = 127;
     c = c + 1;
     unsigned char uc = 255;

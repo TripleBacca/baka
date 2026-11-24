@@ -4,6 +4,8 @@
 #include "ir/ir.hh"
 #include <bit>
 #include <algorithm>
+#include <cctype>
+#include <string>
 #include <cmath>
 #include <limits>
 #include <map>
@@ -50,6 +52,38 @@ namespace ir_test {
             Allocations.push_back({address, size, static_cast<unsigned char>(zero ? 0 : 0xa5)});
             NextAddress += size + 16;
             return address;
+        }
+
+        uint64_t allocateBytes(uint64_t size) {
+            auto address = NextAddress;
+            Allocations.push_back({address, size, 0});
+            NextAddress += size + 16;
+            return address;
+        }
+
+        uint64_t allocateText(const std::string& text) {
+            const auto address = allocateBytes(text.size() + 1);
+            for (size_t i = 0; i <= text.size(); ++i) {
+                Memory[address + i] = static_cast<unsigned char>(i < text.size() ? text[i] : 0);
+            }
+            return address;
+        }
+
+        // C atoi: optional whitespace and sign, then decimal digits; wraps like the
+        // 32-bit result it returns.
+        Value atoi(uint64_t address) const {
+            while (std::isspace(readByte(address))) {
+                ++address;
+            }
+            bool negative = false;
+            if (readByte(address) == '-' || readByte(address) == '+') {
+                negative = readByte(address++) == '-';
+            }
+            uint32_t value = 0;
+            for (unsigned char c; std::isdigit(c = readByte(address)); ++address) {
+                value = value * 10 + static_cast<uint32_t>(c - '0');
+            }
+            return {negative ? 0u - value : value};
         }
 
         unsigned char readByte(uint64_t address) const {
@@ -347,6 +381,9 @@ namespace ir_test {
                 }
                 return {};
             }
+            if (function && !function->defined && function->name == "atoi") {
+                return atoi(arguments.at(0).bits);
+            }
             if (!function || !function->defined) {
                 throw std::runtime_error("test interpreter: external call");
             }
@@ -470,11 +507,22 @@ namespace ir_test {
             }
             for (const auto& function : ModuleValue.functions) {
                 if (function.name == "main") {
-                    // The input is the first argument; further parameters (an argv
-                    // pointer for `main(int argc, char** argv)`) receive zero/null.
-                    std::vector<Value> arguments(ModuleValue.type(function.signature).parameters.size());
-                    if (!arguments.empty()) {
-                        arguments.front() = {static_cast<uint32_t>(n)};
+                    // Like the compiled program run as `prog <n>`: a two-parameter main
+                    // receives argc = 2 and argv = {"prog", "<n>", null}.
+                    std::vector<Value> arguments;
+                    const auto parameters = ModuleValue.type(function.signature).parameters.size();
+                    if (parameters == 2) {
+                        const auto program = allocateText("prog");
+                        const auto input = allocateText(std::to_string(n));
+                        const auto argv = allocateBytes(3 * 8);
+                        for (unsigned i = 0; i < 8; ++i) {
+                            Memory[argv + i] = static_cast<unsigned char>(program >> (8 * i));
+                            Memory[argv + 8 + i] = static_cast<unsigned char>(input >> (8 * i));
+                            Memory[argv + 16 + i] = 0;
+                        }
+                        arguments = {{2}, {argv}};
+                    } else if (parameters != 0) {
+                        throw std::runtime_error("test entry must be main() or main(int argc, char** argv)");
                     }
                     auto value = invoke(function.id, arguments);
                     while (!ExitActions.empty()) {

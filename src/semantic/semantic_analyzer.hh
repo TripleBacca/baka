@@ -124,6 +124,7 @@ namespace baka {
             void error(std::string code, std::string message, const types::ASTNode* source);
             void registerNode(types::ASTNode* node);
             void registerFunction(types::FunctionNode* function, TypeId owner = {});
+            void checkEntrySignature(TypeId type, const types::FunctionNode* node);
             void registerMembers(types::StructBodyNode* body, TypeId owner);
             void registerDefaults(types::FunctionParameterList* parameters, TypeId signature, SymbolId symbol,
                                   const types::ASTNode* source);

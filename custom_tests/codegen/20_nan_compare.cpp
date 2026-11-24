@@ -55,7 +55,8 @@ int logic(double x, double y, int t) {
     return r;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     double nan = mknan(n);
     double one = 1.0 + n;
     double zero = 0.0 * n;

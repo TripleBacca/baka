@@ -53,7 +53,8 @@ Big gb;
 Pair arr[50] = {};
 int zarr[1000][3] = {};
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Tri t = mktri(n + 1);
     Odd7 o = mk7(n);
     Seven s = mkseven(n + 2);

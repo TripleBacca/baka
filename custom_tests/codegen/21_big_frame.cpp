@@ -76,7 +76,8 @@ int many_locals(int n) {
     return t1 + sum + (int)(lsum % 1000) + (int)dsum + (int)t2 + buf[50];
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int r1 = big_after(n);
     double r2 = big_double(n);
     int r3 = rec(5, n);

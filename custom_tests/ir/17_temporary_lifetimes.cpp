@@ -21,7 +21,8 @@ int get(A parameter) {
     return parameter.id;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     0, A(1);
     int x = A(2).get();
     bool condition = n && A(3).get();

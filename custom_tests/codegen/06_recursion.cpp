@@ -53,7 +53,8 @@ int depth(int k) {
     return below + local[3] - local[0];
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     printf("%d %d %ld\n", fib(15 + n), ackermann(2, 3), factorial(15));
     printf("%d %d %f %d\n", is_even(10 + n), is_odd(7), power(1.5, 10), gcd(1071, 462));
     return fib(10 + n) + ackermann(2, 2) + depth(2000) + is_even(n);

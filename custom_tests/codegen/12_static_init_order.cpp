@@ -25,7 +25,8 @@ int visit(int n) {
 
 Tracer third = Tracer(3);
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     printf("main start\n");
     Tracer local = Tracer(10 + n);
     int a = visit(1);

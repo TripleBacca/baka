@@ -13,7 +13,8 @@ class Node {
     }
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Node* a = new(a, n + 1);
     Node* b = new(b, 7);
     a->next = b;

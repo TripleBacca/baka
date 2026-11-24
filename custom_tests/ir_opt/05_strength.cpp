@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     unsigned int u = (unsigned int)n;
     int a = n * 8;
     int z = n * 0;

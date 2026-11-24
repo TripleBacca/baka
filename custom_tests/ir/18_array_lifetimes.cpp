@@ -18,7 +18,8 @@ class Owner {
     Item items[2];
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     {
         Owner owner;
     }

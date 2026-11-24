@@ -23,7 +23,8 @@ Pair copy(const Pair* p) {
 
 Pair zero() {}
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Pair (*indirect)(int n) = relay;
     Pair p = indirect(n);
     Pair q = p.get();

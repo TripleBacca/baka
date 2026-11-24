@@ -52,7 +52,8 @@ int depth_static(int k) {
     return (int)sum + visits;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int r = 0;
     for (int i = 0; i < 3; i++) r += gtab[i](n + 5);
     printf("%d %d %d\n", r, gfun(n + 4), gcomputed);

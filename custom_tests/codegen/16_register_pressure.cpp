@@ -10,7 +10,8 @@ double dtouch(double v) {
     return v * 1.5 + 0.25;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int a = n + 1, b = n + 2, c = n + 3, d = n + 4, e = n + 5, f = n + 6, g = n + 7, h = n + 8;
     int i = n + 9, j = n + 10, k = n + 11, l = n + 12, m = n + 13, o = n + 14, p = n + 15, q = n + 16;
     double x1 = 1.5, x2 = 2.5, x3 = 3.5, x4 = 4.5, x5 = 5.5, x6 = 6.5, x7 = 7.5, x8 = 8.5, x9 = 9.5, x10 = 10.5;
