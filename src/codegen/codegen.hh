@@ -6,7 +6,7 @@
 namespace baka {
     namespace codegen {
         struct Options {
-            // Enables block-local IR optimization before selection and the MIPS
+            // Enables IR optimization before selection and the MIPS
             // peephole pass after register assignment. Selection itself always
             // uses the next-use/descriptor allocator.
             bool optimize = true;

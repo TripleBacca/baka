@@ -334,11 +334,13 @@ namespace baka {
             }
         }
 
-        // Runs the optimization passes to a fixed point: folding, copy propagation, per-block
-        // simplification, value numbering, memory forwarding and dead-store removal, then unreachable-block
+        // Unrolls eligible natural loops once, then runs the local passes to a fixed point: folding, copy
+        // propagation, simplification, value numbering, memory forwarding and dead-store removal, then unreachable-block
         // and dead-code removal. Convergence is detected by comparing the instruction streams; the
         // iteration cap is scaled to the module size and exceeding it throws, as that indicates a pass bug.
         void Optimize(Module& module) {
+            RemoveUnreachableBlocks(module);
+            UnrollSmallLoops(module);
             size_t maxIterations = 64;
             for (const auto& function : module.functions)
                 for (const auto& block : function.blocks) maxIterations += block.instructions.size() + 1;

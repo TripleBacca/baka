@@ -1,0 +1,186 @@
+IR::TAC:
+FILE = opaque
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @atoi.11: fn(ptr<i8>)->i32
+declare @fopen.13: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.14: fn(ptr<FILE>)->i32
+declare @fread.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.16: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.17: fn(i32, ptr<void>, u64)->i64
+declare @write.18: fn(i32, ptr<void>, u64)->i64
+function @five.20: fn(i32)->i32 {
+  parameter n.29: i32
+  local sum.30: i32
+  local i.31: i32
+  (store, _, &sum.30:ptr<i32>, 0:i32)
+  (store, _, &i.31:ptr<i32>, 0:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t1:i32, &i.31:ptr<i32>, _)
+  (lt, %t2:u1, %t1:i32, 5:i32)
+  (if_goto, _, %t2:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t3:i32, &sum.30:ptr<i32>, _)
+  (load, %t4:i32, &n.29:ptr<i32>, _)
+  (load, %t5:i32, &i.31:ptr<i32>, _)
+  (add, %t6:i32, %t4:i32, %t5:i32)
+  (add, %t7:i32, %t3:i32, %t6:i32)
+  (store, _, &sum.30:ptr<i32>, %t7:i32)
+  (goto, _, L4, _)
+L4:
+  (load, %t9:i32, &i.31:ptr<i32>, _)
+  (add, %t10:i32, %t9:i32, 1:i32)
+  (store, _, &i.31:ptr<i32>, %t10:i32)
+  (goto, _, L2, _)
+L5:
+  (load, %t11:i32, &sum.30:ptr<i32>, _)
+  (ret, _, %t11:i32, _)
+}
+function @runtimeBound.22: fn(i32)->i32 {
+  parameter n.32: i32
+  local sum.33: i32
+  local i.34: i32
+  (store, _, &sum.33:ptr<i32>, 0:i32)
+  (store, _, &i.34:ptr<i32>, 0:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t1:i32, &i.34:ptr<i32>, _)
+  (load, %t2:i32, &n.32:ptr<i32>, _)
+  (lt, %t3:u1, %t1:i32, %t2:i32)
+  (if_goto, _, %t3:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t4:i32, &sum.33:ptr<i32>, _)
+  (load, %t5:i32, &i.34:ptr<i32>, _)
+  (add, %t6:i32, %t4:i32, %t5:i32)
+  (store, _, &sum.33:ptr<i32>, %t6:i32)
+  (goto, _, L4, _)
+L4:
+  (load, %t8:i32, &i.34:ptr<i32>, _)
+  (add, %t9:i32, %t8:i32, 1:i32)
+  (store, _, &i.34:ptr<i32>, %t9:i32)
+  (goto, _, L2, _)
+L5:
+  (load, %t10:i32, &sum.33:ptr<i32>, _)
+  (ret, _, %t10:i32, _)
+}
+function @changedCounter.23: fn()->i32 {
+  local sum.35: i32
+  local i.36: i32
+  (store, _, &sum.35:ptr<i32>, 0:i32)
+  (store, _, &i.36:ptr<i32>, 0:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t1:i32, &i.36:ptr<i32>, _)
+  (lt, %t2:u1, %t1:i32, 4:i32)
+  (if_goto, _, %t2:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t3:i32, &i.36:ptr<i32>, _)
+  (add, %t4:i32, %t3:i32, 1:i32)
+  (store, _, &i.36:ptr<i32>, %t4:i32)
+  (load, %t6:i32, &sum.35:ptr<i32>, _)
+  (add, %t8:i32, %t6:i32, %t4:i32)
+  (store, _, &sum.35:ptr<i32>, %t8:i32)
+  (goto, _, L4, _)
+L4:
+  (load, %t10:i32, &i.36:ptr<i32>, _)
+  (add, %t11:i32, %t10:i32, 1:i32)
+  (store, _, &i.36:ptr<i32>, %t11:i32)
+  (goto, _, L2, _)
+L5:
+  (load, %t12:i32, &sum.35:ptr<i32>, _)
+  (ret, _, %t12:i32, _)
+}
+function @escapedCounter.24: fn()->i32 {
+  local i.37: i32
+  local alias.38: ptr<i32>
+  local sum.39: i32
+  (store, _, &alias.38:ptr<ptr<i32>>, &i.37:ptr<i32>)
+  (store, _, &sum.39:ptr<i32>, 0:i32)
+  (store, _, &i.37:ptr<i32>, 0:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t2:i32, &i.37:ptr<i32>, _)
+  (lt, %t3:u1, %t2:i32, 4:i32)
+  (if_goto, _, %t3:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t4:i32, &sum.39:ptr<i32>, _)
+  (load, %t5:i32, &i.37:ptr<i32>, _)
+  (add, %t6:i32, %t4:i32, %t5:i32)
+  (store, _, &sum.39:ptr<i32>, %t6:i32)
+  (load, %t8:ptr<i32>, &alias.38:ptr<ptr<i32>>, _)
+  (load, %t9:i32, %t8:ptr<i32>, _)
+  (add, %t10:i32, %t9:i32, 1:i32)
+  (store, _, %t8:ptr<i32>, %t10:i32)
+  (goto, _, L4, _)
+L4:
+  (load, %t11:i32, &i.37:ptr<i32>, _)
+  (add, %t12:i32, %t11:i32, 1:i32)
+  (store, _, &i.37:ptr<i32>, %t12:i32)
+  (goto, _, L2, _)
+L5:
+  (load, %t13:i32, &sum.39:ptr<i32>, _)
+  (load, %t14:i32, &i.37:ptr<i32>, _)
+  (add, %t15:i32, %t13:i32, %t14:i32)
+  (ret, _, %t15:i32, _)
+}
+function @largeBody.25: fn()->i32 {
+  local sum.40: i32
+  local i.41: i32
+  (store, _, &sum.40:ptr<i32>, 0:i32)
+  (store, _, &i.41:ptr<i32>, 0:i32)
+  (goto, _, L2, _)
+L2:
+  (load, %t1:i32, &i.41:ptr<i32>, _)
+  (lt, %t2:u1, %t1:i32, 4:i32)
+  (if_goto, _, %t2:u1, L3)
+  (goto, _, L5, _)
+L3:
+  (load, %t3:i32, &sum.40:ptr<i32>, _)
+  (load, %t4:i32, &i.41:ptr<i32>, _)
+  (add, %t5:i32, %t3:i32, %t4:i32)
+  (add, %t9:i32, %t4:i32, 1:i32)
+  (add, %t10:i32, %t5:i32, %t9:i32)
+  (add, %t14:i32, %t4:i32, 2:i32)
+  (add, %t15:i32, %t10:i32, %t14:i32)
+  (add, %t19:i32, %t4:i32, 3:i32)
+  (add, %t20:i32, %t15:i32, %t19:i32)
+  (store, _, &sum.40:ptr<i32>, %t20:i32)
+  (goto, _, L4, _)
+L4:
+  (load, %t22:i32, &i.41:ptr<i32>, _)
+  (add, %t23:i32, %t22:i32, 1:i32)
+  (store, _, &i.41:ptr<i32>, %t23:i32)
+  (goto, _, L2, _)
+L5:
+  (load, %t24:i32, &sum.40:ptr<i32>, _)
+  (ret, _, %t24:i32, _)
+}
+function @main.28: fn(i32, ptr<ptr<i8>>)->i32 {
+  parameter argc.42: i32
+  parameter argv.43: ptr<ptr<i8>>
+  local n.44: i32
+  (load, %t1:ptr<ptr<i8>>, &argv.43:ptr<ptr<ptr<i8>>>, _)
+  (offset, %t4:ptr<ptr<i8>>, %t1:ptr<ptr<i8>>, 8:i64)
+  (load, %t5:ptr<i8>, %t4:ptr<ptr<i8>>, _)
+  (param, _, %t5:ptr<i8>, _)
+  (call, %t6:i32, @atoi.11, _)
+  (store, _, &n.44:ptr<i32>, %t6:i32)
+  (param, _, %t6:i32, _)
+  (call, %t8:i32, @five.20, _)
+  (load, %t9:i32, &n.44:ptr<i32>, _)
+  (param, _, %t9:i32, _)
+  (call, %t10:i32, @runtimeBound.22, _)
+  (add, %t11:i32, %t8:i32, %t10:i32)
+  (call, %t12:i32, @changedCounter.23, _)
+  (add, %t13:i32, %t11:i32, %t12:i32)
+  (call, %t14:i32, @escapedCounter.24, _)
+  (add, %t15:i32, %t13:i32, %t14:i32)
+  (call, %t16:i32, @largeBody.25, _)
+  (add, %t17:i32, %t15:i32, %t16:i32)
+  (ret, _, %t17:i32, _)
+}

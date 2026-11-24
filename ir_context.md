@@ -218,9 +218,10 @@ rejects malformed structural type cycles, checks calls and stored values, compar
 CFG edges with terminators, and performs definite-assignment dataflow for temporaries.
 A small verifier test checks missing terminators and uses of undefined temporaries.
 
-Optimization (`--ir --optimize`, and by default under `--codegen`) transforms each
-basic block locally; only analyses (CFG, reachability, liveness via `LiveOut`) are
-global: constant folding, copy propagation, integer identities and
+Optimization (`--ir --optimize`, and by default under `--codegen`) first discovers
+natural loops and fully unrolls eligible loops with a local `int` counter, 2–4
+iterations and at most 16 straight-line body instructions. It then runs local
+constant folding, copy propagation, integer identities and
 strength reduction, value numbering, redundant-load elimination, store-to-load
 forwarding, dead-store elimination on identical named addresses and next-use dead-code
 elimination, iterated until stable. Dead-code elimination is seeded with each block's global

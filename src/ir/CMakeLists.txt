@@ -18,6 +18,8 @@ add_library(ir
     lifetimes.cc
     virtual.cc
     cfg.cc
+    loops.cc
+    loop_unrolling.cc
     verifier.cc
     optimization.cc
     constant_folding.cc

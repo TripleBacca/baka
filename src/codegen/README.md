@@ -9,7 +9,7 @@ source-language rules are in `src/semantic/README.md`.
 ```sh
 ./build/baka --codegen file.cpp > file.s            # optimized (default for codegen)
 ./build/baka --codegen --no-optimize file.cpp       # no IR passes, no peephole
-./build/baka --ir --optimize file.cpp               # print the block-locally optimized TAC
+./build/baka --ir --optimize file.cpp               # print the optimized TAC
 tools/mips/run file.s [n]                           # assemble, link and run in Docker
 ```
 
@@ -157,12 +157,12 @@ selection scratch and return registers; `$t9` holds call targets and computed
 addresses; `$a*`/`$f12-$f19` are used only while staging a call; `$at` is the
 assembler's.
 
-## Block-local IR optimization
+## IR optimization
 
-Scope rule for this project: *analyses* may be global (the CFG, reachability and
-liveness), but every *transformation* is local to one basic block
-(`src/ir/optimization.cc`, `src/ir/dead_code.cc`). This keeps each rewrite easy to
-justify while avoiding the pessimism of assuming everything is live at block exit:
+The optimizer first discovers natural loops and fully unrolls eligible
+straight-line counted loops with 2–4 iterations and at most 16 body instructions.
+The following local passes then simplify the resulting blocks. Dead-code
+elimination uses global liveness:
 
 | Pass | Safety condition |
 | --- | --- |
@@ -174,9 +174,7 @@ justify while avoiding the pessimism of assuming everything is live at block exi
 | Dead-code elimination | Backward next-use scan seeded with the block's global live-out temporaries (`ir::LiveOut`; temporaries are mutable, so every definition kills). |
 | Constant branch folding | Looks only at the block's own `if_goto`/`goto` tail; unreachable blocks are then deleted as cleanup. |
 
-The earlier CFG-wide copy/constant propagation and jump threading were removed, and the
-interpreter's optimizer self-test (`custom_tests/ir/execute.cc`) now asserts that no
-value crosses a block edge. `custom_tests/ir_opt` pins the optimized TAC for each pass,
+Copy and constant propagation stay local to a block. `custom_tests/ir_opt` pins the optimized TAC for each pass,
 including the negative cases (no forwarding across a call or a pointer store, no reuse
 after a redefinition).
 

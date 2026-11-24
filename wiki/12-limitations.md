@@ -5,8 +5,8 @@
 - **Block-local register allocation.** Values never stay in registers across block
   boundaries, so loop variables are stored and reloaded every iteration. Global liveness
   only avoids storing values that are dead.
-- **Block-local IR optimization.** No loop-invariant code motion, global constant
-  propagation or jump threading.
+- **Limited CFG optimization.** Full unrolling handles small fixed-count loops.
+  Loop-invariant code motion, global constant propagation and jump threading remain open.
 - **Records by value use a private convention** (pointer to a copy; hidden result
   pointer), so calling an external C function that takes or returns a struct by value
   would not be ABI-compatible. The language never declares such functions.
