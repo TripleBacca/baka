@@ -2,6 +2,10 @@
 
 namespace baka {
     namespace semantic {
+        // Checks `base.member` / `base->member`. Overload sets are rejected here (they need a call). When
+        // annotating, records the selected member and resolves the identifier to its symbol. The result is an
+        // lvalue if the base is an lvalue or accessed through a pointer, and an instance function is marked as
+        // needing an object-bound call.
         ExprResult ExpressionChecker::checkMember(const types::ExpressionNode* baseNode,
                                                   const types::IdentifierNode* member, bool arrow,
                                                   const types::ASTNode* source) {
@@ -47,6 +51,10 @@ namespace baka {
             return result;
         }
 
+        // Builds the Member entry for a class member declaration: a method with its resolved type, minimum
+        // arity (parameters without defaults) and static-ness, a constructor typed as void(params) named after
+        // the owner, or a destructor named ~Owner. Returns nullopt when the type cannot be resolved or the
+        // node is not a function.
         std::optional<Member> ExpressionChecker::memberSignature(types::ASTNode* node, TypeId owner) {
             if (auto* function = dynamic_cast<types::FunctionNode*>(node)) {
                 auto* returnName = function->getReturnTypeName();

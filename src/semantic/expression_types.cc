@@ -54,6 +54,10 @@ namespace baka {
             return TypeSystem.unConst(type);
         }
 
+        // The common type of two arithmetic operands after promotion; diagnoses and returns an invalid id if
+        // either is not arithmetic. Floating wins by rank; mixed signedness goes to the unsigned type unless
+        // the signed one is strictly wider, and at equal width the unsigned counterpart of the signed type is
+        // chosen.
         TypeId ExpressionChecker::usualArithmetic(TypeId left, TypeId right, const types::ASTNode* source) {
             left = promote(left);
             right = promote(right);
@@ -149,6 +153,10 @@ namespace baka {
             return isAssignable(value.type, TypeSystem.unConst(referent), value);
         }
 
+        // Whether a value of type `from` converts implicitly to `to`: reference binding, null pointer
+        // constants, arithmetic and enum-to-integer conversions, and pointer conversions (to void*, to a base,
+        // adding const but never dropping it). Aggregates only copy from the identical type, and arrays,
+        // functions and void never receive.
         bool ExpressionChecker::isAssignable(TypeId from, TypeId to, const ExprResult& value) const {
             if (!from.value || !to.value) {
                 return false;

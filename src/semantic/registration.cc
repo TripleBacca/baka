@@ -66,6 +66,10 @@ namespace baka {
             (void)source;
         }
 
+        // Registers a top-level or member declaration list. const integral initializers are evaluated
+        // immediately, while each declarator is added so later array bounds and enumerators can use them.
+        // Function declarators get their default arguments registered, and other initializers are queued for
+        // checking.
         void SemanticAnalyzer::registerDeclarations(types::DeclarationList* list) {
             if (!list) {
                 return;
@@ -129,6 +133,10 @@ namespace baka {
             }
         }
 
+        // Registers a function definition (free, or a method when `owner` is set) and queues its body. Free
+        // functions are declared here, and an extern `main` has its signature validated; methods arrive with a
+        // type already resolved by the aggregate pass. The body is recorded with the context needed to resolve
+        // it later.
         void SemanticAnalyzer::registerFunction(types::FunctionNode* node, TypeId owner) {
             auto type =
                 owner.value
@@ -169,6 +177,9 @@ namespace baka {
             Bodies.push_back({node, node->getBody(), parameters, context, type, symbol});
         }
 
+        // Registers the bodies and initializers inside a class/struct/union body: methods, constructors and
+        // destructors are queued as bodies, and member defaults and initializers are queued, all under the
+        // owner's scope and context. The previous context is restored afterwards.
         void SemanticAnalyzer::registerMembers(types::StructBodyNode* body, TypeId owner) {
             auto saved = Current;
             Current.scope = {body->semanticInfo().Scope};
@@ -213,6 +224,9 @@ namespace baka {
             select(saved);
         }
 
+        // Registers one top-level node: declarations, typedefs, enums, forward declarations, aggregate
+        // definitions (whose members are then registered) and function definitions. Anything else is diagnosed
+        // as unsupported.
         void SemanticAnalyzer::registerNode(types::ASTNode* node) {
             if (!node) {
                 return;

@@ -109,7 +109,10 @@ namespace base {
             Arena& operator=(const Arena& other) = delete;
             Arena& operator=(Arena&& other) = delete;
 
-
+            // Placement-constructs N copies of T (each from args) in one contiguous run in the active chunk and
+            // returns it as a span. Throws bad_alloc if the array cannot fit in a single chunk; retries once in
+            // a fresh chunk. Non-trivially-destructible types get an activation record, linked in before the
+            // array so destruction order stays consistent.
             template<class T, class ...Args>
             requires (sizeof(T) <= SZ)
             std::span<T> AllocArray(size_t N ,Args&& ...args) {

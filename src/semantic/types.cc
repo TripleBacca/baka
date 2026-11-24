@@ -56,6 +56,10 @@ namespace baka {
             return ComputeLayout(id, active);
         }
 
+        // Computes size, alignment and field offsets, with `active` tracking types in progress to reject
+        // recursive by-value containment. Incomplete types report Incomplete, and functions and void have no
+        // layout. Classes reserve a vptr at offset 0 in the root, derived classes lay out after the base,
+        // unions overlap, and empty objects take one byte.
         LayoutResult Types::ComputeLayout(TypeId id, std::vector<TypeId>& active) const {
             id = unConst(id);
             const auto& TypeInfo = get(id);
@@ -199,6 +203,9 @@ namespace baka {
             return BuiltinTypes.at(static_cast<unsigned>(Right));
         }
 
+        // Width, conversion rank, signedness and floating-ness of an arithmetic type (enums count as int);
+        // nullopt for everything else, including void. Rank orders the promotion and usual arithmetic
+        // conversions.
         std::optional<Types::ArithmeticInfo> Types::arithmetic(TypeId id) const {
             const auto& TypeInfo = get(unConst(id));
             if (TypeInfo.kind == TypeKind::Enum) {

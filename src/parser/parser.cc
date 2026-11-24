@@ -79,6 +79,8 @@ namespace baka {
             return ParseProgram();
         };
 
+        // Top level: loops until EOF over struct/class/union/enum definitions, typedefs, and functions or declaration lists
+        // (function probe first). After each item, lambdas hoisted during its parse are appended as top-level functions.
         types::ProgramNode* Parser::ParseProgram() {
             const size_t SourceStart = current;
             auto* ProgramNode = AllocNodeAt<types::ProgramNode>(SourceStart);
@@ -143,6 +145,8 @@ namespace baka {
             return ParseCommaExpression();
         }
 
+        // Builds a typed ConstantTNode from the current token's literal value or true/false/nullptr, without consuming it
+        // (the caller advances). Unknown tokens report 'expected constant' and yield an errored int 0.
         types::ConstantNode* Parser::ParseConstantNode() {
             const size_t SourceStart = current;
             const types::Token& Token = this->Peek();

@@ -268,6 +268,10 @@ namespace baka {
             }
         }
 
+        // Block-local constant propagation and folding: literal copies are substituted into later uses and
+        // foldable instructions are replaced by copies of their value. A trailing if_goto/goto pair with a
+        // literal condition is rewritten as a unit into a single unconditional jump so nothing follows a
+        // terminator.
         void ConstantFold(Module& module) {
             for (auto& function : module.functions) {
                 for (auto& block : function.blocks) {
@@ -330,6 +334,10 @@ namespace baka {
             }
         }
 
+        // Runs the optimization passes to a fixed point: folding, copy propagation, per-block
+        // simplification, value numbering, memory forwarding and dead-store removal, then unreachable-block
+        // and dead-code removal. Convergence is detected by comparing the instruction streams; the
+        // iteration cap is scaled to the module size and exceeding it throws, as that indicates a pass bug.
         void Optimize(Module& module) {
             size_t maxIterations = 64;
             for (const auto& function : module.functions)

@@ -9,6 +9,10 @@ namespace baka {
             : TypeSystem(TypeSystem), SymbolTable(SymbolTable) {
         }
 
+        // Resolves a type name to its TypeId with the const qualifier applied. `expected`
+        // (struct/class/enum) diagnoses a kind mismatch, with a struct/class keyword accepting either
+        // aggregate kind but not a union. `unsigned` is allowed only on the spelled char/short/int/long,
+        // not on aliases.
         TypeId Declarations::specifier(std::string name, bool constant, bool isUnsigned,
                                        std::optional<TypeKind> expected, const types::ASTNode* source) {
             auto id = SymbolTable.lookupType(name, source);
@@ -193,6 +197,10 @@ namespace baka {
             return false;
         }
 
+        // Validates a member against its owner and adds it to the aggregate, returning false (with a
+        // diagnostic) on failure. Rejects mismatched constructor/destructor names, static const methods,
+        // reference members, user copy constructors, misplaced pure methods, bad special-member
+        // signatures, nontrivial union fields, and duplicates.
         bool Declarations::member(TypeId owner, Member member) {
             auto type = member.type;
             const auto& TypeInfo = TypeSystem.get(TypeSystem.unConst(type));
@@ -386,6 +394,10 @@ namespace baka {
             return {ConstantState::Value, *previous + 1};
         }
 
+        // Summarizes a type's constructors and destructor, which implicit ones apply, and whether
+        // lifetime is nontrivial (user-declared special members, default member initializers, or a
+        // nontrivial base/member). The result is cached only for complete types, since an incomplete one
+        // may still gain members.
         SpecialMembers Declarations::specialMembers(TypeId id) const {
             id = TypeSystem.unConst(id);
             if (auto found = SpecialMemberCache.find(id.value); found != SpecialMemberCache.end()) {
@@ -431,6 +443,10 @@ namespace baka {
             return result;
         }
 
+        // Decides whether member `index` of `owner`, named through class `naming`, may be used from
+        // `context` (invalid TypeId means outside any class). It computes the member's effective access
+        // along the inheritance path, then applies the private/protected rules, including that a private
+        // base's members are hidden further down.
         bool Declarations::accessible(TypeId naming, TypeId owner, size_t index, TypeId context) const {
             naming = TypeSystem.unConst(naming);
             owner = TypeSystem.unConst(owner);
@@ -506,6 +522,10 @@ namespace baka {
             return false;
         }
 
+        // Looks up `name` on an aggregate receiver (dereferencing it first when `arrow`) and returns the
+        // member's owner, candidate indices and type, with const propagated from the receiver to
+        // non-static fields. With several candidates (overloads) it defers selection and access checks to the
+        // caller; with `accessContext` it checks access.
         Declarations::Access Declarations::memberAccess(TypeId receiver, const std::string& name, bool arrow,
                                                         bool staticContext, const types::ASTNode* source,
                                                         std::optional<TypeId> accessContext) {

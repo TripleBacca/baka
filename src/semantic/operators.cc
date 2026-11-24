@@ -51,6 +51,10 @@ namespace baka {
 
         }
 
+        // Checks a prefix unary operator. Address-of is checked without decay (so &array keeps its bounds) and
+        // needs an lvalue unless it names a function; the other operators check their decayed operand.
+        // Dereference yields an lvalue (void* rejected), ++/-- need a modifiable scalar lvalue, and ~ and
+        // unary +/- promote and fold constants.
         ExprResult ExpressionChecker::checkUnary(const types::FactorNode* node) {
             auto op = node->getUnaryOp();
             auto* operandNode = node->getOperand();
@@ -162,6 +166,10 @@ namespace baka {
             return makeError();
         }
 
+        // Checks `=` and compound assignment. The target must be a modifiable lvalue; plain assignment needs
+        // an implicit conversion, and compound forms are validated against the underlying operator (pointer
+        // +=/-= integer, integer-only shifts and bitwise, arithmetic otherwise). The result is the target as a
+        // non-constant lvalue.
         ExprResult ExpressionChecker::checkAssignment(const types::BinaryExpressionNode* node) {
             auto left = check(node->getLeft(), false);
             auto right = check(node->getRight(), true);
@@ -240,6 +248,10 @@ namespace baka {
             return result;
         }
 
+        // Checks a non-assignment binary operator and folds constants. && and || evaluate the right operand
+        // even when the left decides the result, but still short-circuit the constant value. Handles
+        // comparisons (arithmetic, pointer, null), shifts, bitwise ops, pointer arithmetic/difference and
+        // arithmetic with usual conversions.
         ExprResult ExpressionChecker::checkBinary(const types::BinaryExpressionNode* node) {
             auto op = node->getBinaryOp();
             if (IsAssignment(op)) {
@@ -397,6 +409,10 @@ namespace baka {
             return makeError();
         }
 
+        // Checks `c ? a : b`. When both arms are lvalues of the same type the result is an lvalue of that
+        // type; otherwise the arms are decayed and merged by arithmetic conversion, pointer
+        // qualification/void* merging, null pointer constants or identical types. A constant condition selects
+        // the folded arm.
         ExprResult ExpressionChecker::checkTernary(const types::TernaryOpNode* node) {
             auto condition = check(node->getCondition(), true);
             auto thenValue = check(node->getThen(), false);
@@ -448,6 +464,9 @@ namespace baka {
             return result;
         }
 
+        // Checks a C-style cast. Arrays and functions are not valid targets; allowed conversions are
+        // arithmetic, pointer to pointer, pointer to and from integer, and identity. Constants fold only for
+        // arithmetic casts.
         ExprResult ExpressionChecker::checkCast(const types::CastFactorNode* node) {
             if (!node->getType()) {
                 return makeError();
@@ -488,6 +507,8 @@ namespace baka {
             return makeError();
         }
 
+        // Checks sizeof on a type name or an expression (checked without decay, so an array reports its full
+        // size). Yields a constant of the size type, and diagnoses operands without a complete object layout.
         ExprResult ExpressionChecker::checkSizeof(const types::SizeofNode* node) {
             TypeId measured;
             const auto& payload = node->getPayload();

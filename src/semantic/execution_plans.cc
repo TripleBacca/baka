@@ -4,6 +4,10 @@
 
 namespace baka {
     namespace semantic {
+        // Memoized per unqualified type (the entry is inserted before recursing). Records whether construction
+        // or destruction does real work, the child subobjects with their offsets and member initializers, and
+        // whether a default constructor is available; arrays inherit their element's traits and a union keeps
+        // only its first child.
         LifetimePlan& ExecutionPlans::buildLifetime(TypeId id, const ExpressionChecker& checker) {
             id = TypesView.unConst(id);
             if (auto found = Lifetimes.find(id.value); found != Lifetimes.end()) {
@@ -49,6 +53,8 @@ namespace baka {
             return plan;
         }
 
+        // Eagerly builds every type's lifetime plan and initialization plans, and indexes each function's
+        // non-static locals and parameters, so later queries from lowering are lookups, not recomputation.
         void ExecutionPlans::prepare(const ExpressionChecker& checker) {
             for (uint32_t i = 1; i <= TypesView.typeCount(); ++i) {
                 buildLifetime({i}, checker);

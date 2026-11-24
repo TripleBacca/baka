@@ -2,6 +2,9 @@
 
 namespace baka {
     namespace ir {
+        // Computes the `this` pointer for a bound method call, converted to the class `owner` that declares
+        // the method. Walks from the receiver's static type up the base chain, adding base offsets, so
+        // calls through derived objects (or implicit `this`) pass the right subobject address.
         Operand Lowerer::receiver(const types::ExpressionNode* callee, uint32_t owner) {
             if (auto* comma = dynamic_cast<const types::CommaExpressionNode*>(callee)) {
                 const auto& expressions = comma->getExpressions();
@@ -70,6 +73,10 @@ namespace baka {
             return direct ? captured : ownTemporary(captured, location);
         }
 
+        // Lowers a call: heap builtins and constructions are dispatched first, then the callee is resolved
+        // (virtual through the vtable unless the receiver has an exact static type, else direct). Arguments
+        // are captured as values before any `param` is emitted. A returned value needing destruction is
+        // stored in its destination or registered as an owned temporary.
         Operand Lowerer::call(const types::FunctionCallPostfixExpr* node) {
             if (auto kind = types::heapCallKind(node); kind != types::HeapCallKind::None) {
                 return heapCall(node, kind == types::HeapCallKind::Allocate);

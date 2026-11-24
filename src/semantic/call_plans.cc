@@ -4,6 +4,10 @@
 
 namespace baka {
     namespace semantic {
+        // Records a CallPlan for every call, construction, and constructor-conversion in the expression
+        // tree (children first). The plan lists the argument expressions, extended with default arguments
+        // for omitted parameters; a missing default is reported as an error. It also notes the
+        // constructors/destructors the call requires, and handles `new` calls separately.
         void ExecutionPlans::addExpression(const types::ExpressionNode* expression) {
             if (!expression) {
                 return;

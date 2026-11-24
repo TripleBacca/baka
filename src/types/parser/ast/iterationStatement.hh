@@ -38,6 +38,8 @@ namespace baka {
             void rewriteExpressions(const ExpressionRewriter& rewrite) override { if (auto* expr = std::get_if<ExpressionNode*>(&Decl)) *expr = rewrite(*expr); Cond = rewrite(Cond); Upd = rewrite(Upd); }
             void visitExpressions(const ExpressionVisitor& visit) const override { if (auto* expr = std::get_if<ExpressionNode*>(&Decl)) visit(*expr); visit(Cond); visit(Upd); }
 
+            // Prints the for-statement: control target, init declaration/expression, condition, update, label and body,
+            // writing "nullptr" for each part that is absent.
             void Print(size_t Tabs = 0) const override {
                 INDENT(Tabs);
                 std::cout << "For(" << "\n";

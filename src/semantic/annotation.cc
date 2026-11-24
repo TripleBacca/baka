@@ -2,6 +2,10 @@
 
 namespace baka {
     namespace semantic {
+        // Annotation phase driver: types every collected expression (lambda-return deductions first),
+        // gives switch case values the promoted condition type, and rewrites AST conversions only when no
+        // errors were reported. Then it checks complete result types, builds execution plans, and returns
+        // true if no diagnostics remain.
         bool SemanticAnalyzer::annotateTypes() {
             if (Phase != SemanticPhase::Resolved) {
                 return false;
@@ -153,6 +157,9 @@ namespace baka {
             }
         }
 
+        // Picks the implicit-conversion target implied by how the expression is used (return/default ->
+        // declared type, condition -> bool, case/switch -> integral type), inserts the conversion nodes,
+        // and patches the owning AST node to point at the rewritten expression.
         void SemanticAnalyzer::materializeExpression(ExpressionWork& work) {
             if (!work.expression) {
                 return;

@@ -100,6 +100,10 @@ namespace baka {
                 return valueType(id) || (!definition && validType(id) && module.type(id).kind == TypeKind::Record);
             }
 
+            // Validates the type table: sentinel at index 0, record offsets/bases/fields staying within the
+            // record size, derived-type element and parameter validity, and integer/float widths. Returns
+            // early on the first class of failure, since the cycle checks that follow (structural cycles
+            // must pass through a nominal record; no by-value self-containment) assume a well-formed table.
             void Verifier::checkTypes() {
                 if (module.types.empty() || module.types.front().kind != TypeKind::Invalid) {
                     error("missing invalid-type sentinel");
@@ -262,6 +266,10 @@ namespace baka {
                 }
             }
 
+            // Validates globals: unique ids, storage types, no initializer on externs, and runtime-
+            // initialized objects having zero-filled initial storage. String bytes and scalar initial
+            // values must fit in the object, and object/function relocations must reference existing
+            // symbols with pointer or integer type.
             void Verifier::checkGlobals() {
                 for (const auto& global : module.globals) {
                     if (!global.id || !objectIds.insert(global.id).second || !storageType(global.type)) {
@@ -315,6 +323,10 @@ namespace baka {
                 }
             }
 
+            // Validates a function: signature and parameter/local consistency, unique block ids, that
+            // stored CFG edge lists match a freshly built CFG, temporaries have valid types, each block
+            // ends with a terminator, per- instruction checks, param/call sequencing and arity, and the
+            // conditional-jump placement rule. Definite assignment is checked last by checkDefinitions.
             void Verifier::checkFunction(const Function& function) {
                 if (!function.id || !functionIds.insert(function.id).second || !validType(function.signature) ||
                     module.type(function.signature).kind != TypeKind::Function) {
@@ -419,6 +431,10 @@ namespace baka {
                 checkDefinitions(function, blocks, universe);
             }
 
+            // Checks one operand in isolation: absent operands must be fully zero, block operands must name
+            // an existing block, and temporaries, object/function addresses and literals must agree with
+            // the declared function, objects and type table, including integer literals fitting their
+            // width.
             void Verifier::checkOperand(Operand operand, SourceSpan source, const Function& function,
                                         const BlockMap& blocks) {
                 if (operand.kind == OperandKind::None) {
@@ -499,6 +515,10 @@ namespace baka {
                 checkShape(in, module.type(function.signature).element);
             }
 
+            // Checks that an instruction's operand and result kinds and types fit its opcode: which operands
+            // are present or must be temporaries, pointer/pointee agreement for load and store, call result
+            // against the callee signature, return against `resultType`, and arithmetic/comparison type rules.
+            // Callers must already have validated every operand type.
             void Verifier::checkShape(const Instruction& in, TypeId resultType) {
                 const bool resultTemporary = in.result.kind == OperandKind::Temporary;
                 switch (in.opcode) {
@@ -619,6 +639,10 @@ namespace baka {
                 }
             }
 
+            // Definite-assignment dataflow over the blocks reachable from entry: a temporary may only be
+            // used if every path to the use has written it. Per-block sets are intersected over
+            // predecessors to a fixed point, then each instruction's uses are checked in order. Object
+            // memory is exempt.
             void Verifier::checkDefinitions(const Function& function, const BlockMap& blocks,
                                             const std::set<uint32_t>& universe) {
                 // Definite assignment for mutable temporaries, including branch joins.

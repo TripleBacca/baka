@@ -107,6 +107,9 @@ namespace baka {
             }
         }
 
+        // Emits the data-section assembly for all non-external globals (choosing .rodata, .bss or .data, with
+        // alignment, type and size directives), then the pooled floating-point literals in .rodata, and
+        // finally switches back to .text.
         void PrintData(const ir::Module& module, const LiteralPool& pool, std::ostream& output) {
             for (const auto& object : module.globals) {
                 if (object.external) {

@@ -48,6 +48,9 @@ namespace baka {
             return type.floating ? value.floating != 0 : (value.bits & mask(type)) != 0;
         }
 
+        // Constant-folds a conversion between scalar types. Conversion to bool compares against zero; float to
+        // int truncates toward zero. Returns nullopt for zero-width types, non-finite results, or float values
+        // that do not fit the destination integer range (undefined in C, so left to run time).
         std::optional<Value> convert(Value value, Type from, Type to) {
             if (!from.bits || !to.bits) {
                 return {};
@@ -87,6 +90,9 @@ namespace baka {
             return Value{bits & mask(to)};
         }
 
+        // Constant-folds `op` over operands a (type left) and b (type right), producing a value of type
+        // `result`. Returns nullopt when folding is unsafe or undefined: zero-width types, division by zero,
+        // oversized shifts, non-finite float results, or an unsupported op. Signed >> is arithmetic.
         std::optional<Value> evaluate(Op op, Value a, Type left, Value b, Type right, Type result) {
             if (!left.bits || !result.bits) {
                 return {};

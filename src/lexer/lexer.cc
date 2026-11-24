@@ -27,6 +27,9 @@
 
 namespace baka {
     namespace lexer {
+        // Scans the whole source in one pass into tokens plus parallel source locations (line and column), and records line
+        // boundaries in the global line index. Lexical errors are reported and an UNKNOWN or partial token is emitted so
+        // scanning continues. The token stream always ends with a single EOF_TOKEN.
         Lexed Tokenize(std::string_view SourceCode) {
             std::vector<types::Token> Tokens;
 

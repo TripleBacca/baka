@@ -2,6 +2,9 @@
 
 namespace baka {
     namespace ir {
+        // Central expression lowering: records the source position, then dispatches on the node kind and
+        // returns the operand holding the rvalue (an empty operand for void). Lvalue loads go through
+        // address(); unknown node kinds are a lowering failure.
         Operand Lowerer::value(const types::ExpressionNode* expression) {
             if (!expression) {
                 return {};

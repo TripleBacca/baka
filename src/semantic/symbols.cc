@@ -149,6 +149,10 @@ namespace baka {
                    symbol.defaultArgumentPoints[parameter].value <= limit;
         }
 
+        // Declares a name in the current scope, returning an invalid id after diagnosing on failure.
+        // Redeclaring a function with a different parameter list is a new overload (an error against
+        // builtins); anything else must match kind, type, linkage and storage and be repeatable, with at most
+        // one definition. A repeat returns the existing symbol and can complete an unsized array type.
         SymbolId Symbols::declare(Declaration NewDeclaration) {
             const DeclarationPoint point{++CurrentPoint.value};
             if (NewDeclaration.source) {

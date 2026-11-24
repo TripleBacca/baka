@@ -57,6 +57,8 @@ namespace baka {
             return true;
         }
 
+        // Dispatches on the concrete expression node kind. Uncached; check() adds caching and annotation on
+        // top.
         ExprResult ExpressionChecker::checkImpl(const types::ExpressionNode* expression) {
             if (!expression || expression->hasError()) {
                 return makeError();
@@ -93,6 +95,10 @@ namespace baka {
             }
         }
 
+        // Checks an expression, memoizing the raw (undecayed) and decayed results separately. While
+        // annotating, the raw result is also written to the node's semantic info. An unbound instance member
+        // function is rejected once the value is used (shouldDecay), and decay turns arrays and functions into
+        // pointer rvalues.
         ExprResult ExpressionChecker::check(const types::ExpressionNode* expression, bool shouldDecay) {
             if (!expression || (expression->semanticInfo().Resolved && expression->semanticInfo().Error)) {
                 return makeError(); // resolver already diagnosed this occurrence
@@ -146,6 +152,10 @@ namespace baka {
             return value;
         }
 
+        // Evaluates an expression as an integer constant, optionally in the given scope and converted to the
+        // expected type. Returns Error if the expression is invalid and Nonconstant if it is valid but not an
+        // integral constant; single-element initializer wrappers are unwrapped and the previous scope is
+        // restored on exit.
         IntegerResult ExpressionChecker::integer(const types::ExpressionNode* expression, EvaluationContext context) {
             struct ScopeGuard {
                 Symbols& symbols;

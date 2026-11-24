@@ -9,6 +9,8 @@
 namespace baka {
 namespace parser {
 
+    // struct Name ';' (forward declaration) | struct Name [':' access Base] StructBody ';' (definition). Entry cursor
+    // must be on 'struct'. Registers the type, scopes the body, and returns a placeholder declaration on a missing name.
     std::variant<types::StructDefinitionNode*, types::StructDeclarationNode*> Parser::ParseStruct() {
         const size_t SourceStart = current;
         if (!this->Match(types::TokenType::K_STRUCT)) {

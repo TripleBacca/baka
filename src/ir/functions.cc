@@ -15,6 +15,10 @@ namespace baka {
                               : semantic::TypeId{});
         }
 
+        // Lowers one function body (also used for constructors/destructors) into the IR function already
+        // declared for `symbol`, resetting per-function state. Registers locals, parameters and the implicit
+        // `this`, arms cleanup flags and vptr stores, and appends a synthesized zero return (after pending
+        // cleanups and member destruction) when control can fall off the end.
         void Lowerer::lowerCallable(const types::ASTNode* declaration, const types::StatementNode* body,
                                     uint32_t symbol, semantic::TypeId owner, bool constructor, bool destructor) {
             auto it = std::find_if(Result.functions.begin(), Result.functions.end(),

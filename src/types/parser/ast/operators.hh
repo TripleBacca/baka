@@ -73,6 +73,7 @@ namespace baka {
             return "";
         }
 
+        // Returns the enumerator name of a binary operator for AST dumps, or "UNKNOWN" for an unlisted value.
         inline std::string_view ASTBinaryOpToString(ASTBinaryOp op) {
             switch (op) {
                 case OP_MUL: return "OP_MUL";
@@ -125,6 +126,8 @@ namespace baka {
         };
 
 
+        // Whether a token can act as an infix operator in expression parsing. Includes assignments, comma, member access
+        // (. and ->), the ternary '?', and OP_UNARY_MINUS since the lexer uses that type for binary '-' as well.
         inline bool IsBinaryOperator(TokenType type) {
             switch (type) {
                 case TokenType::OP_MUL:

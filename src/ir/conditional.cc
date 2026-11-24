@@ -2,6 +2,10 @@
 
 namespace baka {
     namespace ir {
+        // Lowers `c ? a : b` as a diamond joining in one result temporary. Record results are built
+        // directly in the destination when there is one; otherwise, if the type needs destruction, the
+        // address of whichever arm ran is recorded so exactly that arm's temporary owns cleanup after the
+        // join.
         Operand Lowerer::conditionalValue(const types::TernaryOpNode* ternary) {
             const auto resultType = type(ternary);
             Operand direct;

@@ -111,6 +111,10 @@ namespace baka {
         }
 
         ExpressionChecker::OverloadSelection
+        // Picks the best candidate for the arguments by cascading tiers: arity filter (deduplicating repeated
+        // declarations), exact matches (preferring reference parameters that add the fewest const qualifiers),
+        // then implicit conversions, with converting constructors allowed when `constructors` is set. The
+        // selection is empty if nothing is viable and flagged ambiguous when several candidates remain.
         ExpressionChecker::selectOverload(const std::vector<FunctionCandidate>& input,
                                           const std::vector<ExprResult>& arguments, bool constructors) const {
             std::vector<FunctionCandidate> candidates;

@@ -7,6 +7,9 @@
 namespace baka {
 namespace parser {
 
+    // Consumes one type-name token (an identifier or builtin keyword) and returns it as an IdentifierNode. Unknown names,
+    // non-type tokens, and 'unsigned' followed by a non-integer type are reported; an errored node is returned and the
+    // token consumed so callers can continue.
     types::IdentifierNode* Parser::ParseTypeIdentifier() {
         const size_t SourceStart = current;
         // Central validation also covers B-owned parameter/function parsers. Keep

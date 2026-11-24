@@ -47,6 +47,10 @@ namespace baka {
             }
         }
 
+        // Defines a struct/class/union: registers the type, resolves the base, then declares every member
+        // in a fresh Aggregate scope (fields, pure methods, typedefs, and methods/special members via the
+        // `signature` service). Returns an invalid TypeId if any member or the base was rejected, so a
+        // half-built aggregate is never exposed.
         TypeId ASTAggregates::definition(types::IdentifierNode* name, types::IdentifierNode* parent,
                                          types::AccessSpecifier baseAccess, types::StructBodyNode& body,
                                          TypeKind kind, MemberSignature signature, types::ASTNode* source) {

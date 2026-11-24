@@ -27,6 +27,10 @@ namespace baka {
             return PureVirtual;
         }
 
+        // Creates a read-only vtable global for every complete polymorphic record and points its vptr slots
+        // at the code: slot 0 is the destructor (left null when trivial), pure slots use the
+        // __baka_pure_virtual helper, and the rest are the most derived overrides from the semantic table.
+        // The slot array type is shared.
         void Lowerer::buildVtables() {
             const auto slot = vtableSlot();
             const auto count = Result.types.size();

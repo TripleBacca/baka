@@ -2,6 +2,9 @@
 
 namespace baka {
     namespace ir {
+        // Lowers `for` into condition/body/update/exit blocks. `continue` targets the update block and
+        // `break` the exit, and cleanups registered by the initializer are run at exit so its variables are
+        // scoped to the loop.
         void Lowerer::forStatement(const types::ForBlockStatementNode* loop) {
             const auto before = State.ActiveCleanups.size();
             std::visit(

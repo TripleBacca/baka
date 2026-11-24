@@ -671,6 +671,9 @@ namespace baka {
                 return changed;
             }
 
+            // Whether the instruction at p may be moved into the delay slot of the branch at br. Rejects
+            // pseudo-ops, multi-instruction expansions (li/la), hi/lo users, control transfers, and anything
+            // following a label or another delay-slot owner; also rejects defs that the branch reads early.
             bool CanFill(const Code& c, size_t p, size_t br) {
                 const auto& in = c[p];
                 const auto& info = Info(in.op);

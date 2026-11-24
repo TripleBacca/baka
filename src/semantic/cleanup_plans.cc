@@ -17,6 +17,10 @@ namespace baka {
             }
         }
 
+        // Walks a statement tree tracking the stack of live objects needing construction/destruction. It
+        // records the live set at each label/case and loop break/continue target, and the objects
+        // destroyed on each return, break, continue and (deferred to finish()) goto. Unsupported
+        // statement kinds are reported as errors.
         void ExecutionPlans::addBody(const types::StatementNode* node, std::vector<SymbolId> active) {
             if (!node) {
                 return;

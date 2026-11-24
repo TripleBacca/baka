@@ -29,6 +29,10 @@ namespace baka {
             return materializeImpl(callee, !isBoundInstanceFunction(callee));
         }
 
+        // Inserts implicit conversions around a call's callee and arguments using the signature chosen
+        // during checking. Heap calls (new/delete) convert their pointer operand as an address and the
+        // remaining new arguments as constructor arguments. Constructor-name callees are left untouched
+        // since they are not function designators.
         void ExpressionChecker::materializeCall(types::FunctionCallPostfixExpr* call) {
             if (auto kind = types::heapCallKind(call); kind != types::HeapCallKind::None) {
                 const bool allocation = kind == types::HeapCallKind::Allocate;

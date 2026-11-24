@@ -9,6 +9,8 @@
 namespace baka {
 namespace parser {
 
+    // enum [Name] '{' Id ['=' expr] (',' Id ['=' expr])* [','] '}' ';'. The name is optional (anonymous enums) and is
+    // registered as a type; redefinition is an error since enums have no forward declarations.
     types::EnumNode* Parser::ParseEnumDecl() {
         const size_t SourceStart = current;
         if(!Match(types::TokenType::K_ENUM)) {

@@ -5,6 +5,9 @@
 
 namespace baka {
     namespace ir {
+        // Lowers a binary expression. Assignment stores through the left address, && and || become short-
+        // circuit control flow joining in one result, comma yields the right operand, and everything else
+        // evaluates both sides and defers to binary().
         Operand Lowerer::binaryValue(const types::BinaryExpressionNode* binaryNode) {
             const auto resultType = type(binaryNode);
             auto opcode = binaryNode->getBinaryOp();
@@ -76,6 +79,9 @@ namespace baka {
             return returnAddress ? target : result;
         }
 
+        // Emits the instruction for an arithmetic, bitwise or comparison operator on already-evaluated
+        // operands. Pointer +/- integer scales the index by the element size, and pointer - pointer divides
+        // the byte difference by it; other pointer operators are rejected, as are unmapped operators.
         Operand Lowerer::binary(types::ASTBinaryOp opcode, Operand left, Operand right, TypeId result) {
             auto leftType = Result.type(left.type), rightType = Result.type(right.type);
             if ((opcode == types::OP_ADD || opcode == types::OP_SUB) &&

@@ -26,6 +26,8 @@ namespace baka {
                 return {name, false, false, false, false, false, true, false, false, true};
             }
 
+            // Returns the static OpInfo for an opcode (mnemonic and def/use/branch/delay-slot flags) from a table
+            // built once on first use. Every MOp up to Movt must be registered here or it keeps default flags.
             const OpInfo& Lookup(MOp op) {
                 static const std::array<OpInfo, static_cast<size_t>(MOp::Movt) + 1> table = [] {
                     std::array<OpInfo, static_cast<size_t>(MOp::Movt) + 1> t{};

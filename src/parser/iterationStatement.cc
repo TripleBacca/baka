@@ -24,6 +24,8 @@ namespace baka {
             return Label;
         }
 
+        // 'for' '(' [declaration | typedef | expr] ';' [cond] ';' [update] [';' label] ')' statement, in its own scope.
+        // Errors resync within the header and mark the node via setHasError; the body is still parsed.
         types::ForBlockStatementNode* Parser::ForBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_FOR)) {
@@ -110,6 +112,7 @@ namespace baka {
             return Node;
         }
 
+        // 'while' '(' expr [';' label] ')' statement. Header errors mark the node via setHasError; the body is still parsed.
         types::WhileBlockStatementNode* Parser::WhileBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_WHILE)) {
@@ -147,6 +150,8 @@ namespace baka {
             return Node;
         }
 
+        // 'do' statement 'while' '(' expr [';' label] ')' ';'. A missing 'while' skips ahead and, if none is found, returns an
+        // errored node with no condition; other errors mark the node via setHasError.
         types::DoWhileBlockStatementNode* Parser::DoWhileBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_DO)) {

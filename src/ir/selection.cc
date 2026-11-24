@@ -55,6 +55,9 @@ namespace baka {
             select(exit);
         }
 
+        // Pre-scans a switch body and allocates a block for every case/default label that belongs to this
+        // switch, recording them in State.Cases. It descends through compound, if, loop and label
+        // statements but not into nested switches, whose labels belong to those switches.
         void Lowerer::collectCases(const types::StatementNode* statement,
                                    std::vector<const types::CaseLabelStatementNode*>& cases,
                                    const types::DefaultLabelStatementNode*& fallback) {

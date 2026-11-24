@@ -33,6 +33,8 @@ namespace types {
         DeclarationIdentifierNode(IdentifierNode* VariableName, std::vector<ExpressionNode*> ArraySizes) :
         PointerCount(0), VariableName(VariableName), ArraySizes(std::move(ArraySizes)) {}
 
+        // Prints the declarator tree: pointer count, reference flag, the nested declarator or identifier (or nullptr),
+        // and function parameters if present. Used by the --parse and verbose dumps.
         void Print(size_t Tabs) const override
         {
             INDENT(Tabs);
