@@ -85,6 +85,10 @@ namespace baka {
             return type;
         }
 
+        // Applies a declarator to a base type: pointers, then reference (collapsing through a typedef'd
+        // reference), array bounds from the innermost out, a function parameter list, and finally any
+        // parenthesized inner declarator. Diagnoses illegal combinations (pointer/array of reference,
+        // reference to void/function) and returns an invalid TypeId on error.
         TypeId ASTDeclarations::declarator(TypeId base, types::DeclarationIdentifierNode* node) {
             if (!node || node->hasError() || !base.value) {
                 return {};
@@ -192,6 +196,10 @@ namespace baka {
             return result;
         }
 
+        // Declares each variable of one declaration statement and returns their symbols. The symbol is
+        // inserted before the initializer runs (via `initialize`) so an unspecified array bound can be
+        // inferred first, and the final storage validation is repeated only if inference changed the
+        // type. Linkage follows static-ness at global scope.
         std::vector<SymbolId> ASTDeclarations::declarationList(types::DeclarationList& node,
                                                                InitializerCheck initialize) {
             std::vector<SymbolId> result;
@@ -242,6 +250,9 @@ namespace baka {
             return result;
         }
 
+        // Declares an enum and its enumerators in the current scope. Each enumerator takes its explicit
+        // constant or the previous value + 1 (0 for the first); after a failed enumerator no further
+        // values are implied. Returns an invalid TypeId if the enum or any enumerator was rejected.
         TypeId ASTDeclarations::enumeration(types::EnumNode& node) {
             auto* name = node.getEnumName();
             auto type = DeclarationChecker.aggregate(name ? std::string(name->GetName()) : std::string{},

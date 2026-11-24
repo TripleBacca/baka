@@ -75,6 +75,9 @@ namespace {
 }
 
 
+// Runs the pipeline (lex, parse, semantic, IR, codegen) up to the stage requested on the command line.
+// After each stage it prints accumulated diagnostics and stops with a nonzero return if any errors exist.
+// IR and codegen failures are reported as line errors. Returns 0 on success or when stopped early by a stage flag.
 int baka::driver::run(int argc, char* argv[]) {
     ParseArgs(argc, argv);
 

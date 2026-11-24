@@ -50,6 +50,8 @@ namespace baka
 			return Parameter;
 		}
 
+		// [param (',' param)*] ['...'] up to, not including, the closing ')'. Empty lists are valid; an errored parameter
+		// resyncs to the next ',' or ')', and a non-default parameter after a defaulted one is an error.
 		types::FunctionParameterList* Parser::ParseFunctionParameterList()
 		{
 			const size_t SourceStart = current;
@@ -99,6 +101,9 @@ namespace baka
 			return AllocNodeAt<types::FunctionParameterList>(SourceStart, Decls, Variadic);
 		}
 
+		// Speculatively parses [static] [const] [modifier] Type Declarator '{' body '}'. If no '{' follows, the cursor and
+		// pending lambdas are rolled back and nullopt is returned so the caller reparses as a declaration; if the probe
+		// already reported an error, it instead skips past the statement to avoid duplicate diagnostics.
 		std::optional<types::FunctionNode*> Parser::TryParseFunction()
 		{
 			const size_t SourceStart = current;

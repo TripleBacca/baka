@@ -46,6 +46,10 @@ namespace baka {
                    TypeSystem.unConst(SymbolTable.get(found.front()).type) == TypeSystem.unConst(target);
         }
 
+        // Advances `cursor` past the initializer values that make up one element of type `target`,
+        // mirroring C brace elision: a braced list, string literal, or same-typed aggregate value is one
+        // element, otherwise nested array elements/subobjects each consume theirs (a union only its first
+        // member). Scalars consume one value.
         void ASTDeclarations::consumeArrayElement(TypeId target, const std::vector<types::ExpressionNode*>& values,
                                                   size_t& cursor) {
             if (cursor >= values.size()) {
@@ -82,6 +86,9 @@ namespace baka {
             }
         }
 
+        // Completes an unspecified-bound array (`int a[] = {...}`) from its initializer: a lone string
+        // literal sizes a char array, a braced list counts elements via consumeArrayElement. Returns true
+        // if no inference was needed, and diagnoses "bound" when no positive count can be derived.
         bool ASTDeclarations::inferArrayBound(SymbolId symbol, const types::ExpressionNode* expression) {
             if (!symbol.value) {
                 return false;

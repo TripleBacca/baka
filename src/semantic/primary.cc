@@ -17,6 +17,9 @@ namespace baka {
             return SymbolTable.lookup(std::string(identifier->GetName()));
         }
 
+        // Types a literal by its payload. Integer and bool literals are integral constants, while float and
+        // double are arithmetic constants without an integer value. nullptr is a void* null pointer constant
+        // and string literals are const char arrays (with the terminating NUL) that are lvalues.
         ExprResult ExpressionChecker::checkConstant(const types::ConstantNode* node) {
             using namespace types;
             if (auto* current = dynamic_cast<const ConstantTNode<int>*>(node)) {
@@ -78,6 +81,10 @@ namespace baka {
             return makeError();
         }
 
+        // Checks a literal, `this`, or an identifier. Unqualified names found nowhere fall back to members of
+        // the current class; overload sets are rejected without a call, as are type names and instance members
+        // in static context. Enumerators and const integers with a known value are constants, and naming a
+        // reference yields its referent.
         ExprResult ExpressionChecker::checkPrimary(const types::PrimaryExpressionNode* node) {
             const auto& payload = node->getExpression();
             if (std::holds_alternative<types::ConstantNode*>(payload)) {

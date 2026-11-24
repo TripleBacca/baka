@@ -12,6 +12,10 @@ namespace baka {
             throw Failure(Diagnostics.back().message);
         }
 
+        // Maps a semantic type to its IR TypeId, memoized in TypeMap. Pointers, references and function
+        // types become pointer/function types; scalar types are deduplicated, while nominal records stay
+        // distinct. A record's identity is published before its bases and fields are imported, so recursive
+        // types terminate.
         TypeId Lowerer::importType(semantic::TypeId id) {
             id = Analyzer.types().unConst(id);
             if (!id.value) {
@@ -228,6 +232,9 @@ namespace baka {
             }
         }
 
+        // Converts `value` to `target`, returning it unchanged when the types already match and an empty
+        // operand for void. Record to record conversion slices to the base subobject through a temporary
+        // object; every other conversion is a scalar cast instruction.
         Operand Lowerer::cast(Operand value, TypeId target) {
             if (!target || Result.type(target).kind == TypeKind::Void) {
                 return {};
@@ -288,6 +295,10 @@ namespace baka {
             return emitValue(Opcode::Load, target, cast(address, Result.pointer(target)));
         }
 
+        // First lowering step: imports all semantic types, records member bindings, and declares an IR
+        // function or global for each function/object symbol. Methods get an implicit pointer-to-owner
+        // first parameter, and member names are qualified with the owner class. Locals and non-static
+        // members are skipped.
         void Lowerer::importSymbols() {
             for (uint32_t i = 1; i <= Analyzer.types().typeCount(); ++i) {
                 importType({i});
@@ -381,6 +392,10 @@ namespace baka {
             }
         }
 
+        // Entry point; a Lowerer is single-use. Imports symbols, lifetimes and vtables, lowers every top-
+        // level item, then lifetime bodies and global initializers, builds CFGs and verifies. Optimization
+        // runs (and is verified again) only when the first verification found no errors. Returns whether
+        // diagnostics are empty.
         bool Lowerer::lower(const types::ProgramNode& program, bool optimize) {
             if (Started) {
                 Diagnostics.push_back({"an IR lowerer can only be used once", {}});

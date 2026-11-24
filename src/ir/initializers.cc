@@ -11,6 +11,10 @@ namespace baka {
             return result;
         }
 
+        // Executes an initialization plan against the object at `destination`: each step addresses its
+        // subobject by offset and zeroes, constructs, copies string bytes, or evaluates an expression into
+        // it. Record-valued expressions are built directly in place, and member initializers temporarily
+        // rebind `this`.
         void Lowerer::initialize(Operand destination, const semantic::InitializationPlan& plan) {
             for (const auto& entry : plan.steps) {
                 const auto type = importType(entry.type);
@@ -66,6 +70,9 @@ namespace baka {
             }
         }
 
+        // Lowers a declaration list. Functions are skipped; globals and statics with something to run are
+        // flagged runtime-initialized and queued, while locals are initialized in place and their cleanup
+        // flag is armed afterwards so a partially built object is never destroyed.
         void Lowerer::declarations(const types::DeclarationList* list, bool global) {
             for (auto* declaration : list->getDeclarations()) {
                 const auto span = declaration->getSourceSpan();

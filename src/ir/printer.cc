@@ -27,6 +27,8 @@ namespace baka {
                 return primitive || duplicate ? name + "." + std::to_string(id) : name;
             }
 
+            // Spells an IR type for the textual dump, e.g. i32, ptr<T>, [N x T], fn(A, B)->R, with records
+            // printed by RecordName.
             std::string TypeName(const Module& module, TypeId id) {
                 const auto& type = module.type(id);
                 switch (type.kind) {
@@ -60,6 +62,8 @@ namespace baka {
                 }
             }
 
+            // Spells an operand for the textual dump. Integer literals are sign-extended according to their
+            // type. When `annotated`, a ":type" suffix is appended.
             std::string Value(const Module& module, const Function& function, Operand operand, bool annotated = true) {
                 std::ostringstream out;
                 switch (operand.kind) {
@@ -104,6 +108,7 @@ namespace baka {
                 return annotated ? out.str() + ':' + TypeName(module, operand.type) : out.str();
             }
 
+            // Mnemonic used for an opcode in the textual dump.
             const char* Name(Opcode opcode) {
                 switch (opcode) {
                 case Opcode::Copy:
@@ -173,6 +178,9 @@ namespace baka {
             }
         }
 
+        // Writes the textual TAC dump: record types, globals, the initializer, then each function with its
+        // parameters, locals and a flat instruction listing. Only jump targets are labelled; CFG edges are
+        // not shown.
         void Print(const Module& module, std::ostream& output) {
             output << "IR::TAC:\n";
             for (TypeId id = 1; id < module.types.size(); ++id) {

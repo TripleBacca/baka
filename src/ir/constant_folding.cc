@@ -15,6 +15,10 @@ namespace baka {
             }
         }
 
+        // Evaluates one instruction whose operands are literals, returning the literal it would produce, or
+        // nothing if it cannot be folded (non-literal operands, unsupported opcode, or a result
+        // numeric::evaluate rejects such as a division by zero). Casts and unary ops only need the left
+        // operand.
         std::optional<Operand> FoldConstant(const Module& module, const Instruction& in) {
             if (!DefinesTemporary(in)) {
                 return {};

@@ -36,6 +36,10 @@ namespace baka {
             }
         }
 
+        // Binds identifiers and `this` within an expression to symbols, once per node. Local names shadow
+        // members and members shadow globals inside methods. Undeclared names are diagnosed (noting lambdas
+        // cannot capture), and `new`/`delete` are left alone. Cast and sizeof type operands are resolved, then
+        // children are visited.
         void SemanticAnalyzer::resolveExpression(types::ExpressionNode* expression) {
             if (!expression || expression->semanticInfo().Resolved) {
                 return;
@@ -136,6 +140,9 @@ namespace baka {
             });
         }
 
+        // Resolves one function body in a fresh function scope: declares `this` for instance methods,
+        // registers parameters, and walks the statements. Gotos are bound afterwards to labels of the whole
+        // function so forward labels need no extra pass.
         void SemanticAnalyzer::resolveBody(BodyWork& body) {
             select(body.context);
             Current.scope = SymbolTable.enter(ScopeKind::Function);
@@ -202,6 +209,10 @@ namespace baka {
             return Diagnostics.empty();
         }
 
+        // Walks one statement, assigning scopes and jump targets and queueing its expressions for checking.
+        // Blocks, for loops and switches open scopes; break/continue bind to the enclosing loop/switch or a
+        // named loop; labels and gotos are recorded per function. Misplaced case/default labels, duplicate
+        // loop labels and switch dispatch past an initialization are reported.
         void SemanticAnalyzer::resolveStatement(types::StatementNode* node, bool outerBody) {
             if (!node) {
                 return;

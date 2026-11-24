@@ -40,6 +40,10 @@ namespace baka {
             }
         }
 
+        // Inserts the implicit conversions a checked binary expression needs. Compound assignment is rewritten
+        // into a CompoundAssignmentNode over a saved-address placeholder, so the target is evaluated once;
+        // other operators convert their operands to the usual arithmetic, promoted shift, bool, or pointer
+        // comparison type.
         types::ExpressionNode* ExpressionChecker::materializeBinary(types::BinaryExpressionNode* binary) {
             types::ExpressionNode* expression = binary;
             const auto boolean = TypeSystem.builtin(Builtin::Bool);

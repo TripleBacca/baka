@@ -2,6 +2,10 @@
 
 namespace baka {
     namespace ir {
+        // Returns the address of an lvalue expression. Besides plain names, members, indexes and derefs it
+        // handles lvalue-producing forms: calls returning T&, assignments, prefix ++/--, ternaries and comma
+        // expressions (evaluated once, then their location reused). A non-lvalue record gets materialized into
+        // local storage so member access on it has an address.
         Operand Lowerer::address(const types::ExpressionNode* expression) {
             if (!expression) {
                 fail(expression, "missing lvalue in IR lowering");
@@ -92,6 +96,9 @@ namespace baka {
             fail(expression, "expression has no supported IR address");
         }
 
+        // Address of an identifier or literal. Unqualified instance members are resolved against the current
+        // receiver; a reference yields the address it holds (not its own slot), and functions yield their code
+        // address. Instance methods cannot escape as ordinary function pointers.
         Operand Lowerer::primaryAddress(const types::PrimaryExpressionNode* primary) {
             const auto& info = primary->semanticInfo();
             const auto& payload = primary->getExpression();
@@ -139,6 +146,9 @@ namespace baka {
             return emitValue(Opcode::AddressOffset, Result.pointer(type(index)), base, offset);
         }
 
+        // Address of the member selected by the semantic metadata on `node`, given the receiver's address and
+        // static type. Static members resolve to their global; otherwise the receiver is adjusted through each
+        // base subobject offset up to the declaring class before adding the member's own offset.
         Operand Lowerer::memberAddress(const types::ASTNode* node, Operand receiver, semantic::TypeId receiverType) {
             const auto& metadata = node->semanticInfo();
             if (!metadata.MemberOwner || !metadata.MemberIndex) {

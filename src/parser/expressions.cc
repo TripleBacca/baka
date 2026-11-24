@@ -114,6 +114,8 @@ namespace parser {
         return AllocNodeAt<types::PrimaryExpressionNode>(SourceStart, Reference);
     }
 
+    // Primary expression: lambda ('[' ...), '(' comma-expression ')', constant, identifier (including 'new' and
+    // 'delete' as names), or 'this'. Reports 'expected expression' and returns nullptr otherwise.
     types::ExpressionNode* Parser::ParsePrimaryExpression() {
         const size_t SourceStart = current;
         auto& ConstantOrIdentifierOrThis = Peek();
@@ -168,6 +170,8 @@ namespace parser {
     }
 
 
+    // Unary level: C-style cast '(' type abstract-declarator ')' factor, unary operator factor, sizeof, or a postfix
+    // expression. '(' is tried as a cast by speculatively parsing a type name, and the cursor is rewound if it isn't one.
     types::ExpressionNode* Parser::ParseFactor() {
         const size_t SourceStart = current;
 
@@ -296,6 +300,9 @@ namespace parser {
         return Left;
     }
 
+    // Precedence-climbing binary/ternary/assignment parser over factors; stops at ',' (see ParseCommaExpression) and at
+    // operators below MinPrecedence. Right-associative operators recurse at the same precedence, left-associative at +1.
+    // The ternary middle operand may be an unparenthesized comma expression. Returns nullptr on error.
     types::ExpressionNode* Parser::ParseAssignmentExpression(size_t MinPrecedence)
     {
         const size_t SourceStart = current;

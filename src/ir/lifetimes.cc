@@ -62,6 +62,10 @@ namespace baka {
             return id;
         }
 
+        // Declares an IR function for every user-written or implicit constructor and destructor of each
+        // complete record, and for array destructors, filling SpecialFunctions, DefaultConstructors and
+        // Destructors. Bodies are lowered later by lowerLifetimes() so mutual references resolve. Unions
+        // with nontrivial lifetimes are rejected.
         void Lowerer::importLifetimes() {
             const auto count = Result.types.size();
             for (TypeId id = 1; id < count; ++id) {
@@ -140,6 +144,10 @@ namespace baka {
             }
         }
 
+        // Runs a constructor on the object at `destination`: arrays are constructed element by element,
+        // otherwise the selected (or default) constructor is called with `this` plus the converted
+        // arguments. Types with no default constructor are a no-op unless they require construction, which
+        // is a failure.
         void Lowerer::construct(Operand destination, TypeId type, uint32_t selected,
                                 std::vector<const types::ExpressionNode*> expressions, uint64_t elements) {
             if (Result.type(type).kind == TypeKind::Array) {

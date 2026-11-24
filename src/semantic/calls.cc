@@ -66,6 +66,10 @@ namespace baka {
             return result;
         }
 
+        // Collects the overload candidates a callee expression can denote: named functions (skipping
+        // instance members in a static context), function-typed objects and function pointers, and
+        // members found via `.`/`->`, with the owner/member index and naming class needed for access
+        // checks. Any other callee is checked as a value.
         std::vector<ExpressionChecker::FunctionCandidate>
         ExpressionChecker::functionCandidates(const types::ExpressionNode* callee, const types::ASTNode* source) {
             std::vector<FunctionCandidate> candidates;
@@ -209,6 +213,10 @@ namespace baka {
             return candidates;
         }
 
+        // Type-checks a call. `T(args)` on an aggregate type is a constructor call (abstract/incomplete
+        // types rejected); otherwise it gathers candidates, selects an overload, checks access, and, when
+        // annotating, records the selected signature/symbol/owner on the call and callee. A reference
+        // return is an lvalue.
         ExprResult ExpressionChecker::checkCall(const types::FunctionCallPostfixExpr* node) {
             if (auto kind = types::heapCallKind(node); kind != types::HeapCallKind::None) {
                 return checkHeapCall(node, kind == types::HeapCallKind::Allocate);
@@ -378,6 +386,10 @@ namespace baka {
             return makeValue(resultType);
         }
 
+        // Checks the `new`/`delete` builtins, whose first argument is the pointer variable to assign
+        // (new) or free (delete). `new` requires a complete, non-abstract target and an lvalue pointer
+        // name; extra arguments pick a constructor (or must convert to the element type). Both yield the
+        // pointer type or void respectively.
         ExprResult ExpressionChecker::checkHeapCall(const types::FunctionCallPostfixExpr* node, bool allocation) {
             auto* list = dynamic_cast<const types::CommaExpressionNode*>(node->getArguments());
             std::vector<types::ExpressionNode*> arguments;

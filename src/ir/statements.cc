@@ -17,6 +17,9 @@ namespace baka {
             }
         }
 
+        // Lowers one statement by dispatching on its node kind after recording the source position. An
+        // expression statement releases its temporaries immediately (finishTemps); unsupported node kinds
+        // are a lowering failure.
         void Lowerer::statement(const types::StatementNode* statement) {
             if (!statement) {
                 return;

@@ -22,6 +22,10 @@ namespace baka {
             return id;
         }
 
+        // Lowers the allocate/deallocate builtins. Deallocation is null-safe and runs the destructor first
+        // (the slot-0 vtable entry for polymorphic types, which may be null), then calls the free helper.
+        // Allocation calls the helper with size and alignment and, only when it returned non-null,
+        // constructs or initializes each element in place.
         Operand Lowerer::heapCall(const types::FunctionCallPostfixExpr* node, bool allocation) {
             auto* list = dynamic_cast<const types::CommaExpressionNode*>(node->getArguments());
             auto* witness = list ? list->getExpressions().front() : node->getArguments();

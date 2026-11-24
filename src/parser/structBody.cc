@@ -26,6 +26,8 @@ namespace parser {
         return std::nullopt;
     }
 
+    // '{' member* '}' where a member is an access label, constructor (Name '('), destructor ('~'), typedef, method
+    // (TryParseFunction) or field declaration list. ParentName identifies constructors/destructors; null for anonymous.
     types::StructBodyNode* Parser::ParseStructBody(types::IdentifierNode* ParentName) {
         const size_t SourceStart = current;
         types::StructBodyNode* Node = AllocNodeAt<types::StructBodyNode>(SourceStart);

@@ -281,6 +281,11 @@ namespace baka {
 
                 // ---- analysis ---------------------------------------------------
 
+                // Decides which objects can live in registers: an object is promoted unless it is a record,
+                // array, void or function, or its address escapes (anything other than a whole-value
+                // load/store at offset 0). Also sizes the outgoing-argument area (stack slots beyond the 8
+                // register slots, 16-aligned, plus 3 extra slots counted for each call), starts the frame
+                // Cursor after it, and computes liveness.
                 void analyze() {
                     std::set<uint32_t> escaped;
                     for (const auto& block : Function.blocks) {
@@ -801,6 +806,11 @@ namespace baka {
 
                 // ---- blocks -----------------------------------------------------
 
+                // Emits one IR block: label, then each instruction in order, with Param operands gathered
+                // and consumed by the following Call. Register descriptors are reset at entry and flushed
+                // before every branch, so no register state crosses a block boundary. If the block ends in
+                // a fused compare/branch, the compare (third from last) is skipped here and emitted with
+                // the JumpIf.
                 void emitBlock(const ir::Block& block) {
                     LiveOutHere = &BlockLiveOut[block.id];
                     computeNextUse(block);
@@ -888,6 +898,10 @@ namespace baka {
                     emitDelayed(MOp::B, {other});
                 }
 
+                // Emits a fused compare-and-branch that jumps to `taken` when the comparison holds and
+                // falls through otherwise. Floats use c.cond.fmt then bc1t/bc1f; integers use beq/bne
+                // directly, bltz-style branches for signed compares against $zero, and otherwise slt/sltu
+                // into a scratch register.
                 void emitCompareBranch(size_t i, const ir::Instruction& compare, const MOperand& taken,
                                        std::vector<Reg>& pinned) {
                     const auto operandType = compare.left.type;
@@ -992,6 +1006,11 @@ namespace baka {
                     MakesCall = true;
                 }
 
+                // Lowers a call following the n64 convention: caller-saved values are saved first, a record
+                // result passes its hidden address in $a0, the first 8 slots go in $a0-$a7 (or $f12-$f19
+                // for fixed float arguments) and the rest to the outgoing stack area. The callee is called
+                // via jalr through Address, and the result is moved from $v0/$f0 into a fresh register
+                // (unless it is a record).
                 void emitCall(size_t i, const ir::Instruction& inst, const std::vector<ir::Operand>& arguments) {
                     const auto& pointer = type(inst.left.type);
                     const auto& signature = type(pointer.kind == TypeKind::Pointer ? pointer.element : inst.left.type);
@@ -1074,6 +1093,9 @@ namespace baka {
 
                 // ---- ordinary instructions ---------------------------------------
 
+                // Dispatches the ordinary (non-control-flow, non-call) IR opcodes to their emitters: copy,
+                // load, store, cast, zero-memory, address arithmetic, binary and unary ops. Throws
+                // Unsupported for anything else, since jumps, calls and returns are handled by emitBlock.
                 void emitInstruction(size_t i, const ir::Instruction& inst) {
                     switch (inst.opcode) {
                     case Opcode::Copy:
@@ -1168,6 +1190,11 @@ namespace baka {
                     define(r, x);
                 }
 
+                // Emits a store. A promoted variable is not written to memory: the value's register is
+                // rebound to the variable name (or a literal is stored to its slot directly). Records are
+                // copied bytewise from the temporary's home, and zero values store $zero. The value is
+                // materialized before the address because a float literal uses $t9 to reach the literal
+                // pool.
                 void emitStore(size_t i, const ir::Instruction& inst) {
                     std::vector<Reg> pinned;
                     pinResident(inst, pinned);
@@ -1204,6 +1231,10 @@ namespace baka {
                     emit(op, {R(value), to});
                 }
 
+                // Zero-fills memory at left for `right` bytes. Constant counts up to 128 are unrolled using
+                // the widest store the known alignment allows; larger ones use a counted store loop over
+                // $a0/$a1. A non-constant count uses a bytewise loop that is skipped when the count is
+                // zero.
                 void emitZero(size_t i, const ir::Instruction& inst) {
                     std::vector<Reg> pinned;
                     pinResident(inst, pinned);
@@ -1296,6 +1327,10 @@ namespace baka {
                     }
                 }
 
+                // Register-register integer x = y op z. 32-bit signed uses the word instructions;
+                // everything else uses the doubleword forms, followed by normalize() to restore the
+                // canonical sign/zero extension for narrower types. Division and remainder go through
+                // div/mflo/mfhi.
                 void emitArithmetic(Opcode op, ir::TypeId id, Reg x, Reg y, Reg z) {
                     const bool narrow = is32Signed(id), wide = bits(id) >= 64, sign = isSigned(id);
                     auto finish = [&] {
@@ -1382,6 +1417,10 @@ namespace baka {
                     }
                 }
 
+                // Emits a binary arithmetic or comparison. Constant operands of commutative ops are moved
+                // to the right; integer ops with a constant right operand try the immediate forms (addiu,
+                // andi, slti...) before materializing it. Comparisons yield 0/1 in the result register,
+                // floats via c.cond and movf/movt.
                 void emitBinary(size_t i, const ir::Instruction& inst, Opcode op) {
                     std::vector<Reg> pinned;
                     pinResident(inst, pinned);
@@ -1435,6 +1474,9 @@ namespace baka {
                     define(r, x);
                 }
 
+                // Emits negate, complement and logical-not. Float logical-not compares against 0.0 and
+                // yields an integer result; integer logical-not is sltiu x, a, 1. Results of unsigned or
+                // narrow types are renormalized.
                 void emitUnary(size_t i, const ir::Instruction& inst) {
                     std::vector<Reg> pinned;
                     pinResident(inst, pinned);
@@ -1494,6 +1536,10 @@ namespace baka {
                     return fromBits == toBits && isSigned(from) == isSigned(to);
                 }
 
+                // Emits a conversion. If the source representation is already canonical for the destination
+                // type (or it is a same-width float cast) no code is emitted and the result shares the
+                // source register. Otherwise handles float<->float, float/int to bool, int<->float, and
+                // integer re-extension. Record conversions are unsupported.
                 void emitCast(size_t i, const ir::Instruction& inst) {
                     const auto from = inst.left.type, to = inst.result.type;
                     const Name x = inst.result.id;
@@ -1590,6 +1636,11 @@ namespace baka {
 
                 // ---- prologue and epilogue ----------------------------------------
 
+                // Assembles the function: builds the prologue (frame allocation, saving callee-saved
+                // registers and $ra if the function makes a call, storing incoming parameters), then the
+                // body, then a return label with the epilogue (restore, pop frame, jr $ra with a delay-slot
+                // nop). Run after all blocks are emitted, since frame size depends on spills and saved
+                // registers used.
                 void finish() {
                     std::vector<Reg> saved(SavedRegisters.begin(), SavedRegisters.end());
                     if (MakesCall) saved.push_back(reg::Ra);

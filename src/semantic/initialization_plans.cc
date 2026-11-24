@@ -133,6 +133,10 @@ namespace baka {
             }
         }
 
+        // Appends the steps that initialize one object at `offset` to the plan. A missing initializer
+        // constructs or zeroes, same-type aggregates copy, scalars take their single value, arrays accept
+        // strings or lists, and classes always construct since a constructor sets the hidden vptr. Problems
+        // are recorded in plan.failure.
         void ExecutionPlans::initializeObject(InitializationPlan& plan, TypeId type, uint64_t offset,
                                               const types::ExpressionNode* expression) {
             type = TypesView.unConst(type);

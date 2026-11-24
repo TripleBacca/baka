@@ -256,6 +256,9 @@ namespace baka
 			return Variable;
 		}
 
+		// Declarator without a name (casts, sizeof, parameter types): '*'* ['&'] ['(' '*' abstract-declarator ')']
+		// ['(' params ')'] ('[' [size] ']')*. '(' is taken as a nested declarator only when followed by '*'; an empty
+		// '[]' records a null size. Errors resync to ')'/']'/';'/'}'.
 		types::DeclarationIdentifierNode* Parser::ParseAbstractDeclarator()
 		{
 			const size_t SourceStart = current;

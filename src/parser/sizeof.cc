@@ -13,6 +13,8 @@
 namespace baka {
 namespace parser {
 
+// sizeof factor | sizeof '(' type abstract-declarator ')' | sizeof '(' comma-expression ')'. After '(' a type name
+// is tried first, otherwise an expression. Returns nullptr if the operand fails to parse.
 types::ExpressionNode* Parser::ParseSizeofExpression() {
     const size_t SourceStart = current;
     if(!Match(types::TokenType::K_SIZEOF)) {

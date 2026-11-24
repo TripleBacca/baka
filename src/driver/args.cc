@@ -17,6 +17,9 @@
 
 namespace baka {
     namespace driver {
+        // Parses argv into the global driver context (stage cutoff, build type, optimize flag, verbosity, source file).
+        // The source file must be the last argument; anything else unrecognized is an error. Defaults to stopping after
+        // the semantic stage. Throws DriverError on bad or missing arguments.
         void ParseArgs(int argc, char** argv) {
             if (argc == 1) {
                 throw baka::exceptions::DriverError("no input file");

@@ -47,6 +47,9 @@ namespace baka {
             return true;
         }
 
+        // Checks a scalar initializer: at most one element (braces may be empty, meaning zero), unwrapping
+        // nested lists, and the value must be implicitly convertible to the target. Records the conversion for
+        // lowering.
         bool ExpressionChecker::initializeScalar(TypeId target, const types::InitializerNode& initializer,
                                                  const types::ASTNode* source) {
             if (Annotating) {
@@ -82,6 +85,10 @@ namespace baka {
             return true;
         }
 
+        // Consumes elements from `values` starting at `cursor` to initialize `target` with brace elision:
+        // nested braced lists initialize one element or member, while unbraced values flow into
+        // sub-aggregates. A union takes only its first member and missing trailing elements are zero. Excess
+        // elements are diagnosed only when `braced`.
         bool ExpressionChecker::initializeList(TypeId target, const std::vector<types::ExpressionNode*>& values,
                                                size_t& cursor, bool braced, const types::ASTNode* source) {
             if (Annotating && source) {
@@ -222,6 +229,9 @@ namespace baka {
             return true;
         }
 
+        // Checks an array initializer: a char array may be initialized from a string literal (with or without
+        // braces) that must fit, copied rather than decayed; otherwise the braced list is checked element by
+        // element.
         bool ExpressionChecker::initializeArray(TypeId target, const types::InitializerNode& initializer) {
             const auto& info = TypeSystem.get(TypeSystem.unConst(target));
             const auto& values = initializer.expressions();
@@ -310,6 +320,10 @@ namespace baka {
             return DeclarationChecker.checkAccess(element, element, selected.member - 1, CurrentClass, entry.source);
         }
 
+        // Entry point for checking a declaration's initializer. No initializer means default construction
+        // access is checked; an unsized array first infers its bound from the list. Arrays, aggregates and
+        // scalars dispatch to their own checks, and a const integer initialized by a constant expression is
+        // remembered as a constant object.
         bool ExpressionChecker::initialize(SymbolId symbol, const types::ExpressionNode* initializerNode) {
             if (!symbol.value) {
                 return false;

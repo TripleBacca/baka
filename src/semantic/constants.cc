@@ -53,6 +53,9 @@ namespace baka {
             return convertConstant(result, target);
         }
 
+        // Constant-folds a binary operator over the converted operands (`computation` type; `rightType`
+        // for shifts). Returns a result of `resultType` with no constant if either operand is not
+        // constant, the operator has no folding, or numeric::evaluate rejects it (e.g. division by zero).
         ExprResult ExpressionChecker::foldBinary(types::ASTBinaryOp op, const ExprResult& left, const ExprResult& right,
                                                  TypeId computation, TypeId resultType, TypeId rightType) const {
             auto a = convertConstant(left, computation);

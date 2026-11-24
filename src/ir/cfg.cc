@@ -4,6 +4,9 @@
 
 namespace baka {
     namespace ir {
+        // Recomputes predecessor/successor lists from block terminators. Only the final goto and an
+        // immediately preceding if_goto create edges; successors keep emission order, predecessors are
+        // sorted and deduplicated. Must be rerun after any pass that changes terminators.
         void BuildCFG(Function& function) {
             std::unordered_map<BlockId, Block*> blocks;
             for (auto& block : function.blocks) {

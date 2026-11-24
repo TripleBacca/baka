@@ -6,6 +6,8 @@
 
 namespace baka {
     namespace parser {
+        // '~' Name '(' ')' CompoundStatement. Name must match ParentName; malformed parens or a missing body are
+        // reported and skipped, yielding an empty body so the caller always gets a node.
         types::DestructorNode* Parser::ParseDestructor(types::IdentifierNode* ParentName) {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::OP_TILDE)) {

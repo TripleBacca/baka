@@ -43,6 +43,9 @@ namespace baka {
             return !member.isStatic && TypeSystem.get(TypeSystem.unConst(member.type)).kind == TypeKind::Function;
         }
 
+        // Wraps an expression in an ImplicitCastNode to `target`, copying its metadata but making it an
+        // rvalue and re-folding any constant through the conversion. Symbol and call-binding data stay on
+        // the operand.
         types::ExpressionNode* ExpressionChecker::wrapConversion(types::ExpressionNode* expression, TypeId target,
                                                                  types::ImplicitConversionKind kind) {
             auto* cast = base::ASTNodeArena::getInstance().Alloc<types::ImplicitCastNode>(
@@ -80,6 +83,10 @@ namespace baka {
             return cast;
         }
 
+        // Applies the value conversions to an expression, then converts it to `target`: array/function
+        // decay or lvalue-to-rvalue first, then a constructor conversion for an aggregate target (needs a
+        // selection recorded earlier) or numeric/boolean/pointer/qualification/promotion conversion.
+        // Bound member functions are left as is.
         types::ExpressionNode* ExpressionChecker::convertValue(types::ExpressionNode* expression, TypeId target) {
             using K = types::ImplicitConversionKind;
             const auto* original = expression;

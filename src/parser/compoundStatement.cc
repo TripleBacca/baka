@@ -12,6 +12,8 @@ namespace baka
 {
 	namespace parser
 	{
+		// If the cursor is at a struct/class/union/enum definition, parses it and appends it to Node, returning true.
+		// Returns false without consuming anything otherwise.
 		bool Parser::TryParseLocalAggregate(types::CompoundStatementNode* Node)
 		{
 			if (!AtAggregateDefinition()) return false;
@@ -46,6 +48,8 @@ namespace baka
 			}
 		}
 
+		// '{' (aggregate | typedef | function | declaration list | statement)* '}' in its own scope. Local functions are
+		// probed with TryParseFunction before falling back to a declaration list; stops at '}' or EOF, reporting missing braces.
 		types::CompoundStatementNode* Parser::CompoundStatement()
 		{
 			const size_t SourceStart = current;

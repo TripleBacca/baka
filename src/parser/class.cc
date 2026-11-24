@@ -8,6 +8,9 @@
 
 namespace baka {
     namespace parser {
+        // class Name ';' (forward declaration) | class Name [':' access Base] StructBody ';' (definition). Entry cursor must be on
+        // 'class'. Registers the type in the symbol table, opens a scope around the body, and returns a placeholder
+        // declaration node on a missing name. A missing trailing ';' is reported and resynced.
         std::variant<types::ClassDefinitionNode *, types::ClassDeclarationNode *> Parser::ParseClass() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_CLASS)) {

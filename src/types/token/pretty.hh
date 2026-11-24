@@ -128,6 +128,8 @@ inline std::ostream& PrintTokenTableHeader(std::ostream& os) {
     return os;
 }
 
+// Prints one row of the token table (lexeme column, then token type). The lexeme is formatted by the
+// variant alternative held: chars and strings quoted, numerics tagged with their C type suffix.
 inline std::ostream& operator<<(std::ostream& os, const types::Token& token) {
     std::ostringstream valueStream;
     switch (token.Value.index()) {

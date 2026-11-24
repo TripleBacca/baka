@@ -5,6 +5,9 @@
 
 namespace baka {
     namespace ir {
+        // Lowers a literal. Integers, characters, booleans, floats and nullptr become immediate operands of
+        // the target type. A string literal becomes a new internal read-only global (NUL-terminated) whose
+        // address is returned as an Object operand.
         Operand Lowerer::constant(const types::ConstantNode* node, TypeId target) {
             if (auto* literal = dynamic_cast<const types::ConstantTNode<int>*>(node)) {
                 return integer(target, static_cast<uint64_t>(literal->getValue()));
