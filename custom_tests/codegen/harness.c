@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int __baka_start(int n, char** argv);
+extern int __baka_start(int argc, char** argv);
 
 #ifdef BAKA_GLOBAL_SYM
 extern char baka_global[] __asm__(BAKA_GLOBAL_SYM);
@@ -34,6 +34,6 @@ static void report(void) {
 
 int main(int argc, char** argv) {
     atexit(report);
-    result = __baka_start(argc > 1 ? atoi(argv[1]) : 0, NULL);
+    result = __baka_start(argc, argv);
     return 0;
 }

@@ -21,7 +21,8 @@ void foo(int x, ...) {}
 
 void zero() {}
 
-int main(int a) {
+int main(int argc, char** argv) {
+    int a = atoi(argv[1]);
     B d = B(2);
     A nested;
     foo(a);

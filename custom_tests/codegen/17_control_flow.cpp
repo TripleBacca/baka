@@ -31,7 +31,8 @@ int fall(int v) {
     return r;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int total = 0;
     for (int i = -4; i < 9; i++) {
         total += classify(i);

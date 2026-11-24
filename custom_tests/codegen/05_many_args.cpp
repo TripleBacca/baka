@@ -26,7 +26,8 @@ int relay(int a, int b, int c, int d, int e, int f, int g, int h, int i, int j) 
     return ten(j, i, h, g, f, e, d, c, b, a) + ten(a, b, c, d, e, f, g, h, i, j);
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int t = ten(1, 2, 3, 4, 5, 6, 7, 8, 9, n);
     long e = eleven(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, n);
     double m = mixed(1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, n + 0.25);

@@ -44,7 +44,8 @@ int shadow(int v) {
     return v + counter;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     ops[0] = twice;
     ops[1] = thrice;
     int a = next();

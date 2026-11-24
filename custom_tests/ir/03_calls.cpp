@@ -20,7 +20,8 @@ class A {
     int (*field)(int x);
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     A a;
     A* p = &a;
     a.x = n;

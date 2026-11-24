@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int a = n * 3;
     int b = 3 * n;
     int c = n + 5;

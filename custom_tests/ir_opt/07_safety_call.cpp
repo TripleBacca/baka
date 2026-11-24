@@ -4,7 +4,8 @@ void bump() {
     g = g + 10;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int a = g;
     bump();
     int b = g;

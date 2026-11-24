@@ -106,6 +106,29 @@ namespace baka {
             }
         }
 
+        // The program entry has exactly the shapes the runtime can call:
+        // `R main()` or `R main(int argc, char** argv)`, R an integer type or void.
+        void SemanticAnalyzer::checkEntrySignature(TypeId type, const types::FunctionNode* node) {
+            const auto& signature = TypeSystem.get(type);
+            const auto result = TypeSystem.unConst(signature.element);
+            if (!TypeSystem.isVoid(result) && !TypeSystem.isIntegral(result)) {
+                error("main", "'main' must return an integer type or void", node);
+            }
+            auto pointerTo = [&](TypeId pointer, auto&& pointee) {
+                const auto& t = TypeSystem.get(TypeSystem.unConst(pointer));
+                return t.kind == TypeKind::Pointer && pointee(TypeSystem.unConst(t.element));
+            };
+            auto isChar = [&](TypeId id) { return id == TypeSystem.builtin(Builtin::Char); };
+            const auto& parameters = signature.parameters;
+            const bool none = parameters.empty();
+            const bool commandLine =
+                parameters.size() == 2 && TypeSystem.unConst(parameters[0]) == TypeSystem.builtin(Builtin::Int) &&
+                pointerTo(parameters[1], [&](TypeId inner) { return pointerTo(inner, isChar); });
+            if (signature.variadic || !(none || commandLine)) {
+                error("main", "'main' must take no parameters or (int argc, char** argv)", node);
+            }
+        }
+
         void SemanticAnalyzer::registerFunction(types::FunctionNode* node, TypeId owner) {
             auto type =
                 owner.value
@@ -118,6 +141,9 @@ namespace baka {
                 return;
             }
             SymbolId symbol{node->semanticInfo().Symbol};
+            if (!owner.value && !node->getIsStatic() && node->getDeclarator()->getVariableName() == "main") {
+                checkEntrySignature(type, node);
+            }
             if (!owner.value) {
                 symbol = DeclarationChecker.functionDefinition(
                     {std::string(node->getDeclarator()->getVariableName()), SymbolKind::Function, type, true,

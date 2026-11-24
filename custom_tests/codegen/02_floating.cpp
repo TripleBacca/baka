@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     double a = 1.5 + n;
     double b = 0.25;
     float f = 3.5f;

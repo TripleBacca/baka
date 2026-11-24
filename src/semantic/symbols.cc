@@ -291,6 +291,9 @@ namespace baka {
                      Linkage::External});
             declare({"scanf", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}, true), false, false,
                      Linkage::External});
+            // Converts command-line text: the program input arrives as argv[1].
+            declare({"atoi", SymbolKind::BuiltinFunction, TypeSystem.function(integer, {string}), false, false,
+                     Linkage::External});
             // FILE is opaque: only pointers to it cross the library boundary.
             auto file = TypeSystem.nominal(TypeKind::Struct, "FILE");
             declare({"FILE", SymbolKind::Type, file});

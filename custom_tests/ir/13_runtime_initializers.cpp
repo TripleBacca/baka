@@ -29,7 +29,8 @@ int local(int n) {
     return count + arithmetic;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Holder holder;
     int result = local(n) + local(n + 100);
     return computed + constant + values[0] + values[1] + values[2] + seed.x + seed.y + snapshot.x + fixed +

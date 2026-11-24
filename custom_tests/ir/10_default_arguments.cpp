@@ -23,7 +23,8 @@ class A {
     }
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     A a;
     a.x = 2;
     int r = f(n) + a.m() + proto();

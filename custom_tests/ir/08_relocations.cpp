@@ -9,6 +9,7 @@ int twice(int x) {
 
 int (*fp)(int x) = twice;
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     return (pz != nullptr) + *pz + *p + fp(n);
 }

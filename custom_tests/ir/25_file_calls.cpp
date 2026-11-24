@@ -1,4 +1,5 @@
-int main(int fd) {
+int main(int argc, char** argv) {
+    int fd = atoi(argv[1]);
     FILE* file = fopen("input.txt", "r+");
     char buffer[16];
     unsigned long elements = fread(buffer, 1, 16, file);

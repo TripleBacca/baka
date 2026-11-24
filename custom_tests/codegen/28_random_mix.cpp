@@ -9,7 +9,8 @@ int h0(int a, long b) { return a * 3 + (int)b; }
 long h1(int a, long b) { return b - a; }
 int h2(int a, long b) { g_sink++; return (int)(b ^ a); }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     unsigned int v0 = (unsigned int)(n + 1);
     unsigned short v1 = (unsigned short)(n + 8);
     unsigned long v2 = (unsigned long)(n + 15);

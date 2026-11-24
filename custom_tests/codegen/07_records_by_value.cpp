@@ -42,7 +42,8 @@ Big pass_through(Big b, Vec v, int extra) {
     return b;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Vec a = {1, 2, 0.5};
     Vec b = {10, 20, 1.5};
     Vec c = add(a, b);

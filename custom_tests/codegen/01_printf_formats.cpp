@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int i = -42 + n;
     long l = 5000000000L;
     unsigned int u = 4000000000u;

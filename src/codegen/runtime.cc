@@ -18,8 +18,9 @@ namespace baka {
                 return false;
             }
 
-            // __baka_start(n, argv): run the initializer, then the user's main with n
-            // (and argv for `main(int argc, char** argv)`). $s0/$s1 keep both alive.
+            // __baka_start(argc, argv): run the initializer, then the user's main, passing
+            // argc/argv when it is `main(int argc, char** argv)` (semantic analysis allows
+            // only that shape or `main()`). $s0/$s1 keep both alive across the initializer.
             void PrintStart(const ir::Module& module, std::ostream& output) {
                 const auto* user = UserMain(module);
                 const auto* initializer = module.initializer ? module.functionById(module.initializer) : nullptr;
@@ -30,12 +31,8 @@ namespace baka {
                     Call(output, FunctionSymbol(*initializer));
                 }
                 if (user) {
-                    const auto parameters = module.type(user->signature).parameters.size();
-                    if (parameters > 0) {
-                        output << "\tmove\t$a0, $s0\n";
-                    }
-                    if (parameters > 1) {
-                        output << "\tmove\t$a1, $s1\n";
+                    if (!module.type(user->signature).parameters.empty()) {
+                        output << "\tmove\t$a0, $s0\n\tmove\t$a1, $s1\n";
                     }
                     Call(output, FunctionSymbol(*user));
                     // Results cross calls sign-extended, but a narrower or void main must not leak junk.
@@ -49,22 +46,11 @@ namespace baka {
                        << "\t.size\t__baka_start, .-__baka_start\n";
             }
 
-            // C entry point; weak so a test harness can provide its own `main`. A user
-            // `main(int argc, char** argv)` receives the real command line; a
-            // `main(int n)` receives n = atoi(argv[1]) (0 without an argument).
-            void PrintMain(const ir::Module& module, std::ostream& output) {
-                output << "\t.weak\tmain\n\t.p2align\t3\n\t.type\tmain, @function\nmain:\n";
-                const auto* user = UserMain(module);
-                if (user && module.type(user->signature).parameters.size() > 1) {
-                    output << "\tdla\t$t9, __baka_start\n\tjr\t$t9\n\tnop\n\t.size\tmain, .-main\n";
-                    return;
-                }
-                output << "\tdaddiu\t$sp, $sp, -16\n\tsd\t$ra, 8($sp)\n\tslti\t$t0, $a0, 2\n"
-                       << "\tbne\t$t0, $zero, .Lbaka.main.run\n\tmove\t$a0, $zero\n\tld\t$a0, 8($a1)\n";
-                Call(output, "atoi");
-                output << "\tmove\t$a0, $v0\n.Lbaka.main.run:\n";
-                Call(output, "__baka_start");
-                output << "\tld\t$ra, 8($sp)\n\tjr\t$ra\n\tdaddiu\t$sp, $sp, 16\n\t.size\tmain, .-main\n";
+            // C entry point: a tail jump to __baka_start(argc, argv). It is weak so a test
+            // harness can provide its own `main` that calls __baka_start itself.
+            void PrintMain(std::ostream& output) {
+                output << "\t.weak\tmain\n\t.p2align\t3\n\t.type\tmain, @function\nmain:\n"
+                       << "\tdla\t$t9, __baka_start\n\tjr\t$t9\n\tnop\n\t.size\tmain, .-main\n";
             }
 
             // Same contract as src/ir/heap_runtime.cc: null for a bad alignment or
@@ -98,7 +84,7 @@ namespace baka {
         void PrintRuntime(const ir::Module& module, std::ostream& output) {
             output << "\t.text\n";
             PrintStart(module, output);
-            PrintMain(module, output);
+            PrintMain(output);
             if (Declares(module, "__baka_allocate")) {
                 PrintAllocate(output);
             }

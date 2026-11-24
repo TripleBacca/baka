@@ -20,7 +20,8 @@ int early() {
     }
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     for (int i = 0; i < 3; i++; outer) {
         Guard a;
         for (int j = 0; j < 2; j++; inner) {

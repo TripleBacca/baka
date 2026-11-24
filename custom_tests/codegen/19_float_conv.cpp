@@ -1,7 +1,8 @@
 double id(double v) { return v; }
 float fid(float v) { return v; }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     unsigned long big = 18446744073709551615UL - n;
     unsigned long half = 9223372036854775808UL + n;
     unsigned long small = 12345UL + n;

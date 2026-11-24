@@ -21,7 +21,8 @@ Number identity(Number value) {
     return value;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Derived d = {{n, 2}, 3};
     Base sliced = d;
     Holder holder = {sliced, 4};

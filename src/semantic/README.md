@@ -7,8 +7,10 @@ public phases:
 register declarations -> resolve bindings -> annotate and normalize -> check
 ```
 
-The built-in library declarations include `printf`, `scanf`, `fopen`, `fclose`,
-`fread`, `fwrite`, `read`, and `write`. `FILE` is an opaque, incomplete record;
+The built-in library declarations include `printf`, `scanf`, `atoi`, `fopen`,
+`fclose`, `fread`, `fwrite`, `read`, and `write`. The program entry must be
+`main()` or `main(int argc, char** argv)` and return an integer type or `void`;
+any other non-static `main` is rejected. `FILE` is an opaque, incomplete record;
 `fopen` returns `FILE*`, and the stream functions accept `FILE*`. `read` and
 `write` accept integer file descriptors. On the LP64 target, byte counts use
 `unsigned long` (`size_t`), and `read`/`write` return `long` (`ssize_t`). These

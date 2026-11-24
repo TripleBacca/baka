@@ -10,7 +10,7 @@ Both use the same schema, one entry per source file:
     "global": ["name", value]                    optional
   }
 
-  input   argument n of `int main(int n)`, passed as argv[1] to the test driver
+  input   passed as argv[1]; a fixture reads it with `int n = atoi(argv[1]);`
   result  expected return value of main, read as a signed 32-bit integer
   stdout  optional: exact text the program itself printed (the driver's marker lines excluded)
   global  source-level name of a global whose integer value (read after static destructors have

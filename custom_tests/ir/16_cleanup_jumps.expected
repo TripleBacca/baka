@@ -1,133 +1,144 @@
 IR::TAC:
 FILE = opaque
 Guard = record() size 1 align 1
-global live.18: i32 = zero
-global destroyed.19: i32 = zero
+global live.19: i32 = zero
+global destroyed.20: i32 = zero
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
-declare @fopen.12: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
-declare @fclose.13: fn(ptr<FILE>)->i32
-declare @fread.14: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
-declare @fwrite.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
-declare @read.16: fn(i32, ptr<void>, u64)->i64
-declare @write.17: fn(i32, ptr<void>, u64)->i64
-function @early.21: fn()->i32 {
-  local a.26: Guard
-  local b.27: Guard
+declare @atoi.11: fn(ptr<i8>)->i32
+declare @fopen.13: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.14: fn(ptr<FILE>)->i32
+declare @fread.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.16: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.17: fn(i32, ptr<void>, u64)->i64
+declare @write.18: fn(i32, ptr<void>, u64)->i64
+function @early.22: fn()->i32 {
+  local a.28: Guard
+  local b.29: Guard
   (copy, %t2:u1, 0:u1, _)
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &a.26:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &a.28:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t1:u1, 1:u1, _)
-  (param, _, &b.27:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &b.29:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t2:u1, 1:u1, _)
-  (load, %t3:i32, &live.18:ptr<i32>, _)
+  (load, %t3:i32, &live.19:ptr<i32>, _)
   (if_goto, _, %t2:u1, L2)
   (goto, _, L3, _)
 L2:
   (copy, %t2:u1, 0:u1, _)
-  (param, _, &b.27:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &b.29:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L3, _)
 L3:
   (if_goto, _, %t1:u1, L4)
   (goto, _, L5, _)
 L4:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &a.26:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &a.28:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L5, _)
 L5:
   (ret, _, %t3:i32, _)
 }
-function @main.23: fn(i32)->i32 {
-  parameter n.28: i32
-  local i.29: i32
-  local a.30: Guard
-  local j.31: i32
-  local b.32: Guard
+function @main.25: fn(i32, ptr<ptr<i8>>)->i32 {
+  parameter argc.30: i32
+  parameter argv.31: ptr<ptr<i8>>
+  local n.32: i32
   local i.33: i32
-  local c.34: Guard
-  local d.35: Guard
-  local result.36: i32
+  local a.34: Guard
+  local j.35: i32
+  local b.36: Guard
+  local i.37: i32
+  local c.38: Guard
+  local d.39: Guard
+  local result.40: i32
   (copy, %t4:u1, 0:u1, _)
   (copy, %t3:u1, 0:u1, _)
   (copy, %t2:u1, 0:u1, _)
   (copy, %t1:u1, 0:u1, _)
-  (store, _, &i.29:ptr<i32>, 0:i32)
+  (load, %t5:ptr<ptr<i8>>, &argv.31:ptr<ptr<ptr<i8>>>, _)
+  (cast, %t6:i64, 1:i32, _)
+  (mul, %t7:i64, %t6:i64, 8:i64)
+  (offset, %t8:ptr<ptr<i8>>, %t5:ptr<ptr<i8>>, %t7:i64)
+  (load, %t9:ptr<i8>, %t8:ptr<ptr<i8>>, _)
+  (param, _, %t9:ptr<i8>, _)
+  (call, %t10:i32, @atoi.11, _)
+  (store, _, &n.32:ptr<i32>, %t10:i32)
+  (store, _, &i.33:ptr<i32>, 0:i32)
   (goto, _, L2, _)
 L2:
-  (load, %t5:i32, &i.29:ptr<i32>, _)
-  (lt, %t6:u1, %t5:i32, 3:i32)
-  (if_goto, _, %t6:u1, L3)
+  (load, %t11:i32, &i.33:ptr<i32>, _)
+  (lt, %t12:u1, %t11:i32, 3:i32)
+  (if_goto, _, %t12:u1, L3)
   (goto, _, L5, _)
 L3:
-  (param, _, &a.30:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &a.34:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t1:u1, 1:u1, _)
-  (store, _, &j.31:ptr<i32>, 0:i32)
+  (store, _, &j.35:ptr<i32>, 0:i32)
   (goto, _, L6, _)
 L4:
-  (load, %t11:i32, &i.29:ptr<i32>, _)
-  (add, %t12:i32, %t11:i32, 1:i32)
-  (store, _, &i.29:ptr<i32>, %t12:i32)
+  (load, %t17:i32, &i.33:ptr<i32>, _)
+  (add, %t18:i32, %t17:i32, 1:i32)
+  (store, _, &i.33:ptr<i32>, %t18:i32)
   (goto, _, L2, _)
 L5:
-  (store, _, &i.33:ptr<i32>, 0:i32)
+  (store, _, &i.37:ptr<i32>, 0:i32)
   (goto, _, L16, _)
 L6:
-  (load, %t7:i32, &j.31:ptr<i32>, _)
-  (lt, %t8:u1, %t7:i32, 2:i32)
-  (if_goto, _, %t8:u1, L7)
+  (load, %t13:i32, &j.35:ptr<i32>, _)
+  (lt, %t14:u1, %t13:i32, 2:i32)
+  (if_goto, _, %t14:u1, L7)
   (goto, _, L9, _)
 L7:
-  (param, _, &b.32:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &b.36:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t2:u1, 1:u1, _)
   (if_goto, _, %t2:u1, L10)
   (goto, _, L11, _)
-  (load, %t9:i32, &j.31:ptr<i32>, _)
-  (add, %t10:i32, %t9:i32, 1:i32)
-  (store, _, &j.31:ptr<i32>, %t10:i32)
+  (load, %t15:i32, &j.35:ptr<i32>, _)
+  (add, %t16:i32, %t15:i32, 1:i32)
+  (store, _, &j.35:ptr<i32>, %t16:i32)
   (goto, _, L6, _)
 L9:
   (if_goto, _, %t1:u1, L14)
   (goto, _, L15, _)
 L10:
   (copy, %t2:u1, 0:u1, _)
-  (param, _, &b.32:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &b.36:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L11, _)
 L11:
   (if_goto, _, %t1:u1, L12)
   (goto, _, L13, _)
 L12:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &a.30:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &a.34:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L13, _)
 L13:
   (goto, _, L4, _)
 L14:
   (copy, %t1:u1, 0:u1, _)
-  (param, _, &a.30:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &a.34:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L15, _)
 L15:
   (goto, _, L4, _)
 L16:
-  (load, %t13:i32, &i.33:ptr<i32>, _)
-  (lt, %t14:u1, %t13:i32, 2:i32)
-  (if_goto, _, %t14:u1, L17)
+  (load, %t19:i32, &i.37:ptr<i32>, _)
+  (lt, %t20:u1, %t19:i32, 2:i32)
+  (if_goto, _, %t20:u1, L17)
   (goto, _, L18, _)
 L17:
-  (param, _, &c.34:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &c.38:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t3:u1, 1:u1, _)
-  (load, %t15:i32, &i.33:ptr<i32>, _)
-  (eq, %t16:u1, %t15:i32, 0:i32)
-  (if_goto, _, %t16:u1, L20)
+  (load, %t21:i32, &i.37:ptr<i32>, _)
+  (eq, %t22:u1, %t21:i32, 0:i32)
+  (if_goto, _, %t22:u1, L20)
   (goto, _, L22, _)
 L18:
   (goto, _, L28, _)
@@ -135,9 +146,9 @@ L19:
   (if_goto, _, %t3:u1, L26)
   (goto, _, L27, _)
 L20:
-  (load, %t17:i32, &i.33:ptr<i32>, _)
-  (add, %t18:i32, %t17:i32, 1:i32)
-  (store, _, &i.33:ptr<i32>, %t18:i32)
+  (load, %t23:i32, &i.37:ptr<i32>, _)
+  (add, %t24:i32, %t23:i32, 1:i32)
+  (store, _, &i.37:ptr<i32>, %t24:i32)
   (if_goto, _, %t3:u1, L24)
   (goto, _, L25, _)
 L21:
@@ -147,62 +158,62 @@ L22:
   (goto, _, L20, _)
 L24:
   (copy, %t3:u1, 0:u1, _)
-  (param, _, &c.34:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &c.38:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L25, _)
 L25:
   (goto, _, L16, _)
 L26:
   (copy, %t3:u1, 0:u1, _)
-  (param, _, &c.34:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &c.38:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L27, _)
 L27:
   (goto, _, L18, _)
 L28:
-  (param, _, &d.35:ptr<Guard>, _)
-  (call, _, @Guard.ctor.1.37, _)
+  (param, _, &d.39:ptr<Guard>, _)
+  (call, _, @Guard.ctor.1.41, _)
   (copy, %t4:u1, 1:u1, _)
   (if_goto, _, %t4:u1, L31)
   (goto, _, L32, _)
-  (cast, %t19:u1, 1:i32, _)
-  (if_goto, _, %t19:u1, L28)
+  (cast, %t25:u1, 1:i32, _)
+  (if_goto, _, %t25:u1, L28)
   (goto, _, L30, _)
 L30:
-  (call, %t20:i32, @early.21, _)
-  (store, _, &result.36:ptr<i32>, %t20:i32)
-  (load, %t21:i32, &live.18:ptr<i32>, _)
-  (mul, %t22:i32, %t21:i32, 1000:i32)
-  (load, %t23:i32, &destroyed.19:ptr<i32>, _)
-  (mul, %t24:i32, %t23:i32, 10:i32)
-  (add, %t25:i32, %t22:i32, %t24:i32)
-  (load, %t26:i32, &result.36:ptr<i32>, _)
-  (add, %t27:i32, %t25:i32, %t26:i32)
-  (ret, _, %t27:i32, _)
+  (call, %t26:i32, @early.22, _)
+  (store, _, &result.40:ptr<i32>, %t26:i32)
+  (load, %t27:i32, &live.19:ptr<i32>, _)
+  (mul, %t28:i32, %t27:i32, 1000:i32)
+  (load, %t29:i32, &destroyed.20:ptr<i32>, _)
+  (mul, %t30:i32, %t29:i32, 10:i32)
+  (add, %t31:i32, %t28:i32, %t30:i32)
+  (load, %t32:i32, &result.40:ptr<i32>, _)
+  (add, %t33:i32, %t31:i32, %t32:i32)
+  (ret, _, %t33:i32, _)
 L31:
   (copy, %t4:u1, 0:u1, _)
-  (param, _, &d.35:ptr<Guard>, _)
-  (call, _, @Guard.dtor.38, _)
+  (param, _, &d.39:ptr<Guard>, _)
+  (call, _, @Guard.dtor.42, _)
   (goto, _, L32, _)
 L32:
   (goto, _, L30, _)
 }
-function @Guard.ctor.1.37: fn(ptr<Guard>)->void internal {
-  parameter this.24: ptr<Guard>
-  (load, %t1:ptr<Guard>, &this.24:ptr<ptr<Guard>>, _)
-  (load, %t2:i32, &live.18:ptr<i32>, _)
+function @Guard.ctor.1.41: fn(ptr<Guard>)->void internal {
+  parameter this.26: ptr<Guard>
+  (load, %t1:ptr<Guard>, &this.26:ptr<ptr<Guard>>, _)
+  (load, %t2:i32, &live.19:ptr<i32>, _)
   (add, %t3:i32, %t2:i32, 1:i32)
-  (store, _, &live.18:ptr<i32>, %t3:i32)
+  (store, _, &live.19:ptr<i32>, %t3:i32)
   (ret, _, _, _)
 }
-function @Guard.dtor.38: fn(ptr<Guard>)->void internal {
-  parameter this.25: ptr<Guard>
-  (load, %t1:i32, &live.18:ptr<i32>, _)
+function @Guard.dtor.42: fn(ptr<Guard>)->void internal {
+  parameter this.27: ptr<Guard>
+  (load, %t1:i32, &live.19:ptr<i32>, _)
   (sub, %t2:i32, %t1:i32, 1:i32)
-  (store, _, &live.18:ptr<i32>, %t2:i32)
-  (load, %t3:i32, &destroyed.19:ptr<i32>, _)
+  (store, _, &live.19:ptr<i32>, %t2:i32)
+  (load, %t3:i32, &destroyed.20:ptr<i32>, _)
   (add, %t4:i32, %t3:i32, 1:i32)
-  (store, _, &destroyed.19:ptr<i32>, %t4:i32)
-  (load, %t5:ptr<Guard>, &this.25:ptr<ptr<Guard>>, _)
+  (store, _, &destroyed.20:ptr<i32>, %t4:i32)
+  (load, %t5:ptr<Guard>, &this.27:ptr<ptr<Guard>>, _)
   (ret, _, _, _)
 }

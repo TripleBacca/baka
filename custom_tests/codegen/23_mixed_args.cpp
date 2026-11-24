@@ -34,7 +34,8 @@ long relay(int a, double b, int c, double d, int e, double f, int g, double h, i
     return (long)(a + b + c + d + e + f + g + h + i + j + k + l) + (long)db10(b, d, f, h, j, l, b, d, f, h, a, b);
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int x1 = n + 1, x2 = n + 2;
     P3 t;
     t.a = (char)n; t.b = (char)(n + 1); t.c = (char)(n + 2);

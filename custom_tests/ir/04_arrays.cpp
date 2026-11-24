@@ -3,7 +3,8 @@ struct S {
     int a[2];
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int a[][2] = {1, 2, 3, 4};
     char text[] = {"ab"};
     S s = {5, {6}};

@@ -2,7 +2,8 @@ long mul(long a, long b) {
     return a * b;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     long a = 9223372036854775807L;
     long b = a + 1 + n;
     unsigned long u = 0;

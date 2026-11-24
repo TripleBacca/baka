@@ -1,4 +1,5 @@
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int a;
     long b;
     double d;

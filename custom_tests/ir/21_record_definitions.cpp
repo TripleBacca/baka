@@ -41,7 +41,8 @@ union Number {
     double floating;
 };
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     Link a = {n, nullptr, nullptr};
     Y y = L;
     Other other = {&a};

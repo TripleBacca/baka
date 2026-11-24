@@ -28,7 +28,7 @@ Little-endian matches the byte order assumed by the IR test interpreter.
 
 ### Environment: Linux user mode under QEMU, glibc, static, non-PIC
 
-The language auto-declares `printf`, `scanf`, `fopen`, `fread`, `fwrite`,
+The language auto-declares `printf`, `scanf`, `atoi`, `fopen`, `fread`, `fwrite`,
 `read` and `write`. With a real libc these work as-is; SPIM/MARS would have
 needed a hand-written libc in assembly. The toolchain is a Debian image
 (`tools/mips/Dockerfile`: `gcc-mips64el-linux-gnuabi64` and `qemu-user`), so
@@ -43,19 +43,22 @@ n64 PIC calling convention, and our own functions tolerate it.
 
 ### Program entry
 
-The source entry is usually `int main(int n)`, an ordinary function taking a test
-input; `int main(int argc, char** argv)` is also accepted (command-line input).
-The backend emits:
+Semantic analysis accepts exactly two entry shapes: `main()` and
+`main(int argc, char** argv)`, returning an integer type or `void`. A program
+that needs an input reads it from the command line, e.g.
+`int n = atoi(argv[1]);` (`atoi` is a built-in). The backend emits:
 
-* `__baka_start(n, argv)`: calls the module initializer (`.module_init`, which runs
-  global initializers in source order), then the user's `main` with `n` (and `argv`
-  when it takes two parameters), and returns its result (0 for a `void` main).
-* a **weak** C `main(argc, argv)`: for a two-parameter user `main` it passes the real
-  `argc`/`argv` straight through; otherwise `n = argc > 1 ? atoi(argv[1]) : 0`. The
-  process exit status is the low 8 bits. The IR test interpreter and the harness use
-  the same rule: the input is the first argument and `argv` is null.
+* `__baka_start(argc, argv)`: calls the module initializer (`.module_init`, which
+  runs global initializers in source order), then the user's `main` (with
+  `argc`/`argv` when it takes them), and returns its result sign-extended to 32 bits
+  (0 for a `void` main).
+* a **weak** C `main(argc, argv)`: a tail jump to `__baka_start` with the real
+  command line. The process exit status is the low 8 bits of the result.
   Weak linkage lets the test harness (`custom_tests/codegen/harness.c`) supply
-  its own `main` that prints the full 32-bit result and inspects globals.
+  its own `main`, which calls `__baka_start(argc, argv)` itself and prints the full
+  32-bit result and a chosen global after static destructors have run.
+* The IR test interpreter runs `main` the same way as `prog <n>`: `argc = 2` and
+  `argv = {"prog", "<n>", null}`, and it implements `atoi`.
 * `register_dtor f, p` lowers to `__cxa_atexit(f, p, &__dso_handle)`. glibc runs
   these after `main` returns, in reverse registration order, which is exactly
   the IR's static-destructor contract.
@@ -206,8 +209,8 @@ Across all execution fixtures, optimization reduces static instruction count by 
 
 ## Language rules that matter here
 
-* `int main(int n)` (or `int main(int argc, char** argv)`) is the entry; `n` is the
-  test input (see Program entry).
+* The entry is `main()` or `main(int argc, char** argv)`; a test reads its input with
+  `atoi(argv[1])` (see Program entry).
 * Integer literals outside `int` range need an `L`/`UL` suffix; string literals have
   type `const char*`; braced arrays of records cannot be initialized from variables.
 * Integer arithmetic wraps at its width (no undefined overflow); booleans are 0/1 in

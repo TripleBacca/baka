@@ -82,7 +82,8 @@ int stat_rec(int k) {
     return (int)(acc % 100000) + calls;
 }
 
-int main(int n) {
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
     int p1 = pressure_nocall(n);
     int p2 = pressure_calls(n);
     double p3 = dpressure(n);
