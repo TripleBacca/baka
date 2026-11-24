@@ -15,6 +15,8 @@ def run(command):
     return subprocess.run([str(arg) for arg in command], capture_output=True, text=True, timeout=15)
 
 
+# Checks or refreshes optimized TAC snapshots, then runs each matching fixture
+# in the interpreter with optimization both enabled and disabled.
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")

@@ -215,6 +215,8 @@ namespace ir_test {
             return {target.kind == TypeKind::Integer ? bits & mask(to) : bits};
         }
 
+        // Evaluates TAC arithmetic and comparisons with the declared signedness
+        // and width. Floating results round to their declared precision.
         Value arithmetic(const Instruction& instruction, Value left, Value right) {
             const auto& source = ModuleValue.type(instruction.left.type);
             const auto& target = ModuleValue.type(instruction.result.type);
@@ -342,6 +344,8 @@ namespace ir_test {
             return {target.kind == TypeKind::Integer ? result & mask(instruction.result.type) : result};
         }
 
+        // Handles supported runtime helpers directly. For a defined function,
+        // creates a frame, binds its parameters, and interprets its CFG until return.
         Value invoke(uint32_t id, const std::vector<Value>& arguments) {
             auto* function = ModuleValue.functionById(id);
             if (function && function->name == "__baka_allocate") {
@@ -498,6 +502,8 @@ namespace ir_test {
             FailNextAllocation = true;
         }
 
+        // Runs module initialization once, calls main with the fixture input, and
+        // drains static destructors in reverse registration order before returning.
         int64_t run(int n) {
             if (!Initialized) {
                 if (ModuleValue.initializer) {

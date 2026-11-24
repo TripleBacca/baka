@@ -257,6 +257,8 @@ class BadSourceTest(unittest.TestCase):
     # temporary directory - created in setup and removed in teardown
     tmpdir: tempfile.TemporaryDirectory[str]
 
+    # Saves the fixtures, then substitutes programs that exercise the harness's
+    # handling of wrong output, exit status, and optimization results.
     @classmethod
     def setUpClass(cls) -> None:
         # save these to a temporary directory before overwriting them

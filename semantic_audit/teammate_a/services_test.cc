@@ -10,6 +10,8 @@ using namespace baka::semantic;
             throw std::runtime_error(std::string("line ") + std::to_string(__LINE__) + ": " #x);                       \
     } while (false)
 
+// Exercises the semantic services directly, covering type interning, validation,
+// aggregate layout, and symbol binding across nested scopes.
 int main() {
     Types t;
     Symbols s(t);

@@ -35,6 +35,8 @@ def get_compile_output(source, stage_args):
     )
 
 
+# Checks the compiler status, diagnostics, and stdout for each lexer or parser
+# fixture. Bless mode refreshes snapshots for fixtures with the expected status.
 def check_snapshots(tests, stage_args, bless):
     failures = 0
     for source in tests:
@@ -87,6 +89,7 @@ def diff_lines(actual: str, expected: str) -> None:
         print(f"  {line}")
 
 
+# Dispatches the requested suites and returns a nonzero status if any checks fail.
 def main():
     os.chdir(ROOT)
 

@@ -181,6 +181,8 @@ def check(tmp, job):
     return problems
 
 
+# Selects fixtures, runs the MIPS jobs in one container, and reports mismatches
+# before releasing the temporary outputs unless they were requested.
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")

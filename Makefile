@@ -16,12 +16,6 @@ help:
 test: build
 	./custom_test_hook $(STAGE_ARGS)
 
-submit:
-	mkdir -p submissions
-	rm -rf submissions/*
-	chmod +x gen_submissions
-	./gen_submissions
-
 bless: build
 	./custom_test_hook bless
 

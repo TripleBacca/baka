@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 
 
+# Builds and runs the service tests, then checks parser acceptance and diagnostics
+# for the audit inputs.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--compiler', type=Path, default=ROOT / 'build/baka')

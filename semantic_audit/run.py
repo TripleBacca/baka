@@ -6,6 +6,8 @@ import re
 import subprocess
 
 
+# Runs lexer and parser probes under a timeout and records full logs alongside
+# a JSON summary of diagnostics and exit statuses.
 def main():
     root = Path(__file__).resolve().parent
     parser = argparse.ArgumentParser(description=__doc__)

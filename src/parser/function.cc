@@ -16,6 +16,8 @@ namespace baka
 {
 	namespace parser
 	{
+		// Parses a parameter's type and declarator. A missing type produces an error
+		// node so the parameter-list parser can recover at the next separator.
 		types::FunctionParameter* Parser::ParseFunctionParameter() {
 			const size_t SourceStart = current;
 

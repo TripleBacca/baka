@@ -165,6 +165,8 @@ namespace {
     }
 }
 
+// Exercises each MIPS peephole rule and cases where the rule must preserve the
+// original instructions. Returns failure if any emitted sequence differs.
 int main() {
     // Rule 1: redundant loads.
     Check("fwd sd->ld", "sd $t0, 8($sp)\nld $t1, 8($sp)\nsd $t1, 0($a0)", "sd $t0, 8($sp)\nsd $t0, 0($a0)");

@@ -46,6 +46,8 @@ int main(int argc, char** argv) {
         run(*qemu, f"/work/{name}", "1000000", status=deep_status)
 
 
+# Tests object and executable generation, launcher behavior, atomic output on
+# link failure, and bounded stack usage for direct tail recursion.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")

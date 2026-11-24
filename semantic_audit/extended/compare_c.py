@@ -11,6 +11,8 @@ import re
 import subprocess
 
 
+# Adds GCC reference diagnostics to the saved Baka observations and checks how
+# the parser represented loop labels in the recorded AST output.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, default=Path('/tmp/baka-extended-audit'))

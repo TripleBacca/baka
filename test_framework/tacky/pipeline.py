@@ -221,6 +221,8 @@ FOLD_CONST_TESTS = {
 BASIC_TESTS = {"compound_assign_exceptions.c"}
 
 
+# Selects the expected optimization check for a fixture and binds its path and
+# expected result into the returned test method.
 def make_whole_pipeline_test(program: Path) -> Callable[[TestWholePipeline], None]:
     if program.name in RETVAL_TESTS:
         expected_retval = RETVAL_TESTS[program.name]

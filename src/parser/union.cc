@@ -13,6 +13,8 @@ namespace parser {
         return this->ParseStructBody(ParentName);
     }
 
+    // Parses a union forward declaration or definition. Introduces a named union
+    // before parsing its scoped member list so members can refer to its type.
     types::UnionNode* Parser::ParseUnion() {
         const size_t SourceStart = current;
         if(!Match(types::TokenType::K_UNION)) {

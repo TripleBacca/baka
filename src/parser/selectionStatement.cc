@@ -4,6 +4,8 @@
 
 namespace baka {
     namespace parser {
+        // Parses the first arm of an if statement. Recovers from an invalid
+        // condition before parsing the body and marks the arm as erroneous.
         types::IfSubBlockStatementNode* Parser::IfSubBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_IF)) {
@@ -40,6 +42,8 @@ namespace baka {
             return Node;
         }
 
+        // Parses a chained else-if condition and body, retaining the arm in the
+        // AST even when the condition fails to parse.
         types::ElseIfSubBlockStatementNode* Parser::ElseIfSubBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_ELSE)) {
@@ -110,6 +114,8 @@ namespace baka {
             return Node;
         }
 
+        // Parses a switch condition followed by one statement as its body.
+        // Recovers from a malformed condition so the body can still be parsed.
         types::SwitchBlockStatementNode* Parser::SwitchBlockStatement() {
             const size_t SourceStart = current;
             if (!this->Match(types::TokenType::K_SWITCH)) {
