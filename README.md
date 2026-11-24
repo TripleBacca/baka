@@ -105,7 +105,8 @@ We are hoping we can support the following featureset:
 - Access specifiers, lvalue references, and captureless lambdas
 
 **Extra Non C++ Features**
-- Quad Equals
+- Quad Equals:
+    Compare types of Class* and Class& at runtime
 - Loop Labels:
     Allows programmers to break or continue out until a specific loop. This feature lets you annotate loops with labels and write cleaner and more readable nested loop control flow.
 

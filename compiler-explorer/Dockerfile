@@ -11,9 +11,13 @@ LABEL org.opencontainers.image.source="https://github.com/compiler-explorer/comp
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# The MIPS cross toolchain links executables and disassembles binaries; qemu-user
+# runs them for CE's Execute pane (the static binaries need no QEMU_LD_PREFIX). CE inspects
+# the executable with `file` before running it.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates git make rsync python3 build-essential \
+        gcc-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross qemu-user file \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth 1 https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer

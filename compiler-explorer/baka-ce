@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 # Adapt Compiler Explorer's GCC-style invocation to baka's stage-based CLI.
 # Successful stage output goes to CE's assembly file; failures go to stderr.
+#
+# CE asks for text with `-S` (the selected stage's output). Without `-S` it wants a
+# file to execute or disassemble: the program is compiled to MIPS assembly (the stage
+# flag is ignored) and assembled and linked statically with the MIPS cross-gcc, the
+# same way baka's own --link stage does. `-c` stops after assembling.
 set -euo pipefail
 
 BAKA="${BAKA:-/opt/baka/bin/baka}"
+MIPS_CC="${MIPS_CC:-mips64el-linux-gnuabi64-gcc}"
 args=("$@")
 input=""
 output=""
 stage=--codegen
 options=()
+text=false
+object=false
+verbose=false
 
 require_value() {
     if ((i + 1 >= ${#args[@]})) || [[ -z "${args[$((i + 1))]}" ]]; then
@@ -34,7 +43,16 @@ for ((i = 0; i < ${#args[@]}; i++)); do
         --lex | --parse | --semantic | --ir | --codegen)
             stage="${args[$i]}"
             ;;
-        --optimize | --no-optimize | --verbose)
+        -S)
+            text=true
+            ;;
+        -c)
+            object=true
+            ;;
+        --verbose)
+            verbose=true
+            ;;
+        --optimize | --no-optimize)
             options+=("${args[$i]}")
             ;;
         --build_type)
@@ -72,8 +90,28 @@ if [[ ! -f "$input" ]]; then
     echo "baka-ce: input file not found: $input" >&2
     exit 2
 fi
+
+# Binary (executable or object) requests compile, assemble and link instead.
+if [[ "$text" == false && -n "$output" ]]; then
+    tmp="$(mktemp --suffix=.s)"
+    trap 'rm -f "$tmp"' EXIT
+    set +e
+    "$BAKA" --codegen "${options[@]}" "$input" >"$tmp" 2>&1
+    rc=$?
+    set -e
+    if ((rc != 0)); then
+        sed -E 's/\x1B\[[0-9;]*m//g' "$tmp" >&2
+        exit "$rc"
+    fi
+    link=(-static -no-pie)
+    if [[ "$object" == true ]]; then
+        link=(-c)
+    fi
+    exec "$MIPS_CC" -march=mips64r2 -mabi=64 "${link[@]}" "$tmp" -o "$output"
+fi
+
 # The parser only prints its AST in verbose mode.
-if [[ "$stage" == --parse ]]; then
+if [[ "$verbose" == true || "$stage" == --parse ]]; then
     options+=(--verbose)
 fi
 
@@ -83,6 +121,20 @@ set +e
 "$BAKA" "$stage" "${options[@]}" "$input" >"$tmp" 2>&1
 rc=$?
 set -e
+
+# The semantic and parser stages print the lexer's token table (and, for the parser,
+# the driver settings) before their AST. Start those views at the AST unless the user
+# asked for --verbose; keep everything if the marker is missing.
+marker=""
+if [[ "$verbose" == false ]]; then
+    case "$stage" in
+        --semantic) marker='Semantic::AST:' ;;
+        --parse) marker='Parser::AST:' ;;
+    esac
+fi
+if ((rc == 0)) && [[ -n "$marker" ]] && grep -q "^$marker" "$tmp"; then
+    sed -i -n "/^$marker/,\$p" "$tmp"
+fi
 
 # Strip colours from both diagnostics and stage output.
 if ((rc != 0)); then
