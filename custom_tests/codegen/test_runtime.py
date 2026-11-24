@@ -145,10 +145,8 @@ def main():
         shutil.copyfile(source, make_source)
         make = ["make", "-s", "-f", ROOT / "Makefile", "-o", "build"]
         make_env = {**os.environ, "LC_ALL": "C"}
-        for recipe, target in (("run-mips-binary", binary), ("run", make_source)):
-            rc, out, err = result([*make, recipe, f"file={target}", "args=store"],
-                                  env=make_env, cwd=work)
-            assert rc == 2 and not out and "Segmentation fault" in err and "Error 139" in err, (rc, out, err)
+        rc, out, err = result([*make, "run", f"file={make_source}", "args=store"], env=make_env, cwd=work)
+        assert rc == 2 and not out and "Segmentation fault" in err and "Error 139" in err, (rc, out, err)
         assembly.write_text(".not_a_valid_mips_directive\n")
         rc, out, err = result([TOOLS / "run", assembly])
         assert rc == 125 and not out and err, (rc, out, err)

@@ -39,7 +39,6 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
-IR_DIR = ROOT / "custom_tests" / "ir"
 MARKER = "\x01"
 C_TYPES = {"i8": "signed char", "u8": "unsigned char", "i16": "short", "u16": "unsigned short",
            "i32": "int", "u32": "unsigned int", "i64": "long long", "u64": "unsigned long long"}
@@ -58,7 +57,7 @@ def signed32(value):
 def collect(names):
     """Return [(name, source path, case dict)] from the case manifests."""
     cases = []
-    for directory in (IR_DIR, ROOT / "custom_tests" / "ir_opt", HERE):
+    for directory in (HERE.parent / "ir", HERE.parent / "ir_opt", HERE):
         for name, case in json.loads((directory / "cases.json").read_text()).items():
             if not names or Path(name).stem in names or name in names:
                 cases.append((name, directory / name, case))

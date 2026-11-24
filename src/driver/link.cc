@@ -100,7 +100,7 @@ namespace baka::driver {
             if (exitStatus != 0) {
                 std::string message = "MIPS toolchain exited with status " + std::to_string(exitStatus);
                 if (exitStatus == 125) {
-                    message += ". Check Docker access and build the image with 'make mips-image'";
+                    message += ". Check Docker access and build the image with 'make mips-runtime'";
                 }
                 throw DriverError(std::move(message));
             }

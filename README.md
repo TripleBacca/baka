@@ -11,7 +11,7 @@ make build
 ```
 baka does not have a preprocessor and thus does not support preprocessor directives.
 
-Running `./build/baka path/to/file.cpp` builds a MIPS64 executable named `a.out`. Build the Docker toolchain with `make mips-image` first. Use a stage flag to stop earlier.
+Running `./build/baka path/to/file.cpp` builds a MIPS64 executable named `a.out`. Build the Docker toolchain with `make mips-runtime` first. Use a stage flag to stop earlier.
 
 #### Make Recipes
 - `make parse file=<source_code_file_path>` : Runs the compiler in verbose mode upto the parser stage.
@@ -25,7 +25,7 @@ Running `./build/baka path/to/file.cpp` builds a MIPS64 executable named `a.out`
 - `make test-semantic` : Runs representative semantic acceptance/rejection programs.
 - `make test-ir` : Checks TAC output and execution before and after optimization.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
-- `make test` : Run custom compiler tests, including native MIPS execution. Run `make mips-image` first.
+- `make test` : Run custom compiler tests, including native MIPS execution. Run `make mips-runtime` first.
 - `make build` : Build the binary and put it in `/build/baka`
 - `make clean` : Clean up the build artifacts
 
@@ -240,25 +240,23 @@ little-endian), linked statically against glibc. The cross toolchain and `qemu-m
 live in a Docker image, so nothing is installed on the host:
 
 ```bash
-make mips-image                       # docker build -t baka-mips64el tools/mips
+make mips-runtime                     # docker build -t baka-mips64el tools/mips
 ./build/baka -o prog.mips prog.cpp    # compile, assemble and link
-./build/baka --assemble -o prog.o prog.cpp
-./build/baka --link -o prog.mips prog.o
-make run-mips-binary file=prog.mips args='5 "two words"'
+make assemble file=prog.cpp out=prog.o
+make link file=prog.o out=prog.mips
 make run file=prog.cpp args='5 "two words"'  # compile and run from source
 make test-codegen                     # every fixture, optimized and unoptimized
 ```
 
-Both recipes stream stdout and stderr and forward stdin. Use shell quoting inside
-`args` to pass an argument with spaces, or use `n=5` as a shortcut for one argument.
-Run `tools/mips/run-binary prog.mips arg1 arg2` directly to get the program's exit
-status in `$?`. It is the low 8 bits of `main`'s result on normal exit and
-`128 + host signal number` for an uncaught signal. Make reports a nonzero status
-as a recipe error and exits with status `2`. The executable launchers report a
-missing binary with status `2` and an invalid executable format with status `1`.
-See the [codegen design notes](src/codegen/README.md) for details.
+`make assemble` accepts source or assembly. `make link` also accepts an existing
+object file. Omit `out` to use the compiler defaults: the input's base name with
+`.o` for assembly, and `a.out` for linking.
 
-To create a launcher you can use outside the checkout, run:
+`make run` forwards standard streams. Use shell quoting inside `args` to pass an
+argument with spaces, or use `n=5` as a shortcut for one argument. Make reports a
+nonzero program status as a recipe error and exits with status `2`.
+
+To run an existing MIPS executable, create a standalone launcher:
 
 ```bash
 make shim out=run-prog
@@ -268,6 +266,10 @@ BAKA_BINARY=./prog.mips ./run-prog 5 "two words"
 Without `out`, `make shim` creates `./run-baka-mips`. The launcher reads
 `BAKA_BINARY` each time it runs and uses the `baka-mips64el` Docker image.
 It forwards program arguments, standard streams, and exit status.
+The exit status is the low 8 bits of `main`'s result on normal exit and
+`128 + host signal number` for an uncaught signal. The launcher reports a missing
+binary with status `2` and an invalid executable format with status `1`.
+See the [codegen design notes](src/codegen/README.md) for details.
 
 Run `ctest --test-dir build -R '^mips_runtime$' --output-on-failure` to verify
 runtime behavior against the Docker image.
