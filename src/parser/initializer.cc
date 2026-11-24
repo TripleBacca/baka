@@ -7,6 +7,8 @@ namespace baka {
 namespace parser {
 
 
+    // Parses a single assignment expression or a possibly nested braced list.
+    // Braced lists accept a trailing comma and recover at '}' or ';'.
     types::InitializerNode* Parser::ParseInitializer() {
         const size_t SourceStart = current;
         auto* IntializerNodeRet = AllocNodeAt<types::InitializerNode>(SourceStart);

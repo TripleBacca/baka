@@ -43,6 +43,7 @@ namespace {
         return lowerer.takeModule();
     }
 
+    // Checks record layout validation and the printer's distinct names for nominal types.
     void CheckRecordDefinitions() {
         ir::Module module;
         ir::Type integer;
@@ -99,6 +100,8 @@ namespace {
         Require(output.str().find("i32.4 = record(") != std::string::npos, "record name collides with primitive type");
     }
 
+    // Exercises heap runtime contracts and checks that the IR verifier accepts
+    // well-formed calls and control flow while diagnosing malformed variants.
     void CheckVerifier() {
         auto* allocation = __baka_allocate(64, 64);
         Require(allocation && reinterpret_cast<uintptr_t>(allocation) % 64 == 0,
@@ -277,6 +280,8 @@ namespace {
                     loops[2].latches == std::vector<ir::BlockId>{8}, "self loop membership is incorrect");
     }
 
+    // Builds small IR modules to check both the shape and execution of local
+    // rewrites, including cases where a temporary or branch must stay intact.
     void CheckOptimizations() {
         ir::Module module;
         ir::Type integer;
@@ -389,6 +394,8 @@ namespace {
     }
 }
 
+// Runs the verifier unit checks or executes one fixture in both optimization modes.
+// Fixture cases can also check allocation failure or the final value of a global.
 int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "verifier") {

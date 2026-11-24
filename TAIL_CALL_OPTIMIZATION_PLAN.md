@@ -35,15 +35,9 @@ checks the frame once, then applies each rewrite to its own block.
    the original call in place. Return lowering exposes cleanup as instructions
    and control flow before the final `Return`. [Return lowering](src/ir/jumps.cc)
 2. **Prove the frame can be reused.** For the first version, allow only parameter
-   objects in the frame and inspect all their uses. Allow only whole-object,
-   offset-zero loads and stores through their addresses. Reject a parameter
-   address passed to a call, stored elsewhere, returned, or used in address
-   arithmetic. This proof covers escapes before the tail site. For example, a
-   recursive callee could read a global pointer that the previous invocation set
-   to `&n`. To add scalar locals later, require a full initialization on every
-   path before each read in the new invocation, as well as the same address-use
-   proof. The verifier currently checks definite assignment of temporaries.
-   [IR verifier](src/ir/verifier.cc)
+   objects in the frame and inspect all their uses. The [parameter address
+   rule](#parameter-addresses-and-frame-reuse) establishes whether a later
+   invocation could observe the previous invocation's storage.
 3. **Update parameters as a parallel assignment.** The lowerer has already
    evaluated argument expressions before emitting `Param`. Reuse the captured
    operands, then emit the typed stores and a `Jump` to the first IR block.
@@ -59,6 +53,36 @@ checks the frame once, then applies each rewrite to its own block.
    post-optimization `Verify` in the lowerer. The new back edge is then visible to
    IR and backend liveness.
    [CFG builder](src/ir/cfg.cc) · [Lowering pipeline](src/ir/lowering.cc)
+
+### Parameter addresses and frame reuse
+
+The IR represents a parameter slot's address as an `Object` operand. A `Load`
+through that address produces a separate value in a temporary. `Param` can pass
+either that loaded value or the address itself, depending on the source expression.
+
+| Source use | Simplified IR | What a later invocation can observe |
+| --- | --- | --- |
+| `walk(n - 1, n)` | `load t, &n`, then `param t` | The copied value stays the same after the store of the next `n`. |
+| `walk(n - 1, &n)` | `param &n` | Reusing the slot would make the pointer read the new `n` instead of the previous invocation's value. |
+| `saved = &n; return walk(n - 1)` | `store &saved, &n` before the call | The callee can retrieve the address through `saved`, even when every call argument is numeric. |
+
+The pass scans the entire function. A parameter address can appear only as the
+address operand of a whole-object `Load` or `Store` at offset zero. A store to
+`n` uses its address as the destination and is allowed. A store of `&n` uses
+its address as the value and makes the function ineligible. Passing, copying,
+returning, or doing address arithmetic on `&n` also makes it ineligible. This
+conservative rule catches the first use that makes access through another
+pointer possible, so the pass needs no pointer tracking. The recursive frame
+remains available whenever a use falls outside the rule. The regression fixture
+checks the example where a global saves `&n`. [Address-escape regression](custom_tests/ir_opt/14_tail_recursion_skip.cpp)
+
+The numeric-only signature check also excludes pointer parameters that could
+safely point to globals, the heap, or an older caller's frame. To allow pointer
+parameters, prove that the values they carry cannot refer to the frame being
+reused. To add scalar locals, require that each local be initialized on every path
+before any read in a new invocation, along with the same address-use check. The
+verifier currently checks definite assignment of temporaries.
+[Frame check](src/ir/tail_recursion.cc) · [IR verifier](src/ir/verifier.cc)
 
 ## 2. Emit sibling tail jumps in the MIPS backend
 

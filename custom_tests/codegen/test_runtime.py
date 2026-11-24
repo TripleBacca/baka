@@ -41,6 +41,8 @@ def check_interrupt(command, env, sig):
                 process.wait()
 
 
+# Builds runtime probes and compares launcher behavior for errors, signals,
+# argument passing, standard streams, and exit status.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")

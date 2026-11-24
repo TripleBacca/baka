@@ -59,6 +59,8 @@ namespace baka {
             }
         }
 
+        // Removes unused temporary definitions within each block using global live-out
+        // information. Keeps instructions that can fault or have other side effects.
         void EliminateDeadCode(Module& module) {
             for (auto& function : module.functions) {
                 if (!function.defined || function.blocks.empty()) {

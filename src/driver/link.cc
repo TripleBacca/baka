@@ -39,6 +39,9 @@ namespace baka::driver {
             fs::path path;
         };
 
+        // Runs the requested MIPS assembly or link step in Docker. The child reads the
+        // input from stdin and writes the artifact to the staging file, leaving stderr
+        // available for toolchain diagnostics.
         void RunToolchain(const fs::path& input, const fs::path& staged, std::string mode) {
             std::string command[] = {
                 "docker", "run", "--rm", "-i", "--pull=never", "baka-mips64el", "sh", "-ec",

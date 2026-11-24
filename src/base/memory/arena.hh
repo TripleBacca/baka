@@ -164,6 +164,8 @@ namespace base {
                 throw std::bad_alloc();
             }
 
+            // Constructs T in aligned arena storage and records how to destroy it when needed.
+            // If the active chunk has no room, retries in a new chunk.
             template<class T, class ...Args>
             requires (sizeof(T) <= SZ)
             T* Alloc(Args&&... args) {

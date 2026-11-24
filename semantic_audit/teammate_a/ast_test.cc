@@ -36,6 +36,8 @@ struct Evaluator : DeclarationEvaluator {
     }
 };
 
+// Exercises AST declaration and aggregate services with synthetic nodes and a
+// test evaluator, including declaration order, type resolution, and member layout.
 int main() {
     Types t;
     Symbols s(t);

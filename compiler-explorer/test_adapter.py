@@ -11,6 +11,8 @@ ROOT = Path(__file__).resolve().parent
 ANSI = re.compile(r"\x1b\[[0-9;]*m")
 
 
+# Compares invoked stages and optimization flags with direct compiler output,
+# then checks the adapter's CLI errors and diagnostics.
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--compiler", type=Path, default=ROOT.parent / "build/baka")

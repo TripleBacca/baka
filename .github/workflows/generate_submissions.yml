@@ -16,8 +16,7 @@ jobs:
           ref: ${{ github.ref_name }}
 
       - name: Generate Submissions
-        run: |
-            make submit
+        run: ./gen_submissions
 
       - name: Compress Submission Files
         run: |

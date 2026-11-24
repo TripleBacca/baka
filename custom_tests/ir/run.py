@@ -15,6 +15,8 @@ def run(command):
     return subprocess.run([str(arg) for arg in command], capture_output=True, text=True, timeout=15)
 
 
+# Runs verifier checks and compares TAC snapshots before executing fixtures,
+# including any requested allocation-failure or final-global assertions.
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--compiler", type=Path, default=ROOT / "build/baka")

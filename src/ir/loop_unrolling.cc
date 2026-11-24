@@ -122,6 +122,9 @@ namespace baka {
                 return true;
             }
 
+            // Replaces the header with one body copy per iteration, substituting the known
+            // counter and giving each copy fresh temporaries. Restores the final counter
+            // value before jumping to the original exit.
             void ReplaceLoop(Function& function, Block& header, const Candidate& candidate) {
                 const auto& body = candidate.body->instructions;
                 std::vector<Instruction> replacement;

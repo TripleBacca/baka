@@ -310,6 +310,8 @@ namespace baka {
             }
         }
 
+        // Installs declarations for the supported libc calls using target LP64
+        // types and an opaque FILE type for stream handles.
         void Symbols::installLibrary() {
             auto integer = TypeSystem.builtin(Builtin::Int);
             auto character = TypeSystem.builtin(Builtin::Char);

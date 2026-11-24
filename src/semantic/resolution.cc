@@ -108,6 +108,9 @@ namespace baka {
             expression->visitMutableExpressions([&](auto* child) { resolveExpression(child); });
         }
 
+        // Registers local declarators in source order and resolves each initializer
+        // before introducing the next name. Records initialized locals for lifetime
+        // checks and publishes integral constants needed during declaration checking.
         void SemanticAnalyzer::registerLocal(types::DeclarationList* list) {
             const bool isStatic = list->getIsStatic();
             // The callback executes after EACH insertion, before the next declarator.
