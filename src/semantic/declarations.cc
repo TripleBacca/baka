@@ -311,7 +311,9 @@ namespace baka {
 
         // Builds the class vtable: the base's slots are inherited, a method with
         // the same name, parameter types and const-ness replaces its slot, and any
-        // other non-static method appends one. Slot 0 is the class's destructor.
+        // other non-static method appends one. Slot 0 is the class's destructor and
+        // slot 1 its record-equality function; methods start at FirstMethodSlot (2).
+        // Diagnoses overrides whose return type or const-ness differs.
         bool Declarations::virtualTable(TypeId type) {
             const auto& info = TypeSystem.get(type);
             std::vector<VirtualSlot> table;

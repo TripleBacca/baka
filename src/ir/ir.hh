@@ -229,6 +229,9 @@ namespace baka {
         // live values (temporaries plus register-resident scalar objects). Callees stay
         // defined. Returns whether any call was expanded. Run by Optimize.
         bool Inline(Module& module);
+        // Runs the local passes (folding, propagation, value numbering, memory forwarding,
+        // dead stores, branch folding, unreachable and dead code) to a fixed point.
+        void Simplify(Module& module);
         void Optimize(Module& module);
         void Print(const Module& module, std::ostream& output);
     }

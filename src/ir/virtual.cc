@@ -27,10 +27,11 @@ namespace baka {
             return PureVirtual;
         }
 
-        // Creates a read-only vtable global for every complete polymorphic record and points its vptr slots
-        // at the code: slot 0 is the destructor (left null when trivial), pure slots use the
-        // __baka_pure_virtual helper, and the rest are the most derived overrides from the semantic table.
-        // The slot array type is shared.
+        // Creates a read-only vtable global for every complete polymorphic record and points its slots at
+        // the code: slot 0 is the destructor (left null when trivial), slot 1 is left null for
+        // lowerEqualities() to fill with the class's `.eq` function when the program compares the class,
+        // pure slots use the __baka_pure_virtual helper, and the rest are the most derived overrides from
+        // the semantic table. The slot array type is shared, and Vtables records each global's index.
         void Lowerer::buildVtables() {
             const auto slot = vtableSlot();
             const auto count = Result.types.size();
@@ -83,7 +84,7 @@ namespace baka {
                         vtable.initialValues.push_back({index * Result.type(slot).size, target});
                     }
                 }
-                Vtables[id] = vtable.id;
+                Vtables[id] = Result.globals.size();
                 Result.globals.push_back(std::move(vtable));
             }
         }
@@ -94,8 +95,7 @@ namespace baka {
 
         // The value a vptr holds for `type`: the address of slot 0 of its vtable.
         Operand Lowerer::vtableAddress(TypeId type) {
-            const auto& global = *std::find_if(Result.globals.begin(), Result.globals.end(),
-                                               [&](const Object& item) { return item.id == Vtables.at(type); });
+            const auto& global = Result.globals.at(Vtables.at(type));
             Operand table{OperandKind::Object, Result.pointer(global.type), global.id};
             return cast(table, Result.pointer(vtableSlot()));
         }
@@ -161,11 +161,12 @@ namespace baka {
             return cast(load(entry, vtableSlot()), Result.pointer(signature));
         }
 
-        // A named object (not a reference) or a field of one has exactly its static
-        // type, so a call on it needs no dispatch.
+        // Whether the object an expression names certainly has exactly its static type, so a call on
+        // it needs no dispatch and ==/==== can decide its class at compile time. True for a named
+        // object that is not a reference (including a by-value parameter), a field of such an object,
+        // and an element of a real array (not of a pointer or an array parameter, which is a pointer).
+        // Caveat: a named object is trusted even while a base constructor still runs on it.
         bool Lowerer::exactType(const types::ExpressionNode* expression) const {
-            // An element of a real array is a complete object of the element type. Indexing a pointer
-            // (including an array parameter, which is a pointer) proves nothing.
             if (auto* index = dynamic_cast<const types::IndexPostfixExpr*>(expression)) {
                 const types::ExpressionNode* base = index->getBase();
                 if (auto* decay = dynamic_cast<const types::ImplicitCastNode*>(base);
