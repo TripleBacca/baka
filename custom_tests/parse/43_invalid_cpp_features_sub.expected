@@ -1,0 +1,91 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/43_invalid_cpp_features_sub.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+class MissingColon {
+public
+    int value;
+};
+
+int main() {
+    int&& r = 2;
+}
+
+Lexer::LexerOutput: 22 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+class                     K_CLASS               
+MissingColon              IDENTIFIER            
+{                         LPAREN_CURLY          
+public                    K_PUBLIC              
+int                       K_INT                 
+value                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+&&                        OP_LOGICAL_AND        
+r                         IDENTIFIER            
+=                         OP_ASSIGN             
+2 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Class(
+        Identifier(MissingColon)
+        StructBodyNode(
+            Access: public
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(value)
+                        ArraySizes: 
+                    )
+                    Initialization : nullptr
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+        )
+    )
+)
+
+custom_tests/parse/43_invalid_cpp_features_sub.cpp:3:5: [38;2;255;0;0merror: [0mexpected ':' after access specifier (PARSE)
+	    int value;
+	    [38;2;255;0;0m^[0m
+custom_tests/parse/43_invalid_cpp_features_sub.cpp:7:11: [38;2;255;0;0merror: [0mrvalue references are not supported (PARSE)
+	    int&& r = 2;
+	          [38;2;255;0;0m^[0m
+Compilation failed due to 2 error(s)

@@ -1,0 +1,20 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: LEX
+Gctx::SourceFile: custom_tests/lex/06_misc_tokens.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+protected @ 42u 42L 42UL
+
+Lexer::LexerOutput: 6 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+protected                 K_PROTECTED           
+@                         AT                    
+42 (uint)                 LITERAL_INTEGER       
+42 (long)                 LITERAL_INTEGER       
+42 (ulong)                LITERAL_INTEGER       
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+

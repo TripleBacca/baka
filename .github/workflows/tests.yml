@@ -24,10 +24,11 @@ jobs:
         run: |
             make build
 
-      - name: Run Tests from Book
-        run: |
-            ./test_hook
+      - name: Build MIPS Test Image
+        run: make mips-image
 
       - name: Run Custom Tests
-        run: |
-            make test
+        run: ./custom_test_hook
+
+      - name: Run Peephole Unit Tests
+        run: ctest --test-dir build -R '^peephole$' --output-on-failure --no-tests=error

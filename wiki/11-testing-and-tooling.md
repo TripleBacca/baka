@@ -23,10 +23,11 @@ links the test harness instead of the generated `main`.
 
 | Suite | What it checks | How |
 |---|---|---|
+| Lexer and parser | Representative syntax and diagnostics | Compare stdout snapshots, check exit status and stderr, and time out a stuck compiler |
 | IR | IR text for each fixture, and execution results | Compares `--ir` output with saved `.expected` files; runs each fixture in the IR interpreter, unoptimized and optimized |
 | IR optimizer | Each optimization pass, including cases where it must not fire | Compares `--ir --optimize` output with saved `.expected` files |
 | Peephole | Each machine-level rule and its negative cases | Unit test on hand-written machine code |
-| Codegen | Programs compile, link and produce the right results on MIPS | Runs every IR fixture plus codegen fixtures under QEMU |
+| Codegen | Programs compile, link and produce the right results on MIPS | Runs IR, IR optimizer, and codegen fixtures under QEMU |
 | Semantic | Front-end acceptance and rejection | Compares diagnostics with saved output |
 
 ```sh
@@ -49,6 +50,11 @@ the same expected values in `custom_tests/ir/cases.json`. Codegen-only fixtures 
 run in the interpreter, and the interpreter can't check stdout because it can't call
 `printf`.
 
+The shared IR manifest includes execution fixtures for access specifiers
+(`26_access_modifiers.cpp`), lvalue references (`27_references.cpp`), and
+captureless lambdas (`28_lambdas.cpp`). Both runners execute them with and without
+optimization.
+
 ## How the codegen suite works
 
 - **Cases:** each fixture lists runs as `[input, expected result]`; the input is passed
@@ -57,9 +63,10 @@ run in the interpreter, and the interpreter can't check stdout because it can't 
   destructors run. It reuses every IR fixture plus codegen-specific ones covering libc
   I/O, all integer widths, floats, records, many arguments, recursion, register pressure,
   big frames and conversions.
-- **Build:** every fixture is compiled twice, optimized and unoptimized, linked against
-  the test harness, and run under QEMU. Everything runs in a single Docker invocation, in
-  parallel, for speed.
+- **Build:** every fixture is compiled twice, optimized and unoptimized, and run under
+  QEMU in one Docker invocation. The harness reports the full return value. Standalone
+  startup fixtures use the generated entry point and check the process exit status.
+  The heap fixture also runs with the first allocation forced to fail.
 - **Expected values** for codegen fixtures were produced by compiling equivalent C++
   natively with wrapping arithmetic (`-fwrapv`) and no fused multiply-add.
 

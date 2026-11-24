@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 """Compile every fixture with --codegen, then assemble, link and run the batch in Docker/QEMU.
 
-Fixtures come from ../ir/cases.json (reused as is, `failed_allocations` ignored) and ./cases.json.
-Both use the same schema, one entry per source file:
+Fixtures come from ../ir/cases.json, ../ir_opt/cases.json and ./cases.json.
+They use the same schema, one entry per source file:
 
   "NN_name.cpp": {
     "runs":  [[input, result], [input, result, "stdout"], ...],
     "stdin": "text piped to every run",          optional
-    "global": ["name", value]                    optional
+    "global": ["name", value],                   optional
+    "standalone": true,                          optional
+    "failed_allocations": [[input, result], ...] optional
   }
 
   input   passed as argv[1]; a fixture reads it with `int n = atoi(argv[1]);`
   result  expected return value of main, read as a signed 32-bit integer
+          (only the low 8 bits are observable for standalone runs)
   stdout  optional: exact text the program itself printed (the driver's marker lines excluded)
   global  source-level name of a global whose integer value (read after static destructors have
           run, from its `name.<id>` assembly symbol) must equal value; the id comes from `--ir`
   Empty `runs` only checks that the program assembles and links.
 
-harness.c supplies the strong `main`; each program is built as
+harness.c supplies the strong `main` except for standalone fixtures, which exercise the
+generated entry point. Failed-allocation runs use a linker wrapper to fail the first
+malloc after the harness starts the program. Harnessed programs are built as
   mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie -O0 x.s harness.c
 and run as `qemu-mips64el ./x <input>` (all jobs in one `docker run`, built and run in parallel).
 """
@@ -39,8 +44,7 @@ MARKER = "\x01"
 C_TYPES = {"i8": "signed char", "u8": "unsigned char", "i16": "short", "u16": "unsigned short",
            "i32": "int", "u32": "unsigned int", "i64": "long long", "u64": "unsigned long long"}
 MODES = {"opt": ["--codegen"], "noopt": ["--codegen", "--no-optimize"]}
-BUILD = ("mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie -O0 {defs} "
-         "{name}.s harness.c -o {name}.bin")
+BUILD = "mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie -O0"
 
 
 def run(command, **kwargs):
@@ -52,13 +56,18 @@ def signed32(value):
 
 
 def collect(names):
-    """Return [(name, source path, case dict)] from both case files."""
+    """Return [(name, source path, case dict)] from the case manifests."""
     cases = []
-    for directory in (IR_DIR, HERE):
+    for directory in (IR_DIR, ROOT / "custom_tests" / "ir_opt", HERE):
         for name, case in json.loads((directory / "cases.json").read_text()).items():
             if not names or Path(name).stem in names or name in names:
                 cases.append((name, directory / name, case))
     return cases
+
+
+def execution_cases(case):
+    yield from ((entry, False) for entry in case["runs"])
+    yield from ((entry, True) for entry in case.get("failed_allocations", []))
 
 
 def global_symbol(compiler, source, name):
@@ -77,7 +86,8 @@ def prepare(args, tmp, cases):
         for mode in ("opt", "noopt"):
             if args.mode not in (mode, "both"):
                 continue
-            job = {"label": f"{name} [{mode}]", "id": f"{source.stem}.{mode}", "case": case, "error": None}
+            job = {"label": f"{name} [{mode}]", "id": f"{source.parent.name}.{source.stem}.{mode}",
+                   "case": case, "error": None}
             jobs.append(job)
             result = run([args.compiler, *MODES[mode], source])
             if result.returncode:
@@ -95,10 +105,16 @@ def prepare(args, tmp, cases):
             ident = job["id"]
             (tmp / f"{ident}.s").write_text(text)
             (tmp / f"{ident}.stdin").write_text(case.get("stdin", ""))
-            lines = [f"cd /work", BUILD.format(defs=defs, name=ident) + f" 2> {ident}.build; echo $? > {ident}.brc",
-                     f"if [ \"$(cat {ident}.brc)\" = 0 ]; then", "true"]
-            for index, entry in enumerate(case["runs"]):
-                lines.append(f"timeout 30 qemu-mips64el ./{ident}.bin {entry[0]} < {ident}.stdin "
+            # Parallel jobs may create files with the same names.
+            (tmp / f"{ident}.cwd").mkdir()
+            harness = "" if case.get("standalone") else "harness.c"
+            if case.get("failed_allocations"):
+                defs += " -DBAKA_WRAP_MALLOC -Wl,--wrap=malloc"
+            lines = [f"{BUILD} {defs} {ident}.s {harness} -o {ident}.bin 2> {ident}.build",
+                     f"echo $? > {ident}.brc", f"if [ \"$(cat {ident}.brc)\" = 0 ]; then", "true"]
+            for index, (entry, fail_allocation) in enumerate(execution_cases(case)):
+                env = "BAKA_FAIL_ALLOCATION=1 " if fail_allocation else ""
+                lines.append(f"(cd {ident}.cwd && {env}timeout 30 qemu-mips64el ../{ident}.bin {entry[0]}) < {ident}.stdin "
                              f"> {ident}.{index}.out 2> {ident}.{index}.err; echo $? > {ident}.{index}.rc")
             lines.append("fi")
             (tmp / f"{ident}.job.sh").write_text("\n".join(lines) + "\n")
@@ -131,11 +147,21 @@ def check(tmp, job):
     if read(tmp, f"{ident}.brc", "missing").strip() != "0":
         return ["assemble/link failed:\n" + read(tmp, f"{ident}.build", "(job did not run)")]
     problems = []
-    for index, entry in enumerate(case["runs"]):
+    for index, (entry, fail_allocation) in enumerate(execution_cases(case)):
         out = read(tmp, f"{ident}.{index}.out")
         rc = read(tmp, f"{ident}.{index}.rc", "?").strip()
-        text, marker, tail = out.partition(MARKER + "result=")
         where = f"input {entry[0]}"
+        if fail_allocation:
+            where += " (first allocation fails)"
+        if case.get("standalone"):
+            expected = str(entry[1] & 0xFF)
+            if rc != expected:
+                problems.append(f"{where}: exit code {rc}, expected {expected}\n"
+                                + read(tmp, f"{ident}.{index}.err"))
+            if len(entry) > 2 and out != entry[2]:
+                problems.append(f"{where}: stdout differs\n" + show_diff(entry[2], out, "stdout"))
+            continue
+        text, marker, tail = out.partition(MARKER + "result=")
         if not marker:
             problems.append(f"{where}: no result line (exit code {rc}); stdout:\n{out}stderr:\n"
                             + read(tmp, f"{ident}.{index}.err"))

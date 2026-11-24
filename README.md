@@ -25,7 +25,7 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 - `make test-semantic` : Runs representative semantic acceptance/rejection programs.
 - `make test-ir` : Checks TAC output and execution before and after optimization.
 - `make parse-folder dir=<directory>` : Runs the parser on all files (excluding `.out` files) in the given directory recursively. Each file's output is written to an `.out` file with the same name and location (e.g. `test/foo.cpp` -> `test/foo.cpp.out`). Reports a summary of files parsed and errors at the end.
-- `make test` : Run tests in the `/test` directory and compare the verbose output to the `.expected` output files.
+- `make test` : Run custom compiler tests, including native MIPS execution. Run `make mips-image` first.
 - `make build` : Build the binary and put it in `/build/baka`
 - `make clean` : Clean up the build artifacts
 
@@ -96,6 +96,7 @@ We are hoping we can support the following featureset:
 - File manipulation
 - Multi-level pointers
 - Multi-dimensional arrays
+- Access specifiers, lvalue references, and captureless lambdas
 
 **Extra Non C++ Features**
 - Loop Labels:
@@ -149,7 +150,6 @@ There are certain features we are not supporting:
 - `signed`
 - `const` pointer
 - Multiple inheritance
-- Access Modifiers: Everything is `public` by default.
 - `namespace` and scope resolution(`::`)
 - `enum class`
 

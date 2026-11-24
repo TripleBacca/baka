@@ -169,5 +169,11 @@
   ],
   "invalid_braced_class.cpp": [
     "braced class construction is unsupported; use Type(arguments)"
+  ],
+  "invalid_main_parameters.cpp": [
+    "'main' must take no parameters or (int argc, char** argv)"
+  ],
+  "invalid_main_result.cpp": [
+    "'main' must return an integer type or void"
   ]
 }

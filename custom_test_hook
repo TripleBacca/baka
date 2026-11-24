@@ -31,41 +31,47 @@ def get_compile_output(source, stage_args):
         capture_output=True,
         text=True,
         errors="replace",
+        timeout=10,
     )
 
 
-def bless(tests, stage_args) -> None:
-    for i in tests:
-        result = get_compile_output(i, stage_args)
-        expected_file = i.with_suffix(".expected")
-
-        expected_file.write_text(result.stdout, encoding="utf-8")
-
-        print(f"blessed {expected_file.relative_to(ROOT)} : exit-code({result.returncode})")
-
-
-def verify(tests, stage_args):
+def check_snapshots(tests, stage_args, bless):
     failures = 0
-    for i in tests:
-
-        expected_file = i.with_suffix(".expected")
-        if not expected_file.exists():
-            print(f"FAIL {i.relative_to(ROOT)}: no expected output {expected_file.relative_to(ROOT)}")
+    for source in tests:
+        label = source.relative_to(ROOT)
+        expected_file = source.with_suffix(".expected")
+        try:
+            result = get_compile_output(source, stage_args)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            print(f"FAIL {label}: {error}")
             failures += 1
             continue
 
-        result = get_compile_output(i, stage_args)
+        expected_status = 1 if "invalid" in source.stem.split("_") else 0
+        if result.returncode != expected_status or result.stderr:
+            print(f"FAIL {label}: exit status {result.returncode}, expected {expected_status}")
+            if result.stderr:
+                print(result.stderr)
+            failures += 1
+            continue
+
+        if bless:
+            expected_file.write_text(result.stdout, encoding="utf-8")
+            print(f"blessed {expected_file.relative_to(ROOT)}")
+            continue
+        if not expected_file.exists():
+            print(f"FAIL {label}: no expected output {expected_file.relative_to(ROOT)}")
+            failures += 1
+            continue
         expected = expected_file.read_text(encoding="utf-8")
-
-        if result.stdout == expected:
-            print(f"PASS {i.relative_to(ROOT)}")
-        else:
-            print(f"FAIL {i.relative_to(ROOT)}")
-
+        if result.stdout != expected:
+            print(f"FAIL {label}")
             diff_lines(result.stdout, expected)
             failures += 1
+        else:
+            print(f"PASS {label}")
 
-    return (1 if failures else 0)
+    return bool(failures)
 
 
 def diff_lines(actual: str, expected: str) -> None:
@@ -113,10 +119,7 @@ def main():
                 print(f"no tests found in {test_dir.relative_to(ROOT)}")
             continue
 
-        if about_to_bless:
-            bless(tests, stage_args)
-        else:
-            failures += verify(tests, stage_args)
+        failures += check_snapshots(tests, stage_args, about_to_bless)
 
     return (1 if failures else 0)
 
