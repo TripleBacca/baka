@@ -4,7 +4,7 @@
 
 ```sh
 make build                                   # build ./build/baka
-make mips-image                              # one-time: build the Docker toolchain image
+make mips-runtime                            # one-time: build the Docker toolchain image
 
 ./build/baka --ir file.cpp                   # print the IR
 ./build/baka --ir --optimize file.cpp        # print the optimized IR
@@ -13,7 +13,8 @@ make mips-image                              # one-time: build the Docker toolch
 
 tools/mips/run file.s 5                      # assemble, link and run with input 5
 make run file=file.cpp args='5'             # compile and run in one step
-make run-mips-binary file=prog.mips args='5 "two words"'
+make shim out=run-prog                       # create a launcher for existing binaries
+BAKA_BINARY=./prog.mips ./run-prog 5 "two words"
 ```
 
 `tools/mips/run` copies the `.s` into a temporary directory, runs the cross-compiler and

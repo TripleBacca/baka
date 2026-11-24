@@ -90,11 +90,6 @@ def main():
 
         output = run(ROOT / "tools/mips/run-binary", executable, "21", input_text="x", status=7)
         assert output.stdout == "42 x\n", output.stdout
-        output = run("make", "-s", "-C", ROOT, "run-mips-binary", f"file={executable}", "n=5", input_text="y")
-        assert output.stdout == "10 y\n", output.stdout
-        output = run("make", "-s", "-C", ROOT, "run-mips-binary", f"file={executable}",
-                     'args=5 "two words" --flag', input_text="z")
-        assert output.stdout == "10 z\n<two words> <--flag>\n", output.stdout
 
         # Reuse the compiler supplied by CTest without rebuilding it from the Make recipe.
         (work / "build").mkdir()

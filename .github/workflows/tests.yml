@@ -25,7 +25,7 @@ jobs:
             make build
 
       - name: Build MIPS Test Image
-        run: make mips-image
+        run: make mips-runtime
 
       - name: Run Custom Tests
         run: ./custom_test_hook
