@@ -65,9 +65,12 @@ namespace baka {
 
             uint32_t NextObject = 1;
             uint32_t HeapAllocate = 0, HeapDeallocate = 0, PureVirtual = 0;
-            std::map<TypeId, uint32_t> Vtables; // class record -> its vtable global
-            std::map<TypeId, uint32_t> EqualityFunctions; // record -> its .eq function
-            std::vector<TypeId> EqualityWork;             // records whose .eq body is pending
+            // Class record -> index of its vtable in Result.globals. Lowering only appends
+            // globals, so the index stays valid.
+            std::map<TypeId, size_t> Vtables;
+            std::map<TypeId, uint32_t> EqualityFunctions; // record -> id of its .eq function
+            // Records whose .eq body is pending, with the function's index in Result.functions.
+            std::vector<std::pair<TypeId, size_t>> EqualityWork;
             std::set<TypeId> EqualityDispatch;            // static classes compared dynamically
             bool Started = false;
             std::vector<const types::SingleDeclarationNode*> GlobalInitializers;

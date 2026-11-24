@@ -59,6 +59,7 @@ How a call is expanded:
 | Up to 3 rounds, with callee bodies snapshotted per round | A helper that calls another small helper is fully expanded by the next round. Copied bodies are not rescanned in the same round, so two small mutually recursive functions stop once each becomes directly recursive. |
 | Callees stay defined | Their address may still be taken (function pointers, vtables). |
 | Simplification runs again afterwards | Arguments and results now flow through ordinary locals and copies that the block-local passes clean up. Jumps between the copied blocks remain, because merging blocks would be a cross-block transformation. |
+| No code-size limit (deliberate) | Register pressure is the only criterion, as chosen for this project. A long callee that needs few registers is copied into every call site, and nested helpers multiply across the three rounds. For example, `custom_tests/codegen/28_random_mix.cpp` calls small helpers many times, and its optimized IR grows from about 2,700 to 7,000 lines. If code size ever matters, add a limit on callee instruction count next to `InlineRegisterLimit`. |
 
 `custom_tests/ir_opt/12_inline.cpp` pins the result: small leaves, a multi-block callee,
 a void callee that writes a global, a nested helper, records by value, a too-wide

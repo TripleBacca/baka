@@ -12,15 +12,19 @@
   would not be ABI-compatible. The language never declares such functions.
 - **Non-PIC, static only.** The output cannot become a shared library or a PIE.
 - **Record copies** are unrolled up to 256 bytes and looped above that.
+- **Inlining has no size limit.** Any callee with peak register pressure of at most 6 is
+  copied into every call site, however long it is, so heavily used helpers can make the
+  optimized code several times larger (page 4).
 - **Struct `==` needs identical types.** A struct has no runtime type, so `SD == SB` (even
   through `SB&` naming the same object) is an error, while the same comparison on classes
   works through the vptr. See page 19.
 - **Unions cannot be compared** with `==`, even as a nested field, because the active
   member is unknown.
-- **`====` folding trusts named objects.** A named object is treated as having exactly its
-  declared class even while a base constructor runs on it, so `d ==== other` can fold to
-  `true` from code reached during `d`'s construction. Call devirtualization has the same
-  blind spot. See page 20.
+- **`==` and `====` trust named objects.** A named object is treated as having exactly its
+  declared class even while a base constructor runs on it. From code reached during `d`'s
+  construction, `d ==== other` can fold to `true`, and `d == other` can compare `d` as its
+  final class and read fields that are not yet initialized. Call devirtualization has the
+  same blind spot. See pages 19 and 20.
 
 ## Findings from the edge-case audit
 

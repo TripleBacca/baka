@@ -6,7 +6,9 @@
 
 
 namespace baka::lexer {
-    // Longest spelling in lexeme_to_operator (`<<=`, `>>=`, `====`, `!===`).
+    // Longest spelling in lexeme_to_operator (`====`, `!===`). The lexer never tries a longer
+    // match, so UPDATE THIS when adding an operator longer than 4 characters, or it will be
+    // split into shorter tokens without any error.
     inline constexpr size_t MaxOperatorLength = 4;
 
     inline const std::unordered_map<std::string_view, types::TokenType> lexeme_to_operator = {

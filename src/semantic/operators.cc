@@ -282,16 +282,6 @@ namespace baka {
                 }
                 return false;
             };
-            // A struct carries no runtime type, so it compares only with its own type (an object or a
-            // reference, const ignored). Classes may mix; lowering decides from their dynamic classes.
-            auto L = TypeSystem.unConst(left), R = TypeSystem.unConst(right);
-            if ((TypeSystem.get(L).kind != TypeKind::Class || TypeSystem.get(R).kind != TypeKind::Class) && L != R) {
-                SymbolTable.diagnose("comparison",
-                                     "cannot compare '" + TypeSystem.get(L).name + "' with '" + TypeSystem.get(R).name +
-                                         "': a struct compares only with the same struct type",
-                                     node);
-                return makeError();
-            }
             for (auto type : {left, right}) {
                 if (!TypeSystem.layout(type)) {
                     SymbolTable.diagnose("comparison",
@@ -305,8 +295,19 @@ namespace baka {
                     return makeError();
                 }
             }
+            // A struct carries no runtime type, so it compares only with its own type (an object or a
+            // reference, const ignored). Classes may mix; lowering decides from their dynamic classes.
+            auto L = TypeSystem.unConst(left), R = TypeSystem.unConst(right);
+            if ((TypeSystem.get(L).kind != TypeKind::Class || TypeSystem.get(R).kind != TypeKind::Class) && L != R) {
+                SymbolTable.diagnose("comparison",
+                                     "cannot compare '" + TypeSystem.get(L).name + "' with '" + TypeSystem.get(R).name +
+                                         "': a struct compares only with the same struct type",
+                                     node);
+                return makeError();
+            }
             return makeValue(TypeSystem.builtin(Builtin::Bool));
         }
+
         // Checks `a ==== b` / `a !=== b`: whether two objects have the same dynamic class (equal vptrs).
         // Each operand is a class lvalue (named object, reference, `*p`, member, element, `*this`) or a
         // pointer to a class (`p ==== q` compares `*p` and `*q`; `this` works). A class rvalue is rejected:

@@ -28,9 +28,9 @@ namespace baka {
                 function.objects.push_back(std::move(parameter));
             }
             const auto id = function.id;
+            EqualityWork.push_back({record, Result.functions.size()});
             Result.functions.push_back(std::move(function));
             EqualityFunctions[record] = id;
-            EqualityWork.push_back(record);
             return id;
         }
 
@@ -128,10 +128,7 @@ namespace baka {
             }
             const auto boolean = importType(Analyzer.types().builtin(semantic::Builtin::Bool));
             for (size_t index = 0; index < EqualityWork.size(); ++index) {
-                const auto record = EqualityWork[index];
-                const auto id = EqualityFunctions.at(record);
-                size_t position = 0;
-                while (Result.functions[position].id != id) ++position;
+                const auto [record, position] = EqualityWork[index];
                 State = FunctionContext{};
                 State.FunctionIndex = position;
                 select(newBlock());
@@ -152,15 +149,11 @@ namespace baka {
                     continue;
                 }
                 const uint64_t offset = semantic::EqualitySlot * Result.type(vtableSlot()).size;
-                for (auto& global : Result.globals) {
-                    if (global.id != table->second) {
-                        continue;
-                    }
-                    auto& values = global.initialValues; // keep entries ordered by offset
-                    auto position = std::find_if(values.begin(), values.end(),
-                                                 [&](const Object::InitialValue& entry) { return entry.offset > offset; });
-                    values.insert(position, {offset, callable(function)});
-                }
+                auto entry = callable(function);
+                auto& values = Result.globals.at(table->second).initialValues; // ordered by offset
+                auto position = std::find_if(values.begin(), values.end(),
+                                             [&](const Object::InitialValue& item) { return item.offset > offset; });
+                values.insert(position, {offset, entry});
             }
         }
 

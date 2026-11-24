@@ -185,6 +185,9 @@
   "invalid_record_eq_struct_base.cpp": [
     "cannot compare 'SD' with 'SB': a struct compares only with the same struct type"
   ],
+  "invalid_record_eq_union_struct.cpp": [
+    "cannot compare unions with '=='"
+  ],
   "invalid_record_eq_struct_class.cpp": [
     "cannot compare 'S' with 'C': a struct compares only with the same struct type"
   ],

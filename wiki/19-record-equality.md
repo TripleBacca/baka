@@ -62,6 +62,30 @@ CB& r = other;  cd == r;  // compares x and y if other matches, because r really
 Comparison stops at the first difference. A class's vptr is not a field and is never
 compared as a value.
 
+### During construction and destruction
+
+While a base constructor or destructor runs, the object's vptr is the base's (page 18), so
+a comparison that reads the vptr treats the object as the base class.
+
+**Caveat:** a *named* object (not a reference) is trusted to have its declared class at
+compile time, without reading its vptr. If code reached from a base constructor names the
+object being built, that trust is wrong:
+
+```cpp
+bool check();
+class Animal { public: int legs; Animal() { legs = 4; check(); } };  // runs while d is only an Animal
+class Dog : public Animal { public: int tricks; Dog() { tricks = 0; } };
+Dog d;                       // a global, being built
+Dog other;
+bool check() { return d == other; }
+```
+
+`d == other` skips the class check for `d` (it is "known" to be a `Dog`), compares
+`other`'s vptr against `Dog`'s and then compares every `Dog` field, reading `d.tricks`
+before `Dog()` has set it. Reading the vptr would have said `d` is still an `Animal`. The
+same assumption is made by `====` (page 20) and by call devirtualization (page 18).
+Avoid comparing an object from code that can run during its own construction.
+
 ### Diagnostics
 
 ```
