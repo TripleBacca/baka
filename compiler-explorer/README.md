@@ -63,4 +63,13 @@ each view with direct compiler output. They cover optimization settings and
 precedence, paths containing spaces, failure diagnostics, version probing and
 missing arguments. They require no Docker image.
 
+After starting CE, test the full adapter/configuration/API path with:
+
+```sh
+python3 compiler-explorer/test_api.py --url http://localhost:10240
+```
+
+This verifies all four compiler registrations, each view at `-O0` and `-O2`,
+and semantic failure diagnostics in the semantic, IR and assembly views.
+
 Compiler registrations use CE's documented [compiler groups and options](https://github.com/compiler-explorer/compiler-explorer/blob/main/docs/AddingACompiler.md).

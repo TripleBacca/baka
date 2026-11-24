@@ -8,8 +8,8 @@ services:
       # expose on your LAN
       - "${CE_BIND:-127.0.0.1}:10240:10240"
     volumes:
-      # live-mount baka + wrapper + config so edits are picked up (restart the
-      # container) without rebuilding the image
+      # Mount baka + wrapper + config without rebuilding the image. Recreate
+      # the container after compiler builds so the mount follows the new binary.
       - ../build/baka:/opt/baka/bin/baka:ro
       - ./baka-ce:/opt/baka/bin/baka-ce:ro
       - ./config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro
