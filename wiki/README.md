@@ -1,7 +1,8 @@
-# Codegen wiki
+# Compiler wiki
 
 An overview of how baka turns a checked program into a running MIPS64 executable.
-These pages cover breadth, not line-by-line detail; read them in order for the full
+Pages 15–18 document the C++ features added on top (access control, references,
+lambdas) and the plan for virtual functions. These pages cover breadth, not line-by-line detail; read them in order for the full
 picture, or jump to a topic.
 
 | # | Page | What it covers |
@@ -19,6 +20,11 @@ picture, or jump to a topic.
 | 11 | [Testing and tooling](11-testing-and-tooling.md) | How to run code, and how the test suites check it |
 | 12 | [Limitations and known gaps](12-limitations.md) | Design trade-offs and what the edge-case audit found |
 | 13 | [Implementation guide](13-implementation-guide.md) | Data structures and algorithms across the whole compiler, plus "how did we implement X?" answers (`static`, `switch`, destructors, overloading, `new`/`delete`, …) |
+| 14 | [Function overloading](14-function-overloading.md) | How overloads are declared, looked up and resolved to one declaration, followed from source to assembly |
+| 15 | [Access modifiers](15-access-modifiers.md) | `public`/`protected`/`private`, defaults, inheritance access, where access is checked, design and implementation |
+| 16 | [References](16-references.md) | `T&` rules, binding and temporaries, how references become pointers in the IR, design and implementation |
+| 17 | [Captureless lambdas](17-captureless-lambdas.md) | Lambda syntax, deduced results, hoisting to internal functions, design and implementation |
+| 18 | [Virtual functions (plan)](18-virtual-functions-plan.md) | Implementation plan for vtables and dynamic dispatch; not yet implemented |
 
 ## One-paragraph summary
 
