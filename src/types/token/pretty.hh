@@ -68,6 +68,8 @@ namespace {
         {types::TokenType::OP_LOGICAL_OR, "OP_LOGICAL_OR"},
         {types::TokenType::OP_EQ, "OP_EQ"},
         {types::TokenType::OP_NEQ, "OP_NEQ"},
+        {types::TokenType::OP_STRICT_EQ, "OP_STRICT_EQ"},
+        {types::TokenType::OP_STRICT_NEQ, "OP_STRICT_NEQ"},
         {types::TokenType::OP_LT, "OP_LT"},
         {types::TokenType::OP_GT, "OP_GT"},
         {types::TokenType::OP_LE, "OP_LE"},

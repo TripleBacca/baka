@@ -179,6 +179,7 @@ namespace baka {
             void storeVptr(Operand object, TypeId type);
             void assign(Operand location, Operand value);
             Operand virtualCallee(Operand instance, uint32_t slot, TypeId signature);
+            Operand strictEquality(const types::BinaryExpressionNode* node);
             bool exactType(const types::ExpressionNode* expression) const;
 
             // Record equality: one generated `.eq.<T>` per compared record type (equality.cc).

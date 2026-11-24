@@ -120,6 +120,40 @@ namespace baka {
             emit(Instruction::store(vptr, saved, State.Source));
         }
 
+        // `a ==== b` / `a !=== b`: every class has exactly one vtable, so equal vptrs mean the same dynamic
+        // class. Both operands are always evaluated, left to right (an operand such as `arr[i++]` has side
+        // effects); only the vptr loads are skipped when a class is known at compile time. An exact operand
+        // (named object, field or element of one) contributes its vtable's address as a constant; two exact
+        // operands make the whole result a constant. A pointer operand is the object's address.
+        Operand Lowerer::strictEquality(const types::BinaryExpressionNode* node) {
+            const bool equal = node->getBinaryOp() == types::OP_STRICT_EQ;
+            const auto resultType = type(node);
+            struct Side {
+                Operand address;
+                TypeId exactClass = 0;
+            };
+            auto side = [&](const types::ExpressionNode* expression) {
+                const auto& types = Analyzer.types();
+                auto source = types.unConst({expression->semanticInfo().Type});
+                if (types.get(source).kind == semantic::TypeKind::Pointer) {
+                    return Side{value(expression), 0};
+                }
+                return Side{address(expression), exactType(expression) ? importType(source) : 0};
+            };
+            const auto left = side(node->getLeft());
+            const auto right = side(node->getRight());
+            if (left.exactClass && right.exactClass) {
+                return integer(resultType, (left.exactClass == right.exactClass) == equal ? 1 : 0);
+            }
+            const auto table = Result.pointer(vtableSlot());
+            auto vptr = [&](const Side& operand) {
+                return operand.exactClass ? vtableAddress(operand.exactClass) : load(vptrAddress(operand.address), table);
+            };
+            auto leftTable = vptr(left);
+            auto rightTable = vptr(right);
+            return emitValue(equal ? Opcode::Equal : Opcode::NotEqual, resultType, leftTable, rightTable);
+        }
+
         Operand Lowerer::virtualCallee(Operand instance, uint32_t slot, TypeId signature) {
             auto table = load(vptrAddress(instance), Result.pointer(vtableSlot()));
             auto entry = emitValue(Opcode::AddressOffset, Result.pointer(vtableSlot()), table,
@@ -130,6 +164,17 @@ namespace baka {
         // A named object (not a reference) or a field of one has exactly its static
         // type, so a call on it needs no dispatch.
         bool Lowerer::exactType(const types::ExpressionNode* expression) const {
+            // An element of a real array is a complete object of the element type. Indexing a pointer
+            // (including an array parameter, which is a pointer) proves nothing.
+            if (auto* index = dynamic_cast<const types::IndexPostfixExpr*>(expression)) {
+                const types::ExpressionNode* base = index->getBase();
+                if (auto* decay = dynamic_cast<const types::ImplicitCastNode*>(base);
+                    decay && decay->getConversionKind() == types::ImplicitConversionKind::ArrayToPointer) {
+                    base = decay->getOperand();
+                }
+                const auto& types = Analyzer.types();
+                return types.get(types.unConst({base->semanticInfo().Type})).kind == semantic::TypeKind::Array;
+            }
             if (auto* dot = dynamic_cast<const types::MemberPostfixExpr*>(expression)) {
                 const auto symbol = dot->semanticInfo().Symbol;
                 return symbol && !Analyzer.types().isReference(Analyzer.symbols().get({symbol}).type) &&

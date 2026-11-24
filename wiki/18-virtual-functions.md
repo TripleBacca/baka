@@ -46,6 +46,12 @@ int main() {
 | `delete(p)` | Runs the destructor of the object's real class, so deleting through a base pointer is safe. |
 | Value semantics | Copy-initializing a class object from a derived object (through `*p` or a reference) produces an object of the declared type, a slice. Assignment copies the value but never changes the destination's dynamic type. |
 
+### Comparing classes
+
+- `a == b` compares two class **values**: the dynamic classes must match, then every field
+  of that class is compared (page 19). Vtable slot 1 holds the generated equality function.
+- `a ==== b` / `a !=== b` compare only the **dynamic classes**, via the vptrs (page 20).
+
 ### Diagnostics
 
 ```
@@ -67,7 +73,8 @@ a class cannot inherit from a struct
 - Even a class without methods carries the 8-byte vptr and gets a constructor.
 - Derived fields are laid out after the padded base, not in its tail padding, so for
   `class A { int x; }; class B : public A { int y; };` `sizeof(B)` is 24 where g++ gives 16.
-- No covariant returns, multiple or virtual inheritance, RTTI or pointers to members.
+- No covariant returns, multiple or virtual inheritance, `typeid`/`dynamic_cast` or pointers to
+  members. `====` / `!===` (not in C++) give an exact dynamic-class test.
 
 ## Design decisions
 
@@ -96,6 +103,7 @@ a class cannot inherit from a struct
 | IR lowering | `src/ir/virtual.cc` | `buildVtables`, `storeVptr`, `assign`, `virtualCallee`, `exactType` |
 | | `lifetimes.cc`, `functions.cc` | Vptr store after the base constructor, before members. Destructor entry re-stamp. By-value parameter re-stamp. |
 | | `calls.cc`, `heap.cc`, `lowering.cc`, `operators.cc`, `addresses.cc` | Dispatch, `delete` through slot 0, vptr re-stamp in `store`, `assign` for `=`. |
+| `==` and `====` | see pages 19 and 20 | Record equality (`.eq.<T>`, slot 1) and dynamic class comparison. |
 | IR printing | `src/ir/printer.cc` | Root classes print `record(vptr, ...)`. |
 | Runtime | `src/codegen/runtime.cc` | `__baka_pure_virtual` writes the message to stderr and calls `abort`. The name is reserved in `symbols.cc`. |
 
@@ -128,5 +136,6 @@ The constructor of `Square` calls `Shape`'s constructor, then stores
   through a base reference, by-value parameters and returned temporaries.
 - `custom_tests/codegen/29_virtual_dispatch.cpp` and `30_virtual_values.cpp` check
   printed output under qemu.
+- Tests for `==` and `====` on classes are listed on pages 19 and 20.
 - Several older fixtures used `class` as a plain brace-initialized aggregate. They now
   say `struct`, which is what those tests meant.

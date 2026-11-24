@@ -1,0 +1,546 @@
+IR::TAC:
+FILE = opaque
+Animal = record(vptr, i32) size 16 align 8
+Dog = record(Animal) size 16 align 8
+Cat = record(Animal) size 16 align 8
+Kennel = record(vptr, Dog) size 24 align 8
+internal .vtable.Animal.65: [5 x ptr<void>] readonly = zero {+16 = @Animal.sound.21:ptr<fn(ptr<Animal>)->i32>} {+24 = @Animal.sameAs.23:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>} {+32 = @Animal.sameAsPointer.25:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>}
+internal .vtable.Dog.66: [5 x ptr<void>] readonly = zero {+16 = @Dog.sound.27:ptr<fn(ptr<Dog>)->i32>} {+24 = @Animal.sameAs.23:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>} {+32 = @Animal.sameAsPointer.25:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>}
+internal .vtable.Cat.67: [5 x ptr<void>] readonly = zero {+16 = @Cat.sound.29:ptr<fn(ptr<Cat>)->i32>} {+24 = @Animal.sameAs.23:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>} {+32 = @Animal.sameAsPointer.25:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>}
+internal .vtable.Kennel.68: [2 x ptr<void>] readonly = zero
+declare @printf.9: fn(ptr<i8>, ...)->i32
+declare @scanf.10: fn(ptr<i8>, ...)->i32
+declare @atoi.11: fn(ptr<i8>)->i32
+declare @fopen.13: fn(ptr<i8>, ptr<i8>)->ptr<FILE>
+declare @fclose.14: fn(ptr<FILE>)->i32
+declare @fread.15: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @fwrite.16: fn(ptr<void>, u64, u64, ptr<FILE>)->u64
+declare @read.17: fn(i32, ptr<void>, u64)->i64
+declare @write.18: fn(i32, ptr<void>, u64)->i64
+function @Animal.sound.21: fn(ptr<Animal>)->i32 {
+  parameter this.36: ptr<Animal>
+  (ret, _, 0:i32, _)
+}
+function @Animal.sameAs.23: fn(ptr<Animal>, ptr<Animal>)->u1 {
+  parameter this.37: ptr<Animal>
+  parameter other.38: ptr<Animal>
+  (load, %t1:ptr<Animal>, &this.37:ptr<ptr<Animal>>, _)
+  (load, %t2:ptr<Animal>, &other.38:ptr<ptr<Animal>>, _)
+  (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Animal>, _)
+  (load, %t4:ptr<ptr<void>>, %t3:ptr<ptr<ptr<void>>>, _)
+  (cast, %t5:ptr<ptr<ptr<void>>>, %t2:ptr<Animal>, _)
+  (load, %t6:ptr<ptr<void>>, %t5:ptr<ptr<ptr<void>>>, _)
+  (eq, %t7:u1, %t4:ptr<ptr<void>>, %t6:ptr<ptr<void>>)
+  (ret, _, %t7:u1, _)
+}
+function @Animal.sameAsPointer.25: fn(ptr<Animal>, ptr<Animal>)->u1 {
+  parameter this.39: ptr<Animal>
+  parameter other.40: ptr<Animal>
+  (load, %t1:ptr<Animal>, &this.39:ptr<ptr<Animal>>, _)
+  (load, %t2:ptr<Animal>, &other.40:ptr<ptr<Animal>>, _)
+  (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Animal>, _)
+  (load, %t4:ptr<ptr<void>>, %t3:ptr<ptr<ptr<void>>>, _)
+  (cast, %t5:ptr<ptr<ptr<void>>>, %t2:ptr<Animal>, _)
+  (load, %t6:ptr<ptr<void>>, %t5:ptr<ptr<ptr<void>>>, _)
+  (eq, %t7:u1, %t4:ptr<ptr<void>>, %t6:ptr<ptr<void>>)
+  (ret, _, %t7:u1, _)
+}
+function @Dog.sound.27: fn(ptr<Dog>)->i32 {
+  parameter this.41: ptr<Dog>
+  (ret, _, 1:i32, _)
+}
+function @Cat.sound.29: fn(ptr<Cat>)->i32 {
+  parameter this.42: ptr<Cat>
+  (ret, _, 2:i32, _)
+}
+function @main.34: fn(i32, ptr<ptr<i8>>)->i32 {
+  parameter argc.43: i32
+  parameter argv.44: ptr<ptr<i8>>
+  local n.45: i32
+  local rex.46: Dog
+  local fido.47: Dog
+  local tom.48: Cat
+  local plain.49: Animal
+  local a.50: ptr<Animal>
+  local b.51: ptr<Animal>
+  local c.52: ptr<Animal>
+  local p.53: ptr<Animal>
+  local q.54: ptr<Animal>
+  local sliced.55: Animal
+  local other.56: Animal
+  local pack.57: [2 x Dog]
+  local k.58: Kennel
+  local bits.59: i32
+  local i.60: i32
+  local .slice.69: Dog
+  (copy, %t8:u1, 0:u1, _)
+  (copy, %t7:u1, 0:u1, _)
+  (copy, %t6:u1, 0:u1, _)
+  (copy, %t5:u1, 0:u1, _)
+  (copy, %t4:u1, 0:u1, _)
+  (copy, %t3:u1, 0:u1, _)
+  (copy, %t2:u1, 0:u1, _)
+  (copy, %t1:u1, 0:u1, _)
+  (load, %t9:ptr<ptr<i8>>, &argv.44:ptr<ptr<ptr<i8>>>, _)
+  (cast, %t10:i64, 1:i32, _)
+  (mul, %t11:i64, %t10:i64, 8:i64)
+  (offset, %t12:ptr<ptr<i8>>, %t9:ptr<ptr<i8>>, %t11:i64)
+  (load, %t13:ptr<i8>, %t12:ptr<ptr<i8>>, _)
+  (param, _, %t13:ptr<i8>, _)
+  (call, %t14:i32, @atoi.11, _)
+  (store, _, &n.45:ptr<i32>, %t14:i32)
+  (param, _, &rex.46:ptr<Dog>, _)
+  (call, _, @Dog.default_ctor.62, _)
+  (copy, %t1:u1, 1:u1, _)
+  (param, _, &fido.47:ptr<Dog>, _)
+  (call, _, @Dog.default_ctor.62, _)
+  (copy, %t2:u1, 1:u1, _)
+  (param, _, &tom.48:ptr<Cat>, _)
+  (call, _, @Cat.default_ctor.63, _)
+  (copy, %t3:u1, 1:u1, _)
+  (param, _, &plain.49:ptr<Animal>, _)
+  (call, _, @Animal.ctor.2.61, _)
+  (copy, %t4:u1, 1:u1, _)
+  (cast, %t15:ptr<Animal>, &rex.46:ptr<Dog>, _)
+  (store, _, &a.50:ptr<ptr<Animal>>, %t15:ptr<Animal>)
+  (cast, %t16:ptr<Animal>, &fido.47:ptr<Dog>, _)
+  (store, _, &b.51:ptr<ptr<Animal>>, %t16:ptr<Animal>)
+  (cast, %t17:ptr<Animal>, &tom.48:ptr<Cat>, _)
+  (store, _, &c.52:ptr<ptr<Animal>>, %t17:ptr<Animal>)
+  (cast, %t18:ptr<Animal>, &tom.48:ptr<Cat>, _)
+  (store, _, &p.53:ptr<ptr<Animal>>, %t18:ptr<Animal>)
+  (load, %t19:i32, &n.45:ptr<i32>, _)
+  (cast, %t20:u1, %t19:i32, _)
+  (if_goto, _, %t20:u1, L3)
+  (goto, _, L4, _)
+L2:
+  (cast, %t23:ptr<Animal>, &fido.47:ptr<Dog>, _)
+  (store, _, &q.54:ptr<ptr<Animal>>, %t23:ptr<Animal>)
+  (load, %t24:Dog, &rex.46:ptr<Dog>, _)
+  (store, _, &.slice.69:ptr<Dog>, %t24:Dog)
+  (cast, %t25:ptr<ptr<void>>, &.vtable.Dog.66:ptr<[5 x ptr<void>]>, _)
+  (cast, %t26:ptr<ptr<ptr<void>>>, &.slice.69:ptr<Dog>, _)
+  (store, _, %t26:ptr<ptr<ptr<void>>>, %t25:ptr<ptr<void>>)
+  (offset, %t27:ptr<Animal>, &.slice.69:ptr<Dog>, 0:i64)
+  (load, %t28:Animal, %t27:ptr<Animal>, _)
+  (store, _, &sliced.55:ptr<Animal>, %t28:Animal)
+  (cast, %t29:ptr<ptr<void>>, &.vtable.Animal.65:ptr<[5 x ptr<void>]>, _)
+  (cast, %t30:ptr<ptr<ptr<void>>>, &sliced.55:ptr<Animal>, _)
+  (store, _, %t30:ptr<ptr<ptr<void>>>, %t29:ptr<ptr<void>>)
+  (copy, %t5:u1, 1:u1, _)
+  (param, _, &other.56:ptr<Animal>, _)
+  (call, _, @Animal.ctor.2.61, _)
+  (copy, %t6:u1, 1:u1, _)
+  (offset, %t31:ptr<Dog>, &pack.57:ptr<[2 x Dog]>, 0:i64)
+  (param, _, %t31:ptr<Dog>, _)
+  (call, _, @Dog.default_ctor.62, _)
+  (offset, %t32:ptr<Dog>, &pack.57:ptr<[2 x Dog]>, 16:i64)
+  (param, _, %t32:ptr<Dog>, _)
+  (call, _, @Dog.default_ctor.62, _)
+  (copy, %t7:u1, 1:u1, _)
+  (param, _, &k.58:ptr<Kennel>, _)
+  (call, _, @Kennel.default_ctor.64, _)
+  (copy, %t8:u1, 1:u1, _)
+  (store, _, &bits.59:ptr<i32>, 0:i32)
+  (if_goto, _, 1:u1, L6)
+  (goto, _, L7, _)
+L3:
+  (cast, %t21:ptr<Animal>, &rex.46:ptr<Dog>, _)
+  (store, _, &p.53:ptr<ptr<Animal>>, %t21:ptr<Animal>)
+  (load, %t22:ptr<Animal>, &p.53:ptr<ptr<Animal>>, _)
+  (goto, _, L2, _)
+L4:
+  (goto, _, L2, _)
+L5:
+  (if_goto, _, 1:u1, L9)
+  (goto, _, L10, _)
+L6:
+  (load, %t33:i32, &bits.59:ptr<i32>, _)
+  (or, %t34:i32, %t33:i32, 1:i32)
+  (store, _, &bits.59:ptr<i32>, %t34:i32)
+  (load, %t35:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L5, _)
+L7:
+  (goto, _, L5, _)
+L8:
+  (load, %t39:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (load, %t40:ptr<Animal>, &b.51:ptr<ptr<Animal>>, _)
+  (cast, %t41:ptr<ptr<ptr<void>>>, %t39:ptr<Animal>, _)
+  (load, %t42:ptr<ptr<void>>, %t41:ptr<ptr<ptr<void>>>, _)
+  (cast, %t43:ptr<ptr<ptr<void>>>, %t40:ptr<Animal>, _)
+  (load, %t44:ptr<ptr<void>>, %t43:ptr<ptr<ptr<void>>>, _)
+  (eq, %t45:u1, %t42:ptr<ptr<void>>, %t44:ptr<ptr<void>>)
+  (if_goto, _, %t45:u1, L12)
+  (goto, _, L13, _)
+L9:
+  (load, %t36:i32, &bits.59:ptr<i32>, _)
+  (or, %t37:i32, %t36:i32, 2:i32)
+  (store, _, &bits.59:ptr<i32>, %t37:i32)
+  (load, %t38:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L8, _)
+L10:
+  (goto, _, L8, _)
+L11:
+  (load, %t49:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (load, %t50:ptr<Animal>, &c.52:ptr<ptr<Animal>>, _)
+  (cast, %t51:ptr<ptr<ptr<void>>>, %t49:ptr<Animal>, _)
+  (load, %t52:ptr<ptr<void>>, %t51:ptr<ptr<ptr<void>>>, _)
+  (cast, %t53:ptr<ptr<ptr<void>>>, %t50:ptr<Animal>, _)
+  (load, %t54:ptr<ptr<void>>, %t53:ptr<ptr<ptr<void>>>, _)
+  (ne, %t55:u1, %t52:ptr<ptr<void>>, %t54:ptr<ptr<void>>)
+  (if_goto, _, %t55:u1, L15)
+  (goto, _, L16, _)
+L12:
+  (load, %t46:i32, &bits.59:ptr<i32>, _)
+  (or, %t47:i32, %t46:i32, 4:i32)
+  (store, _, &bits.59:ptr<i32>, %t47:i32)
+  (load, %t48:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L11, _)
+L13:
+  (goto, _, L11, _)
+L14:
+  (load, %t59:ptr<Animal>, &p.53:ptr<ptr<Animal>>, _)
+  (cast, %t60:ptr<ptr<ptr<void>>>, %t59:ptr<Animal>, _)
+  (load, %t61:ptr<ptr<void>>, %t60:ptr<ptr<ptr<void>>>, _)
+  (cast, %t62:ptr<ptr<void>>, &.vtable.Dog.66:ptr<[5 x ptr<void>]>, _)
+  (eq, %t63:u1, %t61:ptr<ptr<void>>, %t62:ptr<ptr<void>>)
+  (if_goto, _, %t63:u1, L18)
+  (goto, _, L19, _)
+L15:
+  (load, %t56:i32, &bits.59:ptr<i32>, _)
+  (or, %t57:i32, %t56:i32, 8:i32)
+  (store, _, &bits.59:ptr<i32>, %t57:i32)
+  (load, %t58:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L14, _)
+L16:
+  (goto, _, L14, _)
+L17:
+  (if_goto, _, 1:u1, L21)
+  (goto, _, L22, _)
+L18:
+  (load, %t64:i32, &bits.59:ptr<i32>, _)
+  (or, %t65:i32, %t64:i32, 16:i32)
+  (store, _, &bits.59:ptr<i32>, %t65:i32)
+  (load, %t66:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L17, _)
+L19:
+  (goto, _, L17, _)
+L20:
+  (if_goto, _, 1:u1, L27)
+  (goto, _, L28, _)
+L21:
+  (copy, %t67:u1, 1:u1, _)
+  (goto, _, L23, _)
+L22:
+  (copy, %t67:u1, 0:u1, _)
+  (goto, _, L23, _)
+L23:
+  (if_goto, _, %t67:u1, L24)
+  (goto, _, L25, _)
+L24:
+  (load, %t68:i32, &bits.59:ptr<i32>, _)
+  (or, %t69:i32, %t68:i32, 32:i32)
+  (store, _, &bits.59:ptr<i32>, %t69:i32)
+  (load, %t70:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L20, _)
+L25:
+  (goto, _, L20, _)
+L26:
+  (load, %t85:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (cast, %t86:ptr<ptr<ptr<void>>>, %t85:ptr<Animal>, _)
+  (load, %t87:ptr<ptr<void>>, %t86:ptr<ptr<ptr<void>>>, _)
+  (offset, %t88:ptr<ptr<void>>, %t87:ptr<ptr<void>>, 24:i64)
+  (load, %t89:ptr<void>, %t88:ptr<ptr<void>>, _)
+  (cast, %t90:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>, %t89:ptr<void>, _)
+  (load, %t91:ptr<Animal>, &b.51:ptr<ptr<Animal>>, _)
+  (param, _, %t85:ptr<Animal>, _)
+  (param, _, %t91:ptr<Animal>, _)
+  (call, %t92:u1, %t90, _)
+  (if_goto, _, %t92:u1, L36)
+  (goto, _, L37, _)
+L27:
+  (cast, %t72:ptr<Dog>, &pack.57:ptr<[2 x Dog]>, _)
+  (cast, %t73:i64, 0:i32, _)
+  (mul, %t74:i64, %t73:i64, 16:i64)
+  (offset, %t75:ptr<Dog>, %t72:ptr<Dog>, %t74:i64)
+  (cast, %t76:ptr<Dog>, &pack.57:ptr<[2 x Dog]>, _)
+  (cast, %t77:i64, 1:i32, _)
+  (mul, %t78:i64, %t77:i64, 16:i64)
+  (offset, %t79:ptr<Dog>, %t76:ptr<Dog>, %t78:i64)
+  (copy, %t71:u1, 1:u1, _)
+  (goto, _, L29, _)
+L28:
+  (copy, %t71:u1, 0:u1, _)
+  (goto, _, L29, _)
+L29:
+  (if_goto, _, %t71:u1, L30)
+  (goto, _, L31, _)
+L30:
+  (offset, %t81:ptr<Dog>, &k.58:ptr<Kennel>, 8:i64)
+  (copy, %t80:u1, 1:u1, _)
+  (goto, _, L32, _)
+L31:
+  (copy, %t80:u1, 0:u1, _)
+  (goto, _, L32, _)
+L32:
+  (if_goto, _, %t80:u1, L33)
+  (goto, _, L34, _)
+L33:
+  (load, %t82:i32, &bits.59:ptr<i32>, _)
+  (or, %t83:i32, %t82:i32, 64:i32)
+  (store, _, &bits.59:ptr<i32>, %t83:i32)
+  (load, %t84:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L26, _)
+L34:
+  (goto, _, L26, _)
+L35:
+  (load, %t106:ptr<Animal>, &p.53:ptr<ptr<Animal>>, _)
+  (load, %t107:ptr<Animal>, &q.54:ptr<ptr<Animal>>, _)
+  (cast, %t108:ptr<ptr<ptr<void>>>, %t106:ptr<Animal>, _)
+  (load, %t109:ptr<ptr<void>>, %t108:ptr<ptr<ptr<void>>>, _)
+  (cast, %t110:ptr<ptr<ptr<void>>>, %t107:ptr<Animal>, _)
+  (load, %t111:ptr<ptr<void>>, %t110:ptr<ptr<ptr<void>>>, _)
+  (eq, %t112:u1, %t109:ptr<ptr<void>>, %t111:ptr<ptr<void>>)
+  (cast, %t113:i32, %t112:u1, _)
+  (load, %t114:i32, &n.45:ptr<i32>, _)
+  (ne, %t115:u1, %t114:i32, 0:i32)
+  (cast, %t116:i32, %t115:u1, _)
+  (eq, %t117:u1, %t113:i32, %t116:i32)
+  (if_goto, _, %t117:u1, L42)
+  (goto, _, L43, _)
+L36:
+  (load, %t94:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (cast, %t95:ptr<ptr<ptr<void>>>, %t94:ptr<Animal>, _)
+  (load, %t96:ptr<ptr<void>>, %t95:ptr<ptr<ptr<void>>>, _)
+  (offset, %t97:ptr<ptr<void>>, %t96:ptr<ptr<void>>, 24:i64)
+  (load, %t98:ptr<void>, %t97:ptr<ptr<void>>, _)
+  (cast, %t99:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>, %t98:ptr<void>, _)
+  (load, %t100:ptr<Animal>, &c.52:ptr<ptr<Animal>>, _)
+  (param, _, %t94:ptr<Animal>, _)
+  (param, _, %t100:ptr<Animal>, _)
+  (call, %t101:u1, %t99, _)
+  (not, %t102:u1, %t101:u1, _)
+  (copy, %t93:u1, %t102:u1, _)
+  (goto, _, L38, _)
+L37:
+  (copy, %t93:u1, 0:u1, _)
+  (goto, _, L38, _)
+L38:
+  (if_goto, _, %t93:u1, L39)
+  (goto, _, L40, _)
+L39:
+  (load, %t103:i32, &bits.59:ptr<i32>, _)
+  (or, %t104:i32, %t103:i32, 128:i32)
+  (store, _, &bits.59:ptr<i32>, %t104:i32)
+  (load, %t105:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L35, _)
+L40:
+  (goto, _, L35, _)
+L41:
+  (load, %t121:ptr<Animal>, &p.53:ptr<ptr<Animal>>, _)
+  (load, %t122:ptr<Animal>, &q.54:ptr<ptr<Animal>>, _)
+  (cast, %t123:ptr<ptr<ptr<void>>>, %t121:ptr<Animal>, _)
+  (load, %t124:ptr<ptr<void>>, %t123:ptr<ptr<ptr<void>>>, _)
+  (cast, %t125:ptr<ptr<ptr<void>>>, %t122:ptr<Animal>, _)
+  (load, %t126:ptr<ptr<void>>, %t125:ptr<ptr<ptr<void>>>, _)
+  (eq, %t127:u1, %t124:ptr<ptr<void>>, %t126:ptr<ptr<void>>)
+  (if_goto, _, %t127:u1, L45)
+  (goto, _, L46, _)
+L42:
+  (load, %t118:i32, &bits.59:ptr<i32>, _)
+  (or, %t119:i32, %t118:i32, 256:i32)
+  (store, _, &bits.59:ptr<i32>, %t119:i32)
+  (load, %t120:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L41, _)
+L43:
+  (goto, _, L41, _)
+L44:
+  (load, %t137:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (cast, %t138:ptr<ptr<ptr<void>>>, %t137:ptr<Animal>, _)
+  (load, %t139:ptr<ptr<void>>, %t138:ptr<ptr<ptr<void>>>, _)
+  (offset, %t140:ptr<ptr<void>>, %t139:ptr<ptr<void>>, 32:i64)
+  (load, %t141:ptr<void>, %t140:ptr<ptr<void>>, _)
+  (cast, %t142:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>, %t141:ptr<void>, _)
+  (load, %t143:ptr<Animal>, &q.54:ptr<ptr<Animal>>, _)
+  (param, _, %t137:ptr<Animal>, _)
+  (param, _, %t143:ptr<Animal>, _)
+  (call, %t144:u1, %t142, _)
+  (if_goto, _, %t144:u1, L51)
+  (goto, _, L52, _)
+L45:
+  (load, %t129:ptr<Animal>, &q.54:ptr<ptr<Animal>>, _)
+  (cast, %t130:ptr<ptr<ptr<void>>>, %t129:ptr<Animal>, _)
+  (load, %t131:ptr<ptr<void>>, %t130:ptr<ptr<ptr<void>>>, _)
+  (cast, %t132:ptr<ptr<void>>, &.vtable.Dog.66:ptr<[5 x ptr<void>]>, _)
+  (eq, %t133:u1, %t131:ptr<ptr<void>>, %t132:ptr<ptr<void>>)
+  (copy, %t128:u1, %t133:u1, _)
+  (goto, _, L47, _)
+L46:
+  (copy, %t128:u1, 0:u1, _)
+  (goto, _, L47, _)
+L47:
+  (if_goto, _, %t128:u1, L48)
+  (goto, _, L49, _)
+L48:
+  (load, %t134:i32, &bits.59:ptr<i32>, _)
+  (or, %t135:i32, %t134:i32, 512:i32)
+  (store, _, &bits.59:ptr<i32>, %t135:i32)
+  (load, %t136:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L44, _)
+L49:
+  (goto, _, L44, _)
+L50:
+  (cast, %t157:i32, 1:u1, _)
+  (cast, %t158:i32, 1:u1, _)
+  (eq, %t159:u1, %t157:i32, %t158:i32)
+  (if_goto, _, %t159:u1, L57)
+  (goto, _, L58, _)
+L51:
+  (load, %t146:ptr<Animal>, &b.51:ptr<ptr<Animal>>, _)
+  (cast, %t147:ptr<ptr<ptr<void>>>, %t146:ptr<Animal>, _)
+  (load, %t148:ptr<ptr<void>>, %t147:ptr<ptr<ptr<void>>>, _)
+  (offset, %t149:ptr<ptr<void>>, %t148:ptr<ptr<void>>, 32:i64)
+  (load, %t150:ptr<void>, %t149:ptr<ptr<void>>, _)
+  (cast, %t151:ptr<fn(ptr<Animal>, ptr<Animal>)->u1>, %t150:ptr<void>, _)
+  (cast, %t152:ptr<Animal>, &rex.46:ptr<Dog>, _)
+  (param, _, %t146:ptr<Animal>, _)
+  (param, _, %t152:ptr<Animal>, _)
+  (call, %t153:u1, %t151, _)
+  (copy, %t145:u1, %t153:u1, _)
+  (goto, _, L53, _)
+L52:
+  (copy, %t145:u1, 0:u1, _)
+  (goto, _, L53, _)
+L53:
+  (if_goto, _, %t145:u1, L54)
+  (goto, _, L55, _)
+L54:
+  (load, %t154:i32, &bits.59:ptr<i32>, _)
+  (or, %t155:i32, %t154:i32, 1024:i32)
+  (store, _, &bits.59:ptr<i32>, %t155:i32)
+  (load, %t156:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L50, _)
+L55:
+  (goto, _, L50, _)
+L56:
+  (store, _, &i.60:ptr<i32>, 0:i32)
+  (cast, %t181:ptr<Dog>, &pack.57:ptr<[2 x Dog]>, _)
+  (load, %t182:i32, &i.60:ptr<i32>, _)
+  (add, %t183:i32, %t182:i32, 1:i32)
+  (store, _, &i.60:ptr<i32>, %t183:i32)
+  (cast, %t184:i64, %t182:i32, _)
+  (mul, %t185:i64, %t184:i64, 16:i64)
+  (offset, %t186:ptr<Dog>, %t181:ptr<Dog>, %t185:i64)
+  (if_goto, _, 1:u1, L63)
+  (goto, _, L64, _)
+L57:
+  (load, %t161:ptr<Animal>, &a.50:ptr<ptr<Animal>>, _)
+  (load, %t162:ptr<Animal>, &b.51:ptr<ptr<Animal>>, _)
+  (cast, %t163:ptr<ptr<ptr<void>>>, %t161:ptr<Animal>, _)
+  (load, %t164:ptr<ptr<void>>, %t163:ptr<ptr<ptr<void>>>, _)
+  (cast, %t165:ptr<ptr<ptr<void>>>, %t162:ptr<Animal>, _)
+  (load, %t166:ptr<ptr<void>>, %t165:ptr<ptr<ptr<void>>>, _)
+  (eq, %t167:u1, %t164:ptr<ptr<void>>, %t166:ptr<ptr<void>>)
+  (cast, %t168:i32, %t167:u1, _)
+  (load, %t169:ptr<Animal>, &c.52:ptr<ptr<Animal>>, _)
+  (load, %t170:ptr<Animal>, &b.51:ptr<ptr<Animal>>, _)
+  (cast, %t171:ptr<ptr<ptr<void>>>, %t169:ptr<Animal>, _)
+  (load, %t172:ptr<ptr<void>>, %t171:ptr<ptr<ptr<void>>>, _)
+  (cast, %t173:ptr<ptr<ptr<void>>>, %t170:ptr<Animal>, _)
+  (load, %t174:ptr<ptr<void>>, %t173:ptr<ptr<ptr<void>>>, _)
+  (eq, %t175:u1, %t172:ptr<ptr<void>>, %t174:ptr<ptr<void>>)
+  (cast, %t176:i32, %t175:u1, _)
+  (ne, %t177:u1, %t168:i32, %t176:i32)
+  (copy, %t160:u1, %t177:u1, _)
+  (goto, _, L59, _)
+L58:
+  (copy, %t160:u1, 0:u1, _)
+  (goto, _, L59, _)
+L59:
+  (if_goto, _, %t160:u1, L60)
+  (goto, _, L61, _)
+L60:
+  (load, %t178:i32, &bits.59:ptr<i32>, _)
+  (or, %t179:i32, %t178:i32, 2048:i32)
+  (store, _, &bits.59:ptr<i32>, %t179:i32)
+  (load, %t180:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L56, _)
+L61:
+  (goto, _, L56, _)
+L62:
+  (load, %t193:i32, &bits.59:ptr<i32>, _)
+  (copy, %t8:u1, 0:u1, _)
+  (copy, %t7:u1, 0:u1, _)
+  (copy, %t6:u1, 0:u1, _)
+  (copy, %t5:u1, 0:u1, _)
+  (copy, %t4:u1, 0:u1, _)
+  (copy, %t3:u1, 0:u1, _)
+  (copy, %t2:u1, 0:u1, _)
+  (copy, %t1:u1, 0:u1, _)
+  (ret, _, %t193:i32, _)
+L63:
+  (load, %t188:i32, &i.60:ptr<i32>, _)
+  (eq, %t189:u1, %t188:i32, 1:i32)
+  (copy, %t187:u1, %t189:u1, _)
+  (goto, _, L65, _)
+L64:
+  (copy, %t187:u1, 0:u1, _)
+  (goto, _, L65, _)
+L65:
+  (if_goto, _, %t187:u1, L66)
+  (goto, _, L67, _)
+L66:
+  (load, %t190:i32, &bits.59:ptr<i32>, _)
+  (or, %t191:i32, %t190:i32, 4096:i32)
+  (store, _, &bits.59:ptr<i32>, %t191:i32)
+  (load, %t192:i32, &bits.59:ptr<i32>, _)
+  (goto, _, L62, _)
+L67:
+  (goto, _, L62, _)
+}
+function @Animal.ctor.2.61: fn(ptr<Animal>)->void internal {
+  parameter this.35: ptr<Animal>
+  (load, %t1:ptr<Animal>, &this.35:ptr<ptr<Animal>>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Animal.65:ptr<[5 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Animal>, _)
+  (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
+  (offset, %t4:ptr<i32>, %t1:ptr<Animal>, 8:i64)
+  (load, %t5:ptr<Animal>, &this.35:ptr<ptr<Animal>>, _)
+  (offset, %t6:ptr<i32>, %t5:ptr<Animal>, 8:i64)
+  (store, _, %t6:ptr<i32>, 4:i32)
+  (load, %t7:i32, %t6:ptr<i32>, _)
+  (ret, _, _, _)
+}
+function @Dog.default_ctor.62: fn(ptr<Dog>)->void internal {
+  parameter this.70: ptr<Dog>
+  (load, %t1:ptr<Dog>, &this.70:ptr<ptr<Dog>>, _)
+  (offset, %t2:ptr<Animal>, %t1:ptr<Dog>, 0:i64)
+  (param, _, %t2:ptr<Animal>, _)
+  (call, _, @Animal.ctor.2.61, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Dog.66:ptr<[5 x ptr<void>]>, _)
+  (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Dog>, _)
+  (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
+  (ret, _, _, _)
+}
+function @Cat.default_ctor.63: fn(ptr<Cat>)->void internal {
+  parameter this.71: ptr<Cat>
+  (load, %t1:ptr<Cat>, &this.71:ptr<ptr<Cat>>, _)
+  (offset, %t2:ptr<Animal>, %t1:ptr<Cat>, 0:i64)
+  (param, _, %t2:ptr<Animal>, _)
+  (call, _, @Animal.ctor.2.61, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Cat.67:ptr<[5 x ptr<void>]>, _)
+  (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Cat>, _)
+  (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
+  (ret, _, _, _)
+}
+function @Kennel.default_ctor.64: fn(ptr<Kennel>)->void internal {
+  parameter this.72: ptr<Kennel>
+  (load, %t1:ptr<Kennel>, &this.72:ptr<ptr<Kennel>>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Kennel.68:ptr<[2 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Kennel>, _)
+  (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
+  (offset, %t4:ptr<Dog>, %t1:ptr<Kennel>, 8:i64)
+  (param, _, %t4:ptr<Dog>, _)
+  (call, _, @Dog.default_ctor.62, _)
+  (ret, _, _, _)
+}

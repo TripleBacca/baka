@@ -307,6 +307,47 @@ namespace baka {
             }
             return makeValue(TypeSystem.builtin(Builtin::Bool));
         }
+        // Checks `a ==== b` / `a !=== b`: whether two objects have the same dynamic class (equal vptrs).
+        // Each operand is a class lvalue (named object, reference, `*p`, member, element, `*this`) or a
+        // pointer to a class (`p ==== q` compares `*p` and `*q`; `this` works). A class rvalue is rejected:
+        // its copy would carry the static type's vptr. Arrays are rejected rather than decayed, and a null
+        // pointer literal is caught first; a null pointer at run time is undefined, like `*p`.
+        ExprResult ExpressionChecker::checkStrictEquality(const types::BinaryExpressionNode* node) {
+            const std::string spelling = node->getBinaryOp() == types::OP_STRICT_EQ ? "====" : "!===";
+            auto left = check(node->getLeft(), false);
+            auto right = check(node->getRight(), false);
+            if (left.error || right.error) {
+                return makeError();
+            }
+            for (const auto* operand : {&left, &right}) {
+                if (isNullPointerConstant(*operand)) {
+                    SymbolTable.diagnose("operator", "cannot compare the class of a null pointer", node);
+                    return makeError();
+                }
+                const auto type = TypeSystem.unConst(operand->type);
+                const auto& info = TypeSystem.get(type);
+                if (info.kind == TypeKind::Array) {
+                    SymbolTable.diagnose("operator",
+                                         "operands of '" + spelling + "' cannot be arrays; compare an element", node);
+                    return makeError();
+                }
+                if (info.kind == TypeKind::Class) {
+                    if (operand->category != ValueCategory::LValue) {
+                        SymbolTable.diagnose("operator", "operands of '" + spelling + "' must be lvalues", node);
+                        return makeError();
+                    }
+                    continue;
+                }
+                if (info.kind == TypeKind::Pointer &&
+                    TypeSystem.get(TypeSystem.unConst(info.element)).kind == TypeKind::Class) {
+                    continue;
+                }
+                SymbolTable.diagnose("operator",
+                                     "operands of '" + spelling + "' must be class objects or pointers to them", node);
+                return makeError();
+            }
+            return makeValue(TypeSystem.builtin(Builtin::Bool));
+        }
 
         // Checks a non-assignment binary operator and folds constants. && and || evaluate the right operand
         // even when the left decides the result, but still short-circuit the constant value. Handles
@@ -328,6 +369,9 @@ namespace baka {
             if (op == types::OP_DOT || op == types::OP_ARROW) {
                 SymbolTable.diagnose("member", "member access requires an identifier", node);
                 return makeError();
+            }
+            if (op == types::OP_STRICT_EQ || op == types::OP_STRICT_NEQ) {
+                return checkStrictEquality(node);
             }
             auto left = check(node->getLeft(), true);
             if (left.error) {

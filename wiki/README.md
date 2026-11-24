@@ -1,8 +1,8 @@
 # Compiler wiki
 
 An overview of how baka turns a checked program into a running MIPS64 executable.
-Pages 15–19 document the C++ features added on top (access control, references,
-lambdas, virtual functions, record equality). These pages cover breadth, not line-by-line detail; read them in order for the full
+Pages 15–20 document the C++ features added on top (access control, references,
+lambdas, virtual functions, record equality, dynamic class comparison). These pages cover breadth, not line-by-line detail; read them in order for the full
 picture, or jump to a topic.
 
 | # | Page | What it covers |
@@ -26,6 +26,7 @@ picture, or jump to a topic.
 | 17 | [Captureless lambdas](17-captureless-lambdas.md) | Lambda syntax, deduced results, hoisting to internal functions, design and implementation |
 | 18 | [Virtual functions](18-virtual-functions.md) | Every class method is virtual, pure methods and abstract classes, vtables, vptr handling and dispatch |
 | 19 | [Record equality](19-record-equality.md) | `==`/`!=` on structs and classes: field-by-field comparison, the vptr check for classes, generated `.eq` functions |
+| 20 | [Dynamic class comparison](20-dynamic-class-comparison.md) | `====`/`!===`: same dynamic class via vptrs, pointer operands, precedence, compile-time folding, longest-match lexing |
 
 ## One-paragraph summary
 

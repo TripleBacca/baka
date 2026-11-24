@@ -6,6 +6,9 @@
 
 
 namespace baka::lexer {
+    // Longest spelling in lexeme_to_operator (`<<=`, `>>=`, `====`, `!===`).
+    inline constexpr size_t MaxOperatorLength = 4;
+
     inline const std::unordered_map<std::string_view, types::TokenType> lexeme_to_operator = {
         {"~", types::TokenType::OP_TILDE},
         {"-", types::TokenType::OP_UNARY_MINUS},
@@ -23,6 +26,8 @@ namespace baka::lexer {
         {"||", types::TokenType::OP_LOGICAL_OR},
         {"==", types::TokenType::OP_EQ},
         {"!=", types::TokenType::OP_NEQ},
+        {"====", types::TokenType::OP_STRICT_EQ},
+        {"!===", types::TokenType::OP_STRICT_NEQ},
         {">", types::TokenType::OP_GT},
         {"<", types::TokenType::OP_LT},
         {">=", types::TokenType::OP_GE},

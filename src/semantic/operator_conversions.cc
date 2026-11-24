@@ -60,6 +60,16 @@ namespace baka {
                 binary->rewriteExpressions([&](auto* child) { return materializeImpl(child, false); });
                 return expression;
             }
+            if (op == types::OP_STRICT_EQ || op == types::OP_STRICT_NEQ) {
+                // Class operands stay lvalues so ==== reads each object's vptr in place;
+                // pointer operands are loaded as values.
+                binary->rewriteExpressions([&](auto* child) {
+                    TypeId type{child->semanticInfo().Type};
+                    bool pointer = TypeSystem.get(TypeSystem.unConst(type)).kind == TypeKind::Pointer;
+                    return materializeImpl(child, pointer);
+                });
+                return expression;
+            }
             if (Assignment(op)) {
                 auto* location = materializeImpl(left, false);
                 if (op == types::OP_ASSIGN) {

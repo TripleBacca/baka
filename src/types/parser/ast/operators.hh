@@ -40,6 +40,9 @@ namespace baka {
             OP_GT,
             OP_LE,
             OP_GE,
+            // Outside the OP_EQ..OP_GE range: ==== and !=== are not arithmetic/pointer comparisons.
+            OP_STRICT_EQ,
+            OP_STRICT_NEQ,
             OP_ASSIGN,
             OP_ADD_ASSIGN,
             OP_SUB_ASSIGN,
@@ -94,6 +97,8 @@ namespace baka {
                 case OP_GT: return "OP_GT";
                 case OP_LE: return "OP_LE";
                 case OP_GE: return "OP_GE";
+                case OP_STRICT_EQ: return "OP_STRICT_EQ";
+                case OP_STRICT_NEQ: return "OP_STRICT_NEQ";
                 case OP_ASSIGN: return "OP_ASSIGN";
                 case OP_ADD_ASSIGN: return "OP_ADD_ASSIGN";
                 case OP_SUB_ASSIGN: return "OP_SUB_ASSIGN";
@@ -142,6 +147,8 @@ namespace baka {
                 case TokenType::OP_RSHIFT:
                 case TokenType::OP_EQ:
                 case TokenType::OP_NEQ:
+                case TokenType::OP_STRICT_EQ:
+                case TokenType::OP_STRICT_NEQ:
                 case TokenType::OP_LT:
                 case TokenType::OP_GT:
                 case TokenType::OP_LE:
@@ -205,6 +212,8 @@ namespace baka {
             {TokenType::OP_LOGICAL_OR, OP_LOGICAL_OR},
             {TokenType::OP_EQ, OP_EQ},
             {TokenType::OP_NEQ, OP_NEQ},
+            {TokenType::OP_STRICT_EQ, OP_STRICT_EQ},
+            {TokenType::OP_STRICT_NEQ, OP_STRICT_NEQ},
             {TokenType::OP_LT, OP_LT},
             {TokenType::OP_GT, OP_GT},
             {TokenType::OP_LE, OP_LE},

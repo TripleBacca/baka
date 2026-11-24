@@ -6,19 +6,23 @@ namespace baka {
 namespace types {
 
     inline static std::unordered_map<TokenType, int> TokenTypeToPrecedence = {
-        {TokenType::OP_DOT, 15},
-        {TokenType::OP_ARROW, 15},
-        {TokenType::OP_MUL, 12},
-        {TokenType::OP_DIV, 12},
-        {TokenType::OP_MOD, 12},
-        {TokenType::OP_PLUS, 11},
-        {TokenType::OP_UNARY_MINUS, 11}, // binary subtraction
-        {TokenType::OP_LSHIFT, 10},
-        {TokenType::OP_RSHIFT, 10},
-        {TokenType::OP_LT, 9},
-        {TokenType::OP_GT, 9},
-        {TokenType::OP_LE, 9},
-        {TokenType::OP_GE, 9},
+        {TokenType::OP_DOT, 16},
+        {TokenType::OP_ARROW, 16},
+        {TokenType::OP_MUL, 13},
+        {TokenType::OP_DIV, 13},
+        {TokenType::OP_MOD, 13},
+        {TokenType::OP_PLUS, 12},
+        {TokenType::OP_UNARY_MINUS, 12}, // binary subtraction
+        {TokenType::OP_LSHIFT, 11},
+        {TokenType::OP_RSHIFT, 11},
+        {TokenType::OP_LT, 10},
+        {TokenType::OP_GT, 10},
+        {TokenType::OP_LE, 10},
+        {TokenType::OP_GE, 10},
+        // Dynamic-class comparison binds tighter than ==/!=: its operands are never bool, so
+        // `a == b ==== c` means `a == (b ==== c)`.
+        {TokenType::OP_STRICT_EQ, 9},
+        {TokenType::OP_STRICT_NEQ, 9},
         {TokenType::OP_EQ, 8},
         {TokenType::OP_NEQ, 8},
         {TokenType::OP_BIT_AND, 7},
