@@ -12,7 +12,8 @@ make mips-image                              # one-time: build the Docker toolch
 ./build/baka --codegen --no-optimize file.cpp
 
 tools/mips/run file.s 5                      # assemble, link and run with input 5
-make run-mips file=file.cpp n=5              # compile and run in one step
+make run file=file.cpp args='5'             # compile and run in one step
+make run-mips-binary file=prog.mips args='5 "two words"'
 ```
 
 `tools/mips/run` copies the `.s` into a temporary directory, runs the cross-compiler and

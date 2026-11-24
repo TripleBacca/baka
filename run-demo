@@ -1,0 +1,27 @@
+#!/bin/sh
+if [ -z "${BAKA_BINARY:-}" ] || [ ! -f "$BAKA_BINARY" ]; then
+    printf '%s\n' 'baka shim: set BAKA_BINARY to an existing MIPS64 executable' >&2
+    exit 2
+fi
+
+binary=$(realpath -- "$BAKA_BINARY") || exit 2
+# Check the ELF identification, file type and machine before launching QEMU.
+if ! od -An -v -N 64 -t x1 -- "$binary" | awk '
+    { for (i = 1; i <= NF; i++) byte[++size] = $i }
+    END {
+        exit !(size == 64 && byte[1] byte[2] byte[3] byte[4] == "7f454c46" &&
+               byte[5] byte[6] byte[7] == "020101" &&
+               (byte[17] == "02" || byte[17] == "03") && byte[18] == "00" &&
+               byte[19] byte[20] == "0800")
+    }
+'; then
+    printf 'baka runner: %s: expected a little-endian MIPS64 ELF executable\n' "$BAKA_BINARY" >&2
+    exit 1
+fi
+
+# Docker parses --mount as CSV. Quote the path fields to preserve commas.
+mount_path=$(printf '%s' "$binary" | sed 's/"/""/g') || exit 2
+# QEMU re-raises fatal guest signals, so run it as a child of Docker's init.
+exec docker run --rm --init -i --ulimit core=0:0 --pull=never \
+    --mount "type=bind,\"source=$mount_path\",\"target=$mount_path\",readonly" \
+    baka-mips64el qemu-mips64el -0 "$BAKA_BINARY" "$binary" "$@"

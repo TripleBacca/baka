@@ -30,5 +30,5 @@ jobs:
       - name: Run Custom Tests
         run: ./custom_test_hook
 
-      - name: Run Peephole Unit Tests
-        run: ctest --test-dir build -R '^peephole$' --output-on-failure --no-tests=error
+      - name: Run Peephole, MIPS Driver, and Runtime Tests
+        run: ctest --test-dir build -R '^(peephole|mips_driver|mips_runtime)$' --output-on-failure --no-tests=error

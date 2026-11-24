@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ "$#" -eq 0 ]; then
+    printf '%s\n' 'usage: tools/mips/run-binary MIPS_EXECUTABLE [args...]' >&2
+    exit 2
+fi
+
+BAKA_BINARY=$1
+export BAKA_BINARY
+shift
+exec sh "$(dirname -- "$0")/shim" "$@"

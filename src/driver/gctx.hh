@@ -18,14 +18,13 @@ namespace baka {
 
         struct Gctx_t {
             bool DebugMode = true;
-            // Unset: --ir prints raw TAC and --codegen optimizes. --optimize and
-            // --no-optimize force either stage.
+            // Unset: --ir prints raw TAC, and code generation enables optimization.
             std::optional<bool> ShouldOptimize;
             bool VerboseMode = true;
             BuildType BuildType_v;
             std::string SourceFilePath;
 
-            Stage TillStage = Stage::SEMANTIC;
+            Stage TillStage = Stage::LINK;
 
             // external stuff:
             std::shared_ptr<baka::base::MappedFile> MappedFilePtr;

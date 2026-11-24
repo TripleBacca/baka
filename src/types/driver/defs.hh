@@ -11,6 +11,8 @@ namespace baka {
             SEMANTIC = 2,
             IR = 3,
             CODEGEN = 4,
+            ASSEMBLE = 5,
+            LINK = 6,
         };
 
         constexpr std::string_view to_string_view(Stage stage) {
@@ -25,6 +27,10 @@ namespace baka {
                 return "IR";
             case Stage::CODEGEN:
                 return "CODEGEN";
+            case Stage::ASSEMBLE:
+                return "ASSEMBLE";
+            case Stage::LINK:
+                return "LINK";
             }
 
             assert(false && "add more cases");
