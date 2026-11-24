@@ -1,45 +1,65 @@
 #!/usr/bin/env bash
-# Adapter that lets Compiler Explorer drive baka, a parse-only compiler.
-#
-# CE invokes compilers with GCC-style flags (-S -o ...) and expects assembly on
-# the -o path plus a --version response for its version probe. baka emits the
-# lexer dump, AST and diagnostics to stdout instead, so this shim:
-#   1. answers the --version probe,
-#   2. swallows all GCC-style flags,
-#   3. runs baka on the real source file,
-#   4. writes baka's output to the -o file so the Assembly pane shows the tree.
-
+# Adapt Compiler Explorer's GCC-style invocation to baka's stage-based CLI.
+# Successful stage output goes to CE's assembly file; failures go to stderr.
 set -euo pipefail
 
 BAKA="${BAKA:-/opt/baka/bin/baka}"
-
 args=("$@")
 input=""
 output=""
+stage=--codegen
+options=()
+
+require_value() {
+    if ((i + 1 >= ${#args[@]})) || [[ -z "${args[$((i + 1))]}" ]]; then
+        echo "baka-ce: ${args[$i]} requires a value" >&2
+        exit 2
+    fi
+}
 
 for ((i = 0; i < ${#args[@]}; i++)); do
     case "${args[$i]}" in
         --version)
-            echo "Baka (parse-only) 0.1"
+            echo "Baka 1.0 (semantic analysis, typed TAC, MIPS64)"
             exit 0
             ;;
         -o)
+            require_value
             i=$((i + 1))
-            if ((i < ${#args[@]})); then
-                output="${args[$i]}"
-            fi
+            output="${args[$i]}"
             ;;
-        -x)
+        -o?*)
+            output="${args[$i]:2}"
+            ;;
+        --lex | --parse | --semantic | --ir | --codegen)
+            stage="${args[$i]}"
+            ;;
+        --optimize | --no-optimize | --verbose)
+            options+=("${args[$i]}")
+            ;;
+        --build_type)
+            require_value
+            options+=("${args[$i]}" "${args[$((i + 1))]}")
             i=$((i + 1))
             ;;
-        -S | -c | -m* | -O* | -f* | -g* | -std=* | -W* | -D* | -U* | -I* | --*)
+        -O0)
+            options+=(--no-optimize)
+            ;;
+        -O | -O[123sgz] | -Ofast)
+            options+=(--optimize)
+            ;;
+        -x | -I | -D | -U | -include | -isystem | -iquote | -imacros | -MF | -MT | -MQ)
+            require_value
+            i=$((i + 1))
             ;;
         -*)
             ;;
         *)
-            if [[ -z "$input" ]]; then
-                input="${args[$i]}"
+            if [[ -n "$input" ]]; then
+                echo "baka-ce: expected one input file" >&2
+                exit 2
             fi
+            input="${args[$i]}"
             ;;
     esac
 done
@@ -48,25 +68,31 @@ if [[ -z "$input" ]]; then
     echo "baka-ce: no input file" >&2
     exit 2
 fi
-
 if [[ ! -f "$input" ]]; then
     echo "baka-ce: input file not found: $input" >&2
     exit 2
 fi
+# The parser only prints its AST in verbose mode.
+if [[ "$stage" == --parse ]]; then
+    options+=(--verbose)
+fi
 
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
-
 set +e
-"$BAKA" --parse --verbose "$input" >"$tmp" 2>&1
+"$BAKA" "$stage" "${options[@]}" "$input" >"$tmp" 2>&1
 rc=$?
 set -e
 
-# Strip ANSI colour codes so panes aren't littered with escape sequences.
-sed -r 's/\x1B\[[0-9;]*m//g' "$tmp" || true
-
-if [[ -n "$output" ]]; then
-    cp "$tmp" "$output"
+# Strip colours from both diagnostics and stage output.
+if ((rc != 0)); then
+    sed -E 's/\x1B\[[0-9;]*m//g' "$tmp" >&2
+    if [[ -n "$output" ]]; then
+        : >"$output"
+    fi
+elif [[ -n "$output" ]]; then
+    sed -E 's/\x1B\[[0-9;]*m//g' "$tmp" >"$output"
+else
+    sed -E 's/\x1B\[[0-9;]*m//g' "$tmp"
 fi
-
 exit "$rc"

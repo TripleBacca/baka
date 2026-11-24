@@ -1,5 +1,5 @@
 # Self-contained Compiler Explorer image (built from source) that can drive
-# baka, a parse-only compiler. Adapted from madduci/docker-compiler-explorer.
+# baka's parser, semantic, IR and MIPS64 stages. Adapted from madduci/docker-compiler-explorer.
 #
 # The baka binary itself is NOT baked in: docker-compose bind-mounts
 # ../build/baka so rebuilding the compiler doesn't rebuild this image.
