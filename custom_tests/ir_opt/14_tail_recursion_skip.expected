@@ -3,7 +3,7 @@ FILE = opaque
 Guard = record(vptr, i32) size 16 align 8
 global saved.21: ptr<i32> = zero
 global trace.24: i32 = zero
-internal .vtable.Guard.51: [1 x ptr<void>] readonly = zero {+0 = @Guard.dtor.49:ptr<fn(ptr<Guard>)->void>}
+internal .vtable.Guard.51: [2 x ptr<void>] readonly = zero {+0 = @Guard.dtor.49:ptr<fn(ptr<Guard>)->void>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -76,7 +76,7 @@ L2:
   (goto, _, L8, _)
 L8:
   (load, %t10:ptr<Guard>, &this.53:ptr<ptr<Guard>>, _)
-  (cast, %t11:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[1 x ptr<void>]>, _)
+  (cast, %t11:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[2 x ptr<void>]>, _)
   (cast, %t12:ptr<ptr<ptr<void>>>, %t10:ptr<Guard>, _)
   (store, _, %t12:ptr<ptr<ptr<void>>>, %t11:ptr<ptr<void>>)
   (goto, _, L7, _)
@@ -98,7 +98,7 @@ L5:
   (goto, _, L10, _)
 L10:
   (load, %t14:ptr<Guard>, &this.54:ptr<ptr<Guard>>, _)
-  (cast, %t15:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[1 x ptr<void>]>, _)
+  (cast, %t15:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[2 x ptr<void>]>, _)
   (cast, %t16:ptr<ptr<ptr<void>>>, %t14:ptr<Guard>, _)
   (store, _, %t16:ptr<ptr<ptr<void>>>, %t15:ptr<ptr<void>>)
   (load, %t17:i32, &trace.24:ptr<i32>, _)
@@ -190,7 +190,7 @@ L2:
 function @Guard.dtor.49: fn(ptr<Guard>)->void internal {
   parameter this.39: ptr<Guard>
   (load, %t1:ptr<Guard>, &this.39:ptr<ptr<Guard>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Guard>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.24:ptr<i32>, _)
@@ -205,7 +205,7 @@ function @Guard.dtor.49: fn(ptr<Guard>)->void internal {
 function @Guard.default_ctor.50: fn(ptr<Guard>)->void internal {
   parameter this.52: ptr<Guard>
   (load, %t1:ptr<Guard>, &this.52:ptr<ptr<Guard>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.51:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Guard>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (ret, _, _, _)

@@ -2,6 +2,10 @@
 void abort();
 int raise(int signal);
 
+// argv[1][0] selects one behaviour: r = exit with argv[2]; l / s = null load / store; u = misaligned
+// load; a = abort; k = raise signal argv[2]; d = divide by argv[2]; f = failed fopen (exit 3);
+// w = print "ready" and wait for one stdin byte; anything else echoes one stdin byte after writing to
+// both streams. Missing input exits 5, and a missing mode exits 2.
 int main(int argc, char** argv) {
     if (argc < 2) return 2;
     char mode = argv[1][0];
