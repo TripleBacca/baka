@@ -2,7 +2,7 @@ IR::TAC:
 FILE = opaque
 A = record(vptr, i32) size 16 align 8
 global trace.19: i64 = zero
-internal .vtable.A.43: [2 x ptr<void>] readonly = zero {+0 = @A.dtor.42:ptr<fn(ptr<A>)->void>} {+8 = @A.get.22:ptr<fn(ptr<A>)->i32>}
+internal .vtable.A.43: [3 x ptr<void>] readonly = zero {+0 = @A.dtor.42:ptr<fn(ptr<A>)->void>} {+16 = @A.get.22:ptr<fn(ptr<A>)->i32>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -23,7 +23,7 @@ function @get.24: fn(A)->i32 {
   parameter parameter.32: A
   (copy, %t1:u1, 0:u1, _)
   (copy, %t1:u1, 1:u1, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, &parameter.32:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, &parameter.32:ptr<A>, 8:i64)
@@ -91,7 +91,7 @@ L3:
   (copy, %t10:u1, 1:u1, _)
   (cast, %t11:ptr<ptr<ptr<void>>>, &.constructed.45:ptr<A>, _)
   (load, %t12:ptr<ptr<void>>, %t11:ptr<ptr<ptr<void>>>, _)
-  (offset, %t13:ptr<ptr<void>>, %t12:ptr<ptr<void>>, 8:i64)
+  (offset, %t13:ptr<ptr<void>>, %t12:ptr<ptr<void>>, 16:i64)
   (load, %t14:ptr<void>, %t13:ptr<ptr<void>>, _)
   (cast, %t15:ptr<fn(ptr<A>)->i32>, %t14:ptr<void>, _)
   (param, _, &.constructed.45:ptr<A>, _)
@@ -117,7 +117,7 @@ L6:
   (copy, %t21:u1, 1:u1, _)
   (cast, %t22:ptr<ptr<ptr<void>>>, &.constructed.46:ptr<A>, _)
   (load, %t23:ptr<ptr<void>>, %t22:ptr<ptr<ptr<void>>>, _)
-  (offset, %t24:ptr<ptr<void>>, %t23:ptr<ptr<void>>, 8:i64)
+  (offset, %t24:ptr<ptr<void>>, %t23:ptr<ptr<void>>, 16:i64)
   (load, %t25:ptr<void>, %t24:ptr<ptr<void>>, _)
   (cast, %t26:ptr<fn(ptr<A>)->i32>, %t25:ptr<void>, _)
   (param, _, &.constructed.46:ptr<A>, _)
@@ -180,7 +180,7 @@ L14:
 L15:
   (cast, %t40:ptr<ptr<ptr<void>>>, %t35:ptr<A>, _)
   (load, %t41:ptr<ptr<void>>, %t40:ptr<ptr<ptr<void>>>, _)
-  (offset, %t42:ptr<ptr<void>>, %t41:ptr<ptr<void>>, 8:i64)
+  (offset, %t42:ptr<ptr<void>>, %t41:ptr<ptr<void>>, 16:i64)
   (load, %t43:ptr<void>, %t42:ptr<ptr<void>>, _)
   (cast, %t44:ptr<fn(ptr<A>)->i32>, %t43:ptr<void>, _)
   (param, _, %t35:ptr<A>, _)
@@ -310,7 +310,7 @@ function @A.ctor.2.41: fn(ptr<A>, i32)->void internal {
   parameter this.28: ptr<A>
   parameter n.29: i32
   (load, %t1:ptr<A>, &this.28:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<A>, 8:i64)
@@ -332,7 +332,7 @@ function @A.ctor.2.41: fn(ptr<A>, i32)->void internal {
 function @A.dtor.42: fn(ptr<A>)->void internal {
   parameter this.30: ptr<A>
   (load, %t1:ptr<A>, &this.30:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.43:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i64, &trace.19:ptr<i64>, _)

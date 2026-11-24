@@ -1,4 +1,5 @@
 #include "expressions.hh"
+#include <functional>
 
 namespace baka {
     namespace semantic {
@@ -248,6 +249,65 @@ namespace baka {
             return result;
         }
 
+        // Record `==` / `!=` compares values field by field (see wiki page 19). Structs compare only with the
+        // same struct type; classes may mix, and lowering decides from their dynamic classes (different or
+        // unrelated classes are simply unequal). Unions are rejected, directly or nested in a field at any
+        // depth, because their active member is unknown. The result is never a constant expression.
+        ExprResult ExpressionChecker::checkRecordEquality(TypeId left, TypeId right, types::ASTBinaryOp op,
+                                                          const types::ASTNode* node) {
+            const std::string spelling = op == types::OP_EQ ? "==" : "!=";
+            std::function<bool(TypeId)> containsUnion = [&](TypeId type) {
+                type = TypeSystem.unConst(type);
+                while (TypeSystem.get(type).kind == TypeKind::Array) {
+                    type = TypeSystem.unConst(TypeSystem.get(type).element);
+                }
+                const auto& info = TypeSystem.get(type);
+                if (info.kind == TypeKind::Union) {
+                    return true;
+                }
+                if (info.kind != TypeKind::Struct && info.kind != TypeKind::Class) {
+                    return false;
+                }
+                if (info.base.value && containsUnion(info.base)) {
+                    return true;
+                }
+                for (const auto& member : info.members) {
+                    if (member.isStatic || member.isType || member.isConstructor || member.isDestructor ||
+                        TypeSystem.get(TypeSystem.unConst(member.type)).kind == TypeKind::Function) {
+                        continue;
+                    }
+                    if (containsUnion(member.type)) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            // A struct carries no runtime type, so it compares only with its own type (an object or a
+            // reference, const ignored). Classes may mix; lowering decides from their dynamic classes.
+            auto L = TypeSystem.unConst(left), R = TypeSystem.unConst(right);
+            if ((TypeSystem.get(L).kind != TypeKind::Class || TypeSystem.get(R).kind != TypeKind::Class) && L != R) {
+                SymbolTable.diagnose("comparison",
+                                     "cannot compare '" + TypeSystem.get(L).name + "' with '" + TypeSystem.get(R).name +
+                                         "': a struct compares only with the same struct type",
+                                     node);
+                return makeError();
+            }
+            for (auto type : {left, right}) {
+                if (!TypeSystem.layout(type)) {
+                    SymbolTable.diagnose("comparison",
+                                         "cannot compare incomplete type '" +
+                                             TypeSystem.get(TypeSystem.unConst(type)).name + "' with '" + spelling + "'",
+                                         node);
+                    return makeError();
+                }
+                if (containsUnion(type)) {
+                    SymbolTable.diagnose("comparison", "cannot compare unions with '" + spelling + "'", node);
+                    return makeError();
+                }
+            }
+            return makeValue(TypeSystem.builtin(Builtin::Bool));
+        }
+
         // Checks a non-assignment binary operator and folds constants. && and || evaluate the right operand
         // even when the left decides the result, but still short-circuit the constant value. Handles
         // comparisons (arithmetic, pointer, null), shifts, bitwise ops, pointer arithmetic/difference and
@@ -327,6 +387,9 @@ namespace baka {
                         }
                     }
                     return makeValue(TypeSystem.builtin(Builtin::Bool));
+                }
+                if (equality && TypeSystem.isAggregate(left.type) && TypeSystem.isAggregate(right.type)) {
+                    return checkRecordEquality(left.type, right.type, op, node);
                 }
                 if (isPointer(left.type) && isNullPointerConstant(right)) {
                     return makeValue(TypeSystem.builtin(Builtin::Bool));

@@ -9,9 +9,9 @@ global calls.20: i32 = zero
 global globalValue.57: i32 = zero
 global globalAlias.58: ptr<i32> = zero
 internal count.66: i32 = zero
-internal .vtable.Base.100: [2 x ptr<void>] readonly = zero {+8 = @Base.get.50:ptr<fn(ptr<Base>)->i32>}
-internal .vtable.Derived.101: [2 x ptr<void>] readonly = zero {+8 = @Base.get.50:ptr<fn(ptr<Base>)->i32>}
-internal .vtable.Box.102: [1 x ptr<void>] readonly = zero
+internal .vtable.Base.100: [3 x ptr<void>] readonly = zero {+16 = @Base.get.50:ptr<fn(ptr<Base>)->i32>}
+internal .vtable.Derived.101: [3 x ptr<void>] readonly = zero {+16 = @Base.get.50:ptr<fn(ptr<Base>)->i32>}
+internal .vtable.Box.102: [2 x ptr<void>] readonly = zero
 internal .static_guard.66.103: u1 = zero
 initializer @.module_init.108
 declare @printf.9: fn(ptr<i8>, ...)->i32
@@ -180,7 +180,7 @@ function @readBase.54: fn(ptr<Base>)->i32 {
   (load, %t8:ptr<Base>, &b.78:ptr<ptr<Base>>, _)
   (cast, %t9:ptr<ptr<ptr<void>>>, %t8:ptr<Base>, _)
   (load, %t10:ptr<ptr<void>>, %t9:ptr<ptr<ptr<void>>>, _)
-  (offset, %t11:ptr<ptr<void>>, %t10:ptr<ptr<void>>, 8:i64)
+  (offset, %t11:ptr<ptr<void>>, %t10:ptr<ptr<void>>, 16:i64)
   (load, %t12:ptr<void>, %t11:ptr<ptr<void>>, _)
   (cast, %t13:ptr<fn(ptr<Base>)->i32>, %t12:ptr<void>, _)
   (param, _, %t8:ptr<Base>, _)
@@ -322,7 +322,7 @@ function @main.61: fn(i32, ptr<ptr<i8>>)->i32 {
   (call, _, @Box.ctor.2.99, _)
   (load, %t72:Box, &box.95:ptr<Box>, _)
   (store, _, &box.95:ptr<Box>, %t72:Box)
-  (cast, %t73:ptr<ptr<void>>, &.vtable.Box.102:ptr<[1 x ptr<void>]>, _)
+  (cast, %t73:ptr<ptr<void>>, &.vtable.Box.102:ptr<[2 x ptr<void>]>, _)
   (cast, %t74:ptr<ptr<ptr<void>>>, &box.95:ptr<Box>, _)
   (store, _, %t74:ptr<ptr<ptr<void>>>, %t73:ptr<ptr<void>>)
   (copy, %t2:u1, 1:u1, _)
@@ -406,7 +406,7 @@ function @main.61: fn(i32, ptr<ptr<i8>>)->i32 {
 function @Base.default_ctor.97: fn(ptr<Base>)->void internal {
   parameter this.106: ptr<Base>
   (load, %t1:ptr<Base>, &this.106:ptr<ptr<Base>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.100:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.100:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Base>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Base>, 8:i64)
@@ -418,7 +418,7 @@ function @Derived.default_ctor.98: fn(ptr<Derived>)->void internal {
   (offset, %t2:ptr<Base>, %t1:ptr<Derived>, 0:i64)
   (param, _, %t2:ptr<Base>, _)
   (call, _, @Base.default_ctor.97, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Derived.101:ptr<[2 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Derived.101:ptr<[3 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Derived>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<i32>, %t1:ptr<Derived>, 16:i64)
@@ -428,7 +428,7 @@ function @Box.ctor.2.99: fn(ptr<Box>, ptr<i32>)->void internal {
   parameter this.79: ptr<Box>
   parameter x.80: ptr<i32>
   (load, %t1:ptr<Box>, &this.79:ptr<ptr<Box>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Box.102:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Box.102:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Box>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Box>, 8:i64)

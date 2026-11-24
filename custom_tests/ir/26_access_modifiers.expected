@@ -5,10 +5,10 @@ Shape = record(vptr, i32) size 16 align 8
 Square = record(Shape) size 16 align 8
 Stack = record(Shape, [4 x i32], i32) size 40 align 8
 Pair = record(i32, i32) size 8 align 4
-internal .vtable.Account.77: [4 x ptr<void>] readonly = zero {+8 = @Account.fee.21:ptr<fn(ptr<Account>)->i32>} {+16 = @Account.deposit.23:ptr<fn(ptr<Account>, i32)->void>} {+24 = @Account.get.24:ptr<fn(ptr<Account>)->i32>}
-internal .vtable.Shape.78: [2 x ptr<void>] readonly = zero {+8 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>}
-internal .vtable.Square.79: [3 x ptr<void>] readonly = zero {+8 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>} {+16 = @Square.perimeterFactor.31:ptr<fn(ptr<Square>, i32)->i32>}
-internal .vtable.Stack.80: [4 x ptr<void>] readonly = zero {+8 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>} {+16 = @Stack.push.36:ptr<fn(ptr<Stack>, i32)->void>} {+24 = @Stack.top.37:ptr<fn(ptr<Stack>)->i32>}
+internal .vtable.Account.77: [5 x ptr<void>] readonly = zero {+16 = @Account.fee.21:ptr<fn(ptr<Account>)->i32>} {+24 = @Account.deposit.23:ptr<fn(ptr<Account>, i32)->void>} {+32 = @Account.get.24:ptr<fn(ptr<Account>)->i32>}
+internal .vtable.Shape.78: [3 x ptr<void>] readonly = zero {+16 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>}
+internal .vtable.Square.79: [4 x ptr<void>] readonly = zero {+16 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>} {+24 = @Square.perimeterFactor.31:ptr<fn(ptr<Square>, i32)->i32>}
+internal .vtable.Stack.80: [5 x ptr<void>] readonly = zero {+16 = @Shape.scaled.28:ptr<fn(ptr<Shape>, i32)->i32>} {+24 = @Stack.push.36:ptr<fn(ptr<Stack>, i32)->void>} {+32 = @Stack.top.37:ptr<fn(ptr<Stack>)->i32>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -35,7 +35,7 @@ function @Account.deposit.23: fn(ptr<Account>, i32)->void {
   (load, %t8:ptr<Account>, &this.50:ptr<ptr<Account>>, _)
   (cast, %t9:ptr<ptr<ptr<void>>>, %t8:ptr<Account>, _)
   (load, %t10:ptr<ptr<void>>, %t9:ptr<ptr<ptr<void>>>, _)
-  (offset, %t11:ptr<ptr<void>>, %t10:ptr<ptr<void>>, 8:i64)
+  (offset, %t11:ptr<ptr<void>>, %t10:ptr<ptr<void>>, 16:i64)
   (load, %t12:ptr<void>, %t11:ptr<ptr<void>>, _)
   (cast, %t13:ptr<fn(ptr<Account>)->i32>, %t12:ptr<void>, _)
   (param, _, %t8:ptr<Account>, _)
@@ -69,7 +69,7 @@ function @Square.perimeterFactor.31: fn(ptr<Square>, i32)->i32 {
   (cast, %t2:ptr<Shape>, %t1:ptr<Square>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<Shape>, _)
   (load, %t4:ptr<ptr<void>>, %t3:ptr<ptr<ptr<void>>>, _)
-  (offset, %t5:ptr<ptr<void>>, %t4:ptr<ptr<void>>, 8:i64)
+  (offset, %t5:ptr<ptr<void>>, %t4:ptr<ptr<void>>, 16:i64)
   (load, %t6:ptr<void>, %t5:ptr<ptr<void>>, _)
   (cast, %t7:ptr<fn(ptr<Shape>, i32)->i32>, %t6:ptr<void>, _)
   (load, %t8:i32, &k.58:ptr<i32>, _)
@@ -168,7 +168,7 @@ function @main.46: fn(i32, ptr<ptr<i8>>)->i32 {
   (call, _, @Account.ctor.3.73, _)
   (load, %t11:Account, &account.69:ptr<Account>, _)
   (store, _, &account.69:ptr<Account>, %t11:Account)
-  (cast, %t12:ptr<ptr<void>>, &.vtable.Account.77:ptr<[4 x ptr<void>]>, _)
+  (cast, %t12:ptr<ptr<void>>, &.vtable.Account.77:ptr<[5 x ptr<void>]>, _)
   (cast, %t13:ptr<ptr<ptr<void>>>, &account.69:ptr<Account>, _)
   (store, _, %t13:ptr<ptr<ptr<void>>>, %t12:ptr<ptr<void>>)
   (copy, %t1:u1, 1:u1, _)
@@ -179,7 +179,7 @@ function @main.46: fn(i32, ptr<ptr<i8>>)->i32 {
   (call, _, @Square.ctor.1.75, _)
   (load, %t14:Square, &square.70:ptr<Square>, _)
   (store, _, &square.70:ptr<Square>, %t14:Square)
-  (cast, %t15:ptr<ptr<void>>, &.vtable.Square.79:ptr<[3 x ptr<void>]>, _)
+  (cast, %t15:ptr<ptr<void>>, &.vtable.Square.79:ptr<[4 x ptr<void>]>, _)
   (cast, %t16:ptr<ptr<ptr<void>>>, &square.70:ptr<Square>, _)
   (store, _, %t16:ptr<ptr<ptr<void>>>, %t15:ptr<ptr<void>>)
   (copy, %t2:u1, 1:u1, _)
@@ -187,7 +187,7 @@ function @main.46: fn(i32, ptr<ptr<i8>>)->i32 {
   (call, _, @Stack.ctor.3.76, _)
   (load, %t17:Stack, &stack.71:ptr<Stack>, _)
   (store, _, &stack.71:ptr<Stack>, %t17:Stack)
-  (cast, %t18:ptr<ptr<void>>, &.vtable.Stack.80:ptr<[4 x ptr<void>]>, _)
+  (cast, %t18:ptr<ptr<void>>, &.vtable.Stack.80:ptr<[5 x ptr<void>]>, _)
   (cast, %t19:ptr<ptr<ptr<void>>>, &stack.71:ptr<Stack>, _)
   (store, _, %t19:ptr<ptr<ptr<void>>>, %t18:ptr<ptr<void>>)
   (copy, %t3:u1, 1:u1, _)
@@ -232,7 +232,7 @@ function @Account.ctor.3.73: fn(ptr<Account>, i32)->void internal {
   parameter this.48: ptr<Account>
   parameter initial.49: i32
   (load, %t1:ptr<Account>, &this.48:ptr<ptr<Account>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Account.77:ptr<[4 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Account.77:ptr<[5 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Account>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Account>, 8:i64)
@@ -246,7 +246,7 @@ function @Account.ctor.3.73: fn(ptr<Account>, i32)->void internal {
 function @Shape.ctor.3.74: fn(ptr<Shape>)->void internal {
   parameter this.55: ptr<Shape>
   (load, %t1:ptr<Shape>, &this.55:ptr<ptr<Shape>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.78:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.78:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Shape>, 8:i64)
@@ -262,7 +262,7 @@ function @Square.ctor.1.75: fn(ptr<Square>)->void internal {
   (offset, %t2:ptr<Shape>, %t1:ptr<Square>, 0:i64)
   (param, _, %t2:ptr<Shape>, _)
   (call, _, @Shape.ctor.3.74, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Square.79:ptr<[3 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Square.79:ptr<[4 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Square>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (load, %t5:ptr<Square>, &this.56:ptr<ptr<Square>>, _)
@@ -277,7 +277,7 @@ function @Stack.ctor.3.76: fn(ptr<Stack>)->void internal {
   (offset, %t2:ptr<Shape>, %t1:ptr<Stack>, 0:i64)
   (param, _, %t2:ptr<Shape>, _)
   (call, _, @Shape.ctor.3.74, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Stack.80:ptr<[4 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Stack.80:ptr<[5 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Stack>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<[4 x i32]>, %t1:ptr<Stack>, 16:i64)

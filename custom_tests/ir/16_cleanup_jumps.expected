@@ -3,7 +3,7 @@ FILE = opaque
 Guard = record(vptr) size 8 align 8
 global live.19: i32 = zero
 global destroyed.20: i32 = zero
-internal .vtable.Guard.43: [1 x ptr<void>] readonly = zero {+0 = @Guard.dtor.42:ptr<fn(ptr<Guard>)->void>}
+internal .vtable.Guard.43: [2 x ptr<void>] readonly = zero {+0 = @Guard.dtor.42:ptr<fn(ptr<Guard>)->void>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -202,7 +202,7 @@ L32:
 function @Guard.ctor.1.41: fn(ptr<Guard>)->void internal {
   parameter this.26: ptr<Guard>
   (load, %t1:ptr<Guard>, &this.26:ptr<ptr<Guard>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.43:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.43:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Guard>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &live.19:ptr<i32>, _)
@@ -213,7 +213,7 @@ function @Guard.ctor.1.41: fn(ptr<Guard>)->void internal {
 function @Guard.dtor.42: fn(ptr<Guard>)->void internal {
   parameter this.27: ptr<Guard>
   (load, %t1:ptr<Guard>, &this.27:ptr<ptr<Guard>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.43:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Guard.43:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Guard>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &live.19:ptr<i32>, _)

@@ -160,9 +160,13 @@ Other intentional subset rules:
   class `vptr` never has to share offset 0 with a plain base.
 - Virtual functions: every non-static method of a `class` is virtual; structs never
   dispatch. `int f() = 0;` declares a pure method and makes the class abstract
-  (not usable by value). Each class has a `vtable` (slot 0 = destructor) and an
-  8-byte vptr at offset 0, and braced initialization of a class is rejected. See
-  `wiki/18-virtual-functions.md`.
+  (not usable by value). Each class has a `vtable` (slot 0 = destructor, slot 1 =
+  record equality, methods from slot 2) and an 8-byte vptr at offset 0, and braced
+  initialization of a class is rejected. See `wiki/18-virtual-functions.md`.
+- Record `==`/`!=` compares values field by field. A struct compares only with the
+  same struct type; classes may mix base and derived (the dynamic classes must match)
+  and unrelated classes are unequal. Unions, at any depth, cannot be compared. See
+  `wiki/19-record-equality.md`.
   Accesses through `.`/`->`, unqualified member names in methods, selected overloads
   and selected constructors (including default construction and `new`) are checked
   against the enclosing class; inherited access is the more restrictive of member and

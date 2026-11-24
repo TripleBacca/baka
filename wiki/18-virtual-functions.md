@@ -76,6 +76,7 @@ a class cannot inherit from a struct
 | Class-key selects polymorphism | One rule instead of per-method keywords. Structs stay byte-compatible C records; classes always have a vptr. |
 | Classes and structs cannot inherit from each other | Every polymorphic hierarchy is rooted in a class, so the vptr is at offset 0 throughout and `this` never needs adjusting. |
 | Slot 0 is the destructor, always | Every class destructor is virtual, so the slot can never be claimed by an ordinary method. A trivially destructible class stores null there and `delete` skips the call. |
+| Slot 1 is record equality, always | `a == b` on classes calls the dynamic class's generated `.eq.<Class>` through it (page 19). It must sit at the same index in every class of a hierarchy, so it is reserved like slot 0 and stays null unless the program compares that hierarchy. Methods start at slot 2. |
 | Vtables are ordinary IR globals | `.vtable.<Class>` is a read-only `[N x ptr<void>]` of function relocations. The verifier, interpreter and MIPS data emitter already handled these, so no new IR concepts were needed. |
 | Dispatch is plain IR | Load vptr, offset by `slot * 8`, load, cast to the method's signature, `call`. No new opcodes. Indirect calls already go through `$t9`. |
 | Vptr stored by constructors *and* destructors | Gives the C++ behaviour during construction and destruction (rule above) without special cases at call sites. |
@@ -100,12 +101,12 @@ a class cannot inherit from a struct
 
 ### Example lowering
 
-`p->area()` with `Shape* p`, where `area` is slot 1:
+`p->area()` with `Shape* p`, where `area` is slot 2 (slots 0 and 1 are the destructor and equality):
 
 ```
 (cast,   %t4:ptr<ptr<ptr<void>>>, %t3:ptr<Shape>, _)   ; address of the vptr
 (load,   %t5:ptr<ptr<void>>, %t4, _)                    ; vptr
-(offset, %t6:ptr<ptr<void>>, %t5, 8:i64)               ; slot 1
+(offset, %t6:ptr<ptr<void>>, %t5, 16:i64)              ; slot 2
 (load,   %t7:ptr<void>, %t6, _)
 (cast,   %t8:ptr<fn(ptr<Shape>)->i32>, %t7, _)
 (param,  _, %t3:ptr<Shape>, _)

@@ -2,7 +2,7 @@ IR::TAC:
 FILE = opaque
 A = record(vptr, i32) size 16 align 8
 global calls.19: i32 = zero
-internal .vtable.A.45: [2 x ptr<void>] readonly = zero {+8 = @A.m.30:ptr<fn(ptr<A>, i32)->i32>}
+internal .vtable.A.45: [3 x ptr<void>] readonly = zero {+16 = @A.m.30:ptr<fn(ptr<A>, i32)->i32>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -88,7 +88,7 @@ function @main.33: fn(i32, ptr<ptr<i8>>)->i32 {
 function @A.default_ctor.44: fn(ptr<A>)->void internal {
   parameter this.46: ptr<A>
   (load, %t1:ptr<A>, &this.46:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.45:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.45:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<A>, 8:i64)

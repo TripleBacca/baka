@@ -1,7 +1,7 @@
 IR::TAC:
 FILE = opaque
 A = record(vptr, i32, ptr<fn(i32)->i32>) size 24 align 8
-internal .vtable.A.48: [3 x ptr<void>] readonly = zero {+8 = @A.get.24:ptr<fn(ptr<A>, i32)->i32>} {+16 = @A.next.26:ptr<fn(ptr<A>, i32)->i32>}
+internal .vtable.A.48: [4 x ptr<void>] readonly = zero {+16 = @A.get.24:ptr<fn(ptr<A>, i32)->i32>} {+24 = @A.next.26:ptr<fn(ptr<A>, i32)->i32>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -33,7 +33,7 @@ function @A.next.26: fn(ptr<A>, i32)->i32 {
   (load, %t1:ptr<A>, &this.37:ptr<ptr<A>>, _)
   (cast, %t2:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (load, %t3:ptr<ptr<void>>, %t2:ptr<ptr<ptr<void>>>, _)
-  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 8:i64)
+  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 16:i64)
   (load, %t5:ptr<void>, %t4:ptr<ptr<void>>, _)
   (cast, %t6:ptr<fn(ptr<A>, i32)->i32>, %t5:ptr<void>, _)
   (load, %t7:i32, &y.38:ptr<i32>, _)
@@ -86,7 +86,7 @@ function @main.33: fn(i32, ptr<ptr<i8>>)->i32 {
   (load, %t17:ptr<A>, &p.44:ptr<ptr<A>>, _)
   (cast, %t18:ptr<ptr<ptr<void>>>, %t17:ptr<A>, _)
   (load, %t19:ptr<ptr<void>>, %t18:ptr<ptr<ptr<void>>>, _)
-  (offset, %t20:ptr<ptr<void>>, %t19:ptr<ptr<void>>, 8:i64)
+  (offset, %t20:ptr<ptr<void>>, %t19:ptr<ptr<void>>, 16:i64)
   (load, %t21:ptr<void>, %t20:ptr<ptr<void>>, _)
   (cast, %t22:ptr<fn(ptr<A>, i32)->i32>, %t21:ptr<void>, _)
   (load, %t23:i32, &n.42:ptr<i32>, _)
@@ -119,7 +119,7 @@ function @main.33: fn(i32, ptr<ptr<i8>>)->i32 {
 function @A.default_ctor.47: fn(ptr<A>)->void internal {
   parameter this.49: ptr<A>
   (load, %t1:ptr<A>, &this.49:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.48:ptr<[3 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.48:ptr<[4 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<A>, 8:i64)

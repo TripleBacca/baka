@@ -6,7 +6,7 @@ global first.23: A = zero
 global during_startup.24: i32 = zero
 global second.25: A = zero
 internal third.32: A = zero
-internal .vtable.A.38: [1 x ptr<void>] readonly = zero {+0 = @A.dtor.37:ptr<fn(ptr<A>)->void>}
+internal .vtable.A.38: [2 x ptr<void>] readonly = zero {+0 = @A.dtor.37:ptr<fn(ptr<A>)->void>}
 internal .static_guard.32.39: u1 = zero
 initializer @.module_init.40
 declare @printf.9: fn(ptr<i8>, ...)->i32
@@ -28,7 +28,7 @@ L2:
   (call, _, @A.ctor.2.36, _)
   (load, %t2:A, &third.32:ptr<A>, _)
   (store, _, &third.32:ptr<A>, %t2:A)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.A.38:ptr<[1 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.A.38:ptr<[2 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, &third.32:ptr<A>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (register_dtor, _, @A.dtor.37:ptr<fn(ptr<A>)->void>, &third.32:ptr<A>)
@@ -60,7 +60,7 @@ function @A.ctor.2.36: fn(ptr<A>, i32)->void internal {
   parameter this.29: ptr<A>
   parameter n.30: i32
   (load, %t1:ptr<A>, &this.29:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<A>, 8:i64)
@@ -82,7 +82,7 @@ function @A.ctor.2.36: fn(ptr<A>, i32)->void internal {
 function @A.dtor.37: fn(ptr<A>)->void internal {
   parameter this.31: ptr<A>
   (load, %t1:ptr<A>, &this.31:ptr<ptr<A>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)
@@ -102,7 +102,7 @@ function @.module_init.40: fn()->void internal {
   (call, _, @A.ctor.2.36, _)
   (load, %t1:A, &first.23:ptr<A>, _)
   (store, _, &first.23:ptr<A>, %t1:A)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.A.38:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, &first.23:ptr<A>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (register_dtor, _, @A.dtor.37:ptr<fn(ptr<A>)->void>, &first.23:ptr<A>)

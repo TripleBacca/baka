@@ -4,9 +4,9 @@ Base = record(vptr, i32) size 16 align 8
 Member = record(vptr, i32) size 16 align 8
 Derived = record(Base, Member, i32) size 40 align 8
 global trace.19: i32 = zero
-internal .vtable.Base.46: [1 x ptr<void>] readonly = zero {+0 = @Base.dtor.41:ptr<fn(ptr<Base>)->void>}
-internal .vtable.Member.47: [1 x ptr<void>] readonly = zero {+0 = @Member.dtor.43:ptr<fn(ptr<Member>)->void>}
-internal .vtable.Derived.48: [1 x ptr<void>] readonly = zero {+0 = @Derived.dtor.45:ptr<fn(ptr<Derived>)->void>}
+internal .vtable.Base.46: [2 x ptr<void>] readonly = zero {+0 = @Base.dtor.41:ptr<fn(ptr<Base>)->void>}
+internal .vtable.Member.47: [2 x ptr<void>] readonly = zero {+0 = @Member.dtor.43:ptr<fn(ptr<Member>)->void>}
+internal .vtable.Derived.48: [2 x ptr<void>] readonly = zero {+0 = @Derived.dtor.45:ptr<fn(ptr<Derived>)->void>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -66,7 +66,7 @@ L8:
 function @Base.ctor.2.40: fn(ptr<Base>)->void internal {
   parameter this.30: ptr<Base>
   (load, %t1:ptr<Base>, &this.30:ptr<ptr<Base>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.46:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.46:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Base>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Base>, 8:i64)
@@ -81,7 +81,7 @@ function @Base.ctor.2.40: fn(ptr<Base>)->void internal {
 function @Base.dtor.41: fn(ptr<Base>)->void internal {
   parameter this.31: ptr<Base>
   (load, %t1:ptr<Base>, &this.31:ptr<ptr<Base>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.46:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Base.46:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Base>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)
@@ -95,7 +95,7 @@ function @Base.dtor.41: fn(ptr<Base>)->void internal {
 function @Member.ctor.2.42: fn(ptr<Member>)->void internal {
   parameter this.32: ptr<Member>
   (load, %t1:ptr<Member>, &this.32:ptr<ptr<Member>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Member.47:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Member.47:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Member>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Member>, 8:i64)
@@ -110,7 +110,7 @@ function @Member.ctor.2.42: fn(ptr<Member>)->void internal {
 function @Member.dtor.43: fn(ptr<Member>)->void internal {
   parameter this.33: ptr<Member>
   (load, %t1:ptr<Member>, &this.33:ptr<ptr<Member>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Member.47:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Member.47:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Member>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)
@@ -127,7 +127,7 @@ function @Derived.ctor.3.44: fn(ptr<Derived>)->void internal {
   (offset, %t2:ptr<Base>, %t1:ptr<Derived>, 0:i64)
   (param, _, %t2:ptr<Base>, _)
   (call, _, @Base.ctor.2.40, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Derived.48:ptr<[1 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Derived.48:ptr<[2 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Derived>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<Member>, %t1:ptr<Derived>, 16:i64)
@@ -153,7 +153,7 @@ function @Derived.ctor.3.44: fn(ptr<Derived>)->void internal {
 function @Derived.dtor.45: fn(ptr<Derived>)->void internal {
   parameter this.35: ptr<Derived>
   (load, %t1:ptr<Derived>, &this.35:ptr<ptr<Derived>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Derived.48:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Derived.48:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Derived>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)

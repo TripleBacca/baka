@@ -5,6 +5,7 @@
 #include "types/parser/ast/class.hh"
 #include "types/parser/ast/union.hh"
 #include <map>
+#include <set>
 #include <stdexcept>
 
 namespace baka {
@@ -65,6 +66,9 @@ namespace baka {
             uint32_t NextObject = 1;
             uint32_t HeapAllocate = 0, HeapDeallocate = 0, PureVirtual = 0;
             std::map<TypeId, uint32_t> Vtables; // class record -> its vtable global
+            std::map<TypeId, uint32_t> EqualityFunctions; // record -> its .eq function
+            std::vector<TypeId> EqualityWork;             // records whose .eq body is pending
+            std::set<TypeId> EqualityDispatch;            // static classes compared dynamically
             bool Started = false;
             std::vector<const types::SingleDeclarationNode*> GlobalInitializers;
             std::map<TypeId, semantic::TypeId> ReverseTypes;
@@ -171,10 +175,19 @@ namespace baka {
             uint32_t pureVirtual();
             void buildVtables();
             Operand vptrAddress(Operand object);
+            Operand vtableAddress(TypeId type);
             void storeVptr(Operand object, TypeId type);
             void assign(Operand location, Operand value);
             Operand virtualCallee(Operand instance, uint32_t slot, TypeId signature);
             bool exactType(const types::ExpressionNode* expression) const;
+
+            // Record equality: one generated `.eq.<T>` per compared record type (equality.cc).
+            uint32_t equalityFunction(TypeId record);
+            void compareValues(TypeId type, Operand left, Operand right, BlockId unequal);
+            void compareFields(TypeId record, Operand left, Operand right, BlockId unequal);
+            void lowerEqualities();
+            Operand comparand(const types::ExpressionNode* expression, bool& exact);
+            Operand recordEquality(const types::BinaryExpressionNode* node);
             Operand activeFlag();
             uint32_t declareLifetime(TypeId owner, std::string name, std::vector<TypeId> parameters,
                                      const types::ASTNode* declaration, const types::StatementNode* body,

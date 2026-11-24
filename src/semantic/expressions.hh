@@ -85,6 +85,8 @@ namespace baka {
             ExprResult checkComma(const types::CommaExpressionNode* node);
             ExprResult checkBinary(const types::BinaryExpressionNode* node);
             ExprResult checkAssignment(const types::BinaryExpressionNode* node);
+            ExprResult checkRecordEquality(TypeId left, TypeId right, types::ASTBinaryOp op,
+                                           const types::ASTNode* node);
             ExprResult checkIndex(const types::IndexPostfixExpr* node);
             ExprResult checkMember(const types::ExpressionNode* base, const types::IdentifierNode* member, bool arrow,
                                    const types::ASTNode* source);
