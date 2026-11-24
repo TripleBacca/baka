@@ -4,6 +4,7 @@
 import argparse
 import os
 from pathlib import Path
+import re
 import struct
 import subprocess
 import tempfile
@@ -15,6 +16,34 @@ def check_mips_elf(path, elf_type):
     data = path.read_bytes()
     assert data[:6] == b"\x7fELF\x02\x01", f"{path}: expected little-endian ELF64"
     assert struct.unpack_from("<HH", data, 16) == (elf_type, 8), f"{path}: wrong ELF type or machine"
+
+
+def check_tail_recursion(run, compiler, work):
+    source = work / "countdown.cpp"
+    source.write_text("""int countdown(int n, int total) {
+    if (n == 0) return total;
+    return countdown(n - 1, total + 1);
+}
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
+    return countdown(n, 0) == n ? 42 : 1;
+}
+""")
+    qemu = ("docker", "run", "--rm", "--init", "--pull=never", "--ulimit", "core=0:0", "-v",
+            f"{work}:/work:ro", "baka-mips64el", "qemu-mips64el", "-s", "262144")
+    for mode, name, deep_status in (("--optimize", "tail-opt", 42), ("--no-optimize", "tail-raw", 139)):
+        text = run(compiler, "--codegen", mode, source).stdout
+        body = re.search(r"^countdown\.(\d+):\n(.*?)^\t\.end\tcountdown\.\1$", text, re.MULTILINE | re.DOTALL)
+        assert body, text
+        symbol, instructions = body.groups()
+        assert ("\tjalr\t" in instructions) == (mode == "--no-optimize"), instructions
+        if mode == "--optimize":
+            assert f"\tb\t.LB{symbol}.1\n" in instructions, instructions
+        assembly = work / f"{name}.s"
+        assembly.write_text(text)
+        run(compiler, "--link", "-o", work / name, assembly)
+        run(*qemu, f"/work/{name}", "17", status=42)
+        run(*qemu, f"/work/{name}", "1000000", status=deep_status)
 
 
 def main():
@@ -112,7 +141,9 @@ def main():
         assert executable.read_bytes() == before
         assert not list(work.glob(".baka-link-*"))
 
-    print("MIPS driver stages and binary execution passed")
+        check_tail_recursion(run, compiler, work)
+
+    print("MIPS driver stages, binary execution and tail recursion passed")
 
 
 if __name__ == "__main__":

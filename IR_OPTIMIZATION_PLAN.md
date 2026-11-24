@@ -15,6 +15,9 @@ comparisons, address offsets), redundant-load elimination, store-to-load forward
 dead-store elimination and next-use dead-code elimination. Between them it folds
 constant branches (looking only at one block's `if_goto`/`goto` tail) and removes
 blocks that became unreachable, a cleanup that never moves or merges instructions.
+After this simplification, eligible direct tail recursion becomes an IR loop.
+Small direct callees are then inlined, followed by another simplification when
+inlining changed the IR.
 CFG-wide propagation and jump threading were removed. Dead-code elimination starts each block's
 backward scan from its global live-out set (`ir::LiveOut`). The normal `--ir` CLI prints
 unoptimized TAC; `--ir --optimize` prints the result. `custom_tests/ir` executes
@@ -52,10 +55,10 @@ must end in a terminator and CFG lists must match it.
 | Induction-variable simplification | Recognize loop counters in mutable temporaries, replace derived arithmetic, and simplify exit checks. | Later | **High.** Needs loop analysis, width/overflow proof, and careful handling of `goto`, named break/continue and cleanup edges. |
 | Loop unrolling / peeling | Fully unroll eligible natural loops and fold constant counter reads. | Implemented for small fixed counts | Partial unrolling and peeling need remainder and exit handling. |
 | Loop vectorization | Group independent scalar iterations into vector operations. | Not directly | **Very high.** IR has no vector types/opcodes, dependence analysis, alignment facts or vector backend. |
-| Inlining | Clone a defined callee's blocks/objects/temporaries into a caller and bind `Param` values to parameters. | Later | **High.** Requires safe ID remapping, returns/cleanup reconstruction, recursion and growth policy; indirect calls cannot generally be resolved. |
+| Inlining | Clone a small defined callee's blocks, objects, and temporaries into a caller and bind `Param` values to parameters. | [Implemented for eligible direct calls](wiki/04-ir-optimization.md#function-inlining) | Uses a register-pressure limit and bounded expansion rounds. Indirect calls keep their original form. |
 | Interprocedural constant propagation / specialization | Clone functions for known arguments or summarize return values/call effects. | Later | **High.** Needs call graph, address-taken/indirect-call handling and code-growth policy. Module startup and internal destructor helpers are ordinary functions but still have effects. |
 | Dead function/global elimination | Remove unreferenced internal definitions after tracing entry, initializer, address-taken functions and registered destructors. | Restricted | **Medium to high.** External linkage and callbacks are roots; startup and registration must remain intact. No linker/codegen benefit yet. |
-| Tail-call optimization | Turn a return of a call result into a tail call. | Not directly | **High.** No tail-call opcode or ABI/codegen; pending destruction, cleanup and call argument staging often prevent it. |
+| Tail-call optimization | Turn direct self-recursion into an IR loop, then handle calls between functions in MIPS selection. | [Direct self-recursion implemented](TAIL_CALL_OPTIMIZATION_PLAN.md) | Sibling calls will need frame teardown, argument staging, and target ABI checks. |
 | Register allocation / instruction scheduling | Use liveness and dependencies when lowering TAC to machine code. | Later | **High / backend dependent.** These are backend passes; IR has no physical registers or machine latency/cost model. |
 
 ## Recommended sequence
