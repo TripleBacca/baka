@@ -174,6 +174,13 @@ elimination uses global liveness:
 | Dead-code elimination | Backward next-use scan seeded with the block's global live-out temporaries (`ir::LiveOut`; temporaries are mutable, so every definition kills). |
 | Constant branch folding | Looks only at the block's own `if_goto`/`goto` tail; unreachable blocks are then deleted as cleanup. |
 
+After that, **function inlining** (`src/ir/inlining.cc`) replaces a direct call with a
+copy of the callee when the callee's peak register pressure is at most 6 live values
+(temporaries plus register-resident scalar objects, counted with `ir::LiveOut`). This
+measures what the allocator actually needs; counting every distinct temporary would
+reject even trivial functions, since each subexpression is a new temporary. Inlining only
+copies code, and the local passes run again to clean up. Details: wiki page 4.
+
 Copy and constant propagation stay local to a block. `custom_tests/ir_opt` pins the optimized TAC for each pass,
 including the negative cases (no forwarding across a call or a pointer store, no reuse
 after a redefinition).

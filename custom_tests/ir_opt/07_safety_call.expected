@@ -31,12 +31,24 @@ function @main.23: fn(i32, ptr<ptr<i8>>)->i32 {
   (store, _, &n.26:ptr<i32>, %t6:i32)
   (load, %t7:i32, &g.19:ptr<i32>, _)
   (store, _, &a.27:ptr<i32>, %t7:i32)
-  (call, _, @bump.20, _)
+  (goto, _, L3, _)
+L3:
+  (load, %t16:i32, &g.19:ptr<i32>, _)
+  (add, %t17:i32, %t16:i32, 10:i32)
+  (store, _, &g.19:ptr<i32>, %t17:i32)
+  (goto, _, L2, _)
+L2:
   (load, %t8:i32, &g.19:ptr<i32>, _)
   (store, _, &b.28:ptr<i32>, %t8:i32)
   (load, %t9:i32, &n.26:ptr<i32>, _)
   (store, _, &g.19:ptr<i32>, %t9:i32)
-  (call, _, @bump.20, _)
+  (goto, _, L5, _)
+L5:
+  (load, %t19:i32, &g.19:ptr<i32>, _)
+  (add, %t20:i32, %t19:i32, 10:i32)
+  (store, _, &g.19:ptr<i32>, %t20:i32)
+  (goto, _, L4, _)
+L4:
   (load, %t11:i32, &a.27:ptr<i32>, _)
   (load, %t12:i32, &b.28:ptr<i32>, _)
   (add, %t13:i32, %t11:i32, %t12:i32)

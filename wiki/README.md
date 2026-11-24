@@ -10,7 +10,7 @@ picture, or jump to a topic.
 | 1 | [Pipeline overview](01-pipeline-overview.md) | The stages from typed IR to a running binary, and how the driver wires them |
 | 2 | [Target and environment](02-target-and-environment.md) | Why MIPS64 n64, little-endian, glibc, static non-PIC, QEMU |
 | 3 | [The IR the backend consumes](03-ir-input.md) | What three-address code looks like and what the backend can rely on |
-| 4 | [IR optimization](04-ir-optimization.md) | The block-local passes that run before selection |
+| 4 | [IR optimization](04-ir-optimization.md) | The block-local passes that run before selection, and function inlining |
 | 5 | [Instruction selection](05-instruction-selection.md) | Machine IR and how each IR instruction becomes MIPS |
 | 6 | [Register allocation](06-register-allocation.md) | Next-use information, descriptors, `getReg`, spills |
 | 7 | [Calls, frames and the ABI](07-calls-frames-abi.md) | Calling convention, records by value, stack layout, prologue/epilogue |

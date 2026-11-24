@@ -334,13 +334,11 @@ namespace baka {
             }
         }
 
-        // Unrolls eligible natural loops once, then runs the local passes to a fixed point: folding, copy
-        // propagation, simplification, value numbering, memory forwarding and dead-store removal, then unreachable-block
-        // and dead-code removal. Convergence is detected by comparing the instruction streams; the
-        // iteration cap is scaled to the module size and exceeding it throws, as that indicates a pass bug.
-        void Optimize(Module& module) {
-            RemoveUnreachableBlocks(module);
-            UnrollSmallLoops(module);
+        // Runs the local passes to a fixed point: folding, copy propagation, simplification, value
+        // numbering, memory forwarding and dead-store removal, then unreachable-block and dead-code
+        // removal. Convergence is detected by comparing the instruction streams; the iteration cap is
+        // scaled to the module size and exceeding it throws, as that indicates a pass bug.
+        void Simplify(Module& module) {
             size_t maxIterations = 64;
             for (const auto& function : module.functions)
                 for (const auto& block : function.blocks) maxIterations += block.instructions.size() + 1;
@@ -375,6 +373,18 @@ namespace baka {
                 if (equal) return;
             }
             throw std::runtime_error("IR optimization did not converge");
+        }
+
+        // Unrolls eligible natural loops once and simplifies, so register pressure is measured on
+        // cleaned-up callee bodies; then inlines small callees and simplifies again across the
+        // joined code.
+        void Optimize(Module& module) {
+            RemoveUnreachableBlocks(module);
+            UnrollSmallLoops(module);
+            Simplify(module);
+            if (Inline(module)) {
+                Simplify(module);
+            }
         }
     }
 }
