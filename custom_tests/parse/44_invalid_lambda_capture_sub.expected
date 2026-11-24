@@ -1,0 +1,122 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/44_invalid_lambda_capture_sub.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+int main() {
+    int x = 1;
+    return [x] { return x; }();
+}
+
+Lexer::LexerOutput: 24 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+x                         IDENTIFIER            
+=                         OP_ASSIGN             
+1 (int)                   LITERAL_INTEGER       
+;                         SEMICOLON             
+return                    K_RETURN              
+[                         LPAREN_SQUARE         
+x                         IDENTIFIER            
+]                         RPAREN_SQUARE         
+{                         LPAREN_CURLY          
+return                    K_RETURN              
+x                         IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 0
+                            Identifier(x)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        PrimaryExpression(
+                            Constant(1)
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        PrimaryExpression(
+                            Identifier(__lambda_0)
+                        )
+                        CommaExpression(
+                        )
+                    )
+                )
+            )
+        )
+    )
+    Function(
+        IsStatic: 1, IsConst: 0
+        Lambda: deduced result
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(__lambda_0)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(void)
+        FunctionBody:
+        CompoundStatement(
+            Return(
+                CommaExpression(
+                    PrimaryExpression(
+                        Identifier(x)
+                    )
+                )
+            )
+        )
+    )
+)
+
+custom_tests/parse/44_invalid_lambda_capture_sub.cpp:3:13: [38;2;255;0;0merror: [0mlambda captures are not supported; only captureless lambdas '[]' are allowed (PARSE)
+	    return [x] { return x; }();
+	            [38;2;255;0;0m^[0m
+Compilation failed due to 1 error(s)

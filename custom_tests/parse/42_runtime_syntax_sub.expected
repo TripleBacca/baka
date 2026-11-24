@@ -1,0 +1,263 @@
+Gctx::VerboseMode: 1
+Gctx::BuildType: DEBUG
+Gctx::UptoStage: PARSE
+Gctx::SourceFile: custom_tests/parse/42_runtime_syntax_sub.cpp
+Driver::OptimisticDefects: 2
+Driver::SourceCode: 
+int log_value(const char* format, ...);
+
+int main() {
+    int* value = new(value, 42);
+    while (value != nullptr; outer) {
+        delete(value);
+        value = nullptr;
+        continue outer;
+    }
+    FILE* file = fopen("input.txt", "r");
+    return fclose(file);
+}
+
+Lexer::LexerOutput: 68 Tokens
+Lexeme                    Token                 
+------------------------------------------------
+int                       K_INT                 
+log_value                 IDENTIFIER            
+(                         LPAREN_ROUND          
+const                     K_CONST               
+char                      K_CHAR                
+*                         OP_MUL                
+format                    IDENTIFIER            
+,                         OP_COMMA              
+...                       OP_ELLIPSIS           
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+int                       K_INT                 
+main                      IDENTIFIER            
+(                         LPAREN_ROUND          
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+int                       K_INT                 
+*                         OP_MUL                
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+new                       K_NEW                 
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+,                         OP_COMMA              
+42 (int)                  LITERAL_INTEGER       
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+while                     K_WHILE               
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+!=                        OP_NEQ                
+nullptr                   K_NULLPTR             
+;                         SEMICOLON             
+outer                     IDENTIFIER            
+)                         RPAREN_ROUND          
+{                         LPAREN_CURLY          
+delete                    K_DELETE              
+(                         LPAREN_ROUND          
+value                     IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+value                     IDENTIFIER            
+=                         OP_ASSIGN             
+nullptr                   K_NULLPTR             
+;                         SEMICOLON             
+continue                  K_CONTINUE            
+outer                     IDENTIFIER            
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+FILE                      IDENTIFIER            
+*                         OP_MUL                
+file                      IDENTIFIER            
+=                         OP_ASSIGN             
+fopen                     IDENTIFIER            
+(                         LPAREN_ROUND          
+"input.txt"               LITERAL_STRING        
+,                         OP_COMMA              
+"r"                       LITERAL_STRING        
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+return                    K_RETURN              
+fclose                    IDENTIFIER            
+(                         LPAREN_ROUND          
+file                      IDENTIFIER            
+)                         RPAREN_ROUND          
+;                         SEMICOLON             
+}                         RPAREN_CURLY          
+                          EOF_TOKEN             
+
+Lexer: Lexing stage completed
+
+Parser::AST: 
+Program(
+    DeclarationList(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        Identifier(int)
+        SingleDeclarationNode(
+            DeclarationIdentifier(
+                PointerCount: 0
+                    Identifier(log_value)
+                ArraySizes: 
+                FunctionParameters: 
+                    Args(
+                        FunctionParameter(
+                            IsConst: 1
+                            TypeSpecifierModifier: None
+                            Identifier(char)
+                            SingleDeclarationNode(
+                                DeclarationIdentifier(
+                                    PointerCount: 1
+                                        Identifier(format)
+                                    ArraySizes: 
+                                )
+                                Initialization : nullptr
+                            )
+                        )
+                    )
+            )
+            Initialization : nullptr
+        )
+    )
+    Function(
+        IsStatic: 0, IsConst: 0
+        TypeSpecifierModifier: None
+        FuncType: 
+        DeclarationIdentifier(
+            PointerCount: 0
+                Identifier(main)
+            ArraySizes: 
+            FunctionParameters: 
+                Args(
+                )
+        )
+        ReturnType: 
+        Identifier(int)
+        FunctionBody:
+        CompoundStatement(
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(int)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 1
+                            Identifier(value)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(new)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Constant(42)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            While(
+                CommaExpression(
+                    BinaryExpression(
+                        BinaryOp: OP_NEQ,
+                        PrimaryExpression(
+                            Identifier(value)
+                        )
+                        PrimaryExpression(
+                            Constant(nullptr)
+                        )
+                    )
+                )
+            ;
+                Identifier(outer)
+                CompoundStatement(
+                    ExpressionStatement(
+                        CommaExpression(
+                            FunctionCallPostfixExpr(
+                                PrimaryExpression(
+                                    Identifier(delete)
+                                )
+                                CommaExpression(
+                                    PrimaryExpression(
+                                        Identifier(value)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    ExpressionStatement(
+                        CommaExpression(
+                            BinaryExpression(
+                                BinaryOp: OP_ASSIGN,
+                                PrimaryExpression(
+                                    Identifier(value)
+                                )
+                                PrimaryExpression(
+                                    Constant(nullptr)
+                                )
+                            )
+                        )
+                    )
+                    Continue(
+                        Identifier(outer)
+                    )
+                )
+            )
+            DeclarationList(
+                IsStatic: 0, IsConst: 0
+                TypeSpecifierModifier: None
+                Identifier(FILE)
+                SingleDeclarationNode(
+                    DeclarationIdentifier(
+                        PointerCount: 1
+                            Identifier(file)
+                        ArraySizes: 
+                    )
+                    InitializerNode(
+                        Expressions: 1
+                        FunctionCallPostfixExpr(
+                            PrimaryExpression(
+                                Identifier(fopen)
+                            )
+                            CommaExpression(
+                                PrimaryExpression(
+                                    Constant(input.txt)
+                                )
+                                PrimaryExpression(
+                                    Constant(r)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+            Return(
+                CommaExpression(
+                    FunctionCallPostfixExpr(
+                        PrimaryExpression(
+                            Identifier(fclose)
+                        )
+                        CommaExpression(
+                            PrimaryExpression(
+                                Identifier(file)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
+Parser: Parsing stage completed
+

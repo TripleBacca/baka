@@ -22,6 +22,20 @@ extern char baka_global[] __asm__(BAKA_GLOBAL_SYM);
 
 static int result;
 
+#ifdef BAKA_WRAP_MALLOC
+static int fail_next_allocation;
+
+void* __real_malloc(size_t size);
+
+void* __wrap_malloc(size_t size) {
+    if (fail_next_allocation) {
+        fail_next_allocation = 0;
+        return NULL;
+    }
+    return __real_malloc(size);
+}
+#endif
+
 static void report(void) {
     printf("\x01result=%d\n", result);
 #ifdef BAKA_GLOBAL_SYM
@@ -34,6 +48,9 @@ static void report(void) {
 
 int main(int argc, char** argv) {
     atexit(report);
+#ifdef BAKA_WRAP_MALLOC
+    fail_next_allocation = getenv("BAKA_FAIL_ALLOCATION") != NULL;
+#endif
     result = __baka_start(argc, argv);
     return 0;
 }

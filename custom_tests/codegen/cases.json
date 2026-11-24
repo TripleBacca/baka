@@ -181,5 +181,17 @@
       [0, 0, "207 207 302\n102\n102 102 102\n102\n206 5\n102\n101 101\n207\n207 44\n"],
       [1, 0, "207 207 302\n102\n102 102 102\n102\n206 5\n102\n101 101\n207\n207 45\n"]
     ]
+  },
+  "31_startup_no_args.cpp": {
+    "standalone": true,
+    "runs": [[0, 298, ""]]
+  },
+  "32_startup_argv.cpp": {
+    "standalone": true,
+    "runs": [[31, 33, ""], [-3, -1, ""]]
+  },
+  "33_file_io.cpp": {
+    "stdin": "test",
+    "runs": [[0, 0, "bakatest"]]
   }
 }
