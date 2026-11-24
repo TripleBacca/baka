@@ -251,6 +251,32 @@ namespace {
         }
     }
 
+    void CheckNaturalLoops() {
+        auto label = [](ir::BlockId id) { return ir::Operand{ir::OperandKind::Block, 0, id}; };
+        auto branch = [&](ir::BlockId id) {
+            return ir::Instruction{ir::Opcode::JumpIf, {}, {ir::OperandKind::Integer, 1, 0, 1}, label(id)};
+        };
+        auto jump = [&](ir::BlockId id) { return ir::Instruction{ir::Opcode::Jump, {}, label(id)}; };
+        ir::Function function;
+        function.blocks = {
+            {1, {jump(2)}}, {2, {branch(3), jump(8)}}, {3, {branch(4), jump(5)}}, {4, {jump(3)}},
+            {5, {branch(6), jump(7)}}, {6, {jump(2)}}, {7, {jump(2)}}, {8, {branch(8), jump(11)}},
+            {9, {jump(2)}}, // Unreachable predecessor of the outer loop.
+            {11, {branch(12), jump(13)}}, {12, {jump(13)}}, {13, {branch(12), jump(14)}},
+            {14, {{ir::Opcode::Return}}}, // Blocks 12 and 13 form a cycle with two entries.
+        };
+        ir::BuildCFG(function);
+        const auto loops = ir::FindNaturalLoops(function);
+        Require(loops.size() == 3, "natural loop discovery missed a loop or collected a cycle with two entries");
+        Require(loops[0].header == 2 && loops[0].blocks == std::set<ir::BlockId>({2, 3, 4, 5, 6, 7}) &&
+                    loops[0].latches == std::vector<ir::BlockId>({6, 7}),
+                "outer loop did not collect both latches and the nested loop");
+        Require(loops[1].header == 3 && loops[1].blocks == std::set<ir::BlockId>({3, 4}) &&
+                    loops[1].latches == std::vector<ir::BlockId>{4}, "nested loop membership is incorrect");
+        Require(loops[2].header == 8 && loops[2].blocks == std::set<ir::BlockId>{8} &&
+                    loops[2].latches == std::vector<ir::BlockId>{8}, "self loop membership is incorrect");
+    }
+
     void CheckOptimizations() {
         ir::Module module;
         ir::Type integer;
@@ -368,6 +394,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && std::string(argv[1]) == "verifier") {
             CheckVerifier();
             CheckRecordDefinitions();
+            CheckNaturalLoops();
             CheckOptimizations();
             return 0;
         }

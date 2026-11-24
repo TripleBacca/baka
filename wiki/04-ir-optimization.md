@@ -2,17 +2,14 @@
 
 With optimization on, the IR is simplified before instruction selection.
 
-## The scope rule
+## Loop unrolling
 
-*Analyses* may look at the whole function (CFG, reachability, liveness), but every
-*transformation* stays inside one basic block. That keeps each rewrite easy to justify:
-nothing has to reason about values flowing along edges. Using global liveness still
-avoids the pessimistic textbook assumption that every value is live at the end of a
-block.
-
-An earlier version did CFG-wide propagation and jump threading; it was removed in favour
-of this rule. The IR test runner now checks that no value crosses a block edge after
-optimization.
+The unroller finds natural loops from CFG edges whose destination dominates their
+source. It fully unrolls straight-line `for (int i = 0; i < N; i++)` loops with
+2–4 iterations and at most 16 body instructions. A candidate must have a private
+counter that the body cannot change, and its body must have no calls. The copies
+use constant counter values and join the original exit. The passes below then
+simplify instructions within each block, using global liveness for dead code.
 
 ## The passes
 

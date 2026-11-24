@@ -7,7 +7,7 @@ source.cpp
   │  lexer → parser → semantic analysis          (front end)
   ▼
 typed IR (three-address code)  ── verifier
-  │  block-local IR optimization                 (optional, on by default for --codegen)
+  │  IR optimization                             (optional, on by default for --codegen)
   ▼
 optimized IR               ── verifier again
   │  instruction selection + register allocation  (one pass per function)

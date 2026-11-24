@@ -205,8 +205,14 @@ namespace baka {
         bool DefinesTemporary(const Instruction& instruction);
         std::vector<Operand> Uses(const Instruction& instruction);
         void BuildCFG(Function& function);
-        // Global backward liveness (an analysis only; every transformation stays
-        // block-local). `uses` are upward-exposed reads and `defs` whole-value writes
+        struct NaturalLoop {
+            BlockId header;
+            std::set<BlockId> blocks;
+            std::vector<BlockId> latches;
+        };
+        // Finds reachable loops from dominance back edges. Requires current CFG edges.
+        std::vector<NaturalLoop> FindNaturalLoops(const Function& function);
+        // Global backward liveness. `uses` are upward-exposed reads and `defs` whole-value writes
         // per block, over any name space; requires current CFG edges. Returns the
         // names live on exit from each block.
         using LiveSets = std::map<BlockId, std::set<uint64_t>>;
@@ -217,6 +223,7 @@ namespace baka {
         void CopyPropagate(Module& module);
         void RemoveUnreachableBlocks(Module& module);
         void EliminateDeadCode(Module& module);
+        void UnrollSmallLoops(Module& module);
         void Optimize(Module& module);
         void Print(const Module& module, std::ostream& output);
     }

@@ -6,9 +6,10 @@ type/numeric rules. It does **not** mean it needs no correctness tests.
 
 ## Starting point
 
-Scope rule: analyses may be global (CFG, reachability, liveness), but **every
-transformation is local to one basic block.** `Optimize`
-repeats, until stable, block-local constant folding and copy propagation, integer
+`Optimize` first collects natural loops using dominators and fully unrolls eligible
+straight-line loops. The unroller matches a local `int` counter that starts at zero
+and increments by one, with 2–4 iterations and at most 16 body instructions.
+`Optimize` then repeats block-local constant folding and copy propagation, integer
 identities and strength reduction, local value numbering (commutative, casts,
 comparisons, address offsets), redundant-load elimination, store-to-load forwarding,
 dead-store elimination and next-use dead-code elimination. Between them it folds
@@ -34,7 +35,7 @@ must end in a terminator and CFG lists must match it.
 | Algebraic and bitwise identities | Implemented: `x+0`, `x-0`, `x*1`, `x/1`, `x&all_ones`, `x|0`, `x^0`, shifts by zero, plus `x*0`, `x&0`, `x%1`, `x-x`, `x^x` to 0 and `x|all_ones` to all ones, integers only. | Implemented | **Low.** Constants compared at the result width. Dropping a temporary operand cannot hide a fault. Never floating (signed zero, NaN). |
 | Constant branch folding | Fold a literal condition, or identical true/false targets, in a block's own `if_goto`/`goto` tail. | Implemented | **Low.** Rewrites both tail instructions as one `Jump`; unreachable blocks are then dropped. |
 | Unreachable block elimination | Separate cleanup after branch folding, using CFG reachability from the entry. | Implemented | **Low.** Only deletes whole blocks; no instruction moves across blocks. |
-| Jump threading and empty-block removal | Redirect a jump through a block containing only `Jump`. | Removed | Crosses block boundaries; not allowed by the block-local rule. |
+| Jump threading and empty-block removal | Redirect a jump through a block containing only `Jump`. | Removed | Requires a separate CFG rewrite. |
 | Dead temporary elimination | Backward next-use scan per block, seeded with the block's live-out temporaries from global liveness. | Implemented | **Low.** Liveness is an analysis; deletion stays inside the block. Every definition of a mutable temporary kills it. Loads, division/remainder, stores, calls, params, zeroing, destructor registration and control flow stay. |
 | Local common subexpression elimination / value numbering | Reuse a prior pure result in the same block: integer/floating arithmetic, comparisons, casts, address offsets. Commutative integer operands match in either order. | Implemented | **Medium.** Entries die when an operand or result temporary is redefined. Floating only for the exact same operands. An earlier identical division is reusable because it already executed. |
 | Local constant/copy propagation | Per-block constant and copy maps, rerun with folding. | Implemented (CFG-wide version removed) | **Low.** Kill a mapping on every definition of its destination or temporary source. |
@@ -49,7 +50,7 @@ must end in a terminator and CFG lists must match it.
 | Reassociation and expression balancing | Reorder arithmetic trees to expose constants or reduce depth. | Restricted | **Medium to high.** Integer wrapping permits some same-width rules; division, conversions and floating-point operations generally prohibit them. Benefit depends on backend scheduling. |
 | Loop-invariant code motion | Find natural loops/dominators; hoist pure expressions whose inputs are unchanged and whose execution is safe on paths where the expression was previously skipped. | Restricted | **High.** Must avoid hoisting faults, calls, loads, cleanup/constructor effects or conditional work. A preheader and valid CFG rewrites are needed. |
 | Induction-variable simplification | Recognize loop counters in mutable temporaries, replace derived arithmetic, and simplify exit checks. | Later | **High.** Needs loop analysis, width/overflow proof, and careful handling of `goto`, named break/continue and cleanup edges. |
-| Loop unrolling / peeling | Duplicate loop bodies with remapped block and temporary IDs and preserved exit/cleanup behavior. | Later | **High.** Needs trip-count or profitability information and strict code-size limits. Existing lowering already unrolls small array lifetime loops. |
+| Loop unrolling / peeling | Fully unroll eligible natural loops and fold constant counter reads. | Implemented for small fixed counts | Partial unrolling and peeling need remainder and exit handling. |
 | Loop vectorization | Group independent scalar iterations into vector operations. | Not directly | **Very high.** IR has no vector types/opcodes, dependence analysis, alignment facts or vector backend. |
 | Inlining | Clone a defined callee's blocks/objects/temporaries into a caller and bind `Param` values to parameters. | Later | **High.** Requires safe ID remapping, returns/cleanup reconstruction, recursion and growth policy; indirect calls cannot generally be resolved. |
 | Interprocedural constant propagation / specialization | Clone functions for known arguments or summarize return values/call effects. | Later | **High.** Needs call graph, address-taken/indirect-call handling and code-growth policy. Module startup and internal destructor helpers are ordinary functions but still have effects. |
@@ -59,8 +60,8 @@ must end in a terminator and CFG lists must match it.
 
 ## Recommended sequence
 
-Under the block-local rule, steps 1, 2 and the local part of 4 are done; CFG-wide
-dataflow (step 3, SCCP, global value numbering, loop passes) is out of scope.
+The current pipeline combines full unrolling for simple counted loops with
+block-local simplification. CFG-wide propagation and other loop passes remain future work.
 
 1. Make the existing local pipeline iterate to a stable result, with an iteration
    guard. Rebuild CFG after branch changes, then rerun reachability and liveness.
