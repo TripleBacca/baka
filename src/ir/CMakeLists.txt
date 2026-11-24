@@ -16,6 +16,7 @@ add_library(ir
     initializers.cc
     runtime_initialization.cc
     lifetimes.cc
+    virtual.cc
     cfg.cc
     verifier.cc
     optimization.cc

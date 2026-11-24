@@ -1,16 +1,13 @@
-class Base {
-public:
+struct Base {
     int a;
     int b;
 };
 
-class Derived : public Base {
-public:
+struct Derived : Base {
     int extra;
 };
 
-class Holder {
-public:
+struct Holder {
     Base base;
     int last;
 };

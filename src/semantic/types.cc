@@ -145,6 +145,14 @@ namespace baka {
                 result.size = base.layout.size;
                 result.alignment = base.layout.alignment;
                 result.baseOffset = 0;
+            } else if (TypeInfo.kind == TypeKind::Class) {
+                // The root class reserves the vptr; derived classes reuse it inside
+                // the base subobject, so it is at offset 0 for the whole hierarchy.
+                result.size = target::PointerBytes;
+                result.alignment = target::PointerBytes;
+            }
+            if (TypeInfo.kind == TypeKind::Class) {
+                result.vptrOffset = 0;
             }
             for (const auto& member : TypeInfo.members) {
                 const auto& MemberType = get(unConst(member.type));
@@ -529,6 +537,29 @@ namespace baka {
                 }
             }
             return false;
+        }
+
+        bool Types::polymorphic(TypeId id) const {
+            return get(unConst(id)).kind == TypeKind::Class;
+        }
+
+        bool Types::abstract(TypeId id) const {
+            id = unConst(id);
+            while (get(id).kind == TypeKind::Array) {
+                id = unConst(get(id).element);
+            }
+            const auto& table = get(id).vtable;
+            return std::any_of(table.begin(), table.end(), [](const VirtualSlot& slot) { return slot.pure; });
+        }
+
+        void Types::setVirtualTable(TypeId id, std::vector<VirtualSlot> table,
+                                    const std::vector<std::pair<size_t, uint32_t>>& slots) {
+            auto& type = TypeArena.at(unConst(id).value);
+            for (auto [index, slot] : slots) {
+                type.members.at(index).isVirtual = true;
+                type.members.at(index).vtableSlot = slot;
+            }
+            type.vtable = std::move(table);
         }
 
         std::vector<Types::Subobject> Types::subobjects(TypeId id, bool destruction) const {

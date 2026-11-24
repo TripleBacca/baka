@@ -301,7 +301,10 @@ Pages 5–10 cover this in depth. In brief:
 - **Member lookup** searches the class, then its bases.
 - **Calling an inherited method** adds up the base offsets to adjust `this` (always 0
   with single inheritance, but computed generally).
-- No virtual functions: every call is resolved statically.
+- A `class` and a `struct` never inherit from each other.
+- Every method of a `class` is virtual: calls through pointers, references and `this`
+  load the target from the object's vtable. Struct methods are resolved statically.
+  See page 18.
 
 ### …methods and `this`?
 

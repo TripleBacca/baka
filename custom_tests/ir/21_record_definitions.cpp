@@ -26,8 +26,7 @@ enum Y {
 struct Opaque;
 Opaque* raw;
 
-class Metadata {
-public:
+struct Metadata {
     typedef int Count;
     static int count;
     int value;

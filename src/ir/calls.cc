@@ -89,7 +89,13 @@ namespace baka {
                                               semantic::TypeKind::Function) {
                     auto instance = receiver(node->getCallee(), metadata.MemberOwner);
                     arguments.push_back(instance);
-                    callee = callable(metadata.Symbol);
+                    auto* dot = dynamic_cast<const types::MemberPostfixExpr*>(node->getCallee());
+                    if (selected.isVirtual && !(dot && exactType(dot->getBase()))) {
+                        callee = virtualCallee(instance, selected.vtableSlot,
+                                               Result.functionById(metadata.Symbol)->signature);
+                    } else {
+                        callee = callable(metadata.Symbol);
+                    }
                 }
             }
             if (!callee) {

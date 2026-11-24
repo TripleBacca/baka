@@ -6,7 +6,8 @@
 namespace baka {
     namespace semantic {
         Declarations::Declarations(Types& TypeSystem, Symbols& SymbolTable)
-            : TypeSystem(TypeSystem), SymbolTable(SymbolTable) {}
+            : TypeSystem(TypeSystem), SymbolTable(SymbolTable) {
+        }
 
         TypeId Declarations::specifier(std::string name, bool constant, bool isUnsigned,
                                        std::optional<TypeKind> expected, const types::ASTNode* source) {
@@ -16,7 +17,7 @@ namespace baka {
             }
             if (expected && TypeSystem.get(TypeSystem.unConst(id)).kind != *expected &&
                 !((*expected == TypeKind::Struct || *expected == TypeKind::Class) && TypeSystem.isAggregate(id) &&
-                  TypeSystem.get(id).kind != TypeKind::Union)) {
+                    TypeSystem.get(id).kind != TypeKind::Union)) {
                 SymbolTable.diagnose("type-kind", "type does not match aggregate/enum specifier", source);
                 return {};
             }
@@ -24,13 +25,17 @@ namespace baka {
                 // Only direct primitive spellings may carry unsigned; aliases are not specifiers.
                 if (name == "char") {
                     id = TypeSystem.builtin(Builtin::UChar);
-                } else if (name == "short") {
+                }
+                else if (name == "short") {
                     id = TypeSystem.builtin(Builtin::UShort);
-                } else if (name == "int") {
+                }
+                else if (name == "int") {
                     id = TypeSystem.builtin(Builtin::UInt);
-                } else if (name == "long") {
+                }
+                else if (name == "long") {
                     id = TypeSystem.builtin(Builtin::ULong);
-                } else {
+                }
+                else {
                     SymbolTable.diagnose("unsigned", "unsigned requires an integer type specifier", source);
                     return {};
                 }
@@ -46,7 +51,8 @@ namespace baka {
             }
             if (value.state == ConstantState::Value && value.value > 0) {
                 bound = {BoundKind::Constant, static_cast<uint64_t>(value.value)};
-            } else {
+            }
+            else {
                 SymbolTable.diagnose("bound",
                                      value.state == ConstantState::Unavailable
                                          ? "array bound evaluator unavailable"
@@ -81,10 +87,35 @@ namespace baka {
             return true;
         }
 
+        // Abstract classes exist only as base subobjects: no objects, by-value
+        // parameters or by-value results of their type.
+        bool Declarations::concrete(TypeId type, const types::ASTNode* source) {
+            const auto& info = TypeSystem.get(TypeSystem.unConst(type));
+            if (info.kind == TypeKind::Function) {
+                bool valid = concrete(info.element, source);
+                for (auto parameter : info.parameters) {
+                    valid = concrete(parameter, source) && valid;
+                }
+                return valid;
+            }
+            if (TypeSystem.abstract(type)) {
+                auto element = TypeSystem.unConst(type);
+                while (TypeSystem.get(element).kind == TypeKind::Array) {
+                    element = TypeSystem.unConst(TypeSystem.get(element).element);
+                }
+                SymbolTable.diagnose("abstract",
+                                     "cannot use abstract class '" + TypeSystem.get(element).name + "' by value",
+                                     source);
+                return false;
+            }
+            return true;
+        }
+
         SymbolId Declarations::object(Declaration NewDeclaration, DeclarationContext context) {
             NewDeclaration.type =
                 context.parameter ? TypeSystem.parameterObject(NewDeclaration.type) : NewDeclaration.type;
-            if (!validate(NewDeclaration.type, context, NewDeclaration.source)) {
+            if (!validate(NewDeclaration.type, context, NewDeclaration.source) ||
+                !concrete(NewDeclaration.type, NewDeclaration.source)) {
                 return {};
             }
             auto kind = TypeSystem.get(TypeSystem.unConst(NewDeclaration.type)).kind;
@@ -136,7 +167,7 @@ namespace baka {
                         auto type = SymbolTable.get(old[0]).type;
                         auto oldKind = TypeSystem.get(type).kind;
                         if (oldKind == kind || ((oldKind == TypeKind::Struct || oldKind == TypeKind::Class) &&
-                                                (kind == TypeKind::Struct || kind == TypeKind::Class))) {
+                            (kind == TypeKind::Struct || kind == TypeKind::Class))) {
                             return type;
                         }
                     }
@@ -190,8 +221,16 @@ namespace baka {
                                      member.source);
                 return false;
             }
+            if (member.isPure && (TypeSystem.get(owner).kind != TypeKind::Class || member.isStatic ||
+                                  TypeInfo.kind != TypeKind::Function)) {
+                SymbolTable.diagnose("pure", "only non-static class methods can be pure ('= 0')", member.source);
+                return false;
+            }
             bool field = !member.isType && !member.isStatic && TypeInfo.kind != TypeKind::Function;
             if (field && !validate(type, {false, true, false, true}, member.source)) {
+                return false;
+            }
+            if (!member.isType && !concrete(type, member.source)) {
                 return false;
             }
             if (!field && !validate(type, {false, true, true, false}, member.source)) {
@@ -207,7 +246,7 @@ namespace baka {
                 return false;
             }
             if (member.isConstructor && (TypeInfo.kind != TypeKind::Function || !TypeSystem.isVoid(TypeInfo.element) ||
-                                         member.isStatic || member.isConstMethod)) {
+                member.isStatic || member.isConstMethod)) {
                 SymbolTable.diagnose("constructor", "invalid constructor signature", member.source);
                 return false;
             }
@@ -219,7 +258,7 @@ namespace baka {
             }
             if (member.isDestructor &&
                 (TypeInfo.kind != TypeKind::Function || !TypeSystem.isVoid(TypeInfo.element) ||
-                 !TypeInfo.parameters.empty() || TypeInfo.variadic || member.isStatic || member.isConstMethod)) {
+                    !TypeInfo.parameters.empty() || TypeInfo.variadic || member.isStatic || member.isConstMethod)) {
                 SymbolTable.diagnose("destructor", "invalid destructor signature", member.source);
                 return false;
             }
@@ -231,6 +270,17 @@ namespace baka {
         }
 
         bool Declarations::base(TypeId owner, TypeId base, semantic::Access access, const types::ASTNode* source) {
+            const auto OwnerKind = TypeSystem.get(owner).kind;
+            const auto BaseKind = base.value ? TypeSystem.get(base).kind : TypeKind::TypeError;
+            if (OwnerKind == TypeKind::Class && BaseKind == TypeKind::Struct) {
+                SymbolTable.diagnose("base-kind", "a class cannot inherit from a struct", source);
+                return false;
+            }
+            if (OwnerKind == TypeKind::Struct && BaseKind == TypeKind::Class) {
+                SymbolTable.diagnose("base-kind", "a struct cannot inherit from a class", source);
+
+                return false;
+            }
             if (TypeSystem.setBase(owner, base, access)) {
                 return true;
             }
@@ -245,10 +295,69 @@ namespace baka {
                     SymbolTable.diagnose("union-lifetime", "nontrivial union lifetimes are unsupported", source);
                     return false;
                 }
-                return true;
+                return !TypeSystem.polymorphic(type) || virtualTable(type);
             }
             SymbolTable.diagnose("layout", layout.message, source);
             return false;
+        }
+
+        // Builds the class vtable: the base's slots are inherited, a method with
+        // the same name, parameter types and const-ness replaces its slot, and any
+        // other non-static method appends one. Slot 0 is the class's destructor.
+        bool Declarations::virtualTable(TypeId type) {
+            const auto& info = TypeSystem.get(type);
+            std::vector<VirtualSlot> table;
+            if (info.base.value) {
+                table = TypeSystem.get(TypeSystem.unConst(info.base)).vtable;
+            }
+            if (table.empty()) {
+                table.push_back({});
+            }
+            table.front() = {type, 0, false};
+            std::vector<std::pair<size_t, uint32_t>> slots;
+            bool valid = true;
+            for (size_t index = 0; index < info.members.size(); ++index) {
+                const auto& member = info.members[index];
+                const auto& signature = TypeSystem.get(TypeSystem.unConst(member.type));
+                if (member.isStatic || member.isType || member.isConstructor || member.isDestructor ||
+                    signature.kind != TypeKind::Function) {
+                    continue;
+                }
+                uint32_t slot = 0;
+                for (uint32_t candidate = 1; candidate < table.size() && !slot; ++candidate) {
+                    const auto& entry = table[candidate];
+                    if (entry.owner == type) {
+                        continue; // overloads declared in this class never override each other
+                    }
+                    const auto& previous = TypeSystem.get(entry.owner).members.at(entry.member);
+                    const auto& previousSignature = TypeSystem.get(TypeSystem.unConst(previous.type));
+                    if (previous.name == member.name && previousSignature.parameters == signature.parameters &&
+                        previousSignature.variadic == signature.variadic) {
+                        slot = candidate;
+                        if (previousSignature.element != signature.element) {
+                            SymbolTable.diagnose("override",
+                                                 "overriding method '" + member.name +
+                                                     "' must have the same return type",
+                                                 member.source);
+                            valid = false;
+                        }
+                        if (previous.isConstMethod != member.isConstMethod) {
+                            SymbolTable.diagnose("override",
+                                                 "overriding method '" + member.name + "' must match its const-ness",
+                                                 member.source);
+                            valid = false;
+                        }
+                    }
+                }
+                if (!slot) {
+                    slot = static_cast<uint32_t>(table.size());
+                    table.push_back({});
+                }
+                table[slot] = {type, index, member.isPure};
+                slots.push_back({index, slot});
+            }
+            TypeSystem.setVirtualTable(type, std::move(table), slots);
+            return valid;
         }
 
         SymbolId Declarations::enumerator(std::string name, TypeId type, IntegerResult value,
@@ -364,7 +473,7 @@ namespace baka {
                     // Derived members may use protected members only through objects of
                     // their own class (or classes derived from it).
                     return context.value &&
-                           (context == at || (TypeSystem.derivesFrom(context, at) && related(naming, context)));
+                        (context == at || (TypeSystem.derivesFrom(context, at) && related(naming, context)));
                 }
                 return false;
             };
@@ -385,11 +494,14 @@ namespace baka {
                 return true;
             }
             const auto& member = TypeSystem.get(TypeSystem.unConst(owner)).members.at(index);
-            const char* level = member.access == semantic::Access::Private     ? "private"
-                                : member.access == semantic::Access::Protected ? "protected"
-                                                                     : "inaccessible";
-            auto name = member.isConstructor ? "constructor of '" + TypeSystem.get(TypeSystem.unConst(owner)).name + "'"
-                                             : "'" + member.name + "'";
+            const char* level = member.access == semantic::Access::Private
+                                    ? "private"
+                                    : member.access == semantic::Access::Protected
+                                    ? "protected"
+                                    : "inaccessible";
+            auto name = member.isConstructor
+                            ? "constructor of '" + TypeSystem.get(TypeSystem.unConst(owner)).name + "'"
+                            : "'" + member.name + "'";
             SymbolTable.diagnose("access", name + " is " + level + " within this context", source);
             return false;
         }

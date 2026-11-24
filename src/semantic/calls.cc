@@ -232,6 +232,10 @@ namespace baka {
                             SymbolTable.diagnose("constructor", "construction requires a complete object type", node);
                             return makeError();
                         }
+                        if (TypeSystem.abstract(type)) {
+                            SymbolTable.diagnose("abstract", "cannot construct an abstract class", node);
+                            return makeError();
+                        }
                         if (Annotating) {
                             auto& metadata = const_cast<types::FunctionCallPostfixExpr*>(node)->semanticInfo();
                             metadata.Construction = true;
@@ -403,6 +407,10 @@ namespace baka {
             auto target = TypeSystem.unConst(TypeSystem.get(pointer).element);
             if (!isCompleteObject(target)) {
                 SymbolTable.diagnose("allocation", "allocation requires a complete object type", node);
+                return makeError();
+            }
+            if (allocation && TypeSystem.abstract(target)) {
+                SymbolTable.diagnose("abstract", "cannot allocate an abstract class", node);
                 return makeError();
             }
             auto element = target;

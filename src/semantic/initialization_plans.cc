@@ -160,9 +160,11 @@ namespace baka {
                 appendInitialization(plan, type, offset, expression, kind);
                 return;
             }
+            // Classes always construct: the hidden vptr is set by a constructor.
             if (TypesView.isAggregate(type) && list &&
-                std::any_of(info.members.begin(), info.members.end(),
-                            [](const Member& member) { return member.isConstructor; })) {
+                (TypesView.polymorphic(type) ||
+                 std::any_of(info.members.begin(), info.members.end(),
+                             [](const Member& member) { return member.isConstructor; }))) {
                 if (!list->expressions().empty()) {
                     plan.failure = "braced class construction is unsupported; use Type(arguments)";
                 }

@@ -11,7 +11,7 @@ namespace baka {
             if (opcode == types::OP_ASSIGN) {
                 auto location = address(binaryNode->getLeft());
                 auto result = value(binaryNode->getRight());
-                store(location, result);
+                assign(location, result);
                 return result;
             }
             auto left = value(binaryNode->getLeft());

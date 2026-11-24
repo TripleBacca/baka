@@ -81,6 +81,21 @@ namespace baka {
             }
         }
 
+        namespace {
+            // A vtable slot of a pure method. Reaching it means a pure method was
+            // called while an abstract base was being constructed or destroyed.
+            void PrintPureVirtual(std::ostream& output) {
+                output << "\t.section\t.rodata\n.Lbaka.pure.message:\n\t.ascii\t\"pure virtual method called\\n\"\n"
+                       << "\t.text\n\t.globl\t__baka_pure_virtual\n\t.p2align\t3\n"
+                       << "\t.type\t__baka_pure_virtual, @function\n__baka_pure_virtual:\n"
+                       << "\tdaddiu\t$sp, $sp, -16\n\tsd\t$ra, 8($sp)\n"
+                       << "\tli\t$a0, 2\n\tdla\t$a1, .Lbaka.pure.message\n\tli\t$a2, 27\n";
+                Call(output, "write");
+                Call(output, "abort");
+                output << "\t.size\t__baka_pure_virtual, .-__baka_pure_virtual\n";
+            }
+        }
+
         void PrintRuntime(const ir::Module& module, std::ostream& output) {
             output << "\t.text\n";
             PrintStart(module, output);
@@ -90,6 +105,9 @@ namespace baka {
             }
             if (Declares(module, "__baka_deallocate")) {
                 PrintDeallocate(output);
+            }
+            if (Declares(module, "__baka_pure_virtual")) {
+                PrintPureVirtual(output);
             }
         }
     }

@@ -50,9 +50,10 @@ returning an integer type or `void`.
 - Implicit pointer-to-`bool` is rejected in assignments and arguments but accepted in
   conditions.
 - Unsupported syntax includes bare `unsigned`, `signed char`, `const` methods, rvalue
-  references, lambda captures, virtual functions (planned, see page 18) and direct
-  initialization `C c(4)`. Access specifiers, lvalue references and captureless lambdas are
-  supported (pages 15–17).
+  references, lambda captures, constructor initializer lists and direct
+  initialization `C c(4)`. Access specifiers, lvalue references, captureless lambdas and
+  virtual functions are supported (pages 15–18). Classes differ from C++ by design: every
+  method is virtual and every class carries a vptr (page 18).
 
 ### Not bugs, but different from `g++`
 

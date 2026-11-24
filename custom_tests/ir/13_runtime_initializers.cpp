@@ -9,8 +9,7 @@ int computed = calc(10);
 int constant = 3 + 4;
 int values[3] = {calc(20), 3 + 4, calc(30)};
 
-class Pair {
-public:
+struct Pair {
     int x;
     int y;
 };

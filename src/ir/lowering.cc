@@ -31,6 +31,7 @@ namespace baka {
                     source.kind == semantic::TypeKind::Union) {
                     target.memberOffsets = layout.layout.offsets;
                     target.baseOffset = layout.layout.baseOffset;
+                    target.vptrOffset = layout.layout.vptrOffset;
                 }
             }
             using K = semantic::TypeKind;
@@ -198,6 +199,12 @@ namespace baka {
 
         void Lowerer::store(Operand address, Operand value) {
             emit(Instruction::store(address, value, State.Source));
+            // A stored class value may have been read from a derived object (a
+            // slice, `*p`, a reference). The new object has exactly the stored
+            // type, so it gets that type's vptr. Assignment uses assign() instead.
+            if (polymorphic(value.type)) {
+                storeVptr(address, value.type);
+            }
         }
 
         Operand Lowerer::emitValue(Opcode opcode, TypeId type, Operand left, Operand right) {
@@ -387,6 +394,7 @@ namespace baka {
             try {
                 importSymbols();
                 importLifetimes();
+                buildVtables();
                 for (auto* item : program.getBody()) {
                     collect(item);
                 }

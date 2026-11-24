@@ -59,6 +59,8 @@ namespace baka {
             bool base(TypeId owner, TypeId base, semantic::Access access, const types::ASTNode* source = nullptr);
 
             bool finishAggregate(TypeId type, const types::ASTNode* source = nullptr);
+            bool virtualTable(TypeId type);
+            bool concrete(TypeId type, const types::ASTNode* source);
 
             SymbolId enumerator(std::string name, TypeId type, IntegerResult value,
                                 const types::ASTNode* source = nullptr);

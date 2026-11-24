@@ -61,6 +61,19 @@ namespace baka {
                     State.ActiveCleanups.push_back(local.id);
                 }
             }
+            for (auto parameter : function().parameters) {
+                // A by-value class parameter is a new object of its declared type,
+                // whatever object the caller's value was read from.
+                const auto type = Result.object(function(), parameter)->type;
+                if (parameter != State.Self && polymorphic(type)) {
+                    storeVptr(object(parameter), type);
+                }
+            }
+            if (destructor) {
+                // From here on the object behaves as this class: virtual calls in
+                // the body (and in member destructors) never reach a derived class.
+                storeVptr(self(), Result.type(Result.type(function().signature).parameters.front()).element);
+            }
             if (constructor) {
                 initializeMembers(self(), Result.type(Result.type(function().signature).parameters.front()).element);
                 finishTemps();

@@ -41,7 +41,7 @@ namespace baka {
                 assignment && assignment->getBinaryOp() == types::OP_ASSIGN) {
                 auto location = address(assignment->getLeft());
                 auto result = value(assignment->getRight());
-                store(location, result);
+                assign(location, result);
                 return location;
             }
             if (auto* assignment = dynamic_cast<const types::CompoundAssignmentNode*>(expression)) {

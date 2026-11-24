@@ -1,12 +1,10 @@
-class Vec {
-public:
+struct Vec {
     int x;
     int y;
     double w;
 };
 
-class Big {
-public:
+struct Big {
     long a;
     char tag;
     int values[5];

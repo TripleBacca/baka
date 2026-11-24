@@ -8,8 +8,7 @@ const char* label = "global label";
 int* alias = &seeds[2];
 int (*ops[2])(int v);
 
-class Config {
-public:
+struct Config {
     int id;
     double factor;
     const char* name;
