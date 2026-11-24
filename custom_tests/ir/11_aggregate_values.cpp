@@ -1,5 +1,4 @@
-class Pair {
-public:
+struct Pair {
     int a;
     int b;
 

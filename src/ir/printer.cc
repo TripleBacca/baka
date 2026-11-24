@@ -185,6 +185,9 @@ namespace baka {
                         if (type.base) {
                             output << TypeName(module, type.base);
                             separator = true;
+                        } else if (type.vptrOffset) {
+                            output << "vptr";
+                            separator = true;
                         }
                         for (auto field : type.memberTypes) {
                             if (!field) {

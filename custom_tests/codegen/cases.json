@@ -169,5 +169,17 @@
       [0, 150652, "v0=1\nv1=32768\nv2=2\nv3=-0.000000\nv4=65535\nv5=36\nv6=1\nv7=34\nv8=222\nv9=0\nv10=-3.250000\nv11=0\nv12=15.750000\nv13=8464\nv14=10912.000000\nv15=-25\nv16=-87.333333\nv17=0.000000\nv18=0\nv19=-0.000000\nv20=0.000000\nv21=22\nv22=22.250000\nv23=-262.000000\nsink=32995\n"],
       [3, 83589, "v0=0\nv1=13108\nv2=5\nv3=-0.000000\nv4=65535\nv5=39\nv6=1\nv7=33\nv8=175\nv9=0\nv10=-4.750000\nv11=1\nv12=8.750000\nv13=9025\nv14=4356.666667\nv15=-19\nv16=-21934.000000\nv17=0.000000\nv18=0\nv19=-0.000000\nv20=0.000000\nv21=24\nv22=23.750000\nv23=-271.000000\nsink=13484\n"]
     ]
+  },
+  "29_virtual_dispatch.cpp": {
+    "runs": [
+      [0, 11, "Shape:shape Square:square Shape:shape \nsquare=4 rect=3 square=4 \nsum=11 twice=6\n~Square:square ~Shape1:shape \n~Shape2:shape \n"],
+      [2, 41, "Shape:shape Square:square Shape:shape \nsquare=16 rect=9 square=16 \nsum=41 twice=18\n~Square:square ~Shape1:shape \n~Shape2:shape \n"]
+    ]
+  },
+  "30_virtual_values.cpp": {
+    "runs": [
+      [0, 0, "207 207 302\n102\n102 102 102\n102\n206 5\n102\n101 101\n207\n207 44\n"],
+      [1, 0, "207 207 302\n102\n102 102 102\n102\n206 5\n102\n101 101\n207\n207 45\n"]
+    ]
   }
 }

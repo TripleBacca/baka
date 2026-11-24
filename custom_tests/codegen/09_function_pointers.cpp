@@ -29,8 +29,7 @@ int fold(int (*table[3])(int v), int x) {
     return x;
 }
 
-class Handler {
-public:
+struct Handler {
     int (*callback)(int v);
     int base;
 };

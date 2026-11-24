@@ -24,6 +24,8 @@ namespace baka {
                 return plan;
             }
             plan.defaultConstructor = checker.defaultConstructor(id);
+            // Every constructor of a class stores the vptr.
+            plan.construction = TypesView.polymorphic(id);
             for (const auto& member : type.members) {
                 plan.construction |= member.isConstructor;
                 plan.destruction |= member.isDestructor;

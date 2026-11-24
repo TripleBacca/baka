@@ -33,6 +33,7 @@ namespace baka {
             std::vector<std::optional<uint64_t>> memberOffsets;
             std::vector<TypeId> memberTypes; // same indices; zero for non-storage members
             std::optional<uint64_t> baseOffset;
+            std::optional<uint64_t> vptrOffset; // classes: the vtable pointer, at 0
             TypeId base = 0;
             bool isUnion = false;
             bool operator==(const Type&) const = default;

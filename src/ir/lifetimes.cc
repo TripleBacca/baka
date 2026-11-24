@@ -218,7 +218,20 @@ namespace baka {
                 construct(destination, id);
                 return;
             }
-            for (const auto& child : Analyzer.executionPlans().lifetime(semanticType(id)).children) {
+            const auto& children = Analyzer.executionPlans().lifetime(semanticType(id)).children;
+            const bool derived = Analyzer.types().get(semanticType(id)).base.value != 0;
+            // The vptr is set after the base is constructed (which set the base's
+            // own vptr) and before members and the body, so a virtual call made
+            // while constructing a class reaches that class's methods.
+            const size_t first = derived ? 1 : 0; // children[0] is the base subobject
+            for (size_t index = 0; index <= children.size(); ++index) {
+                if (index == std::min(first, children.size())) {
+                    storeVptr(destination, id);
+                }
+                if (index == children.size()) {
+                    break;
+                }
+                const auto& child = children[index];
                 auto type = importType(child.type);
                 auto address = emitValue(Opcode::AddressOffset, Result.pointer(type), destination,
                                          integer(integerType(), child.offset));

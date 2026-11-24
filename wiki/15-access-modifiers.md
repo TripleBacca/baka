@@ -52,6 +52,7 @@ int main() {
 | Labels | `public:`, `protected:`, `private:` may appear any number of times in a `class`, `struct` or `union` body; each applies to the members after it. |
 | Defaults | `class` members are private; `struct` and `union` members are public. The class-key of the **definition** decides. |
 | Base specifier | `class D : public B`, `: protected B`, `: private B`. Without a keyword: private for `class`, public for `struct`. |
+| Base class-key | A `class` may only derive from a `class` and a `struct` only from a `struct` (`a class cannot inherit from a struct`). Classes are polymorphic with a `vptr` at offset 0 (page 18); structs keep a plain C layout. |
 | Inherited access | A member's access in a derived class is the stricter of its declared access and the inheritance access. A **private** member of a base is inaccessible in every derived class. |
 | Who may use what | **public**: anyone. **private**: member functions, constructors and destructors of the class that declares it. **protected**: that class, plus members of derived classes, but only through an object of their own class (or a class derived from it). |
 | Through an inaccessible base | If `B` is a private base of `D`, outside code cannot reach `B`'s members through a `D`, even public ones. |

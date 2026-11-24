@@ -32,7 +32,19 @@ namespace baka {
                 auto destroyBlock = newBlock(), done = newBlock();
                 branch(pointer, destroyBlock, done);
                 select(destroyBlock);
-                if (needsDestruction(target)) {
+                if (polymorphic(target)) {
+                    // Slot 0 holds the most-derived destructor, or null when the
+                    // object's whole hierarchy is trivially destructible.
+                    auto destructor = virtualCallee(pointer, 0, Result.function(importType(Analyzer.types().builtin(
+                                                                                    semantic::Builtin::Void)),
+                                                                                {pointer.type}, false));
+                    auto call = newBlock(), free = newBlock();
+                    branch(destructor, call, free);
+                    select(call);
+                    emitCall({}, destructor, {pointer});
+                    jump(free);
+                    select(free);
+                } else if (needsDestruction(target)) {
                     destroy(pointer, target);
                 }
                 auto helper = heapFunction(false);

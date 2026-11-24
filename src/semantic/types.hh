@@ -60,6 +60,10 @@ namespace baka {
             bool isConstructor = false;
             bool isDestructor = false;
             bool isConstMethod = false;
+            // Every non-static method of a class is virtual. A pure method
+            // (`= 0`) has no body; its slot traps at run time.
+            bool isVirtual = false, isPure = false;
+            uint32_t vtableSlot = 0; // valid when isVirtual; slot 0 is the destructor
             Access access = Access::Public;
             const types::ASTNode* source = nullptr;
             size_t minimumArity = static_cast<size_t>(-1);
@@ -71,7 +75,17 @@ namespace baka {
             uint64_t size = 0, alignment = 1;
             std::vector<std::optional<uint64_t>> offsets; // indexed like Type::members
             std::optional<uint64_t> baseOffset;
+            std::optional<uint64_t> vptrOffset; // classes only, always 0
             bool operator==(const Layout&) const = default;
+        };
+
+        // One vtable entry: the member that implements the slot. Slot 0 is the
+        // class's own destructor and records no member.
+        struct VirtualSlot {
+            TypeId owner;
+            size_t member = 0;
+            bool pure = false;
+            bool operator==(const VirtualSlot&) const = default;
         };
 
         struct Type {
@@ -90,6 +104,8 @@ namespace baka {
             // definitions have no layout. Completed nominal types cannot change
             // storage shape, so all later queries reuse these offsets and size.
             std::optional<Layout> objectLayout;
+            // Classes only, published by setVirtualTable after the definition completes.
+            std::vector<VirtualSlot> vtable;
             bool operator==(const Type&) const = default;
         };
 
@@ -198,6 +214,15 @@ namespace baka {
             bool setBase(TypeId id, TypeId base, Access access = Access::Public);
             bool addMember(TypeId id, Member member);
             bool bindMemberSymbol(TypeId owner, size_t index, SymbolId symbol);
+            // Classes are polymorphic: a vptr at offset 0 and dynamic dispatch for
+            // every non-static method. Structs and unions never are.
+            bool polymorphic(TypeId id) const;
+            // A class (or array of one) with a pure slot cannot be instantiated.
+            bool abstract(TypeId id) const;
+            // Publishes a completed class's vtable and marks each listed member
+            // (index, slot) virtual.
+            void setVirtualTable(TypeId id, std::vector<VirtualSlot> table,
+                                 const std::vector<std::pair<size_t, uint32_t>>& slots);
             LayoutResult finishDefinition(TypeId id);
             LayoutResult layout(TypeId id) const;
 

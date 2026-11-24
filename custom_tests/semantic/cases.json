@@ -134,5 +134,40 @@
   ],
   "invalid_lambda_inconsistent_returns.cpp": [
     "inconsistent deduced return types in lambda"
+  ],
+  "valid_same_key_inheritance.cpp": [],
+  "invalid_class_from_struct.cpp": [
+    "a class cannot inherit from a struct"
+  ],
+  "invalid_struct_from_class.cpp": [
+    "a struct cannot inherit from a class"
+  ],
+  "valid_virtual_functions.cpp": [],
+  "invalid_abstract_object.cpp": [
+    "cannot use abstract class 'Shape' by value"
+  ],
+  "invalid_abstract_parameter.cpp": [
+    "cannot use abstract class 'Shape' by value"
+  ],
+  "invalid_abstract_member.cpp": [
+    "cannot use abstract class 'Shape' by value"
+  ],
+  "invalid_abstract_new.cpp": [
+    "cannot allocate an abstract class"
+  ],
+  "invalid_abstract_construct.cpp": [
+    "cannot construct an abstract class"
+  ],
+  "invalid_override_return_type.cpp": [
+    "overriding method 'value' must have the same return type"
+  ],
+  "invalid_struct_pure_method.cpp": [
+    "only non-static class methods can be pure ('= 0')"
+  ],
+  "invalid_pure_specifier.cpp": [
+    "a method declaration can only be followed by '= 0'"
+  ],
+  "invalid_braced_class.cpp": [
+    "braced class construction is unsupported; use Type(arguments)"
   ]
 }

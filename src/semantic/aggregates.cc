@@ -1,4 +1,8 @@
 #include "aggregates.hh"
+#include "types/parser/ast/constant.hh"
+#include "types/parser/ast/expression.hh"
+#include "types/parser/ast/initializer.hh"
+#include <variant>
 
 namespace baka {
     namespace semantic {
@@ -15,6 +19,23 @@ namespace baka {
         }
 
         namespace {
+            // The pure specifier is the literal `0`, possibly as a one-element initializer.
+            bool PureSpecifier(const types::ExpressionNode* initializer) {
+                if (auto* list = dynamic_cast<const types::InitializerNode*>(initializer)) {
+                    if (list->expressions().size() != 1) {
+                        return false;
+                    }
+                    initializer = list->expressions().front();
+                }
+                auto* primary = dynamic_cast<const types::PrimaryExpressionNode*>(initializer);
+                if (!primary || !std::holds_alternative<types::ConstantNode*>(primary->getExpression())) {
+                    return false;
+                }
+                auto* constant =
+                    dynamic_cast<const types::ConstantTNode<int>*>(std::get<types::ConstantNode*>(primary->getExpression()));
+                return constant && constant->getValue() == 0;
+            }
+
             // Written access, or the default of the class-key used by the definition.
             Access Resolve(types::AccessSpecifier written, TypeKind kind) {
                 switch (written) {
@@ -58,6 +79,19 @@ namespace baka {
                         MemberInfo.source = item;
                         MemberInfo.initializer = item->getInitializer();
                         MemberInfo.access = access;
+                        if (TypeSystem.get(TypeSystem.unConst(type)).kind == TypeKind::Function &&
+                            MemberInfo.initializer) {
+                            // `int area() = 0;` declares a pure method; it is a
+                            // specifier, not a value to initialize anything with.
+                            if (!PureSpecifier(MemberInfo.initializer)) {
+                                SymbolTable.diagnose("pure", "a method declaration can only be followed by '= 0'",
+                                                     item);
+                                valid = false;
+                                continue;
+                            }
+                            MemberInfo.isPure = true;
+                            MemberInfo.initializer = nullptr;
+                        }
                         bool accepted = DeclarationChecker.member(id, MemberInfo);
                         if (accepted) {
                             bool function = TypeSystem.get(TypeSystem.unConst(type)).kind == TypeKind::Function;

@@ -9,8 +9,7 @@ union Mixed {
     long l;
 };
 
-class Tagged {
-public:
+struct Tagged {
     int kind;
     Mixed m;
 };

@@ -156,6 +156,13 @@ Other intentional subset rules:
   declarations remain outside the implemented syntax.
 - Access control: `public:`, `protected:` and `private:` labels and base specifiers
   (`class D : public B`). `class` defaults to private, `struct`/`union` to public.
+  A `class` may only derive from a `class` and a `struct` only from a `struct`, so the
+  class `vptr` never has to share offset 0 with a plain base.
+- Virtual functions: every non-static method of a `class` is virtual; structs never
+  dispatch. `int f() = 0;` declares a pure method and makes the class abstract
+  (not usable by value). Each class has a `vtable` (slot 0 = destructor) and an
+  8-byte vptr at offset 0, and braced initialization of a class is rejected. See
+  `wiki/18-virtual-functions.md`.
   Accesses through `.`/`->`, unqualified member names in methods, selected overloads
   and selected constructors (including default construction and `new`) are checked
   against the enclosing class; inherited access is the more restrictive of member and

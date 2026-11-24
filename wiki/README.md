@@ -2,7 +2,7 @@
 
 An overview of how baka turns a checked program into a running MIPS64 executable.
 Pages 15–18 document the C++ features added on top (access control, references,
-lambdas) and the plan for virtual functions. These pages cover breadth, not line-by-line detail; read them in order for the full
+lambdas, virtual functions). These pages cover breadth, not line-by-line detail; read them in order for the full
 picture, or jump to a topic.
 
 | # | Page | What it covers |
@@ -24,7 +24,7 @@ picture, or jump to a topic.
 | 15 | [Access modifiers](15-access-modifiers.md) | `public`/`protected`/`private`, defaults, inheritance access, where access is checked, design and implementation |
 | 16 | [References](16-references.md) | `T&` rules, binding and temporaries, how references become pointers in the IR, design and implementation |
 | 17 | [Captureless lambdas](17-captureless-lambdas.md) | Lambda syntax, deduced results, hoisting to internal functions, design and implementation |
-| 18 | [Virtual functions (plan)](18-virtual-functions-plan.md) | Implementation plan for vtables and dynamic dispatch; not yet implemented |
+| 18 | [Virtual functions](18-virtual-functions.md) | Every class method is virtual, pure methods and abstract classes, vtables, vptr handling and dispatch |
 
 ## One-paragraph summary
 

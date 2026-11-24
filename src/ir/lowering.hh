@@ -63,7 +63,8 @@ namespace baka {
             } State;
 
             uint32_t NextObject = 1;
-            uint32_t HeapAllocate = 0, HeapDeallocate = 0;
+            uint32_t HeapAllocate = 0, HeapDeallocate = 0, PureVirtual = 0;
+            std::map<TypeId, uint32_t> Vtables; // class record -> its vtable global
             bool Started = false;
             std::vector<const types::SingleDeclarationNode*> GlobalInitializers;
             std::map<TypeId, semantic::TypeId> ReverseTypes;
@@ -163,6 +164,17 @@ namespace baka {
             bool needsConstruction(TypeId type) const;
             bool needsDestruction(TypeId type) const;
             Operand storage(TypeId type, std::string name);
+
+            // Classes: vtables, the vptr at offset 0 and dynamic dispatch.
+            TypeId vtableSlot();
+            bool polymorphic(TypeId type) const;
+            uint32_t pureVirtual();
+            void buildVtables();
+            Operand vptrAddress(Operand object);
+            void storeVptr(Operand object, TypeId type);
+            void assign(Operand location, Operand value);
+            Operand virtualCallee(Operand instance, uint32_t slot, TypeId signature);
+            bool exactType(const types::ExpressionNode* expression) const;
             Operand activeFlag();
             uint32_t declareLifetime(TypeId owner, std::string name, std::vector<TypeId> parameters,
                                      const types::ASTNode* declaration, const types::StatementNode* body,

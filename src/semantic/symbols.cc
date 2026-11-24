@@ -154,8 +154,9 @@ namespace baka {
             if (NewDeclaration.source) {
                 DeclarationPoints[NewDeclaration.source] = point;
             }
-            if (NewDeclaration.name == "__baka_allocate" || NewDeclaration.name == "__baka_deallocate") {
-                diagnose("reserved", "name is reserved for the allocation runtime", NewDeclaration.source);
+            if (NewDeclaration.name == "__baka_allocate" || NewDeclaration.name == "__baka_deallocate" ||
+                NewDeclaration.name == "__baka_pure_virtual") {
+                diagnose("reserved", "name is reserved for the compiler runtime", NewDeclaration.source);
                 return {};
             }
             if (!NewDeclaration.type.value) {
