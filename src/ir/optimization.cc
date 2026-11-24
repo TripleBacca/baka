@@ -375,13 +375,13 @@ namespace baka {
             throw std::runtime_error("IR optimization did not converge");
         }
 
-        // Unrolls eligible natural loops once and simplifies, so register pressure is measured on
-        // cleaned-up callee bodies; then inlines small callees and simplifies again across the
-        // joined code.
+        // Unroll loops and simplify before checking for tail recursion. Inlining later can add
+        // local objects to the frame, so check the original frame first. Simplify again after inlining.
         void Optimize(Module& module) {
             RemoveUnreachableBlocks(module);
             UnrollSmallLoops(module);
             Simplify(module);
+            EliminateTailRecursion(module);
             if (Inline(module)) {
                 Simplify(module);
             }

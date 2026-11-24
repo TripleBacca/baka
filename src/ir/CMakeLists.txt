@@ -20,6 +20,7 @@ add_library(ir
     cfg.cc
     loops.cc
     loop_unrolling.cc
+    tail_recursion.cc
     verifier.cc
     optimization.cc
     inlining.cc
