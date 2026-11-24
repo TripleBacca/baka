@@ -71,6 +71,8 @@ namespace baka {
                         if (auto found = Destructors.find(id); found != Destructors.end()) {
                             target = callable(found->second);
                         }
+                    } else if (index == semantic::EqualitySlot) {
+                        // Filled by lowerEqualities() only when the program compares this class.
                     } else if (table[index].pure) {
                         target = callable(pureVirtual());
                     } else {
@@ -90,15 +92,19 @@ namespace baka {
             return cast(object, Result.pointer(Result.pointer(vtableSlot())));
         }
 
+        // The value a vptr holds for `type`: the address of slot 0 of its vtable.
+        Operand Lowerer::vtableAddress(TypeId type) {
+            const auto& global = *std::find_if(Result.globals.begin(), Result.globals.end(),
+                                               [&](const Object& item) { return item.id == Vtables.at(type); });
+            Operand table{OperandKind::Object, Result.pointer(global.type), global.id};
+            return cast(table, Result.pointer(vtableSlot()));
+        }
+
         void Lowerer::storeVptr(Operand object, TypeId type) {
-            auto found = Vtables.find(type);
-            if (found == Vtables.end()) {
+            if (!Vtables.count(type)) {
                 return;
             }
-            const auto& global = *std::find_if(Result.globals.begin(), Result.globals.end(),
-                                               [&](const Object& item) { return item.id == found->second; });
-            Operand table{OperandKind::Object, Result.pointer(global.type), global.id};
-            emit(Instruction::store(vptrAddress(object), cast(table, Result.pointer(vtableSlot())), State.Source));
+            emit(Instruction::store(vptrAddress(object), vtableAddress(type), State.Source));
         }
 
         // Assignment changes an object's value, never its dynamic type: the

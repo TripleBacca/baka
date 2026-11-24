@@ -17,6 +17,7 @@ add_library(ir
     runtime_initialization.cc
     lifetimes.cc
     virtual.cc
+    equality.cc
     cfg.cc
     loops.cc
     loop_unrolling.cc

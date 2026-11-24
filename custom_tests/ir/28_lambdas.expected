@@ -4,7 +4,7 @@ Operation = record(ptr<fn(i32, i32)->i32>) size 8 align 8
 Scaler = record(vptr, i32) size 16 align 8
 global last.19: i32 = zero
 global square.21: ptr<fn(i32)->i32> = zero
-internal .vtable.Scaler.124: [2 x ptr<void>] readonly = zero {+8 = @Scaler.scale.41:ptr<fn(ptr<Scaler>, i32)->i32>}
+internal .vtable.Scaler.124: [3 x ptr<void>] readonly = zero {+16 = @Scaler.scale.41:ptr<fn(ptr<Scaler>, i32)->i32>}
 initializer @.module_init.126
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
@@ -406,7 +406,7 @@ function @__lambda_13.73: fn(i32)->i32 internal {
 function @Scaler.default_ctor.123: fn(ptr<Scaler>)->void internal {
   parameter this.125: ptr<Scaler>
   (load, %t1:ptr<Scaler>, &this.125:ptr<ptr<Scaler>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Scaler.124:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Scaler.124:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Scaler>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Scaler>, 8:i64)

@@ -4,8 +4,8 @@ Item = record(vptr, i32) size 16 align 8
 Owner = record(vptr, [2 x Item]) size 40 align 8
 global next.19: i32 = zero
 global trace.20: i32 = zero
-internal .vtable.Item.40: [1 x ptr<void>] readonly = zero {+0 = @Item.dtor.36:ptr<fn(ptr<Item>)->void>}
-internal .vtable.Owner.41: [1 x ptr<void>] readonly = zero {+0 = @Owner.default_dtor.38:ptr<fn(ptr<Owner>)->void>}
+internal .vtable.Item.40: [2 x ptr<void>] readonly = zero {+0 = @Item.dtor.36:ptr<fn(ptr<Item>)->void>}
+internal .vtable.Owner.41: [2 x ptr<void>] readonly = zero {+0 = @Owner.default_dtor.38:ptr<fn(ptr<Owner>)->void>}
 initializer @.module_init.45
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
@@ -64,7 +64,7 @@ L5:
 function @Item.ctor.2.35: fn(ptr<Item>)->void internal {
   parameter this.28: ptr<Item>
   (load, %t1:ptr<Item>, &this.28:ptr<ptr<Item>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Item.40:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Item.40:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Item>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Item>, 8:i64)
@@ -88,7 +88,7 @@ function @Item.ctor.2.35: fn(ptr<Item>)->void internal {
 function @Item.dtor.36: fn(ptr<Item>)->void internal {
   parameter this.29: ptr<Item>
   (load, %t1:ptr<Item>, &this.29:ptr<ptr<Item>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Item.40:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Item.40:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Item>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.20:ptr<i32>, _)
@@ -105,7 +105,7 @@ function @Item.dtor.36: fn(ptr<Item>)->void internal {
 function @Owner.default_ctor.37: fn(ptr<Owner>)->void internal {
   parameter this.42: ptr<Owner>
   (load, %t1:ptr<Owner>, &this.42:ptr<ptr<Owner>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Owner.41:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Owner.41:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Owner>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<[2 x Item]>, %t1:ptr<Owner>, 8:i64)
@@ -120,7 +120,7 @@ function @Owner.default_ctor.37: fn(ptr<Owner>)->void internal {
 function @Owner.default_dtor.38: fn(ptr<Owner>)->void internal {
   parameter this.43: ptr<Owner>
   (load, %t1:ptr<Owner>, &this.43:ptr<ptr<Owner>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Owner.41:ptr<[1 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Owner.41:ptr<[2 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Owner>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:ptr<Owner>, &this.43:ptr<ptr<Owner>>, _)

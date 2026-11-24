@@ -53,6 +53,13 @@ namespace baka {
             TypeId lt{left->semanticInfo().Type}, rt{right->semanticInfo().Type};
             lt = decay(lt);
             rt = decay(rt);
+            if ((op == types::OP_EQ || op == types::OP_NEQ) && TypeSystem.isAggregate(lt) &&
+                TypeSystem.isAggregate(rt)) {
+                // Record equality reads each operand in place: a copy would re-stamp a
+                // class's vptr with its static type and hide the dynamic class.
+                binary->rewriteExpressions([&](auto* child) { return materializeImpl(child, false); });
+                return expression;
+            }
             if (Assignment(op)) {
                 auto* location = materializeImpl(left, false);
                 if (op == types::OP_ASSIGN) {

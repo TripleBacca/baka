@@ -17,6 +17,10 @@ namespace baka {
                 assign(location, result);
                 return result;
             }
+            if ((opcode == types::OP_EQ || opcode == types::OP_NEQ) &&
+                Result.type(type(binaryNode->getLeft())).kind == TypeKind::Record) {
+                return recordEquality(binaryNode);
+            }
             auto left = value(binaryNode->getLeft());
             if (opcode == types::OP_LOGICAL_AND || opcode == types::OP_LOGICAL_OR) {
                 auto rightBlock = newBlock(), shortBlock = newBlock(), join = newBlock();

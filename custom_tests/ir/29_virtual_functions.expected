@@ -6,11 +6,11 @@ Rect = record(Shape, i32, i32) size 24 align 8
 Point = record(vptr, i32) size 16 align 8
 Point3 = record(Point, i32) size 24 align 8
 global trace.19: i32 = zero
-internal .vtable.Shape.101: [5 x ptr<void>] readonly = zero {+0 = @Shape.dtor.94:ptr<fn(ptr<Shape>)->void>} {+8 = @Shape.kind.22:ptr<fn(ptr<Shape>)->i32>} {+16 = @__baka_pure_virtual.102:ptr<fn()->void>} {+24 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+32 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
-internal .vtable.Square.103: [5 x ptr<void>] readonly = zero {+0 = @Square.dtor.96:ptr<fn(ptr<Square>)->void>} {+8 = @Square.kind.30:ptr<fn(ptr<Square>)->i32>} {+16 = @Square.area.31:ptr<fn(ptr<Square>)->i32>} {+24 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+32 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
-internal .vtable.Rect.104: [5 x ptr<void>] readonly = zero {+0 = @Rect.default_dtor.98:ptr<fn(ptr<Rect>)->void>} {+8 = @Rect.kind.35:ptr<fn(ptr<Rect>)->i32>} {+16 = @Rect.area.36:ptr<fn(ptr<Rect>)->i32>} {+24 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+32 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
-internal .vtable.Point.105: [2 x ptr<void>] readonly = zero {+8 = @Point.get.39:ptr<fn(ptr<Point>)->i32>}
-internal .vtable.Point3.106: [2 x ptr<void>] readonly = zero {+8 = @Point3.get.42:ptr<fn(ptr<Point3>)->i32>}
+internal .vtable.Shape.101: [6 x ptr<void>] readonly = zero {+0 = @Shape.dtor.94:ptr<fn(ptr<Shape>)->void>} {+16 = @Shape.kind.22:ptr<fn(ptr<Shape>)->i32>} {+24 = @__baka_pure_virtual.102:ptr<fn()->void>} {+32 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+40 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
+internal .vtable.Square.103: [6 x ptr<void>] readonly = zero {+0 = @Square.dtor.96:ptr<fn(ptr<Square>)->void>} {+16 = @Square.kind.30:ptr<fn(ptr<Square>)->i32>} {+24 = @Square.area.31:ptr<fn(ptr<Square>)->i32>} {+32 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+40 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
+internal .vtable.Rect.104: [6 x ptr<void>] readonly = zero {+0 = @Rect.default_dtor.98:ptr<fn(ptr<Rect>)->void>} {+16 = @Rect.kind.35:ptr<fn(ptr<Rect>)->i32>} {+24 = @Rect.area.36:ptr<fn(ptr<Rect>)->i32>} {+32 = @Shape.twice.24:ptr<fn(ptr<Shape>)->i32>} {+40 = @Shape.scaled.27:ptr<fn(ptr<Shape>, i32, i32)->i32>}
+internal .vtable.Point.105: [3 x ptr<void>] readonly = zero {+16 = @Point.get.39:ptr<fn(ptr<Point>)->i32>}
+internal .vtable.Point3.106: [3 x ptr<void>] readonly = zero {+16 = @Point3.get.42:ptr<fn(ptr<Point3>)->i32>}
 declare @printf.9: fn(ptr<i8>, ...)->i32
 declare @scanf.10: fn(ptr<i8>, ...)->i32
 declare @atoi.11: fn(ptr<i8>)->i32
@@ -30,7 +30,7 @@ function @Shape.twice.24: fn(ptr<Shape>)->i32 {
   (load, %t1:ptr<Shape>, &this.55:ptr<ptr<Shape>>, _)
   (cast, %t2:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (load, %t3:ptr<ptr<void>>, %t2:ptr<ptr<ptr<void>>>, _)
-  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 16:i64)
+  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 24:i64)
   (load, %t5:ptr<void>, %t4:ptr<ptr<void>>, _)
   (cast, %t6:ptr<fn(ptr<Shape>)->i32>, %t5:ptr<void>, _)
   (param, _, %t1:ptr<Shape>, _)
@@ -45,7 +45,7 @@ function @Shape.scaled.27: fn(ptr<Shape>, i32, i32)->i32 {
   (load, %t1:ptr<Shape>, &this.56:ptr<ptr<Shape>>, _)
   (cast, %t2:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (load, %t3:ptr<ptr<void>>, %t2:ptr<ptr<ptr<void>>>, _)
-  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 16:i64)
+  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 24:i64)
   (load, %t5:ptr<void>, %t4:ptr<ptr<void>>, _)
   (cast, %t6:ptr<fn(ptr<Shape>)->i32>, %t5:ptr<void>, _)
   (param, _, %t1:ptr<Shape>, _)
@@ -110,7 +110,7 @@ function @byReference.44: fn(ptr<Shape>)->i32 {
   (load, %t1:ptr<Shape>, &shape.73:ptr<ptr<Shape>>, _)
   (cast, %t2:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (load, %t3:ptr<ptr<void>>, %t2:ptr<ptr<ptr<void>>>, _)
-  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 24:i64)
+  (offset, %t4:ptr<ptr<void>>, %t3:ptr<ptr<void>>, 32:i64)
   (load, %t5:ptr<void>, %t4:ptr<ptr<void>>, _)
   (cast, %t6:ptr<fn(ptr<Shape>)->i32>, %t5:ptr<void>, _)
   (param, _, %t1:ptr<Shape>, _)
@@ -122,14 +122,14 @@ function @byValue.46: fn(Point)->i32 {
   local q.75: ptr<Point>
   (copy, %t1:u1, 0:u1, _)
   (copy, %t1:u1, 1:u1, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Point.105:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Point.105:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, &p.74:ptr<Point>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (store, _, &q.75:ptr<ptr<Point>>, &p.74:ptr<Point>)
   (load, %t4:ptr<Point>, &q.75:ptr<ptr<Point>>, _)
   (cast, %t5:ptr<ptr<ptr<void>>>, %t4:ptr<Point>, _)
   (load, %t6:ptr<ptr<void>>, %t5:ptr<ptr<ptr<void>>>, _)
-  (offset, %t7:ptr<ptr<void>>, %t6:ptr<ptr<void>>, 8:i64)
+  (offset, %t7:ptr<ptr<void>>, %t6:ptr<ptr<void>>, 16:i64)
   (load, %t8:ptr<void>, %t7:ptr<ptr<void>>, _)
   (cast, %t9:ptr<fn(ptr<Point>)->i32>, %t8:ptr<void>, _)
   (param, _, %t4:ptr<Point>, _)
@@ -232,7 +232,7 @@ L7:
   (load, %t35:ptr<Shape>, %t34:ptr<ptr<Shape>>, _)
   (cast, %t36:ptr<ptr<ptr<void>>>, %t35:ptr<Shape>, _)
   (load, %t37:ptr<ptr<void>>, %t36:ptr<ptr<ptr<void>>>, _)
-  (offset, %t38:ptr<ptr<void>>, %t37:ptr<ptr<void>>, 16:i64)
+  (offset, %t38:ptr<ptr<void>>, %t37:ptr<ptr<void>>, 24:i64)
   (load, %t39:ptr<void>, %t38:ptr<ptr<void>>, _)
   (cast, %t40:ptr<fn(ptr<Shape>)->i32>, %t39:ptr<void>, _)
   (param, _, %t35:ptr<Shape>, _)
@@ -261,7 +261,7 @@ L9:
   (load, %t56:ptr<Shape>, %t55:ptr<ptr<Shape>>, _)
   (cast, %t57:ptr<ptr<ptr<void>>>, %t56:ptr<Shape>, _)
   (load, %t58:ptr<ptr<void>>, %t57:ptr<ptr<ptr<void>>>, _)
-  (offset, %t59:ptr<ptr<void>>, %t58:ptr<ptr<void>>, 32:i64)
+  (offset, %t59:ptr<ptr<void>>, %t58:ptr<ptr<void>>, 40:i64)
   (load, %t60:ptr<void>, %t59:ptr<ptr<void>>, _)
   (cast, %t61:ptr<fn(ptr<Shape>, i32, i32)->i32>, %t60:ptr<void>, _)
   (param, _, %t56:ptr<Shape>, _)
@@ -320,7 +320,7 @@ L15:
   (load, %t88:ptr<Point>, &base.86:ptr<ptr<Point>>, _)
   (load, %t89:Point, %t88:ptr<Point>, _)
   (store, _, &sliced.87:ptr<Point>, %t89:Point)
-  (cast, %t90:ptr<ptr<void>>, &.vtable.Point.105:ptr<[2 x ptr<void>]>, _)
+  (cast, %t90:ptr<ptr<void>>, &.vtable.Point.105:ptr<[3 x ptr<void>]>, _)
   (cast, %t91:ptr<ptr<ptr<void>>>, &sliced.87:ptr<Point>, _)
   (store, _, %t91:ptr<ptr<ptr<void>>>, %t90:ptr<ptr<void>>)
   (copy, %t2:u1, 1:u1, _)
@@ -348,7 +348,7 @@ L15:
   (load, %t103:ptr<Point>, &base.86:ptr<ptr<Point>>, _)
   (cast, %t104:ptr<ptr<ptr<void>>>, %t103:ptr<Point>, _)
   (load, %t105:ptr<ptr<void>>, %t104:ptr<ptr<ptr<void>>>, _)
-  (offset, %t106:ptr<ptr<void>>, %t105:ptr<ptr<void>>, 8:i64)
+  (offset, %t106:ptr<ptr<void>>, %t105:ptr<ptr<void>>, 16:i64)
   (load, %t107:ptr<void>, %t106:ptr<ptr<void>>, _)
   (cast, %t108:ptr<fn(ptr<Point>)->i32>, %t107:ptr<void>, _)
   (param, _, %t103:ptr<Point>, _)
@@ -357,7 +357,7 @@ L15:
   (load, %t111:ptr<Point>, &ps.88:ptr<ptr<Point>>, _)
   (cast, %t112:ptr<ptr<ptr<void>>>, %t111:ptr<Point>, _)
   (load, %t113:ptr<ptr<void>>, %t112:ptr<ptr<ptr<void>>>, _)
-  (offset, %t114:ptr<ptr<void>>, %t113:ptr<ptr<void>>, 8:i64)
+  (offset, %t114:ptr<ptr<void>>, %t113:ptr<ptr<void>>, 16:i64)
   (load, %t115:ptr<void>, %t114:ptr<ptr<void>>, _)
   (cast, %t116:ptr<fn(ptr<Point>)->i32>, %t115:ptr<void>, _)
   (param, _, %t111:ptr<Point>, _)
@@ -367,7 +367,7 @@ L15:
   (load, %t120:ptr<Point>, &pa.90:ptr<ptr<Point>>, _)
   (cast, %t121:ptr<ptr<ptr<void>>>, %t120:ptr<Point>, _)
   (load, %t122:ptr<ptr<void>>, %t121:ptr<ptr<ptr<void>>>, _)
-  (offset, %t123:ptr<ptr<void>>, %t122:ptr<ptr<void>>, 8:i64)
+  (offset, %t123:ptr<ptr<void>>, %t122:ptr<ptr<void>>, 16:i64)
   (load, %t124:ptr<void>, %t123:ptr<ptr<void>>, _)
   (cast, %t125:ptr<fn(ptr<Point>)->i32>, %t124:ptr<void>, _)
   (param, _, %t120:ptr<Point>, _)
@@ -384,12 +384,12 @@ L15:
   (param, _, %t134:ptr<Point>, _)
   (call, %t135:Point, @copyOf.48, _)
   (store, _, &.materialized.109:ptr<Point>, %t135:Point)
-  (cast, %t136:ptr<ptr<void>>, &.vtable.Point.105:ptr<[2 x ptr<void>]>, _)
+  (cast, %t136:ptr<ptr<void>>, &.vtable.Point.105:ptr<[3 x ptr<void>]>, _)
   (cast, %t137:ptr<ptr<ptr<void>>>, &.materialized.109:ptr<Point>, _)
   (store, _, %t137:ptr<ptr<ptr<void>>>, %t136:ptr<ptr<void>>)
   (cast, %t138:ptr<ptr<ptr<void>>>, &.materialized.109:ptr<Point>, _)
   (load, %t139:ptr<ptr<void>>, %t138:ptr<ptr<ptr<void>>>, _)
-  (offset, %t140:ptr<ptr<void>>, %t139:ptr<ptr<void>>, 8:i64)
+  (offset, %t140:ptr<ptr<void>>, %t139:ptr<ptr<void>>, 16:i64)
   (load, %t141:ptr<void>, %t140:ptr<ptr<void>>, _)
   (cast, %t142:ptr<fn(ptr<Point>)->i32>, %t141:ptr<void>, _)
   (param, _, &.materialized.109:ptr<Point>, _)
@@ -425,7 +425,7 @@ L17:
 function @Shape.ctor.2.93: fn(ptr<Shape>)->void internal {
   parameter this.52: ptr<Shape>
   (load, %t1:ptr<Shape>, &this.52:ptr<ptr<Shape>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.101:ptr<[5 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.101:ptr<[6 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Shape>, 8:i64)
@@ -438,7 +438,7 @@ function @Shape.ctor.2.93: fn(ptr<Shape>)->void internal {
   (load, %t10:ptr<Shape>, &this.52:ptr<ptr<Shape>>, _)
   (cast, %t11:ptr<ptr<ptr<void>>>, %t10:ptr<Shape>, _)
   (load, %t12:ptr<ptr<void>>, %t11:ptr<ptr<ptr<void>>>, _)
-  (offset, %t13:ptr<ptr<void>>, %t12:ptr<ptr<void>>, 8:i64)
+  (offset, %t13:ptr<ptr<void>>, %t12:ptr<ptr<void>>, 16:i64)
   (load, %t14:ptr<void>, %t13:ptr<ptr<void>>, _)
   (cast, %t15:ptr<fn(ptr<Shape>)->i32>, %t14:ptr<void>, _)
   (param, _, %t10:ptr<Shape>, _)
@@ -451,7 +451,7 @@ function @Shape.ctor.2.93: fn(ptr<Shape>)->void internal {
 function @Shape.dtor.94: fn(ptr<Shape>)->void internal {
   parameter this.53: ptr<Shape>
   (load, %t1:ptr<Shape>, &this.53:ptr<ptr<Shape>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.101:ptr<[5 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Shape.101:ptr<[6 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Shape>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)
@@ -459,7 +459,7 @@ function @Shape.dtor.94: fn(ptr<Shape>)->void internal {
   (load, %t6:ptr<Shape>, &this.53:ptr<ptr<Shape>>, _)
   (cast, %t7:ptr<ptr<ptr<void>>>, %t6:ptr<Shape>, _)
   (load, %t8:ptr<ptr<void>>, %t7:ptr<ptr<ptr<void>>>, _)
-  (offset, %t9:ptr<ptr<void>>, %t8:ptr<ptr<void>>, 8:i64)
+  (offset, %t9:ptr<ptr<void>>, %t8:ptr<ptr<void>>, 16:i64)
   (load, %t10:ptr<void>, %t9:ptr<ptr<void>>, _)
   (cast, %t11:ptr<fn(ptr<Shape>)->i32>, %t10:ptr<void>, _)
   (param, _, %t6:ptr<Shape>, _)
@@ -477,7 +477,7 @@ function @Square.ctor.2.95: fn(ptr<Square>, i32)->void internal {
   (offset, %t2:ptr<Shape>, %t1:ptr<Square>, 0:i64)
   (param, _, %t2:ptr<Shape>, _)
   (call, _, @Shape.ctor.2.93, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Square.103:ptr<[5 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Square.103:ptr<[6 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Square>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<i32>, %t1:ptr<Square>, 16:i64)
@@ -491,7 +491,7 @@ function @Square.ctor.2.95: fn(ptr<Square>, i32)->void internal {
   (load, %t12:ptr<Square>, &this.59:ptr<ptr<Square>>, _)
   (cast, %t13:ptr<ptr<ptr<void>>>, %t12:ptr<Square>, _)
   (load, %t14:ptr<ptr<void>>, %t13:ptr<ptr<ptr<void>>>, _)
-  (offset, %t15:ptr<ptr<void>>, %t14:ptr<ptr<void>>, 8:i64)
+  (offset, %t15:ptr<ptr<void>>, %t14:ptr<ptr<void>>, 16:i64)
   (load, %t16:ptr<void>, %t15:ptr<ptr<void>>, _)
   (cast, %t17:ptr<fn(ptr<Square>)->i32>, %t16:ptr<void>, _)
   (param, _, %t12:ptr<Square>, _)
@@ -504,7 +504,7 @@ function @Square.ctor.2.95: fn(ptr<Square>, i32)->void internal {
 function @Square.dtor.96: fn(ptr<Square>)->void internal {
   parameter this.61: ptr<Square>
   (load, %t1:ptr<Square>, &this.61:ptr<ptr<Square>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Square.103:ptr<[5 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Square.103:ptr<[6 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Square>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:i32, &trace.19:ptr<i32>, _)
@@ -512,7 +512,7 @@ function @Square.dtor.96: fn(ptr<Square>)->void internal {
   (load, %t6:ptr<Square>, &this.61:ptr<ptr<Square>>, _)
   (cast, %t7:ptr<ptr<ptr<void>>>, %t6:ptr<Square>, _)
   (load, %t8:ptr<ptr<void>>, %t7:ptr<ptr<ptr<void>>>, _)
-  (offset, %t9:ptr<ptr<void>>, %t8:ptr<ptr<void>>, 8:i64)
+  (offset, %t9:ptr<ptr<void>>, %t8:ptr<ptr<void>>, 16:i64)
   (load, %t10:ptr<void>, %t9:ptr<ptr<void>>, _)
   (cast, %t11:ptr<fn(ptr<Square>)->i32>, %t10:ptr<void>, _)
   (param, _, %t6:ptr<Square>, _)
@@ -534,7 +534,7 @@ function @Rect.ctor.3.97: fn(ptr<Rect>, i32, i32)->void internal {
   (offset, %t2:ptr<Shape>, %t1:ptr<Rect>, 0:i64)
   (param, _, %t2:ptr<Shape>, _)
   (call, _, @Shape.ctor.2.93, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Rect.104:ptr<[5 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Rect.104:ptr<[6 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Rect>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<i32>, %t1:ptr<Rect>, 16:i64)
@@ -554,7 +554,7 @@ function @Rect.ctor.3.97: fn(ptr<Rect>, i32, i32)->void internal {
 function @Rect.default_dtor.98: fn(ptr<Rect>)->void internal {
   parameter this.110: ptr<Rect>
   (load, %t1:ptr<Rect>, &this.110:ptr<ptr<Rect>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Rect.104:ptr<[5 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Rect.104:ptr<[6 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Rect>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (load, %t4:ptr<Rect>, &this.110:ptr<ptr<Rect>>, _)
@@ -566,7 +566,7 @@ function @Rect.default_dtor.98: fn(ptr<Rect>)->void internal {
 function @Point.ctor.2.99: fn(ptr<Point>)->void internal {
   parameter this.69: ptr<Point>
   (load, %t1:ptr<Point>, &this.69:ptr<ptr<Point>>, _)
-  (cast, %t2:ptr<ptr<void>>, &.vtable.Point.105:ptr<[2 x ptr<void>]>, _)
+  (cast, %t2:ptr<ptr<void>>, &.vtable.Point.105:ptr<[3 x ptr<void>]>, _)
   (cast, %t3:ptr<ptr<ptr<void>>>, %t1:ptr<Point>, _)
   (store, _, %t3:ptr<ptr<ptr<void>>>, %t2:ptr<ptr<void>>)
   (offset, %t4:ptr<i32>, %t1:ptr<Point>, 8:i64)
@@ -582,7 +582,7 @@ function @Point3.ctor.2.100: fn(ptr<Point3>)->void internal {
   (offset, %t2:ptr<Point>, %t1:ptr<Point3>, 0:i64)
   (param, _, %t2:ptr<Point>, _)
   (call, _, @Point.ctor.2.99, _)
-  (cast, %t3:ptr<ptr<void>>, &.vtable.Point3.106:ptr<[2 x ptr<void>]>, _)
+  (cast, %t3:ptr<ptr<void>>, &.vtable.Point3.106:ptr<[3 x ptr<void>]>, _)
   (cast, %t4:ptr<ptr<ptr<void>>>, %t1:ptr<Point3>, _)
   (store, _, %t4:ptr<ptr<ptr<void>>>, %t3:ptr<ptr<void>>)
   (offset, %t5:ptr<i32>, %t1:ptr<Point3>, 16:i64)

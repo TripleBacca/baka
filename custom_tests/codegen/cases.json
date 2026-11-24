@@ -193,5 +193,11 @@
   "33_file_io.cpp": {
     "stdin": "test",
     "runs": [[0, 0, "bakatest"]]
+  },
+  "35_record_equality.cpp": {
+    "runs": [
+      [0, 0, "lines 1 0\nchanged 0 1\nsquares 0\nsquare-rect 0 9\nrepointed 1\n"],
+      [1, 10, "lines 1 0\nchanged 0 1\nsquares 1\nsquare-rect 0 9\nrepointed 1\n"]
+    ]
   }
 }

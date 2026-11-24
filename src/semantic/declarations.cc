@@ -318,10 +318,13 @@ namespace baka {
             if (info.base.value) {
                 table = TypeSystem.get(TypeSystem.unConst(info.base)).vtable;
             }
-            if (table.empty()) {
-                table.push_back({});
+            // Slot 0 is the class's own destructor and slot 1 its compiler-generated
+            // equality function (record ==); neither records a member. Methods start at 2.
+            if (table.size() < FirstMethodSlot) {
+                table.resize(FirstMethodSlot);
             }
-            table.front() = {type, 0, false};
+            table[0] = {type, 0, false};
+            table[EqualitySlot] = {type, 0, false};
             std::vector<std::pair<size_t, uint32_t>> slots;
             bool valid = true;
             for (size_t index = 0; index < info.members.size(); ++index) {
@@ -332,7 +335,7 @@ namespace baka {
                     continue;
                 }
                 uint32_t slot = 0;
-                for (uint32_t candidate = 1; candidate < table.size() && !slot; ++candidate) {
+                for (uint32_t candidate = FirstMethodSlot; candidate < table.size() && !slot; ++candidate) {
                     const auto& entry = table[candidate];
                     if (entry.owner == type) {
                         continue; // overloads declared in this class never override each other

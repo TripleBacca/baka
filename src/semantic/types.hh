@@ -63,7 +63,7 @@ namespace baka {
             // Every non-static method of a class is virtual. A pure method
             // (`= 0`) has no body; its slot traps at run time.
             bool isVirtual = false, isPure = false;
-            uint32_t vtableSlot = 0; // valid when isVirtual; slot 0 is the destructor
+            uint32_t vtableSlot = 0; // valid when isVirtual; slots 0/1 are destructor/equality
             Access access = Access::Public;
             const types::ASTNode* source = nullptr;
             size_t minimumArity = static_cast<size_t>(-1);
@@ -80,7 +80,9 @@ namespace baka {
         };
 
         // One vtable entry: the member that implements the slot. Slot 0 is the
-        // class's own destructor and records no member.
+        // class's own destructor and slot 1 its compiler-generated equality
+        // function; neither records a member. Methods start at FirstMethodSlot.
+        inline constexpr uint32_t EqualitySlot = 1, FirstMethodSlot = 2;
         struct VirtualSlot {
             TypeId owner;
             size_t member = 0;

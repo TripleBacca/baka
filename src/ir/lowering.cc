@@ -415,6 +415,7 @@ namespace baka {
                 }
                 lowerLifetimes();
                 lowerGlobalInitializers();
+                lowerEqualities();
                 for (auto& function : Result.functions) {
                     BuildCFG(function);
                 }
