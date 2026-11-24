@@ -20,11 +20,33 @@ not select different optimization strengths. The last optimization option wins.
 The native `--lex`, `--parse`, `--semantic`, `--ir`, `--codegen`, `--verbose`,
 and `--build_type debug|release` flags also work in the options box.
 
-For AST and IR views, turn off assembly filters (especially directives, labels
-and comments) if they hide parts of the text. Errors appear in Compiler Explorer's
-compiler output with source locations and the compiler's failure status. Binary
-output and execution are disabled; the existing `tools/mips/run` workflow runs
-emitted assembly under QEMU outside this container.
+The semantic and parser views start at their AST; the lexer's token table (and the
+parser's driver settings) that the compiler prints first is skipped. Add `--verbose`
+to the options to see the full output. For AST and IR views, turn off assembly
+filters (especially directives, labels and comments) if they hide parts of the
+text. Errors appear in Compiler Explorer's compiler output with source locations
+and the compiler's failure status.
+
+## Running programs
+
+Execution works from every view: open an Executor (or tick "Execute the code" in the
+output pane) and set arguments and stdin there. The output shows the program's stdout,
+stderr and exit code. The program is always built the same way, whatever the view:
+
+1. `baka --codegen` (with the pane's optimization flags) produces MIPS64 assembly.
+2. `mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie` assembles and
+   links it, exactly like baka's own `--link` stage.
+3. CE runs the static executable under `qemu-mips64el` (`executionWrapper`).
+
+"Compile to binary" shows the linked executable disassembled with the MIPS objdump.
+
+How it is wired:
+
+| Piece | Setting |
+| --- | --- |
+| `baka-ce` | Without `-S`, CE wants a binary: the adapter links to the `-o` path (`-c` stops at an object). `MIPS_CC` overrides the cross compiler. |
+| `config/c.local.properties` | `supportsBinary` and `supportsExecute` on, `objdumper` set to the MIPS objdump, `executionWrapper=/usr/bin/qemu-mips64el`, and `emulated=true` so CE runs the foreign binary locally instead of looking for a remote MIPS host. |
+| `Dockerfile` | Installs `gcc-mips64el-linux-gnuabi64`, `libc6-dev-mips64el-cross`, `qemu-user` and `file` (CE checks the executable with `file` before running it). These packages exist for amd64 and arm64. |
 
 ## Start or update the local instance
 
@@ -59,7 +81,8 @@ python3 compiler-explorer/test_adapter.py --compiler build/baka
 ```
 
 The checks run the real compiler through GCC-style CE invocations and compare
-each view with direct compiler output. They cover optimization settings and
+each view with direct compiler output. Binary mode is checked with a stand-in for
+the cross compiler, so the host needs no MIPS toolchain. They cover optimization settings and
 precedence, paths containing spaces, failure diagnostics, version probing and
 missing arguments. They require no Docker image.
 
@@ -70,6 +93,20 @@ python3 compiler-explorer/test_api.py --url http://localhost:10240
 ```
 
 This verifies all four compiler registrations, each view at `-O0` and `-O2`,
-and semantic failure diagnostics in the semantic, IR and assembly views.
+semantic failure diagnostics in the semantic, IR and assembly views, execution from
+every view (arguments, stdin, stdout and exit code), a compile error reported instead
+of running, and the binary disassembly view.
+
+If `docker compose up` fails with `Unable to enable LOOPBACK FILTERING` or
+`Extension tcp revision 0 not supported`, the host's iptables cannot publish the port.
+Run the image with host networking instead (it then listens on port 10240 directly):
+
+```sh
+docker run -d --name baka-godbolt --network host \
+    -v "$PWD/build/baka:/opt/baka/bin/baka:ro" \
+    -v "$PWD/compiler-explorer/baka-ce:/opt/baka/bin/baka-ce:ro" \
+    -v "$PWD/compiler-explorer/config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro" \
+    baka-compiler-explorer:latest
+```
 
 Compiler registrations use CE's documented [compiler groups and options](https://github.com/compiler-explorer/compiler-explorer/blob/main/docs/AddingACompiler.md).

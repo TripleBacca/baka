@@ -36,4 +36,33 @@ for compiler in ('baka', 'baka-ir', 'baka-semantic'):
     diagnostics = '\n'.join(line['text'] for line in result['stderr'])
     assert 'error:' in diagnostics and 'missing' in diagnostics and '\x1b' not in diagnostics, (compiler, result)
     print(compiler, 'diagnostics passed')
+# Execution: link a static MIPS64 executable and run it under qemu, with arguments,
+# stdin and the exit code passed through. Every view executes the same program.
+program = ('int main(int argc, char** argv) { char c; read(0, &c, 1); '
+           'printf("got %c from %s\\n", c, argv[1]); return 7; }')
+for compiler in sorted(expected):
+    for options in ('-O0', '-O2'):
+        result = request('/api/compiler/' + compiler + '/compile', {
+            'source': program,
+            'options': {'userArguments': options, 'compilerOptions': {'executorRequest': True},
+                        'filters': {'execute': True}, 'executeParameters': {'args': ['arg'], 'stdin': 'Q'}}})
+        stdout = '\n'.join(line['text'] for line in result.get('stdout', []))
+        assert result.get('didExecute') and result['code'] == 7 and stdout == 'got Q from arg', (compiler, options, result)
+        print(compiler, options, 'execution passed')
+result = request('/api/compiler/baka/compile', {
+    'source': 'int main() { return missing; }',
+    'options': {'compilerOptions': {'executorRequest': True}, 'filters': {'execute': True}}})
+assert not result.get('didExecute'), result
+build = '\n'.join(line['text'] for line in result.get('buildResult', {}).get('stderr', []))
+assert 'missing' in build, result
+print('execution diagnostics passed')
+
+# "Compile to binary" disassembles the linked executable with the MIPS objdump.
+result = request('/api/compiler/baka/compile', {
+    'source': 'int main() { return 3; }',
+    'options': {'userArguments': '-O2', 'filters': {'binary': True, 'directives': True, 'labels': True}}})
+assert result['code'] == 0, result
+disassembly = '\n'.join(line['text'] for line in result['asm'])
+assert 'jalr' in disassembly or 'jr' in disassembly, disassembly[:2000]
+print('binary disassembly passed')
 print('All Compiler Explorer API checks passed')
