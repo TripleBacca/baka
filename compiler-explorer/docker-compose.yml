@@ -4,9 +4,9 @@ services:
     image: baka-compiler-explorer:latest
     container_name: ${CE_CONTAINER:-baka-godbolt}
     ports:
-      # bound to localhost only; set CE_BIND=0.0.0.0 (e.g. the Pi deploy) to
-      # expose on your LAN
-      - "${CE_BIND:-127.0.0.1}:10240:10240"
+      # listens on every interface so other machines on the network can reach it;
+      # set CE_BIND=127.0.0.1 to keep it local to this machine
+      - "${CE_BIND:-0.0.0.0}:10240:10240"
     volumes:
       # Mount baka + wrapper + config without rebuilding the image. Recreate
       # the container after compiler builds so the mount follows the new binary.

@@ -57,9 +57,11 @@ make build
 docker compose -f compiler-explorer/docker-compose.yml up -d --build --force-recreate
 ```
 
-Open <http://localhost:10240> and select C. Baka accepts its supported C++-like
+Open <http://localhost:10240>, or `http://<machine-address>:10240` from another
+machine (the port listens on all interfaces by default), and select C. Baka accepts its supported C++-like
 syntax in that editor, without preprocessor directives or system headers.
-`CE_BIND` and `CE_CONTAINER` can override the bind address and container name.
+`CE_BIND` and `CE_CONTAINER` can override the bind address (default `0.0.0.0`; use
+`127.0.0.1` to keep it local) and container name.
 
 The compiler binary, adapter and configuration are mounted from this checkout.
 After later compiler builds or configuration changes, recreate the container
