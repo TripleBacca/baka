@@ -1,0 +1,16 @@
+services:
+  compiler-explorer:
+    build: .
+    image: baka-compiler-explorer:latest
+    container_name: ${CE_CONTAINER:-baka-godbolt}
+    ports:
+      # bound to localhost only; set CE_BIND=0.0.0.0 (e.g. the Pi deploy) to
+      # expose on your LAN
+      - "${CE_BIND:-127.0.0.1}:10240:10240"
+    volumes:
+      # live-mount baka + wrapper + config so edits are picked up (restart the
+      # container) without rebuilding the image
+      - ../build/baka:/opt/baka/bin/baka:ro
+      - ./baka-ce:/opt/baka/bin/baka-ce:ro
+      - ./config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro
+    restart: always
