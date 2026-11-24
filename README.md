@@ -11,7 +11,7 @@ make build
 ```
 baka does not have a preprocessor and thus does not support preprocessor directives.
 
-Running `./build/baka path/to/file.cpp` performs semantic analysis by default and prints the annotated AST on success. Use `--lex` or `--parse` to stop earlier.
+Running `./build/baka path/to/file.cpp` builds a MIPS64 executable named `a.out`. Build the Docker toolchain with `make mips-image` first. Use a stage flag to stop earlier.
 
 #### Make Recipes
 - `make parse file=<source_code_file_path>` : Runs the compiler in verbose mode upto the parser stage.
@@ -35,6 +35,9 @@ Running `./build/baka path/to/file.cpp` performs semantic analysis by default an
 - `--semantic` - run declaration registration, resolution/renaming, type annotation, and read-only semantic checks
 - `--ir` - print the typed three-address code (unoptimized unless `--optimize`)
 - `--codegen` - print MIPS64 (n64, little-endian) assembly (optimized unless `--no-optimize`)
+- `--assemble` - write a relocatable MIPS64 object from Baka source or a `.s` file. Defaults to the input's base name with a `.o` extension.
+- `--link` - write a static MIPS64 executable from Baka source, a `.s` file, or a `.o` file. This is the default stage.
+- `-o path` - set the object or executable output path.
 - `--optimize` / `--no-optimize` - force the block-local IR and MIPS peephole optimizations on or off
 - `--build_type` - set the build type (e.g. `debug` / `release`)
 - `--verbose` - print detailed logs during compilation
@@ -186,10 +189,33 @@ live in a Docker image, so nothing is installed on the host:
 
 ```bash
 make mips-image                       # docker build -t baka-mips64el tools/mips
-make run-mips file=prog.cpp n=5       # compile, assemble, link and run main(5)
+./build/baka -o prog.mips prog.cpp    # compile, assemble and link
+./build/baka --assemble -o prog.o prog.cpp
+./build/baka --link -o prog.mips prog.o
+make run-mips-binary file=prog.mips args='5 "two words"'
+make run file=prog.cpp args='5 "two words"'  # compile and run from source
 make test-codegen                     # every fixture, optimized and unoptimized
 ```
 
-The exit status is the low 8 bits of `main`'s result. Design decisions and their
-justifications are in [src/codegen/README.md](src/codegen/README.md).
+Both recipes stream stdout and stderr and forward stdin. Use shell quoting inside
+`args` to pass an argument with spaces, or use `n=5` as a shortcut for one argument.
+Run `tools/mips/run-binary prog.mips arg1 arg2` directly to get the program's exit
+status in `$?`. It is the low 8 bits of `main`'s result on normal exit and
+`128 + host signal number` for an uncaught signal. Make reports a nonzero status
+as a recipe error and exits with status `2`. The executable launchers report a
+missing binary with status `2` and an invalid executable format with status `1`.
+See the [codegen design notes](src/codegen/README.md) for details.
 
+To create a launcher you can use outside the checkout, run:
+
+```bash
+make shim out=run-prog
+BAKA_BINARY=./prog.mips ./run-prog 5 "two words"
+```
+
+Without `out`, `make shim` creates `./run-baka-mips`. The launcher reads
+`BAKA_BINARY` each time it runs and uses the `baka-mips64el` Docker image.
+It forwards program arguments, standard streams, and exit status.
+
+Run `ctest --test-dir build -R '^mips_runtime$' --output-on-failure` to verify
+runtime behavior against the Docker image.

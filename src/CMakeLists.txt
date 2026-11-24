@@ -82,6 +82,14 @@ if(BUILD_TESTING)
         add_test(NAME codegen COMMAND ${Python3_EXECUTABLE}
             "${BAKA_TEST_FIXTURES}/codegen/run.py" --compiler $<TARGET_FILE:baka>)
     endif()
+    if(DOCKER_EXECUTABLE AND EXISTS "${BAKA_TEST_FIXTURES}/codegen/test_driver.py")
+        add_test(NAME mips_driver COMMAND ${Python3_EXECUTABLE}
+            "${BAKA_TEST_FIXTURES}/codegen/test_driver.py" --compiler $<TARGET_FILE:baka>)
+    endif()
+    if(DOCKER_EXECUTABLE AND EXISTS "${BAKA_TEST_FIXTURES}/codegen/test_runtime.py")
+        add_test(NAME mips_runtime COMMAND ${Python3_EXECUTABLE}
+            "${BAKA_TEST_FIXTURES}/codegen/test_runtime.py" --compiler $<TARGET_FILE:baka>)
+    endif()
     if(EXISTS "${BAKA_TEST_FIXTURES}/semantic/run.py")
         add_test(NAME semantic COMMAND ${Python3_EXECUTABLE}
             "${BAKA_TEST_FIXTURES}/semantic/run.py" --compiler $<TARGET_FILE:baka>)

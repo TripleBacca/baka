@@ -15,8 +15,11 @@ optimized IR               ── verifier again
 machine IR (one record per assembly line)
   │  peephole optimization + delay-slot filling   (optional)
   ▼
-printer → one .s file: functions, runtime, data
-  │  mips64el-linux-gnuabi64-gcc -static -no-pie   (outside baka)
+printer → assembly: functions, runtime, data
+  │  mips64el-linux-gnuabi64-gcc -c                (--assemble)
+  ▼
+relocatable object (.o)
+  │  mips64el-linux-gnuabi64-gcc -static -no-pie   (--link, the default)
   ▼
 static executable → qemu-mips64el
 ```
@@ -37,8 +40,9 @@ Everything from "typed IR" down is the codegen phase.
 ## How the driver wires it
 
 - `--ir` stops after lowering and prints the IR. `--ir --optimize` prints the optimized IR.
-- `--codegen` runs the full pipeline and prints assembly to stdout. Optimization defaults
-  to **on** for codegen; `--no-optimize` turns off both the IR passes and the peephole.
+- `--codegen` stops at assembly text. `--assemble` and `--link` use the MIPS Docker
+  toolchain to write a file, with its path set by `-o`. Optimization defaults to **on**
+  at these stages. `--no-optimize` turns off both the IR passes and the peephole.
 - The register allocator is not optional: even unoptimized code uses it.
 
 ## All-or-nothing output

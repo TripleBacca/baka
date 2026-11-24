@@ -1,10 +1,12 @@
 #include "driver.hh"
 #include "gctx.hh"
+#include "link.hh"
 #include "args.cc"
 #include <filesystem>
 #include <iostream>
 #include <memory>
 #include <ostream>
+#include <sstream>
 #include <string_view>
 #include <vector>
 #include "heuristics.hh"
@@ -75,15 +77,31 @@ namespace {
 }
 
 
-// Runs the pipeline (lex, parse, semantic, IR, codegen) up to the stage requested on the command line.
-// After each stage it prints accumulated diagnostics and stops with a nonzero return if any errors exist.
-// IR and codegen failures are reported as line errors. Returns 0 on success or when stopped early by a stage flag.
-int baka::driver::run(int argc, char* argv[]) {
-    ParseArgs(argc, argv);
+// Runs the compiler through the requested stage, assembling or linking when binary output is requested.
+// Reports diagnostics and returns nonzero on failure. Assembly and object inputs go directly to the MIPS toolchain.
+int baka::driver::run(int argc, char* argv[]) try {
+    const auto OutputFile = ParseArgs(argc, argv);
 
     ValidateSourceFile(); // check if exists and has perms
 
     bool isVerbose = Gctx::isVerbose();
+    const auto StageLimit = Gctx::TillStage();
+    const bool EmitFile = StageLimit >= Stage::ASSEMBLE;
+    if (EmitFile) {
+        const std::filesystem::path input = Gctx::GetSourceFilePath();
+        std::error_code error;
+        if (std::filesystem::equivalent(input, OutputFile, error)) {
+            throw exceptions::DriverError("output path refers to the input file: " + OutputFile);
+        }
+        if (input.extension() == ".o" && StageLimit != Stage::LINK) {
+            throw exceptions::DriverError("an object file requires --link");
+        }
+        if (input.extension() == ".s" || input.extension() == ".o") {
+            BuildMipsFromFile(input, OutputFile, StageLimit);
+            return 0;
+        }
+    }
+    std::ostringstream Assembly;
 
     std::string_view SourceCode;
     {
@@ -219,7 +237,8 @@ int baka::driver::run(int argc, char* argv[]) {
                 } else {
                     codegen::Options Options;
                     Options.optimize = Optimize;
-                    codegen::Generate(Lowerer.module(), Options, std::cout, Failures);
+                    std::ostream& Output = EmitFile ? Assembly : std::cout;
+                    codegen::Generate(Lowerer.module(), Options, Output, Failures);
                 }
                 {
                     for (const auto& Entry : Failures) {
@@ -270,5 +289,11 @@ int baka::driver::run(int argc, char* argv[]) {
         }
     }
 
+    if (EmitFile) {
+        BuildMipsFromAssembly(Assembly.view(), OutputFile, StageLimit);
+    }
     return 0;
+} catch (const exceptions::DriverError& error) {
+    std::cerr << "baka: " << error.what() << '\n';
+    return 1;
 }

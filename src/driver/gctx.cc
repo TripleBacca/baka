@@ -32,7 +32,7 @@ baka::driver::Stage baka::driver::Gctx::TillStage() {
 bool baka::driver::Gctx::shouldOptimize() {
     auto lg = Gctx::GetROLock();
     const auto& gctx = Gctx::GetGctxRO();
-    return gctx.ShouldOptimize.value_or(gctx.TillStage == Stage::CODEGEN);
+    return gctx.ShouldOptimize.value_or(gctx.TillStage >= Stage::CODEGEN);
 }
 
 std::shared_ptr<baka::base::LineIndex> baka::driver::Gctx::GetLineIndex() {

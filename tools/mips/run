@@ -1,16 +1,46 @@
 #!/usr/bin/env bash
-# Assemble, link and run a MIPS64el assembly file under qemu in the baka-mips64el image.
-# usage: tools/mips/run [-c harness.c] file.s [args...]   (exit status = program's)
-set -e
-extra=""
-if [ "$1" = "-c" ]; then extra=$(realpath "$2"); shift 2; fi
-[ $# -ge 1 ] || { echo "usage: $0 [-c harness.c] file.s [args...]" >&2; exit 2; }
-src=$(realpath "$1"); shift
+# Assemble and link a MIPS64el assembly file, then run it through the binary launcher.
+set -euo pipefail
+
+usage() {
+    printf 'usage: %s [-c harness.c] file.s [args...]\n' "$0" >&2
+    exit 2
+}
+
+harness=
+if [[ ${1:-} == -c ]]; then
+    [[ $# -ge 3 && -f "$2" ]] || usage
+    harness=$2
+    shift 2
+fi
+[[ $# -ge 1 && -f "$1" ]] || usage
+src=$1
+shift
+
 work=$(mktemp -d)
-trap 'rm -rf "$work"' EXIT
-cp "$src" "$work/prog.s"
-inputs="prog.s"
-if [ -n "$extra" ]; then cp "$extra" "$work/harness.c"; inputs="prog.s harness.c"; fi
-set +e
-docker run --rm -v "$work":/work baka-mips64el sh -c \
-    'mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie '"$inputs"' -o prog.out || exit 125; qemu-mips64el ./prog.out "$@"' sh "$@"
+trap 'rm -rf -- "$work"' EXIT
+cp -- "$src" "$work/prog.s"
+inputs=(prog.s)
+if [[ -n $harness ]]; then
+    cp -- "$harness" "$work/harness.c"
+    inputs+=(harness.c)
+fi
+
+docker run --rm --pull=never --user "$(id -u):$(id -g)" -v "$work:/work" baka-mips64el \
+    mips64el-linux-gnuabi64-gcc -march=mips64r2 -mabi=64 -static -no-pie "${inputs[@]}" -o prog.out || exit 125
+
+# Wait asynchronously so Bash can forward interrupts and still remove the work directory.
+"$(dirname -- "$0")/run-binary" "$work/prog.out" "$@" <&0 &
+runtime_pid=$!
+forward_signal() {
+    interrupted=1
+    kill -s "$1" "$runtime_pid" 2>/dev/null || :
+}
+trap 'forward_signal INT' INT
+trap 'forward_signal TERM' TERM
+while true; do
+    interrupted=
+    status=0
+    wait "$runtime_pid" || status=$?
+    [[ $interrupted ]] || exit "$status"
+done

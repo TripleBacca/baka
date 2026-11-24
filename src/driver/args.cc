@@ -1,6 +1,7 @@
 #include "types/driver/defs.hh"
 #include "gctx.hh"
 #include <cstddef>
+#include <filesystem>
 #include "types/exceptions.hh"
 
 
@@ -17,21 +18,19 @@
 
 namespace baka {
     namespace driver {
-        // Parses argv into the global driver context (stage cutoff, build type, optimize flag, verbosity, source file).
-        // The source file must be the last argument; anything else unrecognized is an error. Defaults to stopping after
-        // the semantic stage. Throws DriverError on bad or missing arguments.
-        void ParseArgs(int argc, char** argv) {
+        // Sets the requested stage, build mode, optimization, verbosity, and input in the driver context.
+        // Returns the output path and defaults to linking an executable. Throws DriverError on invalid arguments.
+        std::string ParseArgs(int argc, char** argv) {
             if (argc == 1) {
                 throw baka::exceptions::DriverError("no input file");
             }
             std::size_t idx = 1;
-            // TODO: maybe change these defaults later
-            Stage UptoStage = Stage::SEMANTIC;
+            Stage UptoStage = Stage::LINK;
             baka::driver::BuildType BuildType = BuildType::DEBUG;
             std::string SourceFile;
+            std::string OutputFile;
             bool VerboseMode = false;
             std::optional<bool> ShouldOptimize;
-            bool SourceFound = false;
 
             while (idx < argc) {
                 std::string_view curr = argv[idx];
@@ -50,6 +49,18 @@ namespace baka {
                 }
                 else if (curr == "--codegen") {
                     UptoStage = Stage::CODEGEN;
+                }
+                else if (curr == "--assemble") {
+                    UptoStage = Stage::ASSEMBLE;
+                }
+                else if (curr == "--link") {
+                    UptoStage = Stage::LINK;
+                }
+                else if (curr == "-o") {
+                    if (++idx == argc || !argv[idx][0] || std::string_view(argv[idx]).starts_with('-')) {
+                        throw baka::exceptions::DriverError("-o requires an output path");
+                    }
+                    OutputFile = argv[idx];
                 }
                 else if (curr == "--build_type") {
                     idx++;
@@ -79,21 +90,28 @@ namespace baka {
                 else if (curr == "--verbose") {
                     VerboseMode = true;
                 }
+                else if (curr.starts_with('-')) {
+                    throw baka::exceptions::DriverError("unknown option: " + std::string(curr));
+                }
+                else if (SourceFile.empty()) {
+                    SourceFile = curr;
+                }
                 else {
-                    if (idx == argc - 1) {
-                        // source file
-                        SourceFile = std::string(argv[idx]);
-                        SourceFound = true;
-                    }
-                    else {
-                        throw baka::exceptions::DriverError("invalid argument");
-                    }
+                    throw baka::exceptions::DriverError("expected one source file");
                 }
                 idx++;
             }
 
-            if (!SourceFound) {
+            if (SourceFile.empty()) {
                 throw baka::exceptions::DriverError("no source file specified");
+            }
+            if (UptoStage < Stage::ASSEMBLE && !OutputFile.empty()) {
+                throw baka::exceptions::DriverError("-o is for --assemble or --link; redirect stdout for text output");
+            }
+            if (OutputFile.empty()) {
+                OutputFile = UptoStage == Stage::ASSEMBLE
+                                 ? std::filesystem::path(SourceFile).stem().string() + ".o"
+                                 : "a.out";
             }
 
 
@@ -108,6 +126,7 @@ namespace baka {
             if (Gctx::isVerbose()) {
                 Gctx::Print();
             }
+            return OutputFile;
         }
     }
 }

@@ -8,7 +8,9 @@ help:
 	@printf "make parse file=path/to/file \t\t run the compiler till the parser stage\n"
 	@printf "make parse-folder dir=path/to/dir \t run parser on all files in dir recursively, output to .out files\n"
 	@printf "make codegen file=path/to/file \t\t print MIPS64 assembly\n"
-	@printf "make run-mips file=path/to/file n=N \t compile and run under qemu (Docker)\n"
+	@printf "make run file=path/to/file args='ARG ...' \t compile and run under qemu (Docker)\n"
+	@printf "make run-mips-binary file=path/to/binary args='ARG ...' \t run an existing MIPS executable (Docker)\n"
+	@printf "make shim out=path/to/launcher \t create a standalone launcher that reads BAKA_BINARY\n"
 	@printf "make test-codegen \t\t\t run the MIPS64 execution suite (Docker)\n"
 
 test: build
@@ -59,8 +61,25 @@ test-codegen: build mips-image
 codegen:
 	./build/baka --codegen $(file)
 
-run-mips: build
-	./build/baka --codegen $(file) > build/out.s && tools/mips/run build/out.s $(n)
+# Treat args as shell words, with n as a shortcut for a single argument.
+RUN_ARGS = $(if $(strip $(args)),$(args),$(if $(n),"$(n)"))
+
+run run-mips-binary: private export BAKA_RUN_FILE = $(value file)
+
+run: build
+	@work=$$(mktemp -d) && \
+		trap 'rm -rf -- "$$work"' EXIT && \
+		./build/baka -o "$$work/program" "$$BAKA_RUN_FILE" && \
+		tools/mips/run-binary "$$work/program" $(RUN_ARGS)
+
+run-mips-binary:
+	@tools/mips/run-binary "$$BAKA_RUN_FILE" $(RUN_ARGS)
+
+out ?= run-baka-mips
+
+shim: private export BAKA_SHIM_OUT = $(value out)
+shim:
+	@install -m 755 -T -- tools/mips/shim "$$BAKA_SHIM_OUT"
 
 parse-folder: build
 	@found=0; failed=0; \
@@ -79,4 +98,4 @@ clean:
 	rm -rf build/*
 
 
-.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir test-ir-opt mips-image test-codegen codegen run-mips
+.PHONY: test build lex clean help parse parse-folder semantic test-semantic ir test-ir test-ir-opt mips-image test-codegen codegen run run-mips-binary shim
