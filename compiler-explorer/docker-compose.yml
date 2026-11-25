@@ -13,6 +13,7 @@ services:
       - ../build/baka:/opt/baka/bin/baka:ro
       - ./baka-ce:/opt/baka/bin/baka-ce:ro
       - ./config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro
+      - ./config/compiler-explorer.local.properties:/compiler-explorer/etc/config/compiler-explorer.local.properties:ro
       # Short share links (/z/...) are files in CE's local storage. Keep them in a
       # named volume so recreating or rebuilding the container doesn't break them.
       - links:/compiler-explorer/lib/storage/data

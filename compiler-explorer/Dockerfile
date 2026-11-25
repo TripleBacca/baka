@@ -23,6 +23,7 @@ RUN apt-get update \
 RUN git clone --depth 1 https://github.com/compiler-explorer/compiler-explorer.git /compiler-explorer
 
 COPY config/c.local.properties /compiler-explorer/etc/config/c.local.properties
+COPY config/compiler-explorer.local.properties /compiler-explorer/etc/config/compiler-explorer.local.properties
 
 RUN mkdir -p /opt/baka/bin
 COPY baka-ce /opt/baka/bin/baka-ce
