@@ -108,6 +108,7 @@ docker run -d --name baka-godbolt --network host \
     -v "$PWD/build/baka:/opt/baka/bin/baka:ro" \
     -v "$PWD/compiler-explorer/baka-ce:/opt/baka/bin/baka-ce:ro" \
     -v "$PWD/compiler-explorer/config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro" \
+    -v baka-ce-links:/compiler-explorer/lib/storage/data \
     baka-compiler-explorer:latest
 ```
 
