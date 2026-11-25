@@ -3,13 +3,13 @@
 Small programs that show off baka's distinctive features. Each one prints what it
 demonstrates.
 
-| File | Shows |
-|---|---|
-| `01_loop_labels.cpp` | Loop labels: `for (...; Name)`, `while (cond; Name)`, `do ... while (cond; Name)` with `break Name;` / `continue Name;` |
-| `02_quad_equals.cpp` | `====` / `!===`: do two objects have the same runtime class? (objects, references and pointers) |
-| `03_record_equality.cpp` | `==` / `!=` on whole structs and classes, compared field by field |
-| `04_classes.cpp` | Access modifiers, inheritance, methods virtual by default, pure methods (`= 0`), `new(p, args)` / `delete(p)` |
-| `05_lambdas_references.cpp` | Captureless lambdas, references and function pointers |
+| File | Shows | Compiler Explorer |
+|---|---|---|
+| `01_loop_labels.cpp` | Loop labels: `for (...; Name)`, `while (cond; Name)`, `do ... while (cond; Name)` with `break Name;` / `continue Name;` | [open](http://pc.tail3e2bc4.ts.net:10240/z/jnfvah) |
+| `02_quad_equals.cpp` | `====` / `!===`: do two objects have the same runtime class? (objects, references and pointers) | [open](http://pc.tail3e2bc4.ts.net:10240/z/jdnrWP) |
+| `03_record_equality.cpp` | `==` / `!=` on whole structs and classes, compared field by field | [open](http://pc.tail3e2bc4.ts.net:10240/z/985aTa) |
+| `04_classes.cpp` | Access modifiers, inheritance, methods virtual by default, pure methods (`= 0`), `new(p, args)` / `delete(p)` | [open](http://pc.tail3e2bc4.ts.net:10240/z/Ys3vMc) |
+| `05_lambdas_references.cpp` | Captureless lambdas, references and function pointers | [open](http://pc.tail3e2bc4.ts.net:10240/z/K6Wrbs) |
 
 ## Running them
 
@@ -25,7 +25,10 @@ builds the image the first time). To see a single stage instead:
 ./build/baka --codegen examples/04_classes.cpp          # MIPS64 assembly
 ```
 
-The programs also paste straight into Compiler Explorer (select C).
+The Compiler Explorer links open each program with baka's MIPS64 output and an
+executor pane showing what it prints (`-O2`). They point at the team's instance on
+`pc.tail3e2bc4.ts.net`, so they need Tailscale access to that machine. The programs
+also paste straight into any baka Compiler Explorer (select C).
 
 ## Expected output
 
