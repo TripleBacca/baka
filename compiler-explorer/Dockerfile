@@ -24,6 +24,7 @@ RUN git clone --depth 1 https://github.com/compiler-explorer/compiler-explorer.g
 
 COPY config/c.local.properties /compiler-explorer/etc/config/c.local.properties
 COPY config/compiler-explorer.local.properties /compiler-explorer/etc/config/compiler-explorer.local.properties
+COPY config/site-templates.yaml /compiler-explorer/etc/config/site-templates.yaml
 
 RUN mkdir -p /opt/baka/bin
 COPY baka-ce /opt/baka/bin/baka-ce
@@ -35,6 +36,9 @@ WORKDIR /compiler-explorer
 RUN npm ci \
     && npm run webpack \
     && npm run ts-compile
+
+# Preview images for config/site-templates.yaml (compose also mounts this directory).
+COPY template_screenshots /compiler-explorer/out/webpack/static/template_screenshots
 
 EXPOSE 10240
 

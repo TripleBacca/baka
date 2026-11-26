@@ -47,6 +47,7 @@ How it is wired:
 | `baka-ce` | Without `-S`, CE wants a binary: the adapter links to the `-o` path (`-c` stops at an object). `MIPS_CC` overrides the cross compiler. |
 | `config/c.local.properties` | `supportsBinary` and `supportsExecute` on, `objdumper` set to the MIPS objdump, `executionWrapper=/usr/bin/qemu-mips64el`, and `emulated=true` so CE runs the foreign binary locally instead of looking for a remote MIPS host. |
 | `config/compiler-explorer.local.properties` | `trustProxy=loopback, uniquelocal`, so behind a reverse proxy or tunnel on a private network (such as cloudflared on the Docker network) CE honours `X-Forwarded-Proto` and short links come back as `https://`. Otherwise the browser refuses the `http://` link (a different origin) and the Short Link dialog never fills in. |
+| `config/site-templates.yaml`, `template_screenshots/` | The **Templates** menu for everyone, replacing CE's stock list. Each entry's `reference` is the compressed `z:` state from a Share → Full Link URL; its previews are `template_screenshots/<id>.<theme>.png` (1000×800, one per theme). CE reads the list at startup, so recreate the container after editing it. |
 | `Dockerfile` | Installs `gcc-mips64el-linux-gnuabi64`, `libc6-dev-mips64el-cross`, `qemu-user` and `file` (CE checks the executable with `file` before running it). These packages exist for amd64 and arm64. |
 
 ## Start or update the local instance
@@ -110,6 +111,8 @@ docker run -d --name baka-godbolt --network host \
     -v "$PWD/compiler-explorer/baka-ce:/opt/baka/bin/baka-ce:ro" \
     -v "$PWD/compiler-explorer/config/c.local.properties:/compiler-explorer/etc/config/c.local.properties:ro" \
     -v "$PWD/compiler-explorer/config/compiler-explorer.local.properties:/compiler-explorer/etc/config/compiler-explorer.local.properties:ro" \
+    -v "$PWD/compiler-explorer/config/site-templates.yaml:/compiler-explorer/etc/config/site-templates.yaml:ro" \
+    -v "$PWD/compiler-explorer/template_screenshots:/compiler-explorer/out/webpack/static/template_screenshots:ro" \
     -v baka-ce-links:/compiler-explorer/lib/storage/data \
     baka-compiler-explorer:latest
 ```
